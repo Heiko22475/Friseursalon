@@ -1,0 +1,44 @@
+{
+  "pricing": [
+    {
+      "name": "Basic",
+      "price": "€45",
+      "description": "Perfect for a quick refresh",
+      "features": [
+        "Haircut & Styling",
+        "Hair Wash",
+        "Blow Dry",
+        "Basic Products"
+      ],
+      "popular": false
+    },
+    {
+      "name": "Premium",
+      "price": "€85",
+      "description": "Our most popular package",
+      "features": [
+        "Haircut & Styling",
+        "Hair Wash & Treatment",
+        "Professional Blow Dry",
+        "Premium Products",
+        "Scalp Massage",
+        "Style Consultation"
+      ],
+      "popular": true
+    },
+    {
+      "name": "Luxury",
+      "price": "€150",
+      "description": "The complete experience",
+      "features": [
+        "Everything in Premium",
+        "Color or Highlights",
+        "Deep Conditioning",
+        "Head & Shoulder Massage",
+        "Refreshments",
+        "Complimentary Product Sample"
+      ],
+      "popular": false
+    }
+  ]
+}

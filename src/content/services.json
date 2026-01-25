@@ -1,0 +1,24 @@
+{
+  "services": [
+    {
+      "title": "Balayage & Coloration",
+      "description": "Professionelle Färbetechniken für natürliche und moderne Looks.",
+      "features": ["Balayage", "Komplettfärbung", "Highlights"]
+    },
+    {
+      "title": "Haarstyling",
+      "description": "Individuelles Styling für jeden Anlass und persönlichen Stil.",
+      "features": ["Föhnen", "Locken", "Glätten"]
+    },
+    {
+      "title": "Brautfrisuren",
+      "description": "Traumhafte Frisuren für den schönsten Tag im Leben.",
+      "features": ["Hochsteckfrisuren", "Probetermine", "Accessoires"]
+    },
+    {
+      "title": "Weitere Leistungen",
+      "description": "Vielfältige Dienstleistungen für die ganze Familie.",
+      "features": ["Dauerwellen", "Flechtfrisuren", "Kinderhaarschnitte"]
+    }
+  ]
+}

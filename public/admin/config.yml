@@ -1,11 +1,11 @@
 # Für lokale Entwicklung:
-backend:
-  name: test-repo
+# backend:
+#   name: test-repo
 
 # Für Produktion auf Netlify (auskommentieren für lokal):
-# backend:
-#   name: git-gateway
-#   branch: main
+backend:
+  name: git-gateway
+  branch: main
 
 media_folder: "public/images"
 public_folder: "/images"

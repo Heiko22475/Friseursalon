@@ -1,11 +1,13 @@
-# Für lokale Entwicklung:
-# backend:
-#   name: test-repo
-
-# Für Produktion auf Netlify (auskommentieren für lokal):
+# Authentifizierung deaktiviert - Kein Login erforderlich
 backend:
-  name: git-gateway
-  branch: main
+  name: test-repo
+
+# Für Produktion mit GitHub (auskommentiert):
+# backend:
+#   name: github
+#   repo: Heiko22475/Friseursalon
+#   branch: main
+#   auth_scope: repo
 
 media_folder: "public/images"
 public_folder: "/images"

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image } from 'lucide-react';
+import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -20,7 +20,8 @@ export const AdminDashboard: React.FC = () => {
     { id: 'reviews', name: 'Bewertungen', icon: Star, path: '/admin/reviews', enabled: true },
     { id: 'about', name: 'Über uns', icon: Info, path: '/admin/about', enabled: true },
     { id: 'pricing', name: 'Preise', icon: DollarSign, path: '/admin/pricing', enabled: true },
-    { id: 'gallery', name: 'Galerie', icon: Image, path: '/admin/gallery', enabled: false },
+    { id: 'gallery', name: 'Galerie', icon: Image, path: '/admin/gallery', enabled: true },
+    { id: 'export', name: 'Daten Export/Import', icon: Database, path: '/admin/export', enabled: true },
   ];
 
   return (

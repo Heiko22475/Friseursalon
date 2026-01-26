@@ -10,6 +10,8 @@ import { HoursEditor } from './components/admin/HoursEditor';
 import { ReviewsEditor } from './components/admin/ReviewsEditor';
 import { AboutEditor } from './components/admin/AboutEditor';
 import { PricingEditor } from './components/admin/PricingEditor';
+import { DataExport } from './components/admin/DataExport';
+import { default as GalleryEditor } from './components/admin/GalleryEditor';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -106,6 +108,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <PricingEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/export"
+            element={
+              <ProtectedRoute>
+                <DataExport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/gallery"
+            element={
+              <ProtectedRoute>
+                <GalleryEditor />
               </ProtectedRoute>
             }
           />

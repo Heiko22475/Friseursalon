@@ -1,61 +1,90 @@
-import { Check } from 'lucide-react'
-import { salonData } from '../data/salonData'
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+
+interface PricingItem {
+  category: string;
+  service: string;
+  price: string;
+  description: string | null;
+}
+
+interface PricingCategory {
+  name: string;
+  description: string;
+  items: PricingItem[];
+}
 
 export default function Pricing() {
+  const [categories, setCategories] = useState<PricingCategory[]>([]);
+
+  useEffect(() => {
+    loadPricing();
+  }, []);
+
+  const loadPricing = async () => {
+    const { data } = await supabase
+      .from('pricing')
+      .select('category, service, price, description')
+      .order('display_order');
+
+    if (data) {
+      // Group by category
+      const grouped = data.reduce((acc, item) => {
+        const existing = acc.find(c => c.name === item.category);
+        if (existing) {
+          existing.items.push(item);
+        } else {
+          acc.push({
+            name: item.category,
+            description: item.description || '',
+            items: [item]
+          });
+        }
+        return acc;
+      }, [] as PricingCategory[]);
+
+      setCategories(grouped);
+    }
+  };
+
   return (
     <section id="pricing" className="py-20 bg-slate-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
-            Pricing Plans
+            Pricing
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Choose the perfect package for your needs
+            Professional services at competitive prices
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {salonData.pricing.map((plan, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {categories.map((category, index) => (
             <div 
               key={index}
-              className={`bg-white rounded-2xl p-8 ${
-                plan.popular 
-                  ? 'ring-2 ring-slate-800 shadow-xl scale-105' 
-                  : 'shadow-lg'
-              } relative`}
+              className="bg-white rounded-2xl p-8 shadow-lg"
             >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Most Popular
-                </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                {category.name}
+              </h3>
+              {category.description && (
+                <p className="text-slate-600 mb-6">{category.description}</p>
               )}
               
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                {plan.name}
-              </h3>
-              <p className="text-slate-600 mb-6">{plan.description}</p>
-              
-              <div className="mb-8">
-                <span className="text-5xl font-bold text-slate-800">{plan.price}</span>
-                <span className="text-slate-600">/session</span>
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <Check className="text-slate-800 flex-shrink-0 mt-1" size={20} />
-                    <span className="text-slate-600">{feature}</span>
+              <ul className="space-y-4">
+                {category.items.map((item, idx) => (
+                  <li key={idx} className="flex justify-between items-start">
+                    <div>
+                      <span className="text-slate-800 font-medium">{item.service}</span>
+                      {item.description && (
+                        <p className="text-sm text-slate-500">{item.description}</p>
+                      )}
+                    </div>
+                    <span className="text-slate-800 font-semibold ml-4">{item.price}</span>
                   </li>
                 ))}
               </ul>
-
-              <button className={`w-full py-3 rounded-lg font-semibold transition ${
-                plan.popular
-                  ? 'bg-slate-800 text-white hover:bg-slate-700'
-                  : 'border-2 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white'
-              }`}>
-                Book Now
-              </button>
             </div>
           ))}
         </div>

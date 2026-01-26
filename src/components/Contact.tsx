@@ -1,7 +1,37 @@
-import { MapPin, Phone, Mail, Clock } from 'lucide-react'
-import { salonData } from '../data/salonData'
+import { useState, useEffect } from 'react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+interface ContactData {
+  street: string;
+  city: string;
+  phone: string;
+  email: string;
+}
+
+interface Hour {
+  day: string;
+  hours: string;
+}
 
 export default function Contact() {
+  const [contact, setContact] = useState<ContactData | null>(null);
+  const [hours, setHours] = useState<Hour[]>([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    const [contactRes, hoursRes] = await Promise.all([
+      supabase.from('contact').select('street, city, phone, email').single(),
+      supabase.from('hours').select('day, hours').order('display_order')
+    ]);
+
+    if (contactRes.data) setContact(contactRes.data);
+    if (hoursRes.data) setHours(hoursRes.data);
+  };
+
   return (
     <section id="contact" className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -79,53 +109,61 @@ export default function Contact() {
               </h3>
               
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-slate-800 p-3 rounded-lg">
-                    <MapPin className="text-white" size={24} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800 mb-1">Address</p>
-                    <p className="text-slate-600">
-                      {salonData.contact.address.street}<br />
-                      {salonData.contact.address.city}
-                    </p>
-                  </div>
-                </div>
+                {contact && (
+                  <>
+                    <div className="flex items-start gap-4">
+                      <div className="bg-slate-800 p-3 rounded-lg">
+                        <MapPin className="text-white" size={24} />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 mb-1">Address</p>
+                        <p className="text-slate-600">
+                          {contact.street}<br />
+                          {contact.city}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="bg-slate-800 p-3 rounded-lg">
-                    <Phone className="text-white" size={24} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800 mb-1">Phone</p>
-                    <p className="text-slate-600">{salonData.contact.phone}</p>
-                  </div>
-                </div>
+                    <div className="flex items-start gap-4">
+                      <div className="bg-slate-800 p-3 rounded-lg">
+                        <Phone className="text-white" size={24} />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 mb-1">Phone</p>
+                        <p className="text-slate-600">{contact.phone}</p>
+                      </div>
+                    </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="bg-slate-800 p-3 rounded-lg">
-                    <Mail className="text-white" size={24} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800 mb-1">Email</p>
-                    <p className="text-slate-600">{salonData.contact.email}</p>
-                  </div>
-                </div>
+                    <div className="flex items-start gap-4">
+                      <div className="bg-slate-800 p-3 rounded-lg">
+                        <Mail className="text-white" size={24} />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 mb-1">Email</p>
+                        <p className="text-slate-600">{contact.email}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                <div className="flex items-start gap-4">
-                  <div className="bg-slate-800 p-3 rounded-lg">
-                    <Clock className="text-white" size={24} />
+                {hours.length > 0 && (
+                  <div className="flex items-start gap-4">
+                    <div className="bg-slate-800 p-3 rounded-lg">
+                      <Clock className="text-white" size={24} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-800 mb-1">Opening Hours</p>
+                      <p className="text-slate-600">
+                        {hours.map((h, i) => (
+                          <span key={i}>
+                            {h.day}: {h.hours}
+                            {i < hours.length - 1 && <><br /></>}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-slate-800 mb-1">Opening Hours</p>
-                    <p className="text-slate-600">
-                      Di, Do, Fr: {salonData.openingHours.tuesday}<br />
-                      Mi: {salonData.openingHours.wednesday}<br />
-                      Sa: {salonData.openingHours.saturday}<br />
-                      So & Mo: {salonData.openingHours.sunday}
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

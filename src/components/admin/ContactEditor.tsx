@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Eye, MapPin, Phone, Mail } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface ContactData {
   id?: string;
@@ -26,6 +27,7 @@ export const ContactEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -94,13 +96,20 @@ export const ContactEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+          >
+            <Eye className="w-4 h-4" />
+            Vorschau
           </button>
         </div>
 
@@ -197,6 +206,52 @@ export const ContactEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="Kontakt Vorschau"
+        maxWidth="w-[1024px]"
+      >
+        <div className="bg-slate-50 p-8 rounded-xl">
+          <h3 className="text-2xl font-bold text-slate-800 mb-6">Visit Us</h3>
+          
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-slate-800 p-3 rounded-lg">
+                <MapPin className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-800 mb-1">Address</p>
+                <p className="text-slate-600">
+                  {data.street}<br />
+                  {data.city}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="bg-slate-800 p-3 rounded-lg">
+                <Phone className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-800 mb-1">Phone</p>
+                <p className="text-slate-600">{data.phone}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="bg-slate-800 p-3 rounded-lg">
+                <Mail className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-800 mb-1">Email</p>
+                <p className="text-slate-600">{data.email}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

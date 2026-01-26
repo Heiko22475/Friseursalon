@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Eye, ArrowRight } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface GeneralData {
   id?: string;
@@ -24,6 +25,7 @@ export const GeneralEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -102,13 +104,20 @@ export const GeneralEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+          >
+            <Eye className="w-4 h-4" />
+            Vorschau
           </button>
         </div>
 
@@ -201,6 +210,42 @@ export const GeneralEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="Hero Vorschau"
+        maxWidth="w-[1024px]"
+      >
+        <div className="pt-8 min-h-[400px] flex items-center bg-gradient-to-br from-slate-50 via-white to-slate-100 rounded-xl">
+          <div className="container mx-auto px-4 py-12">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
+                {data.tagline.split(' & ')[0]} &
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-800">
+                  {data.tagline.split(' & ')[1] || data.tagline}
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-2xl mx-auto italic">
+                "{data.motto}" – {data.name}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  className="bg-slate-800 text-white px-8 py-4 rounded-lg hover:bg-slate-700 transition flex items-center justify-center gap-2 text-lg"
+                >
+                  Book Appointment
+                  <ArrowRight size={20} />
+                </button>
+                <button
+                  className="border-2 border-slate-800 text-slate-800 px-8 py-4 rounded-lg hover:bg-slate-800 hover:text-white transition text-lg"
+                >
+                  View Services
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

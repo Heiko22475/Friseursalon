@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Plus, Trash2, Edit2 } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Edit2, Eye, Star } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface Review {
   id?: string;
@@ -25,6 +26,7 @@ export const ReviewsEditor: React.FC = () => {
     display_order: 0,
   });
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadReviews();
@@ -120,13 +122,20 @@ export const ReviewsEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+          >
+            <Eye className="w-4 h-4" />
+            Vorschau
           </button>
         </div>
 
@@ -273,6 +282,51 @@ export const ReviewsEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="Bewertungen Vorschau"
+        maxWidth="w-[1024px]"
+      >
+        <div className="bg-slate-900 text-white py-8 px-4 rounded-xl">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex justify-center mb-6">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="fill-amber-500 text-amber-500" size={32} />
+              ))}
+            </div>
+
+            {reviews.length > 0 && (
+              <>
+                <blockquote className="text-2xl md:text-3xl font-serif italic mb-8 leading-relaxed">
+                  "{reviews[0].text}"
+                </blockquote>
+
+                <div className="text-amber-500 uppercase tracking-widest text-sm font-semibold">
+                  {reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : '5.0'} Sterne bei {reviews.length} Google-Rezensionen
+                </div>
+              </>
+            )}
+
+            {reviews.length > 1 && (
+              <div className="mt-12 grid md:grid-cols-3 gap-6 text-left">
+                {reviews.slice(1).map((review, index) => (
+                  <div key={index} className="bg-white/10 p-6 rounded-lg">
+                    <div className="flex mb-3">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="fill-amber-500 text-amber-500" size={16} />
+                      ))}
+                    </div>
+                    <p className="text-slate-300 italic mb-3">"{review.text}"</p>
+                    <p className="text-slate-400 text-sm">- {review.name}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

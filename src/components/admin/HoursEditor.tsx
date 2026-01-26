@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Clock } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface HoursData {
   id?: string;
@@ -24,6 +25,7 @@ export const HoursEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -91,13 +93,20 @@ export const HoursEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+          >
+            <Eye className="w-4 h-4" />
+            Vorschau
           </button>
         </div>
 
@@ -183,6 +192,32 @@ export const HoursEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="Öffnungszeiten Vorschau"
+        maxWidth="w-[1024px]"
+      >
+        <div className="bg-slate-50 p-8 rounded-xl">
+          <div className="flex items-start gap-4">
+            <div className="bg-slate-800 p-3 rounded-lg">
+              <Clock className="text-white" size={24} />
+            </div>
+            <div>
+              <p className="font-semibold text-slate-800 mb-1">Opening Hours</p>
+              <p className="text-slate-600">
+                {data.tuesday && <><strong>Dienstag:</strong> {data.tuesday}<br /></>}
+                {data.wednesday && <><strong>Mittwoch:</strong> {data.wednesday}<br /></>}
+                {data.thursday && <><strong>Donnerstag:</strong> {data.thursday}<br /></>}
+                {data.friday && <><strong>Freitag:</strong> {data.friday}<br /></>}
+                {data.saturday && <><strong>Samstag:</strong> {data.saturday}</>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Plus, Trash2, Edit2 } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Edit2, Eye } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface Pricing {
   id?: string;
@@ -25,6 +26,7 @@ export const PricingEditor: React.FC = () => {
     display_order: 0,
   });
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadPricings();
@@ -120,13 +122,20 @@ export const PricingEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+          >
+            <Eye className="w-4 h-4" />
+            Vorschau
           </button>
         </div>
 
@@ -266,6 +275,63 @@ export const PricingEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="Preise Vorschau"
+        maxWidth="w-[1024px]"
+      >
+        <div className="bg-slate-50 py-8 px-4 rounded-xl">
+          <div className="text-center mb-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">Pricing</h2>
+            <p className="text-xl text-slate-600">Professional services at competitive prices</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(() => {
+              const grouped = pricings.reduce((acc, item) => {
+                const existing = acc.find(c => c.name === item.category);
+                if (existing) {
+                  existing.items.push(item);
+                } else {
+                  acc.push({
+                    name: item.category,
+                    description: item.description || '',
+                    items: [item]
+                  });
+                }
+                return acc;
+              }, [] as Array<{name: string, description: string, items: Pricing[]}>);
+
+              return grouped.map((category, index) => (
+                <div key={index} className="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                    {category.name}
+                  </h3>
+                  {category.description && (
+                    <p className="text-slate-600 mb-6">{category.description}</p>
+                  )}
+                  
+                  <ul className="space-y-4">
+                    {category.items.map((item, idx) => (
+                      <li key={idx} className="flex justify-between items-start">
+                        <div>
+                          <span className="text-slate-800 font-medium">{item.service}</span>
+                          {item.description && (
+                            <p className="text-sm text-slate-500">{item.description}</p>
+                          )}
+                        </div>
+                        <span className="text-slate-800 font-semibold ml-4">{item.price}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ));
+            })()}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

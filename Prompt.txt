@@ -1,2 +1,46 @@
-Ich möchte nun eine Gallerie erstellen und dazu eine Admin-Maske mit der ich Bilder nach 
-supabase heraufladen kann. 
+Prompt 1
+In the services editor, I'd like to offer a visual list of all the icons, 
+that lucide offers. A select dropdown or even a better component for that purpose. 
+Also, I'd like to save the color of the Icon. 
+
+Prompt 2
+Ich möchte nun den Icon-Editor als Komponente abstrahieren.
+Man kann den Icon-Editor an verschiedenen Stellen verwenden. 
+
+Neue Option: Icon anzeigen (Checkbox). Default: true. 
+Wenn nicht gesetzt, soll kein Icon ausgespielt werden. 
+Wenn diese Option nicht gesetzt is, sollen die Eingabefelder in dem Editor disabled sein. 
+
+Das Icon sollte eine Option haben, um die Größe zu ändern. Dies sollte eine visuelle 
+Auswahlbox sein, in der ein Beispielicon in verschiedener Größe abgebildet ist.
+Größen: 15px, 18px, 24px, 30px  
+
+Der Hintergrund des Icons sollte auch auswählbar sein: 
+a) Kein HIntergrund (Felder Farbe, Form, Gröpe des Hintergrunds disabled) oder
+
+b-1) Farbe
+
+b-2) 
+Form: Rechteckig mit abgerundeten Ecken oder kreisrund
+Die Auswahl der Form sollte auch in einem Select sein, in dem die Formen visuell dargestellt werden. 
+
+c) Größe des Hintergrunds im Verhältnis zu dem Icon. 
+Also das Padding um das Icon (5px, 10px, 15px, 20px)
+Stelle es auch visuell dar. 
+
+
+
+Prompt: 
+
+Ich möchte einen zweiten Button neben dem Dienstleistungen hinzufüge für  
+ein zweites Popup-Fenster haben, mit dem ich die alle Dienstleistungseinträge 
+stylen kann. Darunter fällt: Icon anzeigen, Icon Farbe, Größe, Hintergrund-Daten. 
+Dazu kann man den IconEditor nehmen, nur dass das Icon nicht ausgewählt wird. 
+
+Prompt: 
+I like to have a Button "Vorschau" which opens a popup window that shows the current
+Section as it would be rendered on the page.  
+The button should be in the upper right corner. 
+Implement this on all editors. 
+
+

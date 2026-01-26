@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Upload, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Upload, Trash2, Image as ImageIcon, Eye, ArrowLeft } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface GalleryImage {
   id: string;
@@ -10,11 +12,14 @@ interface GalleryImage {
 }
 
 export default function GalleryEditor() {
+  const navigate = useNavigate();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [newCaption, setNewCaption] = useState('');
   const [editingCaptions, setEditingCaptions] = useState<Record<string, string>>({});
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedPreviewImage, setSelectedPreviewImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     loadImages();
@@ -160,7 +165,7 @@ export default function GalleryEditor() {
     }
   };
 
-  const handleCaptionKeyDown = (e: React.KeyboardEvent, id: string) => {
+  const handleCaptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.currentTarget.blur(); // Trigger blur event
     }
@@ -181,16 +186,35 @@ export default function GalleryEditor() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Gallery Images</h2>
-        <p className="text-slate-600">Upload and manage gallery images</p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => navigate('/admin')}
+              className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Zurück zum Dashboard
+            </button>
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+            >
+              <Eye className="w-5 h-5" />
+              Vorschau
+            </button>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Gallery Images</h2>
+            <p className="text-slate-600">Upload and manage gallery images</p>
+          </div>
 
       {/* Upload Section */}
-      <div className="bg-slate-50 rounded-lg p-6 border-2 border-dashed border-slate-300">
-        <div className="flex flex-col items-center space-y-4">
-          <ImageIcon className="text-slate-400" size={48} />
+      <div className="bg-slate-50 rounded-lg p-4 border-2 border-dashed border-slate-300">
+        <div className="flex flex-col items-center space-y-3">
+          <ImageIcon className="text-slate-400" size={32} />
           
           <div className="w-full">
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -230,11 +254,11 @@ export default function GalleryEditor() {
       ) : images.length === 0 ? (
         <p className="text-center text-slate-500">No images uploaded yet</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {images.map((image) => (
             <div
               key={image.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-sm overflow-hidden"
             >
               <div className="aspect-square relative">
                 <img
@@ -244,32 +268,32 @@ export default function GalleryEditor() {
                 />
               </div>
               
-              <div className="p-3 space-y-2">
+              <div className="p-2 space-y-1.5">
                 <input
                   type="text"
                   value={editingCaptions[image.id] || ''}
                   onChange={(e) => handleCaptionChange(image.id, e.target.value)}
                   onBlur={() => handleCaptionBlur(image.id)}
-                  onKeyDown={(e) => handleCaptionKeyDown(e, image.id)}
+                  onKeyDown={handleCaptionKeyDown}
                   placeholder="Caption"
-                  className="w-full px-2 py-1 text-sm border border-slate-300 rounded"
+                  className="w-full px-2 py-1 text-xs border border-slate-300 rounded"
                 />
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <label className="text-xs text-slate-600">Order:</label>
                   <input
                     type="number"
                     value={image.display_order}
                     onChange={(e) => updateOrder(image.id, parseInt(e.target.value))}
-                    className="w-20 px-2 py-1 text-sm border border-slate-300 rounded"
+                    className="w-14 px-1 py-1 text-xs border border-slate-300 rounded"
                   />
                 </div>
 
                 <button
                   onClick={() => deleteImage(image)}
-                  className="w-full flex items-center justify-center gap-2 bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 transition text-sm"
+                  className="w-full flex items-center justify-center gap-1 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition text-xs"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={12} />
                   Delete
                 </button>
               </div>
@@ -277,6 +301,87 @@ export default function GalleryEditor() {
           ))}
         </div>
       )}
+
+      {/* Preview Modal */}
+      <Modal
+        isOpen={isPreviewOpen}
+        onClose={() => {
+          setIsPreviewOpen(false);
+          setSelectedPreviewImage(null);
+        }}
+        title="Vorschau: Gallery Sektion"
+        maxWidth="w-[1024px]"
+      >
+        <div className="bg-white">
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+                  Gallery
+                </h2>
+                <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                  Explore our work and get inspired
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+                {images.map((image) => (
+                  <div
+                    key={image.id}
+                    className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+                    onClick={() => setSelectedPreviewImage(image)}
+                  >
+                    <img
+                      src={image.image_url}
+                      alt={image.caption || 'Gallery image'}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    {image.caption && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <p className="text-white text-sm font-medium">{image.caption}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Lightbox inside preview */}
+          {selectedPreviewImage && (
+            <div
+              className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
+              onClick={() => setSelectedPreviewImage(null)}
+            >
+              <div className="relative max-w-7xl max-h-[90vh]">
+                <img
+                  src={selectedPreviewImage.image_url}
+                  alt={selectedPreviewImage.caption || 'Gallery image'}
+                  className="max-w-full max-h-[90vh] object-contain"
+                />
+                {selectedPreviewImage.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-4 text-center">
+                    <p className="text-white text-lg">{selectedPreviewImage.caption}</p>
+                  </div>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPreviewImage(null);
+                  }}
+                  className="absolute top-4 right-4 text-white hover:text-slate-300 text-4xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Modal>
+        </div>
+      </div>
     </div>
   );
 }

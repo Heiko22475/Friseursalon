@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Award, Heart, Star } from 'lucide-react';
+import { Modal } from './Modal';
 
 interface AboutData {
   id?: string;
@@ -20,6 +21,7 @@ export const AboutEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -85,13 +87,20 @@ export const AboutEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
+          </button>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+          >
+            <Eye className="w-5 h-5" />
+            Vorschau
           </button>
         </div>
 
@@ -151,6 +160,54 @@ export const AboutEditor: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Preview Modal */}
+        <Modal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          title="Vorschau: About Sektion"
+          maxWidth="w-[1024px]"
+        >
+          <section className="py-20 bg-slate-50">
+            <div className="container mx-auto px-4">
+              <div className="max-w-6xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                      {data.title || 'Friseursalon Sarah Soriano'}
+                    </h2>
+                    <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                      {data.description || 'Your description will appear here...'}
+                    </p>
+                    <p className="text-lg text-slate-700 font-medium mb-8">
+                      {data.highlight || 'Your highlight text will appear here...'}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <div className="grid grid-cols-2 gap-6">
+                      {[
+                        { icon: Award, title: "15+ Years", text: "Experience" },
+                        { icon: Star, title: "500+", text: "Happy Clients" },
+                        { icon: Heart, title: "Premium", text: "Products" },
+                        { icon: Award, title: "Certified", text: "Stylists" }
+                      ].map((item, index) => {
+                        const Icon = item.icon;
+                        return (
+                          <div key={index} className="bg-white p-6 rounded-xl text-center hover:shadow-lg transition">
+                            <Icon className="w-8 h-8 text-rose-500 mx-auto mb-3" />
+                            <div className="text-2xl font-bold text-slate-800 mb-1">{item.title}</div>
+                            <div className="text-slate-600">{item.text}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </Modal>
       </div>
     </div>
   );

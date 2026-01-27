@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Plus, Trash2, Edit2, ChevronUp, ChevronDown, Palette, Eye } from 'lucide-react';
 import { IconEditor, IconConfig } from './IconEditor';
@@ -25,6 +25,8 @@ interface Service {
 
 export const ServicesEditor: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const instanceId = parseInt(searchParams.get('instance') || '1');
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -64,13 +66,14 @@ export const ServicesEditor: React.FC = () => {
   useEffect(() => {
     loadServices();
     loadSectionContent();
-  }, []);
+  }, [instanceId]);
 
   const loadServices = async () => {
     try {
       const { data, error } = await supabase
         .from('services')
         .select('*')
+        .eq('instance_id', instanceId)
         .order('display_order', { ascending: true });
 
       if (error) throw error;
@@ -97,6 +100,7 @@ export const ServicesEditor: React.FC = () => {
         const { data: normalizedData, error: reloadError } = await supabase
           .from('services')
           .select('*')
+          .eq('instance_id', instanceId)
           .order('display_order', { ascending: true });
           
         if (reloadError) throw reloadError;
@@ -116,6 +120,7 @@ export const ServicesEditor: React.FC = () => {
       const { data, error } = await supabase
         .from('services_section')
         .select('*')
+        .eq('instance_id', instanceId)
         .limit(1)
         .single();
 
@@ -163,7 +168,7 @@ export const ServicesEditor: React.FC = () => {
         if (error) throw error;
       } else {
         // Insert
-        const { error } = await supabase.from('services').insert([editForm]);
+        const { error } = await supabase.from('services').insert([{ ...editForm, instance_id: instanceId }]);
         if (error) throw error;
       }
 
@@ -369,7 +374,9 @@ export const ServicesEditor: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Dienstleistungen</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Dienstleistungen{instanceId > 1 && ` (Instanz #${instanceId})`}
+          </h1>
 
           {message && (
             <div

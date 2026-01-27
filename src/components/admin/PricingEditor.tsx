@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Trash2, Edit2, Eye } from 'lucide-react';
 import { Modal } from './Modal';
 
-interface Pricing {
+interface PricingItem {
   id?: string;
   category: string;
   service: string;
@@ -15,6 +15,8 @@ interface Pricing {
 
 export const PricingEditor: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const instanceId = parseInt(searchParams.get('instance') || '1');
   const [pricings, setPricings] = useState<Pricing[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -30,13 +32,14 @@ export const PricingEditor: React.FC = () => {
 
   useEffect(() => {
     loadPricings();
-  }, []);
+  }, [instanceId]);
 
   const loadPricings = async () => {
     try {
       const { data, error } = await supabase
         .from('pricing')
         .select('*')
+        .eq('instance_id', instanceId)
         .order('display_order', { ascending: true });
 
       if (error) throw error;
@@ -58,7 +61,7 @@ export const PricingEditor: React.FC = () => {
 
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('pricing').insert([editForm]);
+        const { error } = await supabase.from('pricing').insert([{ ...editForm, instance_id: instanceId }]);
         if (error) throw error;
       }
 
@@ -140,7 +143,9 @@ export const PricingEditor: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Preise</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Preise{instanceId > 1 && ` (Instanz #${instanceId})`}
+          </h1>
 
           {message && (
             <div

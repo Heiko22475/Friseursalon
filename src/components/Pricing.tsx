@@ -14,17 +14,22 @@ interface PricingCategory {
   items: PricingItem[];
 }
 
-export default function Pricing() {
+interface PricingProps {
+  instanceId?: number;
+}
+
+export default function Pricing({ instanceId = 1 }: PricingProps) {
   const [categories, setCategories] = useState<PricingCategory[]>([]);
 
   useEffect(() => {
     loadPricing();
-  }, []);
+  }, [instanceId]);
 
   const loadPricing = async () => {
     const { data } = await supabase
       .from('pricing')
       .select('category, service, price, description')
+      .eq('instance_id', instanceId)
       .order('display_order');
 
     if (data) {

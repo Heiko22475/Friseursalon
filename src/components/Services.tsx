@@ -17,19 +17,24 @@ interface Service {
   text_align: 'left' | 'center' | 'right';
 }
 
-export default function Services() {
+interface ServicesProps {
+  instanceId?: number;
+}
+
+export default function Services({ instanceId = 1 }: ServicesProps) {
   const [services, setServices] = useState<Service[]>([]);
   const [sectionContent, setSectionContent] = useState({ title: 'Our Services', subtitle: 'Premium hair care services delivered by experienced professionals' });
 
   useEffect(() => {
     loadServices();
     loadSectionContent();
-  }, []);
+  }, [instanceId]);
 
   const loadSectionContent = async () => {
     const { data } = await supabase
       .from('services_section')
       .select('title, subtitle')
+      .eq('instance_id', instanceId)
       .limit(1)
       .single();
 
@@ -42,6 +47,7 @@ export default function Services() {
     const { data } = await supabase
       .from('services')
       .select('title, description, icon, icon_color, icon_enabled, icon_size, icon_bg_enabled, icon_bg_color, icon_bg_shape, icon_bg_padding, text_align')
+      .eq('instance_id', instanceId)
       .order('display_order');
 
     if (data) {

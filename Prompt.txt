@@ -43,4 +43,18 @@ Section as it would be rendered on the page.
 The button should be in the upper right corner. 
 Implement this on all editors. 
 
+Prompt: 
+I now want to make the page fully customizable. 
+Think of the sections As Building blocks. 
+I need an administration page to add building blocks, disable them (make them invisible)
+delete them, changing the order of them. 
+
+Furthermore, I want to support multi-page application. 
+That means I'd like to add, remove and order pages that contain building blocks. 
+That also means, that a building block e.g. Gallery can be added multiple times.
+
+I then want to support multiple headers, one for a singlepage webpage and 
+one for a website that has several pages. 
+
+
 

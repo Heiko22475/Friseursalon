@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Trash2, Edit2, Eye, Star } from 'lucide-react';
 import { Modal } from './Modal';
@@ -15,6 +15,8 @@ interface Review {
 
 export const ReviewsEditor: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const instanceId = parseInt(searchParams.get('instance') || '1');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -30,13 +32,14 @@ export const ReviewsEditor: React.FC = () => {
 
   useEffect(() => {
     loadReviews();
-  }, []);
+  }, [instanceId]);
 
   const loadReviews = async () => {
     try {
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
+        .eq('instance_id', instanceId)
         .order('display_order', { ascending: true });
 
       if (error) throw error;
@@ -58,7 +61,7 @@ export const ReviewsEditor: React.FC = () => {
 
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('reviews').insert([editForm]);
+        const { error } = await supabase.from('reviews').insert([{ ...editForm, instance_id: instanceId }]);
         if (error) throw error;
       }
 
@@ -140,7 +143,9 @@ export const ReviewsEditor: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Bewertungen</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Bewertungen{instanceId > 1 && ` (Instanz #${instanceId})`}
+          </h1>
 
           {message && (
             <div

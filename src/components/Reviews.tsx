@@ -8,18 +8,23 @@ interface Review {
   text: string;
 }
 
-export default function Reviews() {
+interface ReviewsProps {
+  instanceId?: number;
+}
+
+export default function Reviews({ instanceId = 1 }: ReviewsProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [mainReview, setMainReview] = useState<Review | null>(null);
 
   useEffect(() => {
     loadReviews();
-  }, []);
+  }, [instanceId]);
 
   const loadReviews = async () => {
     const { data } = await supabase
       .from('reviews')
       .select('name, rating, text')
+      .eq('instance_id', instanceId)
       .order('display_order');
 
     if (data && data.length > 0) {

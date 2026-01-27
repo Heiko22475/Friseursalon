@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database } from 'lucide-react';
+import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database, Layout, Layers } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -13,10 +13,11 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const sections = [
+    { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
     { id: 'general', name: 'Allgemeine Informationen', icon: FileText, path: '/admin/general', enabled: true },
     { id: 'contact', name: 'Kontaktdaten', icon: Users, path: '/admin/contact', enabled: true },
     { id: 'hours', name: 'Öffnungszeiten', icon: Clock, path: '/admin/hours', enabled: true },
-    { id: 'services', name: 'Dienstleistungen', icon: FileText, path: '/admin/services', enabled: true },
+    { id: 'services', name: 'Dienstleistungen', icon: Layers, path: '/admin/services', enabled: true },
     { id: 'reviews', name: 'Bewertungen', icon: Star, path: '/admin/reviews', enabled: true },
     { id: 'about', name: 'Über uns', icon: Info, path: '/admin/about', enabled: true },
     { id: 'pricing', name: 'Preise', icon: DollarSign, path: '/admin/pricing', enabled: true },
@@ -70,6 +71,7 @@ export const AdminDashboard: React.FC = () => {
           {sections.map((section) => {
             const Icon = section.icon;
             const isEnabled = section.enabled;
+            const isFeatured = section.featured;
             return (
               <button
                 key={section.id}
@@ -79,16 +81,16 @@ export const AdminDashboard: React.FC = () => {
                   isEnabled
                     ? 'hover:shadow-md cursor-pointer'
                     : 'opacity-50 cursor-not-allowed'
-                }`}
+                } ${isFeatured ? 'ring-2 ring-rose-500' : ''}`}
               >
                 <div className="flex flex-col items-center text-center">
                   <div className={`p-4 rounded-full transition mb-4 ${
                     isEnabled
-                      ? 'bg-rose-50 group-hover:bg-rose-100'
+                      ? isFeatured ? 'bg-rose-500 group-hover:bg-rose-600' : 'bg-rose-50 group-hover:bg-rose-100'
                       : 'bg-gray-100'
                   }`}>
                     <Icon className={`w-8 h-8 ${
-                      isEnabled ? 'text-rose-500' : 'text-gray-400'
+                      isEnabled ? (isFeatured ? 'text-white' : 'text-rose-500') : 'text-gray-400'
                     }`} />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-1">
@@ -97,6 +99,11 @@ export const AdminDashboard: React.FC = () => {
                   <p className="text-sm text-gray-600">
                     {isEnabled ? 'Bearbeiten' : 'Bald verfügbar'}
                   </p>
+                  {isFeatured && (
+                    <span className="mt-2 text-xs font-semibold text-rose-500">
+                      Multi-Page CMS
+                    </span>
+                  )}
                 </div>
               </button>
             );

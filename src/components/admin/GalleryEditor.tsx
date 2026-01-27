@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Upload, Trash2, Image as ImageIcon, Eye, ArrowLeft } from 'lucide-react';
 import { Modal } from './Modal';
@@ -13,6 +13,8 @@ interface GalleryImage {
 
 export default function GalleryEditor() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const instanceId = parseInt(searchParams.get('instance') || '1');
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -23,13 +25,14 @@ export default function GalleryEditor() {
 
   useEffect(() => {
     loadImages();
-  }, []);
+  }, [instanceId]);
 
   const loadImages = async () => {
     setLoading(true);
     const { data } = await supabase
       .from('gallery')
       .select('*')
+      .eq('instance_id', instanceId)
       .order('display_order');
 
     if (data) {
@@ -82,7 +85,8 @@ export default function GalleryEditor() {
           .insert({
             image_url: urlData.publicUrl,
             caption: newCaption || null,
-            display_order: nextOrder
+            display_order: nextOrder,
+            instance_id: instanceId
           });
 
         if (dbError) {
@@ -207,7 +211,9 @@ export default function GalleryEditor() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Gallery Images</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              Gallery Images{instanceId > 1 && ` (Instanz #${instanceId})`}
+            </h2>
             <p className="text-slate-600">Upload and manage gallery images</p>
           </div>
 

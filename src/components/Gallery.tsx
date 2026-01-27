@@ -7,18 +7,23 @@ interface GalleryImage {
   caption: string | null;
 }
 
-export default function Gallery() {
+interface GalleryProps {
+  instanceId?: number;
+}
+
+export default function Gallery({ instanceId = 1 }: GalleryProps) {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     loadImages();
-  }, []);
+  }, [instanceId]);
 
   const loadImages = async () => {
     const { data } = await supabase
       .from('gallery')
       .select('id, image_url, caption')
+      .eq('instance_id', instanceId)
       .order('display_order');
 
     if (data) setImages(data);

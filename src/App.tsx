@@ -11,31 +11,10 @@ import { ReviewsEditor } from './components/admin/ReviewsEditor';
 import { AboutEditor } from './components/admin/AboutEditor';
 import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
+import { PageManager } from './components/admin/PageManager';
+import { BlockManager } from './components/admin/BlockManager';
 import { default as GalleryEditor } from './components/admin/GalleryEditor';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Services from './components/Services';
-import About from './components/About';
-import Reviews from './components/Reviews';
-import Gallery from './components/Gallery';
-import Pricing from './components/Pricing';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
-
-// Main Website Component
-const MainWebsite = () => (
-  <div className="min-h-screen">
-    <Header />
-    <Hero />
-    <Services />
-    <About />
-    <Reviews />
-    <Gallery />
-    <Pricing />
-    <Contact />
-    <Footer />
-  </div>
-);
+import { DynamicPage } from './components/DynamicPage';
 
 function App() {
   return (
@@ -43,7 +22,8 @@ function App() {
       <Router>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<MainWebsite />} />
+          <Route path="/" element={<DynamicPage />} />
+          <Route path="/:slug" element={<DynamicPage />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Admin Routes */}
@@ -124,6 +104,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <GalleryEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/pages"
+            element={
+              <ProtectedRoute>
+                <PageManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/page-builder/:pageId"
+            element={
+              <ProtectedRoute>
+                <BlockManager />
               </ProtectedRoute>
             }
           />

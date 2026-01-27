@@ -13,6 +13,7 @@ import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
 import { PageManager } from './components/admin/PageManager';
 import { BlockManager } from './components/admin/BlockManager';
+import { StaticContentEditor } from './components/admin/StaticContentEditor';
 import { default as GalleryEditor } from './components/admin/GalleryEditor';
 import { DynamicPage } from './components/DynamicPage';
 
@@ -120,6 +121,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BlockManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/static-content"
+            element={
+              <ProtectedRoute>
+                <StaticContentEditor />
               </ProtectedRoute>
             }
           />

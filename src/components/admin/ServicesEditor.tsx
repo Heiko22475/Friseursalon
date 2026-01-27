@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Plus, Trash2, Edit2, ChevronUp, ChevronDown, Palette, Eye } from 'lucide-react';
 import { IconEditor, IconConfig } from './IconEditor';
 import { Modal } from './Modal';
+import { RichTextInput } from './RichTextInput';
 import * as LucideIcons from 'lucide-react';
 import { Scissors } from 'lucide-react';
 
@@ -33,8 +34,8 @@ export const ServicesEditor: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGlobalStyleModalOpen, setIsGlobalStyleModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [sectionContent, setSectionContent] = useState({ id: '', title: '', subtitle: '' });
-  const [originalSectionContent, setOriginalSectionContent] = useState({ id: '', title: '', subtitle: '' });
+  const [sectionContent, setSectionContent] = useState({ id: null as string | null, title: '', subtitle: '' });
+  const [originalSectionContent, setOriginalSectionContent] = useState({ id: null as string | null, title: '', subtitle: '' });
   const [sectionMessage, setSectionMessage] = useState('');
   const [editForm, setEditForm] = useState<Service>({
     title: '',
@@ -124,10 +125,29 @@ export const ServicesEditor: React.FC = () => {
         .limit(1)
         .single();
 
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') throw error;
+      
       if (data) {
         setSectionContent(data);
         setOriginalSectionContent(data);
+      } else {
+        // Kein Eintrag gefunden, erstelle einen neuen
+        const { data: newData, error: insertError } = await supabase
+          .from('services_section')
+          .insert([{ 
+            instance_id: instanceId, 
+            title: 'Our Services', 
+            subtitle: 'Premium hair care services delivered by experienced professionals' 
+          }])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        
+        if (newData) {
+          setSectionContent(newData);
+          setOriginalSectionContent(newData);
+        }
       }
     } catch (error) {
       console.error('Fehler beim Laden des Section Content:', error);
@@ -136,6 +156,11 @@ export const ServicesEditor: React.FC = () => {
 
   const saveSectionContent = async () => {
     try {
+      if (!sectionContent.id) {
+        setSectionMessage('Fehler: Keine Section ID gefunden!');
+        return;
+      }
+
       const { error } = await supabase
         .from('services_section')
         .update({ 
@@ -407,26 +432,18 @@ export const ServicesEditor: React.FC = () => {
             )}
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Hauptüberschrift</label>
-                <input
-                  type="text"
-                  value={sectionContent.title}
-                  onChange={(e) => setSectionContent({ ...sectionContent, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Our Services"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Untertitel</label>
-                <input
-                  type="text"
-                  value={sectionContent.subtitle}
-                  onChange={(e) => setSectionContent({ ...sectionContent, subtitle: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Premium hair care services delivered by experienced professionals"
-                />
-              </div>
+              <RichTextInput
+                label="Hauptüberschrift"
+                value={sectionContent.title}
+                onChange={(value) => setSectionContent({ ...sectionContent, title: value })}
+                placeholder="Our Services"
+              />
+              <RichTextInput
+                label="Untertitel"
+                value={sectionContent.subtitle}
+                onChange={(value) => setSectionContent({ ...sectionContent, subtitle: value })}
+                placeholder="Premium hair care services delivered by experienced professionals"
+              />
               <button
                 onClick={saveSectionContent}
                 disabled={sectionContent.title === originalSectionContent.title && sectionContent.subtitle === originalSectionContent.subtitle}
@@ -467,15 +484,12 @@ export const ServicesEditor: React.FC = () => {
             title={editingId ? 'Dienstleistung bearbeiten' : 'Neue Dienstleistung'}
           >
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Titel</label>
-                <input
-                  type="text"
-                  value={editForm.title}
-                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                />
-              </div>
+              <RichTextInput
+                label="Titel"
+                value={editForm.title}
+                onChange={(value) => setEditForm({ ...editForm, title: value })}
+                placeholder="z.B. Haarschnitt"
+              />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
                 <textarea

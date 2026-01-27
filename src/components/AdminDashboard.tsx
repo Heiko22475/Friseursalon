@@ -14,14 +14,6 @@ export const AdminDashboard: React.FC = () => {
 
   const sections = [
     { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
-    { id: 'general', name: 'Allgemeine Informationen', icon: FileText, path: '/admin/general', enabled: true },
-    { id: 'contact', name: 'Kontaktdaten', icon: Users, path: '/admin/contact', enabled: true },
-    { id: 'hours', name: 'Öffnungszeiten', icon: Clock, path: '/admin/hours', enabled: true },
-    { id: 'services', name: 'Dienstleistungen', icon: Layers, path: '/admin/services', enabled: true },
-    { id: 'reviews', name: 'Bewertungen', icon: Star, path: '/admin/reviews', enabled: true },
-    { id: 'about', name: 'Über uns', icon: Info, path: '/admin/about', enabled: true },
-    { id: 'pricing', name: 'Preise', icon: DollarSign, path: '/admin/pricing', enabled: true },
-    { id: 'gallery', name: 'Galerie', icon: Image, path: '/admin/gallery', enabled: true },
     { id: 'export', name: 'Daten Export/Import', icon: Database, path: '/admin/export', enabled: true },
   ];
 

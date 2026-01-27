@@ -9,6 +9,7 @@ import Reviews from './Reviews';
 import Gallery from './Gallery';
 import Pricing from './Pricing';
 import Contact from './Contact';
+import StaticContent from './StaticContent';
 import Footer from './Footer';
 
 interface PageBlock {
@@ -84,21 +85,23 @@ export const DynamicPage: React.FC = () => {
     
     switch (block.block_type) {
       case 'hero':
-        return <Hero key={key} />;
+        return <div key={key} id="hero"><Hero /></div>;
       case 'services':
-        return <Services key={key} instanceId={instanceId} />;
+        return <div key={key} id="services"><Services instanceId={instanceId} /></div>;
       case 'about':
-        return <About key={key} />;
+        return <div key={key} id="about"><About /></div>;
       case 'gallery':
-        return <Gallery key={key} instanceId={instanceId} />;
+        return <div key={key} id="gallery"><Gallery instanceId={instanceId} /></div>;
       case 'reviews':
-        return <Reviews key={key} instanceId={instanceId} />;
+        return <div key={key} id="reviews"><Reviews instanceId={instanceId} /></div>;
       case 'pricing':
-        return <Pricing key={key} instanceId={instanceId} />;
+        return <div key={key} id="pricing"><Pricing instanceId={instanceId} /></div>;
       case 'hours':
-        return <Contact key={key} />;
+        return <div key={key} id="hours"><Contact /></div>;
       case 'contact':
-        return <Contact key={key} />;
+        return <div key={key} id="contact"><Contact /></div>;
+      case 'static-content':
+        return <div key={key} id="static-content"><StaticContent instanceId={instanceId} /></div>;
       default:
         return null;
     }

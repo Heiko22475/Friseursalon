@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Plus, Trash2, Edit2, ChevronUp, ChevronDown, Eye, Home } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ChevronUp, ChevronDown, Eye, Home, Layers, FileEdit } from 'lucide-react';
 import { Modal } from './Modal';
 
 interface Page {
@@ -278,7 +278,7 @@ export const PageManager: React.FC = () => {
                         }`}
                         title="Nach oben"
                       >
-                        <ChevronUp className="w-4 h-4" />
+                        <ChevronUp className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => moveDown(index)}
@@ -290,7 +290,7 @@ export const PageManager: React.FC = () => {
                         }`}
                         title="Nach unten"
                       >
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => toggleEnabled(page)}
@@ -301,28 +301,28 @@ export const PageManager: React.FC = () => {
                         }`}
                         title={page.is_enabled ? 'Deaktivieren' : 'Aktivieren'}
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => navigate(`/admin/page-builder/${page.id}`)}
                         className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
                         title="Bausteine verwalten"
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Layers className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleEdit(page)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        title="Bearbeiten"
+                        title="Seiten-Daten bearbeiten"
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <FileEdit className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleDelete(page.id)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                         title="Löschen"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </div>

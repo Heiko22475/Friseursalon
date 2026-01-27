@@ -108,10 +108,16 @@ export const BlockManager: React.FC = () => {
         }
       }
 
-      // Get next instance_id for this block type
-      const existingInstances = pageBlocks.filter((pb) => pb.block_type === selectedBlockType);
-      const nextInstanceId = existingInstances.length > 0
-        ? Math.max(...existingInstances.map((pb) => pb.block_instance_id)) + 1
+      // Get next instance_id for this block type GLOBALLY (across all pages)
+      const { data: allBlocks } = await supabase
+        .from('page_blocks')
+        .select('block_instance_id')
+        .eq('block_type', selectedBlockType)
+        .order('block_instance_id', { ascending: false })
+        .limit(1);
+
+      const nextInstanceId = allBlocks && allBlocks.length > 0
+        ? allBlocks[0].block_instance_id + 1
         : 1;
 
       // Get next display_order
@@ -233,6 +239,7 @@ export const BlockManager: React.FC = () => {
       pricing: 'pricing',
       hours: 'hours',
       contact: 'contact',
+      'static-content': 'static-content',
     };
 
     const editorPath = editorMap[blockType];

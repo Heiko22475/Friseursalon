@@ -1,40 +1,83 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-interface NavigationItem {
+interface Page {
   id: string;
-  label: string;
+  slug: string;
+  title: string;
+  display_order: number;
+}
+
+interface Block {
+  block_type: string;
 }
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [salonName, setSalonName] = useState('Salon');
-  const [navigation] = useState<NavigationItem[]>([
-    { id: 'home', label: 'Home' },
-    { id: 'services', label: 'Services' },
-    { id: 'about', label: 'About' },
-    { id: 'pricing', label: 'Pricing' },
-    { id: 'contact', label: 'Contact' }
-  ]);
+  const [pages, setPages] = useState<Page[]>([]);
+  const [currentPageBlocks, setCurrentPageBlocks] = useState<Block[]>([]);
+  const [isMultiPage, setIsMultiPage] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    loadSalonName();
-  }, []);
+    loadHeaderData();
+  }, [location.pathname]);
 
-  const loadSalonName = async () => {
-    const { data } = await supabase
+  const loadHeaderData = async () => {
+    // Load salon name
+    const { data: generalData } = await supabase
       .from('general')
       .select('name')
       .single();
 
-    if (data) setSalonName(data.name);
+    if (generalData) setSalonName(generalData.name);
+
+    // Load all enabled pages
+    const { data: pagesData } = await supabase
+      .from('pages')
+      .select('id, slug, title, display_order')
+      .eq('is_enabled', true)
+      .order('display_order', { ascending: true });
+
+    if (pagesData) {
+      setPages(pagesData);
+      setIsMultiPage(pagesData.length > 1);
+
+      // If single page, load blocks for scroll navigation
+      if (pagesData.length === 1) {
+        const { data: blocksData } = await supabase
+          .from('page_blocks')
+          .select('block_type')
+          .eq('page_id', pagesData[0].id)
+          .eq('is_enabled', true)
+          .order('display_order', { ascending: true });
+
+        if (blocksData) setCurrentPageBlocks(blocksData);
+      }
+    }
   };
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
+  const scrollToSection = (blockType: string) => {
+    const element = document.getElementById(blockType);
     element?.scrollIntoView({ behavior: 'smooth' });
     setIsMenuOpen(false);
+  };
+
+  const getBlockLabel = (blockType: string): string => {
+    const labels: Record<string, string> = {
+      hero: 'Home',
+      services: 'Services',
+      about: 'About',
+      gallery: 'Gallery',
+      reviews: 'Reviews',
+      pricing: 'Pricing',
+      hours: 'Hours',
+      contact: 'Contact',
+    };
+    return labels[blockType] || blockType;
   };
 
   return (
@@ -47,15 +90,29 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
-            {navigation.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-slate-600 hover:text-slate-900 transition"
-              >
-                {item.label}
-              </button>
-            ))}
+            {isMultiPage ? (
+              // Multi-page mode: Router links
+              pages.map((page) => (
+                <Link
+                  key={page.id}
+                  to={page.slug === 'home' ? '/' : `/${page.slug}`}
+                  className="text-slate-600 hover:text-slate-900 transition"
+                >
+                  {page.title}
+                </Link>
+              ))
+            ) : (
+              // Single-page mode: Scroll navigation
+              currentPageBlocks.map((block, index) => (
+                <button
+                  key={`${block.block_type}-${index}`}
+                  onClick={() => scrollToSection(block.block_type)}
+                  className="text-slate-600 hover:text-slate-900 transition"
+                >
+                  {getBlockLabel(block.block_type)}
+                </button>
+              ))
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -70,15 +127,30 @@ export default function Header() {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 flex flex-col space-y-3">
-            {navigation.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-slate-600 hover:text-slate-900 transition text-left"
-              >
-                {item.label}
-              </button>
-            ))}
+            {isMultiPage ? (
+              // Multi-page mode: Router links
+              pages.map((page) => (
+                <Link
+                  key={page.id}
+                  to={page.slug === 'home' ? '/' : `/${page.slug}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-slate-600 hover:text-slate-900 transition text-left"
+                >
+                  {page.title}
+                </Link>
+              ))
+            ) : (
+              // Single-page mode: Scroll navigation
+              currentPageBlocks.map((block, index) => (
+                <button
+                  key={`${block.block_type}-${index}`}
+                  onClick={() => scrollToSection(block.block_type)}
+                  className="text-slate-600 hover:text-slate-900 transition text-left"
+                >
+                  {getBlockLabel(block.block_type)}
+                </button>
+              ))
+            )}
           </div>
         )}
       </nav>

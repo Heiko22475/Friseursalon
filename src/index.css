@@ -20,3 +20,194 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+/* TipTap Editor Styles */
+.tiptap-editor {
+  max-width: none;
+  color: #334155;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.tiptap-editor h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+}
+
+.tiptap-editor h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.75rem 0;
+}
+
+.tiptap-editor h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 0.5rem 0;
+}
+
+.tiptap-editor p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #334155;
+  margin: 0 0 1rem 0;
+}
+
+.tiptap-editor ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.tiptap-editor ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.tiptap-editor li {
+  color: #334155;
+  margin: 0 0 0.25rem 0;
+}
+
+.tiptap-editor a {
+  color: #f43f5e;
+  text-decoration: underline;
+}
+
+.tiptap-editor a:hover {
+  color: #e11d48;
+}
+
+.tiptap-editor strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tiptap-editor em {
+  font-style: italic;
+}
+
+.tiptap-editor u {
+  text-decoration: underline;
+}
+
+/* Static Content Display Styles (Webseite) */
+.static-content-display {
+  max-width: none;
+  color: #475569;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.static-content-display h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.static-content-display h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.static-content-display h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 0.75rem 0;
+}
+
+.static-content-display p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #475569;
+  margin: 0 0 1rem 0;
+}
+
+.static-content-display ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.static-content-display ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.static-content-display li {
+  color: #475569;
+  margin: 0 0 0.25rem 0;
+}
+
+.static-content-display a {
+  color: #f43f5e;
+  text-decoration: none;
+}
+
+.static-content-display a:hover {
+  text-decoration: underline;
+}
+
+.static-content-display strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.static-content-display em {
+  font-style: italic;
+}
+
+.static-content-display u {
+  text-decoration: underline;
+}
+
+/* Rich Text Input Editor Styles */
+.rich-text-input-editor {
+  font-size: 1rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.rich-text-input-editor strong,
+.rich-text-input-editor b {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rich-text-input-editor em,
+.rich-text-input-editor i {
+  font-style: italic;
+}
+
+.rich-text-input-editor u {
+  text-decoration: underline;
+}
+
+.rich-text-input-editor a {
+  color: #f43f5e;
+  text-decoration: underline;
+}
+
+.rich-text-input-editor a:hover {
+  color: #e11d48;
+}
+
+/* Remove default paragraph spacing in inline mode */
+.rich-text-input-editor p {
+  margin: 0;
+  display: inline;
+}
+
+.rich-text-input-editor span {
+  display: inline;
+}

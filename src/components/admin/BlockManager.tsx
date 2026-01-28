@@ -3,6 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Modal } from './Modal';
+import Hero from '../Hero';
+import Services from '../Services';
+import About from '../About';
+import Gallery from '../Gallery';
+import Reviews from '../Reviews';
+import Pricing from '../Pricing';
+import Contact from '../Contact';
+import StaticContent from '../StaticContent';
+import { Grid } from '../Grid';
 
 interface BuildingBlock {
   block_type: string;
@@ -38,6 +47,7 @@ export const BlockManager: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBlockType, setSelectedBlockType] = useState('');
   const [message, setMessage] = useState('');
+  const [previewBlock, setPreviewBlock] = useState<PageBlock | null>(null);
 
   useEffect(() => {
     if (pageId) {
@@ -229,6 +239,34 @@ export const BlockManager: React.FC = () => {
     }
   };
 
+  const renderBlockPreview = (block: PageBlock) => {
+    const instanceId = block.block_instance_id;
+    
+    switch (block.block_type) {
+      case 'hero':
+        return <Hero />;
+      case 'services':
+        return <Services instanceId={instanceId} />;
+      case 'about':
+        return <About />;
+      case 'gallery':
+        return <Gallery instanceId={instanceId} />;
+      case 'reviews':
+        return <Reviews instanceId={instanceId} />;
+      case 'pricing':
+        return <Pricing instanceId={instanceId} />;
+      case 'hours':
+      case 'contact':
+        return <Contact />;
+      case 'static-content':
+        return <StaticContent instanceId={instanceId} />;
+      case 'grid':
+        return <Grid instanceId={instanceId} />;
+      default:
+        return <div className="p-8 text-center text-gray-500">Keine Vorschau verfügbar</div>;
+    }
+  };
+
   const getBlockEditor = (blockType: string, instanceId: number) => {
     const editorMap: { [key: string]: string } = {
       hero: 'general',
@@ -240,6 +278,7 @@ export const BlockManager: React.FC = () => {
       hours: 'hours',
       contact: 'contact',
       'static-content': 'static-content',
+      'grid': 'grid',
     };
 
     const editorPath = editorMap[blockType];
@@ -343,7 +382,7 @@ export const BlockManager: React.FC = () => {
                         }`}
                         title="Nach oben"
                       >
-                        <ChevronUp className="w-4 h-4" />
+                        <ChevronUp className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => moveDown(index)}
@@ -355,7 +394,7 @@ export const BlockManager: React.FC = () => {
                         }`}
                         title="Nach unten"
                       >
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => toggleEnabled(block)}
@@ -366,7 +405,14 @@ export const BlockManager: React.FC = () => {
                         }`}
                         title={block.is_enabled ? 'Deaktivieren' : 'Aktivieren'}
                       >
-                        {block.is_enabled ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        {block.is_enabled ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                      </button>
+                      <button
+                        onClick={() => setPreviewBlock(block)}
+                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
+                        title="Vorschau"
+                      >
+                        <Eye className="w-5 h-5" />
                       </button>
                       {getBlockEditor(block.block_type, block.block_instance_id) && (
                         <button
@@ -376,7 +422,7 @@ export const BlockManager: React.FC = () => {
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
                           title="Inhalt bearbeiten"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>
@@ -386,7 +432,7 @@ export const BlockManager: React.FC = () => {
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                         title="Löschen"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
@@ -448,7 +494,7 @@ export const BlockManager: React.FC = () => {
                     : 'bg-rose-500 text-white hover:bg-rose-600'
                 }`}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 Hinzufügen
               </button>
               <button
@@ -463,6 +509,19 @@ export const BlockManager: React.FC = () => {
             </div>
           </div>
         </Modal>
+
+        {/* Preview Modal */}
+        {previewBlock && (
+          <Modal
+            isOpen={!!previewBlock}
+            onClose={() => setPreviewBlock(null)}
+            title={`Vorschau: ${previewBlock.building_block?.block_name || previewBlock.block_type}`}
+          >
+            <div className="bg-gray-50 rounded-lg overflow-auto" style={{ maxHeight: '70vh' }}>
+              {renderBlockPreview(previewBlock)}
+            </div>
+          </Modal>
+        )}
       </div>
     </div>
   );

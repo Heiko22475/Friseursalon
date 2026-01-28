@@ -14,6 +14,7 @@ import { DataExport } from './components/admin/DataExport';
 import { PageManager } from './components/admin/PageManager';
 import { BlockManager } from './components/admin/BlockManager';
 import { StaticContentEditor } from './components/admin/StaticContentEditor';
+import { GridEditor } from './components/admin/GridEditor';
 import { default as GalleryEditor } from './components/admin/GalleryEditor';
 import { DynamicPage } from './components/DynamicPage';
 
@@ -129,6 +130,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <StaticContentEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/grid"
+            element={
+              <ProtectedRoute>
+                <GridEditor />
               </ProtectedRoute>
             }
           />

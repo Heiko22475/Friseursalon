@@ -10,6 +10,7 @@ import Gallery from './Gallery';
 import Pricing from './Pricing';
 import Contact from './Contact';
 import StaticContent from './StaticContent';
+import { Grid } from './Grid';
 import Footer from './Footer';
 
 interface PageBlock {
@@ -102,6 +103,8 @@ export const DynamicPage: React.FC = () => {
         return <div key={key} id="contact"><Contact /></div>;
       case 'static-content':
         return <div key={key} id="static-content"><StaticContent instanceId={instanceId} /></div>;
+      case 'grid':
+        return <div key={key} id="grid"><Grid instanceId={instanceId} /></div>;
       default:
         return null;
     }

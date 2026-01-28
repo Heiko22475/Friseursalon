@@ -12,11 +12,13 @@ interface Page {
   is_enabled: boolean;
   display_order: number;
   meta_description: string | null;
+  is_system_page: boolean;
 }
 
 export const PageManager: React.FC = () => {
   const navigate = useNavigate();
   const [pages, setPages] = useState<Page[]>([]);
+  const [legalPages, setLegalPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -57,7 +59,10 @@ export const PageManager: React.FC = () => {
         .order('display_order', { ascending: true });
 
       if (error) throw error;
-      setPages(data || []);
+      
+      const allPages = data || [];
+      setPages(allPages.filter(p => !p.is_system_page));
+      setLegalPages(allPages.filter(p => p.is_system_page));
     } catch (error) {
       console.error('Error loading pages:', error);
     } finally {
@@ -186,6 +191,32 @@ export const PageManager: React.FC = () => {
       loadPages();
     } catch (error) {
       console.error('Error toggling:', error);
+    }
+  };
+
+  const getStaticContentInstance = async (pageId: string): Promise<number | null> => {
+    try {
+      const { data, error } = await supabase
+        .from('page_blocks')
+        .select('block_instance_id')
+        .eq('page_id', pageId)
+        .eq('block_type', 'static-content')
+        .single();
+
+      if (error) throw error;
+      return data?.block_instance_id || null;
+    } catch (error) {
+      console.error('Error getting instance:', error);
+      return null;
+    }
+  };
+
+  const handleLegalPageEdit = async (pageId: string) => {
+    const instanceId = await getStaticContentInstance(pageId);
+    if (instanceId) {
+      navigate(`/admin/static-content?instance=${instanceId}`);
+    } else {
+      setMessage('Fehler: Kein Content-Block gefunden!');
     }
   };
 
@@ -323,6 +354,45 @@ export const PageManager: React.FC = () => {
                         title="Löschen"
                       >
                         <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Legal Pages Section */}
+          <div className="space-y-4 mt-8 pt-8 border-t-2 border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">Rechtliche Seiten</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Diese Seiten sind fest vorgegeben und können nicht gelöscht werden. Sie erscheinen nicht im Menü und müssen manuell verlinkt werden.
+            </p>
+            {legalPages.length === 0 ? (
+              <p className="text-gray-500">Rechtliche Seiten werden geladen...</p>
+            ) : (
+              <div className="grid gap-4">
+                {legalPages.map((page) => (
+                  <div
+                    key={page.id}
+                    className="flex items-start justify-between p-4 rounded-lg border-2 bg-blue-50 border-blue-200"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-gray-900">{page.title}</h3>
+                        <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
+                          System-Seite
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">Slug: /{page.slug}</p>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => handleLegalPageEdit(page.id)}
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+                        title="Inhalt bearbeiten"
+                      >
+                        <FileEdit className="w-5 h-5" />
                       </button>
                     </div>
                   </div>

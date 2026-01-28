@@ -12,9 +12,15 @@ Eine moderne, responsive Website für Friseursalons mit integriertem Content Man
 
 ---
 
+# Supabase
+
 Supabase-Postgres-passwort: 
 
 #Raphaelsupabase
+
+Dashboard: https://supabase.com/dashboard/project/bcboebhicfsscxrqumyk
+
+
 
 
 

@@ -57,4 +57,33 @@ I then want to support multiple headers, one for a singlepage webpage and
 one for a website that has several pages. 
 
 
+Prompt: Ich möchte nun eine neue baustein-Art implementieren. 
+Es handelt sich um ein Grid, das weitere bereits bestehende Bausteine enthalten kann, 
+z.B. Static Text, Gallery, Cards,
+Das Grid ist einzeilig aber es soll verschiedene Auswahlmöglichkeiten geben: 
+2-spaltig: 50:50
+2-spaltig: 25:75
+2-spaltig: 75:25
+2-spaltig: 66:33
+2-spaltig: 33:66
+3-spaltig: 33:33:33
+4-spaltig: 25:25:25:25
+
+Auf der Seite, auf der das Grid konfiguriert wird, soll es dementsprechend ein Auswahl-
+feld geben, das die Grid-Arten visuell darstellt. 
+Also beispielsweise ein Dropdown, das in jeder Zeile des Flyouts eine Spaltenart zeigt. 
+Beispielsweise ist das Dropdown 300px breit, und je zeile werden für jede Spalte in dem Grid
+Blöcke angezeigt. Z.B. in der 2-spaltigen (33:66) zeile des Flyouts zwei schön gestaltete 
+Divs (vielleicht mit runden Ecken), die in dem Verhältnis 33:66 stehen. 
+
+Jetzt hat man wie auf einer SEitenverwaltung eine Liste, in die man Baustein hinzufügen kann. 
+Das soll analog wie auf der Seitenverwaltung aussehen, am besten per Komponente abstrahiert. 
+Man soll beliebig viele Bausteine auswählen können, aber es werden nur soviele 
+in dem  Grid angezeigt, wie eben in das Grid passt. 
+Bausteine können aber auch ausgeblendet und verschoben werden. 
+Beispiel: Man hat 3 Bausteine hinzugefügt, man hat aber ein 66:33 2-Spalten Grid. 
+Hier dann die ersten beiden sichtbaren Bausteine in das Grid einfügen. 
+Hast du noch offene FRagen? 
+
+
 

@@ -5,9 +5,10 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Palette as PaletteIcon, Save, Plus, Trash2, Download, Upload, Shuffle } from 'lucide-react';
+import { ArrowLeft, Palette as PaletteIcon, Save, Plus, Trash2, Download, Upload, Shuffle, Wand2 } from 'lucide-react';
 import { ThemeTokens, Palette, PalettePreset } from '../types/theme';
 import { generatePalette, HARMONY_TYPES, HarmonyType } from '../utils/color-generator';
+import { autoTextColor, getReadableTextColors } from '../utils/color-utils';
 import {
   getActiveTheme,
   getAllPalettes,
@@ -456,56 +457,21 @@ export default function ThemeManager() {
               <div className="overflow-y-auto flex-1">
                 <table className="w-full">
                   <tbody className="divide-y divide-gray-200">
-                    {/* Links & Navigation */}
+                    {/* Hintergründe */}
                     <tr className="bg-gray-50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Links & Navigation
-                      </td>
-                    </tr>
-                    {[
-                      { key: 'link', label: 'Link' },
-                      { key: 'link_hover', label: 'Link Hover' },
-                      { key: 'focus_ring', label: 'Focus Ring' },
-                    ].map(({ key, label }) => {
-                      const value = theme.semantic_tokens[key as keyof typeof theme.semantic_tokens] as ColorValue;
-                      const displayColor = resolveColor(value, theme) || '#999999';
-                      return (
-                        <tr
-                          key={key}
-                          onClick={() => setSelectedSemanticToken(key)}
-                          className={`cursor-pointer hover:bg-rose-50 transition-colors ${
-                            selectedSemanticToken === key ? 'bg-rose-100' : ''
-                          }`}
-                        >
-                          <td className="px-4 py-3 text-sm text-gray-900">{label}</td>
-                          <td className="px-4 py-3 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <span className="text-xs text-gray-600">
-                                {value?.kind === 'tokenRef' ? value.ref : value?.hex || 'N/A'}
-                              </span>
-                              <div
-                                className="w-8 h-8 rounded border border-gray-300 shadow-sm"
-                                style={{ backgroundColor: displayColor }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    
-                    {/* Backgrounds */}
-                    <tr className="bg-gray-50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <td colSpan={3} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Hintergründe
                       </td>
                     </tr>
                     {[
-                      { key: 'page_bg', label: 'Page Background' },
-                      { key: 'content_bg', label: 'Content Background' },
-                      { key: 'card_bg', label: 'Card Background' },
+                      { key: 'page_bg', label: 'Seiten-Hintergrund' },
+                      { key: 'card_bg', label: 'Karten / Container' },
                     ].map(({ key, label }) => {
                       const value = theme.semantic_tokens[key as keyof typeof theme.semantic_tokens] as ColorValue;
                       const displayColor = resolveColor(value, theme) || '#999999';
+                      const formattedRef = value?.kind === 'tokenRef' 
+                        ? value.ref.replace('palette.', '').replace('.accents', '').replace('.', '/') 
+                        : value?.hex || 'N/A';
                       return (
                         <tr
                           key={key}
@@ -517,8 +483,8 @@ export default function ThemeManager() {
                           <td className="px-4 py-3 text-sm text-gray-900">{label}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-2">
-                              <span className="text-xs text-gray-600">
-                                {value?.kind === 'tokenRef' ? value.ref : value?.hex || 'N/A'}
+                              <span className="text-xs text-gray-600 truncate max-w-[120px]" title={value?.kind === 'tokenRef' ? value.ref : ''}>
+                                {formattedRef}
                               </span>
                               <div
                                 className="w-8 h-8 rounded border border-gray-300 shadow-sm"
@@ -526,72 +492,120 @@ export default function ThemeManager() {
                               />
                             </div>
                           </td>
+                           <td className="px-4 py-3"></td>
                         </tr>
                       );
                     })}
                     
+
+
                     {/* Text */}
                     <tr className="bg-gray-50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <td colSpan={3} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Text
                       </td>
                     </tr>
                     {[
-                      { key: 'heading_text', label: 'Heading Text' },
-                      { key: 'body_text', label: 'Body Text' },
-                      { key: 'muted_text', label: 'Muted Text' },
-                    ].map(({ key, label }) => {
+                      { key: 'heading_text', inverseKey: 'heading_text_inverse', label: 'Überschriften' },
+                      { key: 'body_text', inverseKey: 'body_text_inverse', label: 'Fließtext' },
+                      { key: 'muted_text', inverseKey: 'muted_text_inverse', label: 'Sekundärtext' },
+                    ].map(({ key, inverseKey, label }) => {
+                       // Light Token
                       const value = theme.semantic_tokens[key as keyof typeof theme.semantic_tokens] as ColorValue;
                       const displayColor = resolveColor(value, theme) || '#999999';
+                      const formattedRef = value?.kind === 'tokenRef' 
+                        ? value.ref.replace('palette.', '').replace('.accents', '').replace('.', '/') 
+                        : value?.hex || 'N/A';
+                        
+                      // Inverse Token
+                      const invValue = (theme.semantic_tokens as any)[inverseKey] as ColorValue | undefined;
+                      const invDisplayColor = invValue ? (resolveColor(invValue, theme) || '#FFFFFF') : '#FFFFFF';
+                      const invFormattedRef = invValue?.kind === 'tokenRef' 
+                          ? invValue.ref.replace('palette.', '').replace('.accents', '').replace('.', '/')
+                          : invValue?.hex || '-';
+
                       return (
-                        <tr
-                          key={key}
-                          onClick={() => setSelectedSemanticToken(key)}
-                          className={`cursor-pointer hover:bg-rose-50 transition-colors ${
-                            selectedSemanticToken === key ? 'bg-rose-100' : ''
-                          }`}
-                        >
-                          <td className="px-4 py-3 text-sm text-gray-900">{label}</td>
-                          <td className="px-4 py-3 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <span className="text-xs text-gray-600">
-                                {value?.kind === 'tokenRef' ? value.ref : value?.hex || 'N/A'}
+                        <tr key={key} className="group">
+                          <td className="px-4 py-3 text-sm text-gray-900 font-medium">{label}</td>
+                          
+                          {/* Light Preview - Clickable */}
+                          <td 
+                            className={`px-4 py-3 text-right cursor-pointer transition-colors ${
+                                selectedSemanticToken === key ? 'bg-rose-100 ring-inset ring-2 ring-rose-300' : 'hover:bg-gray-50'
+                            }`}
+                            onClick={() => setSelectedSemanticToken(key)}
+                          >
+                             <div className="flex items-center justify-end gap-2">
+                              <span className="text-xs text-gray-400 group-hover:text-gray-600 truncate max-w-[80px]" title={value?.kind === 'tokenRef' ? value.ref : ''}>
+                                {formattedRef}
                               </span>
-                              <div
-                                className="w-8 h-8 rounded border border-gray-300 shadow-sm"
-                                style={{ backgroundColor: displayColor }}
-                              />
+                              <div className="w-10 h-10 rounded bg-white flex items-center justify-center border border-gray-300 shadow-sm">
+                                  <span style={{ color: displayColor }} className="text-sm font-bold">Aa</span>
+                              </div>
                             </div>
                           </td>
+                          
+                           {/* Dark Preview - Clickable */}
+                           <td 
+                             className={`px-4 py-3 text-right cursor-pointer transition-colors ${
+                                 selectedSemanticToken === inverseKey ? 'bg-rose-100 ring-inset ring-2 ring-rose-300' : 'hover:bg-gray-50'
+                             }`}
+                             onClick={() => setSelectedSemanticToken(inverseKey)}
+                           >
+                               <div className="flex items-center justify-end gap-2">
+                                  <span className="text-xs text-gray-400 group-hover:text-gray-600 truncate max-w-[80px]" title={invValue?.kind === 'tokenRef' ? invValue.ref : ''}>
+                                    {invFormattedRef}
+                                  </span>
+                                  <div className="w-10 h-10 rounded bg-gray-900 flex items-center justify-center border border-gray-700">
+                                      <span style={{ color: invDisplayColor }} className="text-sm font-bold">Aa</span>
+                                  </div>
+                               </div>
+                           </td>
                         </tr>
                       );
                     })}
+
+
                     
-                    {/* Borders */}
+
+                    {/* Elemente */}
                     <tr className="bg-gray-50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Borders
+                      <td colSpan={3} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Elemente
                       </td>
                     </tr>
                     {[
-                      { key: 'border', label: 'Border' },
-                      { key: 'border_light', label: 'Border Light' },
-                    ].map(({ key, label }) => {
+                      { key: 'link', inverseKey: 'link_inverse', label: 'Links' },
+                      { key: 'button_primary_bg', inverseKey: null, label: 'Buttons (Primär)' },
+                      { key: 'border', inverseKey: null, label: 'Rahmen / Linien' },
+                    ].map(({ key, inverseKey, label }) => {
+                       // Light Token
                       const value = theme.semantic_tokens[key as keyof typeof theme.semantic_tokens] as ColorValue;
                       const displayColor = resolveColor(value, theme) || '#999999';
+                      const formattedRef = value?.kind === 'tokenRef' 
+                        ? value.ref.replace('palette.', '').replace('.accents', '').replace('.', '/') 
+                        : value?.hex || 'N/A';
+                      
+                      // Inverse Token (only for link)
+                      const invValue = inverseKey ? (theme.semantic_tokens as any)[inverseKey as string] as ColorValue : undefined;
+                      
                       return (
                         <tr
                           key={key}
-                          onClick={() => setSelectedSemanticToken(key)}
-                          className={`cursor-pointer hover:bg-rose-50 transition-colors ${
-                            selectedSemanticToken === key ? 'bg-rose-100' : ''
-                          }`}
+                          className="group"
                         >
-                          <td className="px-4 py-3 text-sm text-gray-900">{label}</td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-4 py-3 text-sm text-gray-900 font-medium">{label}</td>
+                          
+                          {/* Light / Main */}
+                          <td 
+                             className={`px-4 py-3 text-right cursor-pointer transition-colors ${
+                                 selectedSemanticToken === key ? 'bg-rose-100 ring- inset ring-2 ring-rose-300' : 'hover:bg-gray-50'
+                             }`}
+                             onClick={() => setSelectedSemanticToken(key)}
+                          >
                             <div className="flex items-center justify-end gap-2">
-                              <span className="text-xs text-gray-600">
-                                {value?.kind === 'tokenRef' ? value.ref : value?.hex || 'N/A'}
+                              <span className="text-xs text-gray-400 group-hover:text-gray-600 truncate max-w-[80px]" title={value?.kind === 'tokenRef' ? value.ref : ''}>
+                                {formattedRef}
                               </span>
                               <div
                                 className="w-8 h-8 rounded border border-gray-300 shadow-sm"
@@ -599,49 +613,33 @@ export default function ThemeManager() {
                               />
                             </div>
                           </td>
+                           
+                           {/* Dark / Inverse (Optional) */}
+                           <td 
+                             className={`px-4 py-3 text-right ${invValue ? 'cursor-pointer hover:bg-gray-50' : ''} ${selectedSemanticToken === inverseKey ? 'bg-rose-100 ring-2 ring-rose-300' : ''}`}
+                             onClick={() => invValue && inverseKey && setSelectedSemanticToken(inverseKey)}
+                           >
+                               {invValue && (
+                                   <div className="flex items-center justify-end gap-2">
+                                       <div className="w-10 h-10 rounded bg-gray-900 flex items-center justify-center border border-gray-700">
+                                            {/* For links, show simple underline or text */}
+                                            <span style={{ color: resolveColor(invValue, theme) || '#fff', textDecoration: 'underline' }} className="text-sm font-bold">Aa</span>
+                                       </div>
+                                   </div>
+                               )}
+                           </td>
                         </tr>
                       );
                     })}
-                    
-                    {/* Buttons */}
-                    <tr className="bg-gray-50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Buttons
-                      </td>
-                    </tr>
-                    {[
-                      { key: 'button_primary_bg', label: 'Button Primary Background' },
-                      { key: 'button_primary_text', label: 'Button Primary Text' },
-                      { key: 'button_secondary_bg', label: 'Button Secondary Background' },
-                      { key: 'button_secondary_text', label: 'Button Secondary Text' },
-                    ].map(({ key, label }) => {
-                      const value = theme.semantic_tokens[key as keyof typeof theme.semantic_tokens] as ColorValue;
-                      const displayColor = resolveColor(value, theme) || '#999999';
-                      return (
-                        <tr
-                          key={key}
-                          onClick={() => setSelectedSemanticToken(key)}
-                          className={`cursor-pointer hover:bg-rose-50 transition-colors ${
-                            selectedSemanticToken === key ? 'bg-rose-100' : ''
-                          }`}
-                        >
-                          <td className="px-4 py-3 text-sm text-gray-900">{label}</td>
-                          <td className="px-4 py-3 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <span className="text-xs text-gray-600">
-                                {value?.kind === 'tokenRef' ? value.ref : value?.hex || 'N/A'}
-                              </span>
-                              <div
-                                className="w-8 h-8 rounded border border-gray-300 shadow-sm"
-                                style={{ backgroundColor: displayColor }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+
+
+                     {/* Dunkler Hintergrund */}
+                     {/* Removed separate section, merged into Text rows */}
+
+
                   </tbody>
                 </table>
+
               </div>
             </div>
 
@@ -654,7 +652,7 @@ export default function ThemeManager() {
                   </h4>
                   <UnifiedColorPicker
                     label=""
-                    value={theme.semantic_tokens[selectedSemanticToken as keyof typeof theme.semantic_tokens] as ColorValue}
+                    value={(theme.semantic_tokens as any)[selectedSemanticToken] || { kind: 'custom', hex: '#000000' }}
                     onChange={(v) => handleSemanticTokenChange(selectedSemanticToken as any, v)}
                     theme={theme}
                     showTextContrasts={
@@ -664,6 +662,50 @@ export default function ThemeManager() {
                       selectedSemanticToken === 'button_secondary_bg'
                     }
                   />
+                  
+                  {/* Reset/Auto Button for Text Tokens */}
+                  {(selectedSemanticToken.includes('text') || selectedSemanticToken.includes('inverse')) && (
+                      <div className="mt-6 pt-6 border-t border-gray-100">
+                          <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Automatisierung</h5>
+                          <button
+                            onClick={() => {
+                                // Determine context background
+                                let bgHex = '#FFFFFF'; // Default to white page
+                                if (selectedSemanticToken.includes('inverse')) {
+                                    // Inverse usually on dark brand color or dark grey
+                                    // Use Primary 1 Base as reference if available, else black
+                                    const p1 = resolveColor({ kind: 'tokenRef', ref: 'palette.primary1.base'}, theme);
+                                    bgHex = p1 || '#000000';
+                                } else {
+                                    // Normal text is usually on page_bg
+                                    const pageBg = theme.semantic_tokens.page_bg;
+                                    const resolvedPageBg = resolveColor(pageBg, theme);
+                                    bgHex = resolvedPageBg || '#FFFFFF';
+                                }
+                                
+                                const textColors = getReadableTextColors(bgHex);
+                                let finalColor = textColors.body; 
+
+                                if (selectedSemanticToken.includes('heading')) {
+                                    finalColor = textColors.heading;
+                                } else if (selectedSemanticToken.includes('muted')) {
+                                    finalColor = textColors.muted;
+                                }
+                                
+                                handleSemanticTokenChange(selectedSemanticToken as any, { kind: 'custom', hex: finalColor });
+                            }}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 bg-gray-50 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors w-full justify-center"
+                          >
+                            <Wand2 className="w-4 h-4 text-purple-600" />
+                            <span>Automatisch berechnen (Kontrast)</span>
+                          </button>
+                          <p className="text-xs text-center text-gray-500 mt-2">
+                             {selectedSemanticToken.includes('inverse') 
+                                ? 'Setzt optimierte Textfarbe (Heading/Body/Muted) basierend auf Primärfarbe.' 
+                                : 'Setzt optimierte Textfarbe (Heading/Body/Muted) basierend auf Seitenhintergrund.'}
+                          </p>
+                      </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">

@@ -3,6 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Trash2, Edit2, Eye, Star } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface Review {
   id?: string;
@@ -29,6 +32,8 @@ export const ReviewsEditor: React.FC = () => {
   });
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'reviews', instanceId });
 
   useEffect(() => {
     loadReviews();
@@ -133,13 +138,19 @@ export const ReviewsEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
@@ -294,7 +305,16 @@ export const ReviewsEditor: React.FC = () => {
         title="Bewertungen Vorschau"
         maxWidth="w-[1024px]"
       >
-        <div className="bg-slate-900 text-white py-8 px-4 rounded-xl">
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div 
+              className="py-8 px-4 rounded-xl"
+              style={{ 
+                backgroundColor: backgroundColor || '#0f172a',
+                ...customProps as React.CSSProperties
+              }}
+            >
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex justify-center mb-6">
               {[...Array(5)].map((_, i) => (
@@ -304,7 +324,10 @@ export const ReviewsEditor: React.FC = () => {
 
             {reviews.length > 0 && (
               <>
-                <blockquote className="text-2xl md:text-3xl font-serif italic mb-8 leading-relaxed">
+                <blockquote 
+                  className="text-2xl md:text-3xl font-serif italic mb-8 leading-relaxed"
+                  style={{ color: textColors?.heading || '#ffffff' }}
+                >
                   "{reviews[0].text}"
                 </blockquote>
 
@@ -331,6 +354,8 @@ export const ReviewsEditor: React.FC = () => {
             )}
           </div>
         </div>
+          );
+        })()}
       </Modal>
     </div>
   );

@@ -43,28 +43,7 @@ const SEMANTIC_TOKENS: { ref: SemanticTokenRef; label: string }[] = [
   { ref: 'semantic.info', label: 'Info' },
 ];
 
-const PALETTE_TOKENS: { ref: PaletteTokenRef; label: string }[] = [
-  { ref: 'palette.primary1.base', label: 'Primary 1' },
-  { ref: 'palette.primary1.accents.accent1', label: 'Primary 1 - Accent 1' },
-  { ref: 'palette.primary1.accents.accent2', label: 'Primary 1 - Accent 2' },
-  { ref: 'palette.primary1.accents.accent3', label: 'Primary 1 - Accent 3' },
-  { ref: 'palette.primary2.base', label: 'Primary 2' },
-  { ref: 'palette.primary2.accents.accent1', label: 'Primary 2 - Accent 1' },
-  { ref: 'palette.primary2.accents.accent2', label: 'Primary 2 - Accent 2' },
-  { ref: 'palette.primary2.accents.accent3', label: 'Primary 2 - Accent 3' },
-  { ref: 'palette.primary3.base', label: 'Primary 3' },
-  { ref: 'palette.primary3.accents.accent1', label: 'Primary 3 - Accent 1' },
-  { ref: 'palette.primary3.accents.accent2', label: 'Primary 3 - Accent 2' },
-  { ref: 'palette.primary3.accents.accent3', label: 'Primary 3 - Accent 3' },
-  { ref: 'palette.primary4.base', label: 'Primary 4' },
-  { ref: 'palette.primary4.accents.accent1', label: 'Primary 4 - Accent 1' },
-  { ref: 'palette.primary4.accents.accent2', label: 'Primary 4 - Accent 2' },
-  { ref: 'palette.primary4.accents.accent3', label: 'Primary 4 - Accent 3' },
-  { ref: 'palette.primary5.base', label: 'Primary 5' },
-  { ref: 'palette.primary5.accents.accent1', label: 'Primary 5 - Accent 1' },
-  { ref: 'palette.primary5.accents.accent2', label: 'Primary 5 - Accent 2' },
-  { ref: 'palette.primary5.accents.accent3', label: 'Primary 5 - Accent 3' },
-];
+
 
 export default function UnifiedColorPicker({
   value,
@@ -213,28 +192,58 @@ export default function UnifiedColorPicker({
 
         {/* Palette Tab */}
         {activeTab === 'palette' && (
-          <div className="space-y-1">
-            {PALETTE_TOKENS.map((token) => {
-              const tokenColor = resolveColor({ kind: 'tokenRef', ref: token.ref }, theme);
-              const isSelected = value.kind === 'tokenRef' && value.ref === token.ref;
-              
-              return (
-                <button
-                  key={token.ref}
-                  onClick={() => handleTokenSelect(token.ref)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
-                    isSelected
-                      ? 'bg-rose-50 border border-rose-200'
-                      : 'hover:bg-gray-50 border border-transparent'
-                  }`}
-                >
-                  <div
-                    className="w-8 h-8 rounded border border-gray-300 flex-shrink-0"
-                    style={{ backgroundColor: tokenColor || '#000000' }}
-                  />
-                  <span className="flex-1 text-left">{token.label}</span>
-                </button>
-              );
+          <div className="space-y-4 pt-2">
+             <div className="grid grid-cols-[1fr_repeat(3,2rem)] gap-3 px-1 mb-2 text-[10px] uppercase tracking-wider text-gray-500 font-medium text-center">
+                <div className="text-left pl-2">Basis</div>
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+             </div>
+            {[1, 2, 3, 4, 5].map((primaryNum) => {
+               const baseRef = `palette.primary${primaryNum}.base` as PaletteTokenRef;
+               const baseColor = resolveColor({ kind: 'tokenRef', ref: baseRef }, theme);
+               const isBaseSelected = value.kind === 'tokenRef' && value.ref === baseRef;
+
+               return (
+                 <div key={primaryNum} className="grid grid-cols-[1fr_repeat(3,2rem)] gap-3 items-center">
+                   {/* Base Color (with label) */}
+                   <button
+                     onClick={() => handleTokenSelect(baseRef)}
+                     className={`flex items-center gap-3 px-2 py-1.5 rounded border transition-all w-full text-left ${
+                       isBaseSelected 
+                        ? 'bg-rose-50 border-rose-500 ring-1 ring-rose-500' 
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                     }`}
+                   >
+                     <div
+                       className="w-6 h-6 rounded border border-gray-200 shadow-sm flex-shrink-0"
+                       style={{ backgroundColor: baseColor || '#000000' }}
+                     />
+                     <span className="text-xs font-medium text-gray-700 truncate">Primary {primaryNum}</span>
+                   </button>
+
+                   {/* Accents (No Labels, just Boxes) */}
+                   {[1, 2, 3].map((accentNum) => {
+                     const accRef = `palette.primary${primaryNum}.accents.accent${accentNum}` as PaletteTokenRef;
+                     const accColor = resolveColor({ kind: 'tokenRef', ref: accRef }, theme);
+                     const isAccSelected = value.kind === 'tokenRef' && value.ref === accRef;
+
+                     return (
+                       <button
+                         key={accentNum}
+                         onClick={() => handleTokenSelect(accRef)}
+                         title={`Primary ${primaryNum} - Accent ${accentNum}`}
+                         className={`w-8 h-8 rounded border transition-all ${
+                           isAccSelected 
+                            ? 'border-rose-500 ring-2 ring-rose-200 z-10 scale-105' 
+                            : 'border-gray-200 hover:border-gray-400 hover:scale-105 shadow-sm'
+                         }`}
+                         style={{ backgroundColor: accColor || '#000000' }}
+                       />
+                     );
+                   })}
+                 </div>
+               );
             })}
           </div>
         )}

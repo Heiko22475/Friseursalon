@@ -275,6 +275,40 @@ export function autoTextColorWithLevel(bgHex: string): {
   return { color, contrast };
 }
 
+/**
+ * Returns a set of readable text colors for a given background
+ * Optimized for hierarchy: heading (high), body (medium), muted (low/disabled)
+ * Automatically determines if light or dark text is needed based on contrast.
+ */
+export function getReadableTextColors(bgHex: string): {
+  heading: string;
+  body: string;
+  muted: string;
+} {
+  // Calculate contrast for both White and Black text
+  const whiteContrast = getContrastRatio('#FFFFFF', bgHex);
+  const blackContrast = getContrastRatio('#000000', bgHex);
+
+  // If Black provides better contrast, use Dark Text (light background)
+  const useLightText = blackContrast > whiteContrast;
+
+  if (useLightText) {
+    // Dark background -> Light text
+    return {
+      heading: '#FFFFFF',      // Pure white for headings
+      body: '#E5E7EB',         // Gray-200 for body
+      muted: '#9CA3AF',        // Gray-400 for muted
+    };
+  } else {
+    // Light background -> Dark text
+    return {
+      heading: '#111827',      // Gray-900 (Black-ish)
+      body: '#374151',         // Gray-700
+      muted: '#6B7280',        // Gray-500
+    };
+  }
+}
+
 // ===== ACCENT GENERATION =====
 
 /**
@@ -350,6 +384,45 @@ export function colorDistance(hex1: string, hex2: string): number {
   return Math.sqrt(dr * dr + dg * dg + db * db);
 }
 
+// ===== BACKGROUND COLOR DETECTION =====
+
+/**
+ * Determines if a background color is light or dark
+ * @param hex - Background color in hex format
+ * @returns 'light' or 'dark'
+ */
+export function isLightBackground(hex: string): boolean {
+  const luminance = getLuminance(hex);
+  // Using 0.5 as threshold (50% lightness)
+  return luminance > 0.5;
+}
+
+/**
+ * Gets adaptive text colors based on background
+ * Returns CSS custom properties that can be used throughout the component tree
+ */
+export function getAdaptiveTextColors(backgroundColor: string): {
+  '--text-primary': string;
+  '--text-secondary': string;
+  '--text-muted': string;
+} {
+  const isLight = isLightBackground(backgroundColor);
+  
+  if (isLight) {
+    return {
+      '--text-primary': '#111827',   // gray-900
+      '--text-secondary': '#374151',  // gray-700
+      '--text-muted': '#6B7280',     // gray-500
+    };
+  } else {
+    return {
+      '--text-primary': '#F9FAFB',   // gray-50
+      '--text-secondary': '#E5E7EB',  // gray-200
+      '--text-muted': '#9CA3AF',     // gray-400
+    };
+  }
+}
+
 // ===== UTILITY EXPORTS =====
 
 export const COLOR_UTILS = {
@@ -369,4 +442,6 @@ export const COLOR_UTILS = {
   generateAccents,
   meetsContrast: meetsMinimumContrast,
   distance: colorDistance,
+  isLight: isLightBackground,
+  adaptiveColors: getAdaptiveTextColors,
 } as const;

@@ -61,8 +61,11 @@ export interface SemanticTokens {
   
   // Text
   heading_text: ColorValue;
+  heading_text_inverse: ColorValue;
   body_text: ColorValue;
+  body_text_inverse: ColorValue;
   muted_text: ColorValue;
+  muted_text_inverse: ColorValue;
   
   // Borders
   border: ColorValue;

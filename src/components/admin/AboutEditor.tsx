@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Eye, Award, Heart, Star } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getReadableTextColors, getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface AboutData {
   id?: string;
@@ -13,6 +16,7 @@ interface AboutData {
 
 export const AboutEditor: React.FC = () => {
   const navigate = useNavigate();
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'about', instanceId: 1 });
   const [data, setData] = useState<AboutData>({
     title: '',
     description: '',
@@ -95,13 +99,19 @@ export const AboutEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
-          >
-            <Eye className="w-5 h-5" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-3">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+            >
+              <Eye className="w-5 h-5" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -168,20 +178,40 @@ export const AboutEditor: React.FC = () => {
           title="Vorschau: About Sektion"
           maxWidth="w-[1024px]"
         >
-          <section className="py-20 bg-slate-50">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                  <div>
-                    <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-                      {data.title || 'Friseursalon Sarah Soriano'}
-                    </h2>
-                    <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                      {data.description || 'Your description will appear here...'}
-                    </p>
-                    <p className="text-lg text-slate-700 font-medium mb-8">
-                      {data.highlight || 'Your highlight text will appear here...'}
-                    </p>
+          {(() => {
+            // Get CSS custom properties based on background color
+            const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+            
+            return (
+              <section 
+                className="py-20 bg-slate-50"
+                style={{ 
+                  backgroundColor: backgroundColor || undefined,
+                  ...customProps as React.CSSProperties
+                }}
+              >
+                <div className="container mx-auto px-4">
+                  <div className="max-w-6xl mx-auto">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                      <div>
+                        <h2 
+                          className="text-4xl md:text-5xl font-bold mb-6"
+                          style={{ color: 'var(--text-primary, #1e293b)' }}
+                        >
+                          {data.title || 'Friseursalon Sarah Soriano'}
+                        </h2>
+                        <p 
+                          className="text-lg mb-6 leading-relaxed"
+                          style={{ color: 'var(--text-secondary, #475569)' }}
+                        >
+                          {data.description || 'Your description will appear here...'}
+                        </p>
+                        <p 
+                          className="text-lg font-medium mb-8"
+                          style={{ color: 'var(--text-secondary, #334155)' }}
+                        >
+                          {data.highlight || 'Your highlight text will appear here...'}
+                        </p>
                   </div>
                   
                   <div>
@@ -207,6 +237,8 @@ export const AboutEditor: React.FC = () => {
               </div>
             </div>
           </section>
+            );
+          })()}
         </Modal>
       </div>
     </div>

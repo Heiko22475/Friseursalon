@@ -3,6 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Trash2, Edit2, Eye } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface PricingItem {
   id?: string;
@@ -17,10 +20,10 @@ export const PricingEditor: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const instanceId = parseInt(searchParams.get('instance') || '1');
-  const [pricings, setPricings] = useState<Pricing[]>([]);
+  const [pricings, setPricings] = useState<PricingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Pricing>({
+  const [editForm, setEditForm] = useState<PricingItem>({
     category: '',
     service: '',
     price: '',
@@ -29,6 +32,8 @@ export const PricingEditor: React.FC = () => {
   });
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'pricing', instanceId });
 
   useEffect(() => {
     loadPricings();
@@ -82,7 +87,7 @@ export const PricingEditor: React.FC = () => {
     }
   };
 
-  const handleEdit = (pricing: Pricing) => {
+  const handleEdit = (pricing: PricingItem) => {
     setEditingId(pricing.id || null);
     setEditForm(pricing);
   };
@@ -133,13 +138,19 @@ export const PricingEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
@@ -287,11 +298,30 @@ export const PricingEditor: React.FC = () => {
         title="Preise Vorschau"
         maxWidth="w-[1024px]"
       >
-        <div className="bg-slate-50 py-8 px-4 rounded-xl">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">Pricing</h2>
-            <p className="text-xl text-slate-600">Professional services at competitive prices</p>
-          </div>
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div 
+              className="py-8 px-4 rounded-xl"
+              style={{ 
+                backgroundColor: backgroundColor || '#f8fafc',
+                ...customProps as React.CSSProperties
+              }}
+            >
+              <div className="text-center mb-8">
+                <h2 
+                  className="text-4xl md:text-5xl font-bold mb-4"
+                  style={{ color: 'var(--text-primary, #1e293b)' }}
+                >
+                  Pricing
+                </h2>
+                <p 
+                  className="text-xl"
+                  style={{ color: 'var(--text-secondary, #475569)' }}
+                >
+                  Professional services at competitive prices
+                </p>
+              </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {(() => {
@@ -307,7 +337,7 @@ export const PricingEditor: React.FC = () => {
                   });
                 }
                 return acc;
-              }, [] as Array<{name: string, description: string, items: Pricing[]}>);
+              }, [] as Array<{name: string, description: string, items: PricingItem[]}>);
 
               return grouped.map((category, index) => (
                 <div key={index} className="bg-white rounded-2xl p-8 shadow-lg">
@@ -336,6 +366,8 @@ export const PricingEditor: React.FC = () => {
             })()}
           </div>
         </div>
+          );
+        })()}
       </Modal>
     </div>
   );

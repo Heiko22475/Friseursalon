@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Eye, Clock } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface HoursData {
   id?: string;
@@ -26,6 +29,8 @@ export const HoursEditor: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'hours', instanceId: 1 });
 
   useEffect(() => {
     loadData();
@@ -101,17 +106,22 @@ export const HoursEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Öffnungszeiten</h1>
+        <div className="bg-white rounded-xl shadow-sm p-8">\n          <h1 className="text-3xl font-bold text-gray-900 mb-6">Öffnungszeiten</h1>
 
           {message && (
             <div
@@ -199,7 +209,16 @@ export const HoursEditor: React.FC = () => {
         title="Öffnungszeiten Vorschau"
         maxWidth="w-[1024px]"
       >
-        <div className="bg-slate-50 p-8 rounded-xl">
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div 
+              className="p-8 rounded-xl"
+              style={{ 
+                backgroundColor: backgroundColor || '#f8fafc',
+                ...customProps as React.CSSProperties
+              }}
+            >
           <div className="flex items-start gap-4">
             <div className="bg-slate-800 p-3 rounded-lg">
               <Clock className="text-white" size={24} />
@@ -217,6 +236,8 @@ export const HoursEditor: React.FC = () => {
             </div>
           </div>
         </div>
+          );
+        })()}
       </Modal>
     </div>
   );

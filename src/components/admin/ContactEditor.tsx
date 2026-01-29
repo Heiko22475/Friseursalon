@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Eye, MapPin, Phone, Mail } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface ContactData {
   id?: string;
@@ -28,6 +31,8 @@ export const ContactEditor: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'contact', instanceId: 1 });
 
   useEffect(() => {
     loadData();
@@ -104,13 +109,19 @@ export const ContactEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -213,8 +224,22 @@ export const ContactEditor: React.FC = () => {
         title="Kontakt Vorschau"
         maxWidth="w-[1024px]"
       >
-        <div className="bg-slate-50 p-8 rounded-xl">
-          <h3 className="text-2xl font-bold text-slate-800 mb-6">Visit Us</h3>
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div 
+              className="p-8 rounded-xl"
+              style={{ 
+                backgroundColor: backgroundColor || '#f8fafc',
+                ...customProps as React.CSSProperties
+              }}
+            >
+              <h3 
+                className="text-2xl font-bold mb-6"
+                style={{ color: 'var(--text-primary, #1e293b)' }}
+              >
+                Visit Us
+              </h3>
           
           <div className="space-y-6">
             <div className="flex items-start gap-4">
@@ -251,6 +276,8 @@ export const ContactEditor: React.FC = () => {
             </div>
           </div>
         </div>
+          );
+        })()}
       </Modal>
     </div>
   );

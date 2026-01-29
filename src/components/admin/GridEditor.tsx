@@ -5,6 +5,9 @@ import { ArrowLeft, Save, Plus, Eye } from 'lucide-react';
 import { GridLayoutSelector, GridLayout, getColumnCount } from './GridLayoutSelector';
 import { BlockList, BlockItem } from './BlockList';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 import Hero from '../Hero';
 import Services from '../Services';
 import About from '../About';
@@ -66,6 +69,8 @@ export const GridEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'grid', instanceId });
 
   useEffect(() => {
     loadData();
@@ -333,6 +338,10 @@ export const GridEditor: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900">Grid Layout Editor</h1>
             <p className="text-gray-600 mt-1">Instanz #{instanceId}</p>
           </div>
+          <BackgroundColorPicker
+            value={backgroundColor}
+            onChange={setBackgroundColor}
+          />
           <button
             onClick={() => setShowPreview(true)}
             className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
@@ -574,6 +583,7 @@ export const GridEditor: React.FC = () => {
               paddingBottom: `${config.padding_bottom}px`,
               paddingLeft: `${config.margin_left}px`,
               paddingRight: `${config.margin_right}px`,
+              backgroundColor: backgroundColor || undefined,
             }}
           >
             <div

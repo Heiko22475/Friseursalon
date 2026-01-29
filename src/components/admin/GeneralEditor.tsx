@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Save, Eye, ArrowRight } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface GeneralData {
   id?: string;
@@ -26,6 +29,8 @@ export const GeneralEditor: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'hero', instanceId: 1 });
 
   useEffect(() => {
     loadData();
@@ -112,13 +117,19 @@ export const GeneralEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -217,18 +228,37 @@ export const GeneralEditor: React.FC = () => {
         title="Hero Vorschau"
         maxWidth="w-[1024px]"
       >
-        <div className="pt-8 min-h-[400px] flex items-center bg-gradient-to-br from-slate-50 via-white to-slate-100 rounded-xl">
-          <div className="container mx-auto px-4 py-12">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
-                {data.tagline.split(' & ')[0]} &
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-800">
-                  {data.tagline.split(' & ')[1] || data.tagline}
-                </span>
-              </h1>
-              <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-2xl mx-auto italic">
-                "{data.motto}" – {data.name}
-              </p>
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div 
+              className="pt-8 min-h-[400px] flex items-center rounded-xl"
+              style={{ 
+                backgroundColor: backgroundColor || undefined,
+                backgroundImage: backgroundColor ? 'none' : 'linear-gradient(to bottom right, #f8fafc, #ffffff, #f1f5f9)',
+                ...customProps as React.CSSProperties
+              }}
+            >
+              <div className="container mx-auto px-4 py-12">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h1 
+                    className="text-4xl md:text-6xl font-bold mb-6"
+                    style={{ color: 'var(--text-primary, #1e293b)' }}
+                  >
+                    {data.tagline.split(' & ')[0]} &
+                    <span 
+                      className="block"
+                      style={{ color: 'var(--text-primary, #334155)' }}
+                    >
+                      {data.tagline.split(' & ')[1] || data.tagline}
+                    </span>
+                  </h1>
+                  <p 
+                    className="text-lg md:text-xl mb-8 max-w-2xl mx-auto italic"
+                    style={{ color: 'var(--text-secondary, #475569)' }}
+                  >
+                    "{data.motto}" – {data.name}
+                  </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   className="bg-slate-800 text-white px-8 py-4 rounded-lg hover:bg-slate-700 transition flex items-center justify-center gap-2 text-lg"
@@ -245,6 +275,8 @@ export const GeneralEditor: React.FC = () => {
             </div>
           </div>
         </div>
+          );
+        })()}
       </Modal>
     </div>
   );

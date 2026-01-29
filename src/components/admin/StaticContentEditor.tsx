@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Highlighter, Type, PaintBucket, Eraser } from 'lucide-react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -9,6 +9,15 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import { Modal } from './Modal';
 import StaticContent from '../StaticContent';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
+
+import { Color } from '@tiptap/extension-color';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Highlight } from '@tiptap/extension-highlight';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
+import { generateTextContrasts } from '../../utils/text-contrast-generator';
 
 export const StaticContentEditor: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +28,11 @@ export const StaticContentEditor: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+  // Load Active Theme Colors
+  const { theme, getBrandColor, getAccentColor } = useActiveTheme();
+
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'static-content', instanceId });
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -27,6 +41,9 @@ export const StaticContentEditor: React.FC = () => {
         },
       }),
       Underline,
+      TextStyle,
+      Color,
+      Highlight.configure({ multicolor: true }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -40,14 +57,35 @@ export const StaticContentEditor: React.FC = () => {
     content: '',
     editorProps: {
       attributes: {
-        class: 'tiptap-editor min-h-[400px] focus:outline-none px-4 py-3',
+        class: 'tiptap-editor min-h-[400px] focus:outline-none px-4 py-3 prose prose-slate max-w-none',
       },
     },
   });
 
+  // Load content
   useEffect(() => {
     loadContent();
   }, [instanceId]);
+
+  // Helper: Apply Smart Marker (Background + Contrast Text)
+  const applySmartMarker = (bgColor: string) => {
+    if (!editor) return;
+    
+    // Calculate optimal text color
+    const contrasts = generateTextContrasts(bgColor);
+    const textColor = contrasts.high; // Use highest contrast (AAA)
+
+    // Apply Background and Text Color
+    editor.chain().focus()
+      .setHighlight({ color: bgColor })
+      .setColor(textColor)
+      .run();
+  };
+
+  // Helper: Reset Styles (Clear Marker & Color)
+  const clearFormatting = () => {
+    editor?.chain().focus().unsetHighlight().unsetColor().run();
+  };
 
   useEffect(() => {
     if (editor && !loading) {
@@ -139,13 +177,19 @@ export const StaticContentEditor: React.FC = () => {
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
-          <button
-            onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
-          >
-            <Eye className="w-5 h-5" />
-            Vorschau
-          </button>
+          <div className="flex items-center gap-2">
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+            <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+            >
+              <Eye className="w-5 h-5" />
+              Vorschau
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -217,7 +261,83 @@ export const StaticContentEditor: React.FC = () => {
 
                 <div className="w-px bg-gray-300 mx-1"></div>
 
-                {/* Headings (H1 entfernt, da Seitentitel bereits H1 ist) */}
+                {/* --- COLOR TOOLS --- */}
+                {/* 1. Text Colors (Foreground) */}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500 font-semibold uppercase px-1">Text</span>
+                  
+                  {/* Brand Color Text */}
+                  <button
+                    onClick={() => editor?.chain().focus().setColor(getBrandColor()).run()}
+                    className="w-6 h-6 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: getBrandColor() }}
+                    title="Markenfarbe (Text)"
+                  />
+                  
+                  {/* Accent Color Text */}
+                  <button
+                    onClick={() => editor?.chain().focus().setColor(getAccentColor()).run()}
+                    className="w-6 h-6 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: getAccentColor() }}
+                    title="Akzentfarbe (Text)"
+                  />
+
+                  {/* RESET Text */}
+                   <button
+                    onClick={() => editor?.chain().focus().unsetColor().run()}
+                    className="p-1 rounded hover:bg-gray-200 text-gray-600"
+                    title="Farbe entfernen (Schwarz)"
+                  >
+                    <Eraser className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="w-px bg-gray-300 mx-1"></div>
+
+                {/* 2. Smart Markers (Background + Auto Text) */}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500 font-semibold uppercase px-1">Marker</span>
+                  
+                  {/* Brand Marker */}
+                  <button
+                    onClick={() => applySmartMarker(getBrandColor())}
+                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: getBrandColor() }}
+                    title="Marken-Highlight (Smart)"
+                  >
+                    <Highlighter className="w-3 h-3 text-white mix-blend-difference" />
+                  </button>
+                  
+                  {/* Accent Marker */}
+                  <button
+                    onClick={() => applySmartMarker(getAccentColor())}
+                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: getAccentColor() }}
+                    title="Akzent-Highlight (Smart)"
+                  >
+                    <Highlighter className="w-3 h-3 text-white mix-blend-difference" />
+                  </button>
+
+                   {/* Error/Important Marker (Red) */}
+                   <button
+                    onClick={() => applySmartMarker('#EF4444')}
+                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm bg-red-500"
+                    title="Wichtig / Fehler"
+                  >
+                    <Highlighter className="w-3 h-3 text-white" />
+                  </button>
+
+                  {/* Clear All Formatting */}
+                  <button
+                    onClick={clearFormatting}
+                    className="p-1 rounded hover:bg-gray-200 text-gray-600"
+                    title="Markierung entfernen"
+                  >
+                    <Eraser className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="w-px bg-gray-300 mx-1"></div>
                 <button
                   onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
                   className={`px-3 py-1 rounded text-sm font-semibold ${

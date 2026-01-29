@@ -3,6 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Upload, Trash2, Image as ImageIcon, Eye, ArrowLeft } from 'lucide-react';
 import { Modal } from './Modal';
+import { BackgroundColorPicker } from './BackgroundColorPicker';
+import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface GalleryImage {
   id: string;
@@ -15,6 +18,7 @@ export default function GalleryEditor() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const instanceId = parseInt(searchParams.get('instance') || '1');
+  const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'gallery', instanceId });
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -201,13 +205,19 @@ export default function GalleryEditor() {
               <ArrowLeft className="w-4 h-4" />
               Zurück zum Dashboard
             </button>
-            <button
-              onClick={() => setIsPreviewOpen(true)}
-              className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
-            >
-              <Eye className="w-5 h-5" />
-              Vorschau
-            </button>
+            <div className="flex items-center gap-3">
+              <BackgroundColorPicker
+                value={backgroundColor}
+                onChange={setBackgroundColor}
+              />
+              <button
+                onClick={() => setIsPreviewOpen(true)}
+                className="flex items-center gap-2 bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+              >
+                <Eye className="w-5 h-5" />
+                Vorschau
+              </button>
+            </div>
           </div>
 
           <div>
@@ -318,17 +328,32 @@ export default function GalleryEditor() {
         title="Vorschau: Gallery Sektion"
         maxWidth="w-[1024px]"
       >
-        <div className="bg-white">
-          <section className="py-20 bg-white">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
-                  Gallery
-                </h2>
-                <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                  Explore our work and get inspired
-                </p>
-              </div>
+        {(() => {
+          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          return (
+            <div className="bg-white">
+              <section 
+                className="py-20 bg-white"
+                style={{ 
+                  backgroundColor: backgroundColor || undefined,
+                  ...customProps as React.CSSProperties
+                }}
+              >
+                <div className="container mx-auto px-4">
+                  <div className="text-center mb-16">
+                    <h2 
+                      className="text-4xl md:text-5xl font-bold mb-4"
+                      style={{ color: 'var(--text-primary, #1e293b)' }}
+                    >
+                      Gallery
+                    </h2>
+                    <p 
+                      className="text-xl max-w-2xl mx-auto"
+                      style={{ color: 'var(--text-secondary, #475569)' }}
+                    >
+                      Explore our work and get inspired
+                    </p>
+                  </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
                 {images.map((image) => (
@@ -385,6 +410,8 @@ export default function GalleryEditor() {
             </div>
           )}
         </div>
+          );
+        })()}
       </Modal>
         </div>
       </div>

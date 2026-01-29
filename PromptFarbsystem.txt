@@ -1,109 +1,64 @@
-Prompt 1
-In the services editor, I'd like to offer a visual list of all the icons, 
-that lucide offers. A select dropdown or even a better component for that purpose. 
-Also, I'd like to save the color of the Icon. 
-
-Prompt 2
-Ich möchte nun den Icon-Editor als Komponente abstrahieren.
-Man kann den Icon-Editor an verschiedenen Stellen verwenden. 
-
-Neue Option: Icon anzeigen (Checkbox). Default: true. 
-Wenn nicht gesetzt, soll kein Icon ausgespielt werden. 
-Wenn diese Option nicht gesetzt is, sollen die Eingabefelder in dem Editor disabled sein. 
-
-Das Icon sollte eine Option haben, um die Größe zu ändern. Dies sollte eine visuelle 
-Auswahlbox sein, in der ein Beispielicon in verschiedener Größe abgebildet ist.
-Größen: 15px, 18px, 24px, 30px  
-
-Der Hintergrund des Icons sollte auch auswählbar sein: 
-a) Kein HIntergrund (Felder Farbe, Form, Gröpe des Hintergrunds disabled) oder
-
-b-1) Farbe
-
-b-2) 
-Form: Rechteckig mit abgerundeten Ecken oder kreisrund
-Die Auswahl der Form sollte auch in einem Select sein, in dem die Formen visuell dargestellt werden. 
-
-c) Größe des Hintergrunds im Verhältnis zu dem Icon. 
-Also das Padding um das Icon (5px, 10px, 15px, 20px)
-Stelle es auch visuell dar. 
+Kontext:
+Ich baue ein CMS mit React + Tailwind. Persistenz über Supabase (Postgres). 
+Bitte implementiere ein Farbsystem (Design Tokens), davon zunächst den UI-Editor, 
+der mit Features wie Farbpallete bearbeiten aber auch eine datenbank-Gespeicherter
+Liste hat, mit der man die aktuelle Einstellung überschreiben kann (Warnung!). 
+Der FarbEditor soll auf der Hauptseite aufrufbar sein. 
 
 
+Ziel-Funktionalität:
+1) Palette (Systemfarben):
+   - Genau 5 Hauptfarben: primary1..primary5
+   - Jede Hauptfarbe hat:
+     - base (pflicht)
+     - accents (optional, z.B. accent1..accent3 ODER light/dark/muted). vom Programm her berechnet, nicht in der DB gespeichert
+   - Farben werden als HEX gespeichert (normalisiert #RRGGBB)
+   - In der Datenbank-Tabelle für die Palette soll es für die 5 Hauptfarben jeweils ein Tabellenfeld geben
+2) Text-Mapping:
+   - Für jedes Paletten-Token (z.B. palette.primary1.base, palette.primary1.accents.accent1) muss eine zugeordnete Textfarbe existieren:
+     - Modus "auto" (berechne beste Textfarbe für Kontrast)
+     - Modus "custom" (User wählt Hex)
+3) Semantik-/Standardfarben:
+   - Standardfarben sind Tokens wie:
+     link, linkHover, pageBg, contentBg, cardBg, border, headingText, bodyText, mutedText,
+     buttonPrimaryBg, buttonPrimaryText, buttonSecondaryBg, buttonSecondaryText, focusRing
+   - Jede Standardfarbe ist ein ColorValue:
+     - { kind: "tokenRef", ref: "palette.primary1.base" | "semantic.link" ... }
+     - { kind: "custom", hex: "#..." }
+   - In der UI muss ein UnifiedColorPicker existieren mit 3 Quellen:
+     (A) Semantik (Standardfarben)
+     (B) Palette (Hauptfarben + Akzente)
+     (C) Custom (frei wählbar; optional begrenzen/Warning)
+4) Token-Auflösung:
+   - Implementiere resolveColor(ColorValue, tokenStore) -> HEX
+   - Erkenne und verhindere Zyklen (cycle detection) bei tokenRef.
+   - Implementiere resolveSemanticToken(name) -> ColorValue -> HEX
+5) Tailwind Integration:
+   - Exportiere CSS-Variablen (z.B. :root { --c-link: #...; --c-primary-1: #... })
+   - Nutze Tailwind so, dass Komponenten Farben via CSS vars nutzen können:
+     z.B. className="bg-[var(--c-card-bg)] text-[var(--c-body-text)]"
+   - Baue eine Preview-Area (Cards, Buttons, Links, Section backgrounds), die live aus Tokens gerendert wird.
+7) UX/Editor-Seite:
+   Die Seite sollte eine Tabelle zeigen: 1. Zeile: die 5 Hauptfarben (base), 2.Zeile Akzentfarbe hell (geignet beispielsweise für Hintergründe), 3. Zeile Akzentfarbe dunkel (z.B. für Hintergründe)
+   - Ich möchte vordefinierte Paletten anbieten können, die in der Datenbank gespeichert sind und aufgelistet werden. 
+   - die 5 Primärfarben sollten mit einem Colorpicker ausgewählt werden können. 
+   - In den Palettenfeldern sollten zu jeder Primär / Hell / Dunkelfarbe ebenfalls 
+   eine Beispielschrift stehen, die man auch ändern kann. 
+   
+Technische Vorgaben
 
-Prompt: 
+- Keine Hardcoded-Farben in UI-Komponenten: immer via resolveColor + CSS vars.
+- Token-Refs als stabile Strings, z.B. "palette.primary1.base", "palette.primary1.accents.accent1", "semantic.link".
+- Bitte erzeuge:
+  1) Types: ThemeTokens, Palette, SemanticTokens, ColorValue, TextMapping
+  2) Utilities: color parsing/normalize, luminance/contrast, autoTextColor, resolveColor, cycle detection
+  4) UI components: UnifiedColorPicker, PaletteEditor, TextMappingEditor, SemanticColorsEditor, ThemePreview
 
-Ich möchte einen zweiten Button neben dem Dienstleistungen hinzufüge für  
-ein zweites Popup-Fenster haben, mit dem ich die alle Dienstleistungseinträge 
-stylen kann. Darunter fällt: Icon anzeigen, Icon Farbe, Größe, Hintergrund-Daten. 
-Dazu kann man den IconEditor nehmen, nur dass das Icon nicht ausgewählt wird. 
+Output von dir:
+- Zuerst Architekturüberblick
 
-Prompt: 
-I like to have a Button "Vorschau" which opens a popup window that shows the current
-Section as it would be rendered on the page.  
-The button should be in the upper right corner. 
-Implement this on all editors. 
+Wichtige Semantik-Defaults:
+- Lege sinnvolle Default-Werte an, die ohne Custom gut aussehen (z.B. pageBg hell, contentBg neutral, link = primary1.base, cardBg = contentBg leicht abgesetzt).
+- Auto-Textfarbe soll min. 4.5:1 anstreben; falls nicht erreichbar, Warning anzeigen und bestmögliche Wahl treffen.
 
-Prompt: 
-I now want to make the page fully customizable. 
-Think of the sections As Building blocks. 
-I need an administration page to add building blocks, disable them (make them invisible)
-delete them, changing the order of them. 
-
-Furthermore, I want to support multi-page application. 
-That means I'd like to add, remove and order pages that contain building blocks. 
-That also means, that a building block e.g. Gallery can be added multiple times.
-
-I then want to support multiple headers, one for a singlepage webpage and 
-one for a website that has several pages. 
-
-
-Prompt: Ich möchte nun eine neue baustein-Art implementieren. 
-Es handelt sich um ein Grid, das weitere bereits bestehende Bausteine enthalten kann, 
-z.B. Static Text, Gallery, Cards,
-Das Grid ist einzeilig aber es soll verschiedene Auswahlmöglichkeiten geben: 
-2-spaltig: 50:50
-2-spaltig: 25:75
-2-spaltig: 75:25
-2-spaltig: 66:33
-2-spaltig: 33:66
-3-spaltig: 33:33:33
-4-spaltig: 25:25:25:25
-
-Auf der Seite, auf der das Grid konfiguriert wird, soll es dementsprechend ein Auswahl-
-feld geben, das die Grid-Arten visuell darstellt. 
-Also beispielsweise ein Dropdown, das in jeder Zeile des Flyouts eine Spaltenart zeigt. 
-Beispielsweise ist das Dropdown 300px breit, und je zeile werden für jede Spalte in dem Grid
-Blöcke angezeigt. Z.B. in der 2-spaltigen (33:66) zeile des Flyouts zwei schön gestaltete 
-Divs (vielleicht mit runden Ecken), die in dem Verhältnis 33:66 stehen. 
-
-Jetzt hat man wie auf einer SEitenverwaltung eine Liste, in die man Baustein hinzufügen kann. 
-Das soll analog wie auf der Seitenverwaltung aussehen, am besten per Komponente abstrahiert. 
-Man soll beliebig viele Bausteine auswählen können, aber es werden nur soviele 
-in dem  Grid angezeigt, wie eben in das Grid passt. 
-Bausteine können aber auch ausgeblendet und verschoben werden. 
-Beispiel: Man hat 3 Bausteine hinzugefügt, man hat aber ein 66:33 2-Spalten Grid. 
-Hier dann die ersten beiden sichtbaren Bausteine in das Grid einfügen. 
-Hast du noch offene FRagen? 
-
-Die Bausteine, die im Grid enthalten sind sollten generisch sein. 
-Aber Ich plane nicht, ein Grid im Grid zu verwenden.
-Cards: Den Baustein gibt es noch nicht, ich plane, später einen Baustein mit Cards anzulegen. 
-In der Datenbank würde man eine Tabelle grid_blocks einrichten, die mit den Instanzen der 
-Blöcke verbunden sind. Am besten aber so einrichten, dass diese Instanzen der Blöcke
-später verschoben werden können, also aus dem Grid raus. Mit einer Ausschneiden-Einfügen-Funktion (geplant)
-Die Kind-Bausteine sollten erst einmal ihre normale Darstellung haben. 
-Es wäre gut, auf der Grid-Baustein-Seite Gaps und padding konfigurierbar zu machen, 
-auch die Margin des Grids nach links und rechts, und padding nach oben und unten. 
-Das mit den Icons kannst du gleich miterledigen. 
-Noch Fragen? 
-
-
-Prompt
-
-Information: Ich habe einen Namen für das CMS festgelegt: Es soll BeautifulCMS oder
-kurz nur Beautiful heißen. 
-Ich möchte nun einen Rework machen. 
-
-
-
-
+Bevor wir beginnen, gib Kommentare, wie gut du das findest und stelle Rückfragen. 

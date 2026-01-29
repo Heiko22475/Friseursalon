@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database, Layout, Layers } from 'lucide-react';
+import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database, Layout, Layers, Palette } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -14,6 +14,7 @@ export const AdminDashboard: React.FC = () => {
 
   const sections = [
     { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
+    { id: 'theme', name: 'Theme Editor', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
     { id: 'export', name: 'Daten Export/Import', icon: Database, path: '/admin/export', enabled: true },
   ];
 

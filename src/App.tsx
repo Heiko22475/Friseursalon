@@ -17,6 +17,7 @@ import { StaticContentEditor } from './components/admin/StaticContentEditor';
 import { GridEditor } from './components/admin/GridEditor';
 import { default as GalleryEditor } from './components/admin/GalleryEditor';
 import { DynamicPage } from './components/DynamicPage';
+import ThemeManager from './components/ThemeManager';
 
 function App() {
   return (
@@ -138,6 +139,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <GridEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/theme"
+            element={
+              <ProtectedRoute>
+                <ThemeManager />
               </ProtectedRoute>
             }
           />

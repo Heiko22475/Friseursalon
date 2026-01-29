@@ -78,7 +78,8 @@ export default function Services({ instanceId = 1 }: ServicesProps) {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="services-grid-container">
+          <div className="services-grid">
           {services.map((service, index) => {
             const IconComponent = (LucideIcons[service.icon as keyof typeof LucideIcons] || Scissors) as React.FC<{ 
               size?: number; 
@@ -114,7 +115,28 @@ export default function Services({ instanceId = 1 }: ServicesProps) {
               </div>
             );
           })}
+          </div>
         </div>
+        <style>{`
+          .services-grid-container {
+            container-type: inline-size;
+          }
+          .services-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: 1fr;
+          }
+          @container (min-width: 640px) {
+            .services-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          @container (min-width: 1024px) {
+            .services-grid {
+              grid-template-columns: repeat(4, 1fr);
+            }
+          }
+        `}</style>
       </div>
     </section>
   );

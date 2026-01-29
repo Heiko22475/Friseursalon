@@ -42,7 +42,8 @@ export default function Gallery({ instanceId = 1 }: GalleryProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+          <div className="gallery-container">
+            <div className="gallery-grid max-w-7xl mx-auto">
             {images.map((image) => (
               <div
                 key={image.id}
@@ -61,11 +62,33 @@ export default function Gallery({ instanceId = 1 }: GalleryProps) {
                 )}
               </div>
             ))}
+            </div>
           </div>
 
           {images.length === 0 && (
             <p className="text-center text-slate-500">No images yet</p>
           )}
+          
+          <style>{`
+            .gallery-container {
+              container-type: inline-size;
+            }
+            .gallery-grid {
+              display: grid;
+              gap: 1rem;
+              grid-template-columns: repeat(2, 1fr);
+            }
+            @container (min-width: 640px) {
+              .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+              }
+            }
+            @container (min-width: 1024px) {
+              .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+              }
+            }
+          `}</style>
         </div>
       </section>
 

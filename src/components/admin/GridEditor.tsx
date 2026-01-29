@@ -568,11 +568,16 @@ export const GridEditor: React.FC = () => {
         <Modal
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
-          title="Grid Vorschau"
+          title="Grid Vorschau - Responsive"
           maxWidth="max-w-[1400px]"
         >
-          <div className="text-sm text-gray-600 mb-4">
-            Vorschau des Grids mit aktueller Konfiguration und echten Baustein-Inhalten
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <p className="text-sm text-blue-800 font-semibold mb-2">📱 Responsive Verhalten:</p>
+            <ul className="text-xs text-blue-700 space-y-1">
+              <li>• <strong>Mobile (&lt; 768px):</strong> 1 Spalte (alle Bausteine untereinander)</li>
+              <li>• <strong>Tablet (768px - 1023px):</strong> {columnCount > 2 ? '2 Spalten (50:50)' : '2 Spalten (50:50 für bessere Lesbarkeit)'}</li>
+              <li>• <strong>Desktop (&gt; 1024px):</strong> Volles {columnCount}-Spalten Layout ({config.layout_type})</li>
+            </ul>
           </div>
           <div
             style={{
@@ -587,18 +592,33 @@ export const GridEditor: React.FC = () => {
             }}
           >
             <div
-              className={`grid`}
+              className="grid-preview-container"
               style={{
+                display: 'grid',
                 gap: `${config.gap}px`,
-                gridTemplateColumns: getGridTemplateColumns(config.layout_type),
               }}
             >
               {visibleBlocks.map((block) => (
-                <div key={block.id}>
+                <div key={block.id} style={{ minWidth: '280px', containerType: 'inline-size' }}>
                   {renderBlockPreview(block.block_type, block.block_instance_id)}
                 </div>
               ))}
             </div>
+            <style>{`
+              .grid-preview-container {
+                grid-template-columns: 1fr;
+              }
+              @media (min-width: 768px) and (max-width: 1023px) {
+                .grid-preview-container {
+                  grid-template-columns: ${columnCount > 2 ? '1fr 1fr' : '1fr 1fr'};
+                }
+              }
+              @media (min-width: 1024px) {
+                .grid-preview-container {
+                  grid-template-columns: ${getGridTemplateColumns(config.layout_type)};
+                }
+              }
+            `}</style>
           </div>
         </Modal>
       </div>
@@ -640,6 +660,14 @@ const getGridTemplateColumns = (layout: GridLayout): string => {
   switch (layout) {
     case '50-50':
       return '1fr 1fr';
+    case '60-40':
+      return '3fr 2fr';
+    case '40-60':
+      return '2fr 3fr';
+    case '70-30':
+      return '7fr 3fr';
+    case '30-70':
+      return '3fr 7fr';
     case '25-75':
       return '1fr 3fr';
     case '75-25':

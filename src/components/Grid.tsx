@@ -118,6 +118,14 @@ export const Grid: React.FC<GridProps> = ({ instanceId }) => {
     switch (layout) {
       case '50-50':
         return '1fr 1fr';
+      case '60-40':
+        return '3fr 2fr';
+      case '40-60':
+        return '2fr 3fr';
+      case '70-30':
+        return '7fr 3fr';
+      case '30-70':
+        return '3fr 7fr';
       case '25-75':
         return '1fr 3fr';
       case '75-25':
@@ -166,6 +174,8 @@ export const Grid: React.FC<GridProps> = ({ instanceId }) => {
     return null; // Don't render empty grid
   }
 
+  const gridId = `grid-${instanceId}`;
+
   return (
     <div
       style={{
@@ -176,18 +186,37 @@ export const Grid: React.FC<GridProps> = ({ instanceId }) => {
       }}
     >
       <div
-        className="grid"
+        className={gridId}
         style={{
+          display: 'grid',
           gap: `${config.gap}px`,
-          gridTemplateColumns: getGridTemplateColumns(config.layout_type),
+          containerType: 'inline-size',
         }}
       >
         {visibleBlocks.map((block) => (
-          <div key={`${block.child_block_type}-${block.child_block_instance_id}`}>
+          <div 
+            key={`${block.child_block_type}-${block.child_block_instance_id}`}
+            style={{ minWidth: '280px', containerType: 'inline-size' }}
+          >
             {renderBlock(block.child_block_type, block.child_block_instance_id)}
           </div>
         ))}
       </div>
+      <style>{`
+        .${gridId} {
+          grid-template-columns: 1fr;
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .${gridId} {
+            grid-template-columns: ${columnCount > 2 ? '1fr 1fr' : '1fr 1fr'};
+          }
+        }
+        @media (min-width: 1024px) {
+          .${gridId} {
+            grid-template-columns: ${getGridTemplateColumns(config.layout_type)};
+          }
+        }
+      `}</style>
     </div>
   );
 };

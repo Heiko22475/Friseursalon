@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
 import { AdminDashboard } from './components/AdminDashboard';
 import { GeneralEditor } from './components/admin/GeneralEditor';
+import { SettingsEditor } from './components/admin/SettingsEditor';
 import { ServicesEditor } from './components/admin/ServicesEditor';
 import { ContactEditor } from './components/admin/ContactEditor';
 import { HoursEditor } from './components/admin/HoursEditor';
@@ -16,6 +17,7 @@ import { BlockManager } from './components/admin/BlockManager';
 import { StaticContentEditor } from './components/admin/StaticContentEditor';
 import { GridEditor } from './components/admin/GridEditor';
 import { default as GalleryEditor } from './components/admin/GalleryEditor';
+import { MediaLibrary } from './components/admin/MediaLibrary';
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 
@@ -43,6 +45,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <GeneralEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsEditor />
               </ProtectedRoute>
             }
           />
@@ -147,6 +157,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ThemeManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/media"
+            element={
+              <ProtectedRoute>
+                <MediaLibrary />
               </ProtectedRoute>
             }
           />

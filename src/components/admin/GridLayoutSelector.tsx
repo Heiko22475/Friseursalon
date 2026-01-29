@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-export type GridLayout = '50-50' | '25-75' | '75-25' | '66-33' | '33-66' | '33-33-33' | '25-25-25-25';
+export type GridLayout = '50-50' | '60-40' | '40-60' | '70-30' | '30-70' | '25-75' | '75-25' | '66-33' | '33-66' | '33-33-33' | '25-25-25-25';
 
 interface GridLayoutOption {
   value: GridLayout;
@@ -10,11 +10,15 @@ interface GridLayoutOption {
 }
 
 const LAYOUT_OPTIONS: GridLayoutOption[] = [
-  { value: '50-50', label: '2-spaltig: 50:50', columns: [50, 50] },
-  { value: '25-75', label: '2-spaltig: 25:75', columns: [25, 75] },
-  { value: '75-25', label: '2-spaltig: 75:25', columns: [75, 25] },
-  { value: '66-33', label: '2-spaltig: 66:33', columns: [66, 34] },
-  { value: '33-66', label: '2-spaltig: 33:66', columns: [34, 66] },
+  { value: '50-50', label: '2-spaltig: 50:50 (Gleichmäßig)', columns: [50, 50] },
+  { value: '60-40', label: '2-spaltig: 60:40 (Golden Ratio)', columns: [60, 40] },
+  { value: '40-60', label: '2-spaltig: 40:60 (Umgekehrt)', columns: [40, 60] },
+  { value: '70-30', label: '2-spaltig: 70:30 (Content + Sidebar)', columns: [70, 30] },
+  { value: '30-70', label: '2-spaltig: 30:70 (Sidebar + Content)', columns: [30, 70] },
+  { value: '25-75', label: '2-spaltig: 25:75 (Schmal + Breit)', columns: [25, 75] },
+  { value: '75-25', label: '2-spaltig: 75:25 (Breit + Schmal)', columns: [75, 25] },
+  { value: '66-33', label: '2-spaltig: 66:33 (Zwei Drittel)', columns: [66, 34] },
+  { value: '33-66', label: '2-spaltig: 33:66 (Ein Drittel)', columns: [34, 66] },
   { value: '33-33-33', label: '3-spaltig: 33:33:33', columns: [33, 33, 34] },
   { value: '25-25-25-25', label: '4-spaltig: 25:25:25:25', columns: [25, 25, 25, 25] },
 ];
@@ -126,6 +130,14 @@ export const getGridClass = (layout: GridLayout): string => {
   switch (layout) {
     case '50-50':
       return 'grid-cols-2';
+    case '60-40':
+      return 'grid-cols-[3fr_2fr]';
+    case '40-60':
+      return 'grid-cols-[2fr_3fr]';
+    case '70-30':
+      return 'grid-cols-[7fr_3fr]';
+    case '30-70':
+      return 'grid-cols-[3fr_7fr]';
     case '25-75':
       return 'grid-cols-[1fr_3fr]';
     case '75-25':

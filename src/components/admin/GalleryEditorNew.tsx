@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Eye, ArrowLeft, Save, ExternalLink } from 'lucide-react';
+import { Trash2, Eye, ArrowLeft, Save, ExternalLink, Image as ImageIcon } from 'lucide-react';
 import { Modal } from './Modal';
+import { MediaLibrary } from './MediaLibrary';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
 import { getAdaptiveTextColors } from '../../utils/color-utils';
@@ -22,6 +23,7 @@ export const GalleryEditorNew: React.FC = () => {
   const [newImageUrl, setNewImageUrl] = useState('');
   const [newCaption, setNewCaption] = useState('');
   const [editingCaptions, setEditingCaptions] = useState<Record<string, string>>({});
+  const [isMediaLibraryOpen, setIsMediaLibraryOpen] = useState(false);
 
   const images = website?.gallery?.images || [];
 
@@ -171,15 +173,24 @@ export const GalleryEditorNew: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Bild URL
                 </label>
-                <input
-                  type="url"
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={() => setIsMediaLibraryOpen(true)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 flex items-center gap-2"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    Mediathek
+                  </button>
+                </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Tipp: Nutzen Sie die Mediathek unter /admin/media oder externe URLs
+                  Wählen Sie ein Bild aus der Mediathek oder geben Sie eine externe URL ein.
                 </p>
               </div>
               <div>
@@ -275,6 +286,32 @@ export const GalleryEditorNew: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Media Library Modal */}
+      <Modal
+        isOpen={isMediaLibraryOpen}
+        onClose={() => setIsMediaLibraryOpen(false)}
+        title="Bilder aus Mediathek wählen"
+        maxWidth="max-w-5xl"
+      >
+        <div className="h-[70vh] flex flex-col">
+            <MediaLibrary 
+                mode="select"
+                onSelect={(files: any[]) => {
+                    if (files.length > 0) {
+                        // If one file selected and input is empty, fill input
+                        // If multiple selected, or user intent is clear, we could add immediately.
+                        // For now, let's keep the single file flow if 1 file, or add first.
+                        // BUT better to support multi-add.
+                        // Let's assume for now focused on single select for the input field.
+                         setNewImageUrl(files[0].file_url);
+                    }
+                    setIsMediaLibraryOpen(false);
+                }}
+                onCancel={() => setIsMediaLibraryOpen(false)}
+            />
+        </div>
+      </Modal>
 
       {/* Preview Modal */}
       <Modal

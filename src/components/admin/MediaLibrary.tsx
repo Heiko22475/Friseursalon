@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Upload, Image, Video, Palette, FileText } from 'lucide-react';
+import { 
+  ArrowLeft, Upload, Image, Video, Palette, FileText, 
+  LayoutGrid, List as ListIcon, FolderPlus, Folder, Trash2, 
+  Scissors, Clipboard, XSquare, CheckSquare
+} from 'lucide-react';
 import { MediaUpload } from './MediaUpload';
 import { MediaGrid } from './MediaGrid';
 import { Modal } from './Modal';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface MediaCategory {
   id: string;
@@ -22,6 +27,8 @@ interface MediaFolder {
   name: string;
   path: string;
   display_order: number;
+  parent_folder_id?: string | null;
+  media_files?: { count: number }[];
 }
 
 interface MediaFile {
@@ -40,10 +47,21 @@ interface MediaFile {
   width: number | null;
   height: number | null;
   thumbnail_url: string | null;
+  storage_path: string;
   created_at: string;
 }
 
-export const MediaLibrary: React.FC = () => {
+interface MediaLibraryProps {
+  mode?: 'admin' | 'select';
+  onSelect?: (files: MediaFile[]) => void;
+  onCancel?: () => void;
+}
+
+export const MediaLibrary: React.FC<MediaLibraryProps> = ({ 
+  mode = 'admin', 
+  onSelect,
+  onCancel 
+}) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<MediaCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<MediaCategory | null>(null);
@@ -53,6 +71,17 @@ export const MediaLibrary: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [customerId, setCustomerId] = useState<string>('000000');
+  
+  // New Features States
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [clipboard, setClipboard] = useState<{ action: 'cut' | 'copy', fileIds: string[] } | null>(null);
+  
+  // Dialog States
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [confirmAction, setConfirmAction] = useState<() => Promise<void> | void>(() => {});
 
   useEffect(() => {
     loadData();
@@ -61,12 +90,17 @@ export const MediaLibrary: React.FC = () => {
   useEffect(() => {
     if (selectedCategory) {
       loadFolders(selectedCategory.id);
+      setSelectedFolder(null); // Reset folder seleciton when category changes
+      setSelectedIds([]); // Reset selection on category change
     }
   }, [selectedCategory]);
 
   useEffect(() => {
     if (selectedFolder) {
       loadFiles(selectedFolder.id);
+      setSelectedIds([]); // Reset selection on folder change
+    } else {
+        setFiles([]);
     }
   }, [selectedFolder]);
 
@@ -104,22 +138,25 @@ export const MediaLibrary: React.FC = () => {
 
   const loadFolders = async (categoryId: string) => {
     try {
+      // Use explicit join with alias if needed, or check if relation exists.
+      // Assuming 'media_files' is the relation name derived from table name.
       const { data, error } = await supabase
         .from('media_folders')
-        .select('*')
+        .select(`
+          *,
+          media_files:media_files(count)
+        `)
         .eq('category_id', categoryId)
-        .is('parent_folder_id', null) // Phase 1: nur Root-Ordner
-        .order('display_order');
+        .order('display_order'); 
 
       if (error) throw error;
       setFolders(data || []);
       
-      // Select first folder by default
-      if (data && data.length > 0) {
+      // Auto-select first folder if available
+      if (data && data.length > 0 && !selectedFolder) {
         setSelectedFolder(data[0]);
-      } else {
+      } else if (!data || data.length === 0) {
         setSelectedFolder(null);
-        setFiles([]);
       }
     } catch (error) {
       console.error('Error loading folders:', error);
@@ -128,6 +165,7 @@ export const MediaLibrary: React.FC = () => {
 
   const loadFiles = async (folderId: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('media_files')
         .select('*')
@@ -138,6 +176,8 @@ export const MediaLibrary: React.FC = () => {
       setFiles(data || []);
     } catch (error) {
       console.error('Error loading files:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,50 +188,149 @@ export const MediaLibrary: React.FC = () => {
     }
   };
 
-  const handleDeleteFile = async (fileId: string, storagePath: string) => {
-    if (!confirm('Datei wirklich löschen?')) return;
+  const handleAddFolder = async () => {
+    if (!selectedCategory) return;
+    
+    const name = window.prompt("Name des neuen Ordners:");
+    if (!name) return;
 
     try {
-      // Get file info to determine bucket
-      const file = files.find(f => f.id === fileId);
-      if (!file) return;
+      const newFolder = {
+        category_id: selectedCategory.id,
+        name: name,
+        path: `/${name}`, 
+        display_order: folders.length
+      };
 
-      const category = categories.find(c => c.id === file.category_id);
-      if (!category) return;
+      const { data, error } = await supabase
+        .from('media_folders')
+        .insert([newFolder])
+        .select()
+        .single();
 
-      // Delete from storage
-      const { error: storageError } = await supabase.storage
-        .from(category.bucket_name)
-        .remove([storagePath]);
-
-      if (storageError) throw storageError;
-
-      // Delete from database
-      const { error: dbError } = await supabase
-        .from('media_files')
-        .delete()
-        .eq('id', fileId);
-
-      if (dbError) throw dbError;
-
-      // Reload files
-      if (selectedFolder) {
-        loadFiles(selectedFolder.id);
-      }
+      if (error) throw error;
+      
+      setFolders([...folders, data]);
+      setSelectedFolder(data); 
     } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('Fehler beim Löschen!');
+      console.error('Error creating folder:', error);
+      alert('Fehler beim Erstellen des Ordners');
     }
   };
 
-  const getCategoryIcon = (iconName: string) => {
-    const icons: Record<string, React.FC<{ className?: string }>> = {
-      'Image': Image,
-      'Video': Video,
-      'Palette': Palette,
-      'FileText': FileText,
-    };
-    return icons[iconName] || FileText;
+  const handleDeleteFolder = async (folder: MediaFolder) => {
+    setConfirmTitle('Ordner löschen');
+    setConfirmMessage(`Möchten Sie den Ordner "${folder.name}" und alle enthaltenen Dateien löschen?`);
+    setConfirmAction(() => async () => {
+      try {
+        // Files should be deleted via cascade in DB, but we need to clean Storage!
+        const { data: filesToDelete } = await supabase
+          .from('media_files')
+          .select('storage_path')
+          .eq('folder_id', folder.id);
+        
+        if (filesToDelete && filesToDelete.length > 0 && selectedCategory) {
+          const paths = filesToDelete.map(f => f.storage_path);
+          await supabase.storage.from(selectedCategory.bucket_name).remove(paths);
+        }
+
+        const { error } = await supabase
+          .from('media_folders')
+          .delete()
+          .eq('id', folder.id);
+
+        if (error) throw error;
+
+        setFolders(folders.filter(f => f.id !== folder.id));
+        if (selectedFolder?.id === folder.id) {
+          setSelectedFolder(folders.length > 1 ? folders.find(f => f.id !== folder.id) || null : null);
+        }
+        setConfirmOpen(false);
+      } catch (error) {
+        console.error('Error deleting folder:', error);
+        alert('Fehler beim Löschen des Ordners');
+      }
+    });
+    setConfirmOpen(true);
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (select: boolean) => {
+    if (select) {
+      setSelectedIds(files.map(f => f.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleCutFiles = () => {
+    if (selectedIds.length === 0) return;
+    setClipboard({ action: 'cut', fileIds: [...selectedIds] });
+    setSelectedIds([]);
+  };
+
+  const handlePasteFiles = async () => {
+    if (!clipboard || !selectedFolder) return;
+    
+    try {
+      const { error } = await supabase
+        .from('media_files')
+        .update({ folder_id: selectedFolder.id })
+        .in('id', clipboard.fileIds);
+
+      if (error) throw error;
+
+      loadFiles(selectedFolder.id); 
+      setClipboard(null);
+    } catch (error) {
+      console.error('Error moving files:', error);
+      alert('Fehler beim Verschieben der Dateien');
+    }
+  };
+
+  const handleDeleteFiles = async (fileIds: string[]) => {
+    const idsToDelete = fileIds.length > 0 ? fileIds : selectedIds;
+    if (idsToDelete.length === 0) return;
+
+    setConfirmTitle(idsToDelete.length > 1 ? 'Dateien löschen' : 'Datei löschen');
+    setConfirmMessage(`Möchten Sie ${idsToDelete.length} Datei(en) wirklich löschen?`);
+    setConfirmAction(() => async () => {
+      try {
+        const { data: filesData } = await supabase
+          .from('media_files')
+          .select('storage_path')
+          .in('id', idsToDelete);
+        
+        if (filesData && filesData.length > 0 && selectedCategory) {
+          const paths = filesData.map(f => f.storage_path);
+          await supabase.storage.from(selectedCategory.bucket_name).remove(paths);
+        }
+
+        const { error } = await supabase
+          .from('media_files')
+          .delete()
+          .in('id', idsToDelete);
+
+        if (error) throw error;
+
+        if (selectedFolder) loadFiles(selectedFolder.id);
+        setSelectedIds([]);
+        setConfirmOpen(false);
+      } catch (error) {
+        console.error('Error deleting files:', error);
+        alert('Fehler beim Löschen der Dateien');
+      }
+    });
+    setConfirmOpen(true);
+  };
+  
+  const handleDeleteSingle = (fileId: string, _storagePath: string) => {
+     handleDeleteFiles([fileId]);
   };
 
   if (loading) {
@@ -203,139 +342,290 @@ export const MediaLibrary: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/admin')}
-              className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-            >
-              <ArrowLeft className="w-5 h-5" />
+      <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-4">
+          {mode === 'admin' ? (
+            <button onClick={() => navigate('/admin')} className="p-2 hover:bg-gray-100 rounded-full">
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Mediathek</h1>
-              <p className="text-sm text-gray-600">
-                {selectedCategory?.display_name} {selectedFolder && `→ ${selectedFolder.name}`}
-              </p>
+          ) : (
+            <button onClick={onCancel} className="p-2 hover:bg-gray-100 rounded-full">
+              <XSquare className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
+          <h1 className="text-xl font-bold text-gray-800">
+            {mode === 'select' ? 'Bild auswählen' : 'Mediathek'}
+          </h1>
+        </div>
+        <div className="flex items-center gap-3">
+            {/* Selection Confirmation for Picker Mode */}
+            {mode === 'select' && selectedIds.length > 0 && onSelect && (
+              <button
+                onClick={() => {
+                   const selectedFiles = files.filter(f => selectedIds.includes(f.id));
+                   onSelect(selectedFiles);
+                }}
+                className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm font-medium"
+              >
+                 <CheckSquare className="w-4 h-4" />
+                 {selectedIds.length} übernehmen
+              </button>
+            )}
+
+            {/* View Toggle */}
+            <div className="bg-gray-100 p-1 rounded-lg flex border border-gray-200">
+                <button 
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm text-rose-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  title="Rasteransicht"
+                >
+                    <LayoutGrid size={18} />
+                </button>
+                <button 
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm text-rose-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  title="Listenansicht"
+                >
+                    <ListIcon size={18} />
+                </button>
             </div>
-          </div>
-          
+
+            {/* Actions for Selection (Admin Mode) */}
+            {mode === 'admin' && selectedIds.length > 0 && (
+                <div className="flex items-center gap-2 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100">
+                   <span className="text-sm font-medium text-rose-700 mr-2">{selectedIds.length} ausgewählt</span>
+                   <button 
+                     onClick={handleCutFiles}
+                     className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                     title="Ausschneiden"
+                   >
+                     <Scissors size={18} />
+                   </button>
+                   <button 
+                     onClick={() => handleDeleteFiles(selectedIds)}
+                     className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                     title="Löschen"
+                   >
+                     <Trash2 size={18} />
+                   </button>
+                   <button 
+                     onClick={() => handleSelectAll(false)}
+                     className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                     title="Auswahl aufheben"
+                   >
+                     <XSquare size={18} />
+                   </button>
+                </div>
+            )}
+
+            {/* Clipboard Actions */}
+            {clipboard && (
+                <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+                    <span className="text-sm font-medium text-blue-700 mr-2">
+                        {clipboard.fileIds.length} Datei(en) in Zwischenablage
+                    </span>
+                    <button 
+                     onClick={handlePasteFiles}
+                     className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                     title="Einfügen"
+                    >
+                     <Clipboard size={14} /> Einfügen
+                    </button>
+                    <button 
+                     onClick={() => setClipboard(null)}
+                     className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                     title="Abbrechen"
+                    >
+                     <XSquare size={18} />
+                    </button>
+                </div>
+            )}
+
           <button
             onClick={() => setIsUploadOpen(true)}
-            disabled={!selectedFolder}
-            className="flex items-center gap-2 bg-rose-500 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm"
           >
-            <Upload className="w-5 h-5" />
+            <Upload className="w-4 h-4" />
             Upload
           </button>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Sidebar: Categories & Folders */}
-          <div className="col-span-3 space-y-4">
-            {/* Categories */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-                Bereiche
-              </h2>
-              <div className="space-y-1">
-                {categories.map((category) => {
-                  const Icon = getCategoryIcon(category.icon);
-                  const isSelected = selectedCategory?.id === category.id;
-                  return (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition ${
-                        isSelected
-                          ? 'bg-rose-50 text-rose-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{category.display_name}</span>
-                    </button>
-                  );
-                })}
-              </div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-64 bg-white border-r flex flex-col overflow-y-auto">
+          {/* Categories */}
+          <div className="p-4 border-b">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Bereiche
+            </h3>
+            <div className="space-y-1">
+              {categories.map((cat) => {
+                const isActive = selectedCategory?.id === cat.id;
+                // Icon mapping
+                let Icon = Image;
+                if (cat.name === 'videos') Icon = Video;
+                if (cat.name === 'stockphotos') Icon = Palette;
+                if (cat.name === 'documents') Icon = FileText;
+
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-rose-50 text-rose-700' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="font-medium">{cat.display_name}</span>
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Folders */}
-            {selectedCategory && (
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                    Ordner
-                  </h2>
-                  {/* TODO: Folder creation in Phase 2 */}
-                </div>
-                <div className="space-y-1">
-                  {folders.map((folder) => {
-                    const isSelected = selectedFolder?.id === folder.id;
-                    return (
-                      <button
-                        key={folder.id}
+          {/* Folders */}
+          <div className="flex-1 p-4">
+             <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Ordner
+                </h3>
+                <button 
+                  onClick={handleAddFolder}
+                  className="p-1 text-gray-400 hover:text-rose-500 transition"
+                  title="Neuer Ordner"
+                >
+                  <FolderPlus className="w-4 h-4" />
+                </button>
+             </div>
+            
+            <div className="space-y-1">
+              {folders.map((folder) => {
+                const isActive = selectedFolder?.id === folder.id;
+                return (
+                  <div 
+                    key={folder.id}
+                    className={`group flex items-center justify-between px-3 py-2 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-gray-100 text-gray-900' 
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <button
                         onClick={() => setSelectedFolder(folder)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition ${
-                          isSelected
-                            ? 'bg-rose-50 text-rose-600 font-medium'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {folder.name}
-                      </button>
-                    );
-                  })}
-                  {folders.length === 0 && (
-                    <p className="text-sm text-gray-500 px-3 py-2">
-                      Keine Ordner vorhanden
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
+                        className="flex items-center gap-2 flex-1 text-left truncate"
+                    >
+                        <Folder className={`w-4 h-4 ${isActive ? 'text-rose-500' : 'text-gray-400'}`} />
+                        <span className="truncate">
+                          {folder.name} 
+                          <span className="text-xs text-gray-400 ml-1">
+                            ({folder.media_files?.[0]?.count || 0})
+                          </span>
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => handleDeleteFolder(folder)}
+                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition"
+                        title="Ordner löschen"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
+              {folders.length === 0 && (
+                <p className="text-sm text-gray-400 italic px-2">Keine Ordner angelegt</p>
+              )}
+            </div>
           </div>
+        </div>
 
-          {/* Main Area: File Grid */}
-          <div className="col-span-9">
-            {selectedFolder ? (
-              <MediaGrid
-                files={files}
-                onDelete={handleDeleteFile}
-                category={selectedCategory}
-              />
-            ) : (
-              <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                <p className="text-gray-500">
-                  Wählen Sie einen Ordner aus, um Dateien anzuzeigen
-                </p>
-              </div>
-            )}
-          </div>
+        {/* Main Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {selectedFolder ? (
+            <>
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <Folder className="w-5 h-5 text-gray-400" />
+                        {selectedFolder.name}
+                        <span className="text-sm font-normal text-gray-400 ml-2">
+                            {files.length} Dateien
+                        </span>
+                    </h2>
+                    <div className="flex items-center gap-2">
+                        <button 
+                           onClick={() => handleSelectAll(true)}
+                           className="text-sm text-rose-600 hover:text-rose-700"
+                        >
+                            Alle auswählen
+                        </button>
+                    </div>
+                </div>
+
+                <MediaGrid
+                  files={files}
+                  onDelete={handleDeleteSingle}
+                  category={selectedCategory}
+                  viewMode={viewMode}
+                  selectedIds={selectedIds}
+                  onToggleSelect={handleToggleSelect}
+                  onSelect={(file: MediaFile) => {
+                     if (mode === 'select' && onSelect) {
+                        onSelect([file]);
+                     }
+                  }}
+                />
+            </>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+              <Folder className="w-16 h-16 mb-4 text-gray-200" />
+              <p className="text-lg">Wählen Sie einen Ordner aus</p>
+              <button 
+                onClick={handleAddFolder}
+                className="mt-4 text-rose-500 hover:text-rose-600 font-medium"
+              >
+                + Ersten Ordner erstellen
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Upload Modal */}
       <Modal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
-        title={`Upload → ${selectedCategory?.display_name} / ${selectedFolder?.name}`}
+        title={`Upload → ${selectedCategory?.display_name || ''} / ${selectedFolder?.name || ''}`}
         maxWidth="max-w-3xl"
       >
-        {selectedFolder && selectedCategory && (
+        {selectedFolder && selectedCategory ? (
           <MediaUpload
             folderId={selectedFolder.id}
             category={selectedCategory}
             customerId={customerId}
             onComplete={handleUploadComplete}
           />
+        ) : (
+             <div className="p-4 text-center text-gray-500">
+                Bitte wählen Sie zuerst einen Ordner aus.
+             </div>
         )}
       </Modal>
+      
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={confirmTitle}
+        message={confirmMessage}
+        onConfirm={async () => {
+             await confirmAction();
+        }}
+        onCancel={() => setConfirmOpen(false)}
+        variant="danger"
+        confirmText="Löschen"
+      />
     </div>
   );
 };

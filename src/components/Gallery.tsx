@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface GalleryImage {
   id: string;
@@ -12,14 +13,30 @@ interface GalleryProps {
 }
 
 export default function Gallery({ instanceId = 1 }: GalleryProps) {
+  const { website } = useWebsite();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
-    loadImages();
-  }, [instanceId]);
+    if (website?.gallery?.images && website.gallery.images.length > 0) {
+      const mappedImages = website.gallery.images
+        .slice()
+        .sort((a, b) => a.display_order - b.display_order)
+        .map(img => ({
+          id: img.id,
+          image_url: img.url,
+          caption: img.caption || img.alt_text
+        }));
+      setImages(mappedImages);
+    } else {
+      loadImages();
+    }
+  }, [instanceId, website]);
 
   const loadImages = async () => {
+    // If website data is available, don't fallback to legacy fetch
+    if (website?.gallery?.images && website.gallery.images.length > 0) return;
+
     const { data } = await supabase
       .from('gallery')
       .select('id, image_url, caption')

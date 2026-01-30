@@ -112,3 +112,8 @@ Ich möchte eine Warnmaske implementieren, die die Browser-Alerts ersetzt, auch 
 Alerts in dem Programm
 
 
+Prompt 11:
+Füge in der Ordnerliste zu jedem Eintrag die Anzahl der Files hinzu: 
+in () klammern hinter dem Namen aber kleiner und mit gemuteter schrift. 
+Dann möchte ich gerne, dass die Gallerie-Editor-Komponente keine Upload-Funktion mehr hat, 
+sondern man die Bilder aus der Mediathek aussuchen kann. Gib Vorschläge zur Umsätzung. 

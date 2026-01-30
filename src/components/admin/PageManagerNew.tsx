@@ -15,6 +15,7 @@ export const PageManagerNew: React.FC = () => {
     title: '',
     is_home: false,
     is_published: true,
+    show_in_menu: true,
     display_order: 0,
     meta_description: '',
     blocks: [],
@@ -60,6 +61,7 @@ export const PageManagerNew: React.FC = () => {
           title: editForm.title!,
           is_home: editForm.is_home || false,
           is_published: editForm.is_published !== false,
+          show_in_menu: editForm.show_in_menu !== false,
           meta_description: editForm.meta_description || null,
           seo_title: editForm.seo_title || null,
           display_order: editForm.display_order || pages.length,
@@ -79,6 +81,7 @@ export const PageManagerNew: React.FC = () => {
         title: '',
         is_home: false,
         is_published: true,
+        show_in_menu: true,
         display_order: 0,
         meta_description: '',
         blocks: [],
@@ -96,6 +99,7 @@ export const PageManagerNew: React.FC = () => {
       title: page.title,
       is_home: page.is_home,
       is_published: page.is_published,
+      show_in_menu: page.show_in_menu,
       display_order: page.display_order,
       meta_description: page.meta_description || '',
       blocks: page.blocks,
@@ -104,6 +108,12 @@ export const PageManagerNew: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
+    const page = pages.find(p => p.id === id);
+    if (page?.is_home) {
+      setMessage('Die Hauptseite kann nicht gelöscht werden!');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
     if (!confirm('Seite wirklich löschen?')) return;
     try {
       await deletePage(id);
@@ -138,6 +148,14 @@ export const PageManagerNew: React.FC = () => {
   const togglePublished = async (page: Page) => {
     const updatedPages = pages.map(p =>
       p.id === page.id ? { ...p, is_published: !p.is_published } : p
+    );
+    await updatePages(updatedPages as Page[]);
+  };
+
+  const toggleShowInMenu = async (page: Page) => {
+    if (page.is_home) return; // Homepage always in menu
+    const updatedPages = pages.map(p =>
+      p.id === page.id ? { ...p, show_in_menu: !p.show_in_menu } : p
     );
     await updatePages(updatedPages as Page[]);
   };
@@ -183,6 +201,7 @@ export const PageManagerNew: React.FC = () => {
                 title: '',
                 is_home: false,
                 is_published: true,
+                show_in_menu: true,
                 display_order: regularPages.length,
                 meta_description: '',
                 blocks: [],
@@ -208,86 +227,97 @@ export const PageManagerNew: React.FC = () => {
           {regularPages.length === 0 ? (
             <p className="text-gray-500">Keine Seiten vorhanden</p>
           ) : (
-            <div className="space-y-2">
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '40px 1fr 80px 100px 80px auto',
+                gap: '0',
+                alignItems: 'center'
+              }}
+            >
+              {/* Header Row */}
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}></div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}>Seite</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Im Menü</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Status</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Blöcke</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}>Aktionen</div>
+              
+              {/* Data Rows */}
               {regularPages.map((page, index) => (
-                <div
-                  key={page.id}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100"
-                >
-                  {/* Home Badge */}
-                  {page.is_home && (
-                    <Home size={20} className="text-rose-600" title="Homepage" />
-                  )}
-
-                  {/* Page Info */}
-                  <div className="flex-1">
-                    <div className="font-semibold">{page.title}</div>
-                    <div className="text-sm text-gray-500">/{page.slug}</div>
+                <React.Fragment key={page.id}>
+                  {/* Home Icon */}
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
+                    {page.is_home && <Home size={20} className="text-rose-600" title="Homepage" />}
                   </div>
 
-                  {/* Published Badge */}
-                  <button
-                    onClick={() => togglePublished(page)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
-                      page.is_published
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    <Eye size={16} />
-                    {page.is_published ? 'Veröffentlicht' : 'Entwurf'}
-                  </button>
+                  {/* Page Info */}
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
+                    <div style={{ fontWeight: 600, fontSize: '16px' }}>{page.title}</div>
+                    <div style={{ fontSize: '13px', color: '#6b7280' }}>/{page.slug}</div>
+                  </div>
+
+                  {/* Menu Checkbox */}
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={page.show_in_menu || page.is_home}
+                      onChange={() => toggleShowInMenu(page)}
+                      disabled={page.is_home}
+                      style={{ width: '20px', height: '20px', cursor: page.is_home ? 'not-allowed' : 'pointer', accentColor: '#e11d48' }}
+                      title={page.is_home ? 'Homepage ist immer im Menü' : 'Im Menü anzeigen'}
+                    />
+                  </div>
+
+                  {/* Published Status */}
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
+                    <button
+                      onClick={() => togglePublished(page)}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                        padding: '4px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 500,
+                        border: 'none', cursor: 'pointer',
+                        backgroundColor: page.is_published ? '#dcfce7' : '#e5e7eb',
+                        color: page.is_published ? '#166534' : '#4b5563'
+                      }}
+                    >
+                      <Eye size={14} />
+                      {page.is_published ? 'Live' : 'Entwurf'}
+                    </button>
+                  </div>
 
                   {/* Block Count */}
-                  <div className="flex items-center gap-1 text-gray-600">
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', color: '#374151' }}>
                     <Layers size={16} />
-                    <span className="text-sm">{page.blocks?.length || 0} Blöcke</span>
+                    <span style={{ fontWeight: 500 }}>{page.blocks?.length || 0}</span>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => movePageUp(index)}
-                      disabled={index === 0}
-                      className="p-1 text-gray-600 hover:text-gray-900 disabled:opacity-30"
-                    >
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button onClick={() => movePageUp(index)} disabled={index === 0} style={{ padding: '4px', color: index === 0 ? '#d1d5db' : '#4b5563', background: 'none', border: 'none', cursor: index === 0 ? 'default' : 'pointer' }} title="Nach oben">
                       <ChevronUp size={20} />
                     </button>
-                    <button
-                      onClick={() => movePageDown(index)}
-                      disabled={index === regularPages.length - 1}
-                      className="p-1 text-gray-600 hover:text-gray-900 disabled:opacity-30"
-                    >
+                    <button onClick={() => movePageDown(index)} disabled={index === regularPages.length - 1} style={{ padding: '4px', color: index === regularPages.length - 1 ? '#d1d5db' : '#4b5563', background: 'none', border: 'none', cursor: index === regularPages.length - 1 ? 'default' : 'pointer' }} title="Nach unten">
                       <ChevronDown size={20} />
                     </button>
                     {!page.is_home && (
-                      <button
-                        onClick={() => setAsHome(page)}
-                        className="px-3 py-1 text-sm bg-rose-100 text-rose-700 rounded hover:bg-rose-200"
-                      >
+                      <button onClick={() => setAsHome(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#ffe4e6', color: '#be123c', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                         Als Home
                       </button>
                     )}
-                    <button
-                      onClick={() => navigate(`/admin/blocks/${page.id}`)}
-                      className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                    >
+                    <button onClick={() => navigate(`/admin/blocks/${page.id}`)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                       Blöcke
                     </button>
-                    <button
-                      onClick={() => handleEdit(page)}
-                      className="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                    >
+                    <button onClick={() => handleEdit(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#e5e7eb', color: '#374151', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                       Bearbeiten
                     </button>
-                    <button
-                      onClick={() => handleDelete(page.id)}
-                      className="p-1 text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                    {!page.is_home && (
+                      <button onClick={() => handleDelete(page.id)} style={{ padding: '4px', color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }} title="Löschen">
+                        <Trash2 size={20} />
+                      </button>
+                    )}
                   </div>
-                </div>
+                </React.Fragment>
               ))}
             </div>
           )}
@@ -357,14 +387,29 @@ export const PageManagerNew: React.FC = () => {
                 rows={3}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={editForm.is_published !== false}
-                onChange={(e) => setEditForm({ ...editForm, is_published: e.target.checked })}
-                className="rounded"
-              />
-              <label className="text-sm">Veröffentlicht</label>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editForm.is_published !== false}
+                  onChange={(e) => setEditForm({ ...editForm, is_published: e.target.checked })}
+                  className="rounded"
+                />
+                <label className="text-sm">Veröffentlicht</label>
+              </div>
+              {!editForm.is_home ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editForm.show_in_menu !== false}
+                    onChange={(e) => setEditForm({ ...editForm, show_in_menu: e.target.checked })}
+                    className="rounded"
+                  />
+                  <label className="text-sm">Im Menü anzeigen</label>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500 italic">Die Hauptseite wird immer im Menü angezeigt</p>
+              )}
             </div>
             <div className="flex gap-2">
               <button

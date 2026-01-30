@@ -353,6 +353,70 @@ Ordnerstruktur
             /videos
             /docs
 
+---
+
+## 🆕 Zusätzliche Anforderungen (Prompt 10)
+
+### UI-Verbesserungen
+- **Toggle zwischen Grid/Liste-Ansicht**: Umschalten zwischen Kachel-Ansicht und Tabellen-Ansicht
+- **Ordner-Management**: 
+  - Ordner anlegen mit Name-Eingabe
+  - Ordner löschen mit Bestätigung
+  - Ordner umbenennen
+- **Ausschneiden & Einfügen**: Dateien zwischen Ordnern verschieben
+- **Mehrfach-Auswahl**:
+  - Checkbox-Auswahl für mehrere Bilder
+  - Batch-Operationen: Löschen, Verschieben
+  - "Alle auswählen" / "Auswahl aufheben"
+
+### Custom Confirmation Dialog
+- **Warnmaske statt Browser-Alerts**: Eigene Modal-Komponente für alle Bestätigungen
+- **Anwendung auf alle Alerts**: Alle `alert()` und `confirm()` Aufrufe ersetzen
+- **Features**:
+  - Anpassbares Design (Warnung, Fehler, Info)
+  - Primäre/Sekundäre Actions
+  - Keyboard-Support (Enter/Escape)
+  - Optional: "Nicht mehr fragen"-Checkbox
+
+### Implementierung
+```tsx
+// Confirmation Dialog Komponente
+<ConfirmDialog
+  isOpen={showConfirm}
+  title="Ordner löschen?"
+  message="Möchten Sie den Ordner und alle enthaltenen Dateien wirklich löschen?"
+  confirmText="Löschen"
+  cancelText="Abbrechen"
+  variant="danger"
+  onConfirm={handleDelete}
+  onCancel={() => setShowConfirm(false)}
+/>
+```
+
+---
+
+## 📋 Phase 1+ Features (erweitert)
+
+### Must-Have für MVP
+1. ✅ Grid/Liste Toggle
+2. ✅ Ordner erstellen/löschen
+3. ✅ Mehrfach-Auswahl mit Checkboxen
+4. ✅ Ausschneiden/Einfügen Funktion
+5. ✅ Custom Confirmation Dialog
+6. ✅ Upload mit Titel/Alt-Text Eingabe (optional)
+
+### Technische Umsetzung
+- **State Management**: Ausgewählte Dateien in React State
+- **Clipboard**: Zwischenablage für Ausschneiden/Einfügen
+- **Keyboard Shortcuts**: 
+  - `Ctrl+A` - Alle auswählen
+  - `Ctrl+X` - Ausschneiden
+  - `Ctrl+V` - Einfügen
+  - `Delete` - Löschen
+  - `Escape` - Auswahl aufheben
+
+---
+
 
 
 

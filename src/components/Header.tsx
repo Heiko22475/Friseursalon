@@ -28,7 +28,7 @@ export default function Header() {
   }, [location.pathname, website]);
 
   const loadHeaderData = () => {
-    const publishedPages = website?.pages.filter(p => p.is_published) || [];
+    const publishedPages = website?.pages.filter(p => p.is_published && (p.show_in_menu || p.is_home)) || [];
     setIsMultiPage(publishedPages.length > 1);
 
     // If single page, load blocks for scroll navigation
@@ -70,7 +70,7 @@ export default function Header() {
             {isMultiPage ? (
               // Multi-page mode: Router links
               website?.pages
-                .filter(p => p.is_published)
+                .filter(p => p.is_published && (p.show_in_menu || p.is_home))
                 .sort((a, b) => a.display_order - b.display_order)
                 .map((page) => (
                   <Link
@@ -110,7 +110,7 @@ export default function Header() {
             {isMultiPage ? (
               // Multi-page mode: Router links
               website?.pages
-                .filter(p => p.is_published)
+                .filter(p => p.is_published && (p.show_in_menu || p.is_home))
                 .sort((a, b) => a.display_order - b.display_order)
                 .map((page) => (
                   <Link

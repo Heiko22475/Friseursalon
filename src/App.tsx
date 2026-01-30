@@ -22,7 +22,8 @@ import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
 import { PageManager as PageManagerOld } from './components/admin/PageManager';
 import { PageManagerNew as PageManager } from './components/admin/PageManagerNew';
-import { BlockManager } from './components/admin/BlockManager';
+import { BlockManager as BlockManagerOld } from './components/admin/BlockManager';
+import { BlockManagerNew as BlockManager } from './components/admin/BlockManagerNew';
 import { StaticContentEditor as StaticContentEditorOld } from './components/admin/StaticContentEditor';
 import { StaticContentEditorNew as StaticContentEditor } from './components/admin/StaticContentEditorNew';
 import { GridEditor } from './components/admin/GridEditor';
@@ -215,6 +216,14 @@ function AppContent() {
           />
           <Route
             path="/admin/page-builder/:pageId"
+            element={
+              <ProtectedRoute>
+                <BlockManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blocks/:pageId"
             element={
               <ProtectedRoute>
                 <BlockManager />

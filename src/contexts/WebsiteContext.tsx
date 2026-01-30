@@ -32,6 +32,7 @@ export interface Page {
   slug: string;
   is_home: boolean;
   is_published: boolean;
+  show_in_menu: boolean;
   meta_description: string | null;
   seo_title: string | null;
   display_order: number;

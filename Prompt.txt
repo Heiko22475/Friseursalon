@@ -98,12 +98,17 @@ Das mit den Icons kannst du gleich miterledigen.
 Noch Fragen? 
 
 
-Prompt
+Prompt 10 
 
 Information: Ich habe einen Namen für das CMS festgelegt: Es soll BeautifulCMS oder
 kurz nur Beautiful heißen. 
-Ich möchte nun einen Rework machen. 
 
-
+Setze die Punkte hinten an das MEDIATHEK_KONZEPT.md. 
+Ich möchte auf der Mediatheks-Seite ein Togge zwischen Einer Grid/Liste-anzeigen
+Ich möchte Folder anlegen und löschen können. 
+Ich möchte Bilder ausschneiden und einfügen können, also verschieben von Bildern ermöglichen. 
+Ich möchte eine Mehrfach-Auswahl für die Bilder zum Löschen oder verschieben implementieren. 
+Ich möchte eine Warnmaske implementieren, die die Browser-Alerts ersetzt, auch für alle 
+Alerts in dem Programm
 
 

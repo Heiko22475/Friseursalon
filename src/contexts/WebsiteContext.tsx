@@ -1,0 +1,401 @@
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+import { syncGalleryToUserMedia, syncTeamToUserMedia } from '../lib/mediaSync';
+
+// =====================================================
+// TYPES
+// =====================================================
+
+export interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  duration: number;
+  category: string;
+  is_featured: boolean;
+  display_order: number;
+}
+
+export interface Block {
+  id: string;
+  type: string;
+  position: number;
+  config: Record<string, any>;
+  content: Record<string, any>;
+  created_at?: string;
+}
+
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  is_home: boolean;
+  is_published: boolean;
+  meta_description: string | null;
+  seo_title: string | null;
+  display_order: number;
+  blocks: Block[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Contact {
+  phone: string;
+  email: string;
+  street: string;
+  postal_code: string;
+  city: string;
+  country: string;
+  instagram: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
+  google_maps_url: string | null;
+}
+
+export interface BusinessHour {
+  id: string;
+  day_of_week: number;
+  day_name: string;
+  is_open: boolean;
+  open_time: string | null;
+  close_time: string | null;
+  break_start: string | null;
+  break_end: string | null;
+}
+
+export interface Hours {
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+}
+
+export interface Review {
+  id: string;
+  author_name: string;
+  rating: number;
+  review_text: string;
+  review_date: string;
+  is_featured: boolean;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  position: string;
+  bio: string;
+  image_url: string | null;
+  display_order: number;
+}
+
+export interface About {
+  title: string;
+  content: string;
+  team_title: string;
+  team: TeamMember[];
+}
+
+export interface GalleryImage {
+  id: string;
+  url: string;
+  alt_text: string;
+  caption: string | null;
+  display_order: number;
+}
+
+export interface Gallery {
+  images: GalleryImage[];
+}
+
+export interface StaticContent {
+  imprint: string;
+  privacy: string;
+  terms: string;
+}
+
+export interface SiteSettings {
+  header_type: 'simple' | 'centered' | 'split';
+  theme: {
+    primary_color: string;
+    font_family: string;
+  };
+}
+
+export interface Website {
+  site_settings: SiteSettings;
+  pages: Page[];
+  services: Service[];
+  contact: Contact;
+  hours: Hours;
+  business_hours: BusinessHour[];
+  reviews: Review[];
+  about: About;
+  gallery: Gallery;
+  static_content: StaticContent;
+}
+
+export interface WebsiteRecord {
+  id: string;
+  customer_id: string;
+  site_name: string;
+  is_published: boolean;
+  content: Website;
+  created_at: string;
+  updated_at: string;
+}
+
+// =====================================================
+// CONTEXT
+// =====================================================
+
+interface WebsiteContextType {
+  website: Website | null;
+  websiteRecord: WebsiteRecord | null;
+  loading: boolean;
+  error: string | null;
+  customerId: string;
+  
+  // Generic update
+  updateWebsite: (updates: Partial<Website>) => Promise<void>;
+  
+  // Specific updates
+  updateSiteSettings: (settings: Partial<SiteSettings>) => Promise<void>;
+  updatePages: (pages: Page[]) => Promise<void>;
+  updatePage: (pageId: string, updates: Partial<Page>) => Promise<void>;
+  addPage: (page: Omit<Page, 'id'>) => Promise<string>;
+  deletePage: (pageId: string) => Promise<void>;
+  
+  updateServices: (services: Service[]) => Promise<void>;
+  updateService: (serviceId: string, updates: Partial<Service>) => Promise<void>;
+  addService: (service: Omit<Service, 'id'>) => Promise<string>;
+  deleteService: (serviceId: string) => Promise<void>;
+  
+  updateContact: (contact: Partial<Contact>) => Promise<void>;
+  updateHours: (hours: Partial<Hours>) => Promise<void>;
+  updateBusinessHours: (hours: BusinessHour[]) => Promise<void>;
+  updateReviews: (reviews: Review[]) => Promise<void>;
+  updateAbout: (about: About) => Promise<void>;
+  updateGallery: (gallery: Gallery) => Promise<void>;
+  updateStaticContent: (content: Partial<StaticContent>) => Promise<void>;
+  
+  // Reload from DB
+  reload: () => Promise<void>;
+}
+
+const WebsiteContext = createContext<WebsiteContextType | undefined>(undefined);
+
+// =====================================================
+// PROVIDER
+// =====================================================
+
+interface WebsiteProviderProps {
+  customerId: string;
+  children: React.ReactNode;
+}
+
+export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, children }) => {
+  const [websiteRecord, setWebsiteRecord] = useState<WebsiteRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadWebsite = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data, error: fetchError } = await supabase
+        .from('websites')
+        .select('*')
+        .eq('customer_id', customerId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      
+      setWebsiteRecord(data);
+    } catch (err: any) {
+      console.error('Error loading website:', err);
+      setError(err.message || 'Failed to load website');
+    } finally {
+      setLoading(false);
+    }
+  }, [customerId]);
+
+  useEffect(() => {
+    loadWebsite();
+  }, [loadWebsite]);
+
+  // Generic update function
+  const updateWebsite = async (updates: Partial<Website>) => {
+    if (!websiteRecord) return;
+
+    const newContent = { ...websiteRecord.content, ...updates };
+
+    try {
+      const { error: updateError } = await supabase
+        .from('websites')
+        .update({ content: newContent })
+        .eq('customer_id', customerId);
+
+      if (updateError) throw updateError;
+
+      // Optimistic update
+      setWebsiteRecord({ ...websiteRecord, content: newContent });
+    } catch (err: any) {
+      console.error('Error updating website:', err);
+      throw err;
+    }
+  };
+
+  // Specific update functions
+  const updateSiteSettings = async (settings: Partial<SiteSettings>) => {
+    if (!websiteRecord) return;
+    await updateWebsite({
+      site_settings: { ...websiteRecord.content.site_settings, ...settings },
+    });
+  };
+
+  const updatePages = async (pages: Page[]) => {
+    await updateWebsite({ pages });
+  };
+
+  const updatePage = async (pageId: string, updates: Partial<Page>) => {
+    if (!websiteRecord) return;
+    const newPages = websiteRecord.content.pages.map((p) =>
+      p.id === pageId ? { ...p, ...updates } : p
+    );
+    await updatePages(newPages);
+  };
+
+  const addPage = async (page: Omit<Page, 'id'>): Promise<string> => {
+    if (!websiteRecord) throw new Error('No website loaded');
+    const newId = crypto.randomUUID();
+    const newPage: Page = { ...page, id: newId };
+    await updatePages([...websiteRecord.content.pages, newPage]);
+    return newId;
+  };
+
+  const deletePage = async (pageId: string) => {
+    if (!websiteRecord) return;
+    const newPages = websiteRecord.content.pages.filter((p) => p.id !== pageId);
+    await updatePages(newPages);
+  };
+
+  const updateServices = async (services: Service[]) => {
+    await updateWebsite({ services });
+  };
+
+  const updateService = async (serviceId: string, updates: Partial<Service>) => {
+    if (!websiteRecord) return;
+    const newServices = websiteRecord.content.services.map((s) =>
+      s.id === serviceId ? { ...s, ...updates } : s
+    );
+    await updateServices(newServices);
+  };
+
+  const addService = async (service: Omit<Service, 'id'>): Promise<string> => {
+    if (!websiteRecord) throw new Error('No website loaded');
+    const newId = crypto.randomUUID();
+    const newService: Service = { ...service, id: newId };
+    await updateServices([...websiteRecord.content.services, newService]);
+    return newId;
+  };
+
+  const deleteService = async (serviceId: string) => {
+    if (!websiteRecord) return;
+    const newServices = websiteRecord.content.services.filter((s) => s.id !== serviceId);
+    await updateServices(newServices);
+  };
+
+  const updateContact = async (contact: Partial<Contact>) => {
+    if (!websiteRecord) return;
+    await updateWebsite({ 
+      contact: { ...websiteRecord.content.contact, ...contact } 
+    });
+  };
+
+  const updateHours = async (hours: Partial<Hours>) => {
+    if (!websiteRecord) return;
+    await updateWebsite({ 
+      hours: { ...websiteRecord.content.hours, ...hours } 
+    });
+  };
+
+  const updateBusinessHours = async (hours: BusinessHour[]) => {
+    await updateWebsite({ business_hours: hours });
+  };
+
+  const updateReviews = async (reviews: Review[]) => {
+    await updateWebsite({ reviews });
+  };
+
+  const updateAbout = async (about: About) => {
+    await updateWebsite({ about });
+    
+    // Sync team photos to user_media
+    try {
+      await syncTeamToUserMedia(customerId, about.team);
+    } catch (error) {
+      console.error('Failed to sync team photos to user_media:', error);
+    }
+  };
+
+  const updateGallery = async (gallery: Gallery) => {
+    await updateWebsite({ gallery });
+    
+    // Sync gallery images to user_media
+    try {
+      await syncGalleryToUserMedia(customerId, gallery.images);
+    } catch (error) {
+      console.error('Failed to sync gallery to user_media:', error);
+    }
+  };
+
+  const updateStaticContent = async (content: Partial<StaticContent>) => {
+    if (!websiteRecord) return;
+    await updateWebsite({
+      static_content: { ...websiteRecord.content.static_content, ...content },
+    });
+  };
+
+  const value: WebsiteContextType = {
+    website: websiteRecord?.content || null,
+    websiteRecord,
+    loading,
+    error,
+    customerId,
+    updateWebsite,
+    updateSiteSettings,
+    updatePages,
+    updatePage,
+    addPage,
+    deletePage,
+    updateServices,
+    updateService,
+    addService,
+    deleteService,
+    updateContact,
+    updateHours,
+    updateBusinessHours,
+    updateReviews,
+    updateAbout,
+    updateGallery,
+    updateStaticContent,
+    reload: loadWebsite,
+  };
+
+  return <WebsiteContext.Provider value={value}>{children}</WebsiteContext.Provider>;
+};
+
+// =====================================================
+// HOOK
+// =====================================================
+
+export const useWebsite = () => {
+  const context = useContext(WebsiteContext);
+  if (context === undefined) {
+    throw new Error('useWebsite must be used within a WebsiteProvider');
+  }
+  return context;
+};

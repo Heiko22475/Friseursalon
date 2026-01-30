@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 import Header from './Header';
 import Hero from './Hero';
 import Services from './Services';
@@ -15,11 +15,10 @@ import Footer from './Footer';
 
 interface PageBlock {
   id: string;
-  block_type: string;
-  block_instance_id: number;
-  is_enabled: boolean;
-  display_order: number;
+  type: string;
+  position: number;
   config: any;
+  content: any;
 }
 
 interface Page {
@@ -27,64 +26,58 @@ interface Page {
   slug: string;
   title: string;
   meta_description: string | null;
+  blocks: PageBlock[];
 }
 
 export const DynamicPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { website, loading: websiteLoading } = useWebsite();
   const [page, setPage] = useState<Page | null>(null);
-  const [blocks, setBlocks] = useState<PageBlock[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadPage();
-  }, [slug]);
+    if (!websiteLoading && website) {
+      loadPage();
+    }
+  }, [slug, website, websiteLoading]);
 
-  const loadPage = async () => {
+  const loadPage = () => {
     try {
-      // Load page info
-      const { data: pageData, error: pageError } = await supabase
-        .from('pages')
-        .select('*')
-        .eq('slug', slug || 'home')
-        .eq('is_enabled', true)
-        .single();
+      // Find page by slug in JSONB
+      const targetSlug = slug || 'home';
+      const foundPage = website?.pages.find(
+        (p) => p.slug === targetSlug && p.is_published
+      );
 
-      if (pageError) throw pageError;
-      setPage(pageData);
+      if (!foundPage) {
+        setPage(null);
+        setLoading(false);
+        return;
+      }
+
+      setPage(foundPage);
 
       // Update page title and meta
-      if (pageData) {
-        document.title = pageData.title + ' - Friseursalon Sarah Soriano';
-        if (pageData.meta_description) {
-          const metaDesc = document.querySelector('meta[name="description"]');
-          if (metaDesc) {
-            metaDesc.setAttribute('content', pageData.meta_description);
-          }
+      document.title = foundPage.title + ' - Friseursalon Sarah Soriano';
+      if (foundPage.meta_description) {
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+          metaDesc.setAttribute('content', foundPage.meta_description);
         }
       }
 
-      // Load page blocks
-      const { data: blocksData, error: blocksError } = await supabase
-        .from('page_blocks')
-        .select('*')
-        .eq('page_id', pageData.id)
-        .eq('is_enabled', true)
-        .order('display_order', { ascending: true });
-
-      if (blocksError) throw blocksError;
-      setBlocks(blocksData || []);
+      setLoading(false);
     } catch (error) {
       console.error('Error loading page:', error);
-    } finally {
       setLoading(false);
     }
   };
 
   const renderBlock = (block: PageBlock) => {
-    const key = `${block.block_type}-${block.block_instance_id}`;
-    const instanceId = block.block_instance_id;
+    const key = `${block.type}-${block.position}`;
+    const instanceId = block.position;
     
-    switch (block.block_type) {
+    switch (block.type) {
       case 'hero':
         return <div key={key} id="hero"><Hero /></div>;
       case 'services':
@@ -110,7 +103,7 @@ export const DynamicPage: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading || websiteLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
@@ -132,7 +125,9 @@ export const DynamicPage: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      {blocks.map((block) => renderBlock(block))}
+      {page.blocks
+        .sort((a, b) => a.position - b.position)
+        .map((block) => renderBlock(block))}
       <Footer />
     </div>
   );

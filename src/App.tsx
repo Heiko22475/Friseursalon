@@ -1,29 +1,50 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { WebsiteProvider } from './contexts/WebsiteContext';
+import { useCustomerId } from './hooks/useCustomerId';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
 import { AdminDashboard } from './components/AdminDashboard';
 import { GeneralEditor } from './components/admin/GeneralEditor';
-import { SettingsEditor } from './components/admin/SettingsEditor';
-import { ServicesEditor } from './components/admin/ServicesEditor';
-import { ContactEditor } from './components/admin/ContactEditor';
-import { HoursEditor } from './components/admin/HoursEditor';
-import { ReviewsEditor } from './components/admin/ReviewsEditor';
-import { AboutEditor } from './components/admin/AboutEditor';
+import { SettingsEditor as SettingsEditorOld } from './components/admin/SettingsEditor';
+import { SettingsEditorNew as SettingsEditor } from './components/admin/SettingsEditorNew';
+import { ServicesEditor as ServicesEditorOld } from './components/admin/ServicesEditor';
+import { ServicesEditorNew as ServicesEditor } from './components/admin/ServicesEditorNew';
+import { ContactEditor as ContactEditorOld } from './components/admin/ContactEditor';
+import { ContactEditorNew as ContactEditor } from './components/admin/ContactEditorNew';
+import { HoursEditor as HoursEditorOld } from './components/admin/HoursEditor';
+import { HoursEditorNew as HoursEditor } from './components/admin/HoursEditorNew';
+import { ReviewsEditor as ReviewsEditorOld } from './components/admin/ReviewsEditor';
+import { ReviewsEditorNew as ReviewsEditor } from './components/admin/ReviewsEditorNew';
+import { AboutEditor as AboutEditorOld } from './components/admin/AboutEditor';
+import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew';
 import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
-import { PageManager } from './components/admin/PageManager';
+import { PageManager as PageManagerOld } from './components/admin/PageManager';
+import { PageManagerNew as PageManager } from './components/admin/PageManagerNew';
 import { BlockManager } from './components/admin/BlockManager';
-import { StaticContentEditor } from './components/admin/StaticContentEditor';
+import { StaticContentEditor as StaticContentEditorOld } from './components/admin/StaticContentEditor';
+import { StaticContentEditorNew as StaticContentEditor } from './components/admin/StaticContentEditorNew';
 import { GridEditor } from './components/admin/GridEditor';
-import { default as GalleryEditor } from './components/admin/GalleryEditor';
+import { default as GalleryEditorOld } from './components/admin/GalleryEditor';
+import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 
-function App() {
+function AppContent() {
+  const { customerId, loading } = useCustomerId();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      </div>
+    );
+  }
+
   return (
-    <AuthProvider>
+    <WebsiteProvider customerId={customerId}>
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -57,10 +78,26 @@ function App() {
             }
           />
           <Route
+            path="/admin/settings-old"
+            element={
+              <ProtectedRoute>
+                <SettingsEditorOld />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/services"
             element={
               <ProtectedRoute>
                 <ServicesEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/services-old"
+            element={
+              <ProtectedRoute>
+                <ServicesEditorOld />
               </ProtectedRoute>
             }
           />
@@ -73,10 +110,26 @@ function App() {
             }
           />
           <Route
+            path="/admin/contact-old"
+            element={
+              <ProtectedRoute>
+                <ContactEditorOld />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/hours"
             element={
               <ProtectedRoute>
                 <HoursEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/hours-old"
+            element={
+              <ProtectedRoute>
+                <HoursEditorOld />
               </ProtectedRoute>
             }
           />
@@ -89,10 +142,26 @@ function App() {
             }
           />
           <Route
+            path="/admin/reviews-old"
+            element={
+              <ProtectedRoute>
+                <ReviewsEditorOld />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/about"
             element={
               <ProtectedRoute>
                 <AboutEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/about-old"
+            element={
+              <ProtectedRoute>
+                <AboutEditorOld />
               </ProtectedRoute>
             }
           />
@@ -121,10 +190,26 @@ function App() {
             }
           />
           <Route
+            path="/admin/gallery-old"
+            element={
+              <ProtectedRoute>
+                <GalleryEditorOld />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/pages"
             element={
               <ProtectedRoute>
                 <PageManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/pages-old"
+            element={
+              <ProtectedRoute>
+                <PageManagerOld />
               </ProtectedRoute>
             }
           />
@@ -141,6 +226,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <StaticContentEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/static-content-old"
+            element={
+              <ProtectedRoute>
+                <StaticContentEditorOld />
               </ProtectedRoute>
             }
           />
@@ -170,6 +263,14 @@ function App() {
           />
         </Routes>
       </Router>
+    </WebsiteProvider>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 }

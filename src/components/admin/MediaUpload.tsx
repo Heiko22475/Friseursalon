@@ -24,9 +24,10 @@ interface UploadFile {
   id: string;
   title: string;
   altText: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: 'pending' | 'uploading' | 'success' | 'error' | 'duplicate';
   progress: number;
   error?: string;
+  hash?: string;
 }
 
 export const MediaUpload: React.FC<MediaUploadProps> = ({
@@ -116,12 +117,71 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
     }
   };
 
+  // Calculate SHA-256 hash of a file
+  const calculateFileHash = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+  };
+
+  // Check for duplicate files in the same folder
+  const checkForDuplicates = async () => {
+    const updatedFiles = [...files];
+    
+    for (let i = 0; i < updatedFiles.length; i++) {
+      const uploadFile = updatedFiles[i];
+      
+      try {
+        // Calculate hash
+        const hash = await calculateFileHash(uploadFile.file);
+        uploadFile.hash = hash;
+
+        // Check if file with same name AND hash exists in this folder
+        const { data: existingFiles, error } = await supabase
+          .from('media_files')
+          .select('id, original_filename, file_hash')
+          .eq('folder_id', folderId)
+          .eq('original_filename', uploadFile.file.name)
+          .eq('file_hash', hash);
+
+        if (error) throw error;
+
+        if (existingFiles && existingFiles.length > 0) {
+          // Duplicate found
+          uploadFile.status = 'duplicate';
+          uploadFile.error = 'Datei existiert bereits in diesem Ordner';
+        }
+      } catch (error) {
+        console.error('Error checking duplicate:', error);
+      }
+    }
+
+    setFiles(updatedFiles);
+  };
+
   const handleUpload = async () => {
     if (files.length === 0 || isUploading) return;
+
+    // First check for duplicates
+    await checkForDuplicates();
+
+    // Check if there are any non-duplicate files to upload
+    const filesToUpload = files.filter(f => f.status === 'pending');
+    if (filesToUpload.length === 0) {
+      setIsUploading(false);
+      return;
+    }
 
     setIsUploading(true);
 
     for (const uploadFile of files) {
+      // Skip duplicates
+      if (uploadFile.status === 'duplicate') {
+        continue;
+      }
+
       try {
         updateFile(uploadFile.id, { status: 'uploading', progress: 0 });
 
@@ -167,7 +227,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
 
         updateFile(uploadFile.id, { progress: 75 });
 
-        // Insert into database
+        // Insert into database with hash
         const { error: dbError } = await supabase.from('media_files').insert({
           folder_id: folderId,
           category_id: category.id,
@@ -182,6 +242,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
           width,
           height,
           storage_path: storagePath,
+          file_hash: uploadFile.hash, // Store hash for duplicate detection
         });
 
         if (dbError) throw dbError;
@@ -268,6 +329,9 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                       {uploadFile.status === 'error' && (
                         <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
                       )}
+                      {uploadFile.status === 'duplicate' && (
+                        <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                      )}
                       {uploadFile.status === 'uploading' && (
                         <Loader2 className="w-5 h-5 text-rose-500 animate-spin flex-shrink-0" />
                       )}
@@ -276,7 +340,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                       {formatFileSize(uploadFile.file.size)}
                     </p>
                   </div>
-                  {uploadFile.status === 'pending' && (
+                  {(uploadFile.status === 'pending' || uploadFile.status === 'duplicate') && (
                     <button
                       onClick={() => removeFile(uploadFile.id)}
                       className="text-gray-400 hover:text-red-500 transition"
@@ -320,9 +384,15 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                   </div>
                 )}
 
-                {/* Error Message */}
+                {/* Error/Duplicate Message */}
                 {uploadFile.status === 'error' && (
                   <p className="text-sm text-red-600">{uploadFile.error}</p>
+                )}
+                {uploadFile.status === 'duplicate' && (
+                  <div className="text-sm">
+                    <p className="text-orange-600 font-medium">⚠️ Duplikat gefunden</p>
+                    <p className="text-gray-600">Diese Datei existiert bereits in diesem Ordner</p>
+                  </div>
                 )}
               </div>
             ))}
@@ -334,10 +404,11 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
       {files.length > 0 && !isUploading && (
         <button
           onClick={handleUpload}
-          className="w-full bg-rose-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition flex items-center justify-center gap-2"
+          disabled={files.filter(f => f.status === 'pending').length === 0}
+          className="w-full bg-rose-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Upload className="w-5 h-5" />
-          {files.length} {files.length === 1 ? 'Datei' : 'Dateien'} hochladen
+          {files.filter(f => f.status === 'pending').length} {files.filter(f => f.status === 'pending').length === 1 ? 'Datei' : 'Dateien'} hochladen
         </button>
       )}
 

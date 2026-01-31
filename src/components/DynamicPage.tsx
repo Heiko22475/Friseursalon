@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useWebsite } from '../contexts/WebsiteContext';
 import Header from './Header';
 import Hero from './Hero';
+import { HeroV2 } from './blocks/HeroV2';
 import Services from './Services';
 import About from './About';
 import Reviews from './Reviews';
@@ -80,6 +81,8 @@ export const DynamicPage: React.FC = () => {
     switch (block.type) {
       case 'hero':
         return <div key={key} id="hero"><Hero /></div>;
+      case 'hero-v2':
+        return <div key={key} id={`hero-v2-${instanceId}`}><HeroV2 config={block.config} instanceId={instanceId} /></div>;
       case 'services':
         return <div key={key} id="services"><Services instanceId={instanceId} /></div>;
       case 'about':

@@ -188,3 +188,59 @@ Mit der man Logos bearbeiten kann Das soll dann so aussehen dass man Sich ein Bi
 An solchen Logo Entwurf kann man dann eben eine Liste abspeichern und diese Liste kann man pflegen indem man Logos auch löschen kann Und in einer Kleinen anzeigen Kleinanzicht muss dann das Logo sehen sein. 
 Das heißt man hat dazu eine Liste wo das Logo als Miniatur zu sehen ist, und man dieses Logo Löschen oder editieren kann. 
 Schreibe als erstes ein Konzept dazu. 
+
+Prompt 16 
+Ich möchte nun einen neuen Hero-Baustein erzeugen. Der alte soll deprecated werden.
+Der Hero-Baustein benötigt ein flächendeckendes Hintergrundbild (soll also von links nach rechts gehen)
+Man soll das Bild auswählen können. 
+Man soll auf dem Hintergrund Buttons setzen können. 
+
+## Buttongenerator 
+Es soll möglich sein, Buttons zu gestalten. 
+Hierzu benötigen wir einen eigenen Button-Editor, 
+den generieren müssen
+
+## Logos: 
+Es soll möglich sein, ein Logo auszuwählen, zu skalieren und zu positionieren. 
+
+## Schriften
+Es soll analog dem Logo-Generator möglich sein, ein Schriften auf dem Hero zu positionieren. 
+
+## Mobile ansicht. 
+Es solll möglich sein, den Hero auf Tablets und Handy zu gestalten.
+Das heißt, für die Viewports soll die Position und Größe von Logos und Schriften 
+gesetzt werden können. 
+
+Plane zuerst den Hero-Editor und den Baustein. Stelle Rückfragen
+
+1) Es soll ein Overlay möglch sein, die Farbe gestaltet werden können. 
+Die Höhe einstellbar für jeden viewport. 
+Ich möchte die Position des Bilds innerhalb des sichtbaren bereichs 
+einstellen können. 
+2) Alle Einstellungen möglich. Farben aus dem Theming editor. Buttons unbegrenzt. 
+3) Wir probieren das erstmal mit Auswahl von positionen. 
+Schriften und Buttons können aber untendrunter gesetzt werden können. 
+(Auswahl), je nach viewport. 
+4) Es sollte das gleiche HIntergrundbild sein, innerhalb des sichtbaren bereichs 
+positionierbar. 
+5: Speichern als Block, mit Unterstrukturen. Natürlich alles im JSON. 
+Pro Viewport separate Funktionen für jedes Element. 
+6: 
+Wir probieren es erstmal ohne visuellen Editor, mit Positionsangaben. 
+Es sollten zahlreiche Positionen definiert werden können. 
+Positionn möglichst responsive. 
+Viewports innerhalb des Editors umschaltbar. 
+Live-Vorschau togglebar. 
+
+7: Mehrere Abstufungen, aber responsive. 
+8) Texte und Buttons sollten unabhängig voneinanger gesetzt werden können. 
+9) yes, all possible. 
+10) Buttons configurable via theme colors. 
+11) Zunächst keine Textschatten. Zeilenumbruch möglich. 
+12) Viewport-Vererbung soll möglich sein.
+13) Elemente ausblendbar, aber auch ggf. unterhalb des Bildes anzeigbar (mobil). 
+14) ok. 
+15) separater Bereich, aber die Bildbereich per Höhe veränderbar. 
+16) Ich möchte die Reihenfolge in den Viewports festlegen können. 
+
+

@@ -32,6 +32,7 @@ import { GridEditor } from './components/admin/GridEditor';
 import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
+import { HeroV2Editor } from './components/admin/HeroV2Editor';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
 import { DynamicPage } from './components/DynamicPage';
@@ -328,6 +329,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <LogoEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/hero-v2/:pageId/:blockId"
+            element={
+              <ProtectedRoute>
+                <HeroV2Editor />
               </ProtectedRoute>
             }
           />

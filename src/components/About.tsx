@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Award, Heart, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface AboutData {
   title: string;
@@ -9,6 +10,7 @@ interface AboutData {
 }
 
 export default function About() {
+  const { website } = useWebsite();
   const [data, setData] = useState<AboutData>({
     title: 'Friseursalon Sarah Soriano',
     description: '',
@@ -16,10 +18,20 @@ export default function About() {
   });
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (website?.about) {
+      setData({
+        title: website.about.title,
+        description: website.about.content, // Maps 'content' to 'description'
+        highlight: '' // 'highlight' specific field seems missing in new context, user may need to add it or use default
+      });
+    } else {
+      loadData();
+    }
+  }, [website]);
 
   const loadData = async () => {
+    if (website?.about) return;
+    /*
     const { data: result } = await supabase
       .from('about')
       .select('title, description, highlight')
@@ -27,6 +39,7 @@ export default function About() {
       .single();
 
     if (result) setData(result);
+    */
   };
 
   return (

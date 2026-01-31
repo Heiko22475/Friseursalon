@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface Review {
   name: string;
@@ -13,14 +14,27 @@ interface ReviewsProps {
 }
 
 export default function Reviews({ instanceId = 1 }: ReviewsProps) {
+  const { website } = useWebsite();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [mainReview, setMainReview] = useState<Review | null>(null);
 
   useEffect(() => {
-    loadReviews();
-  }, [instanceId]);
+    if (website?.reviews && website.reviews.length > 0) {
+      const mappedReviews = website.reviews.map(r => ({
+        name: r.author_name,
+        rating: r.rating,
+        text: r.review_text
+      }));
+      setMainReview(mappedReviews[0]);
+      setReviews(mappedReviews.slice(1));
+    } else {
+      loadReviews();
+    }
+  }, [instanceId, website]);
 
   const loadReviews = async () => {
+    if (website?.reviews && website.reviews.length > 0) return;
+    /*
     const { data } = await supabase
       .from('reviews')
       .select('name, rating, text')
@@ -31,6 +45,7 @@ export default function Reviews({ instanceId = 1 }: ReviewsProps) {
       setMainReview(data[0]);
       setReviews(data.slice(1));
     }
+    */
   };
 
   const averageRating = reviews.length > 0

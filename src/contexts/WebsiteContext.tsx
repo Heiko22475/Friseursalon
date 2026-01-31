@@ -135,6 +135,15 @@ export interface Website {
   about: About;
   gallery: Gallery;
   static_content: StaticContent;
+  general: GeneralInfo;
+}
+
+export interface GeneralInfo {
+  name: string;
+  full_name: string;
+  tagline: string;
+  motto: string;
+  description: string;
 }
 
 export interface WebsiteRecord {
@@ -180,6 +189,7 @@ interface WebsiteContextType {
   updateAbout: (about: About) => Promise<void>;
   updateGallery: (gallery: Gallery) => Promise<void>;
   updateStaticContent: (content: Partial<StaticContent>) => Promise<void>;
+  updateGeneralInfo: (info: GeneralInfo, siteName?: string) => Promise<void>;
   
   // Reload from DB
   reload: () => Promise<void>;
@@ -360,6 +370,38 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
     });
   };
 
+  const updateGeneralInfo = async (info: GeneralInfo, siteName?: string) => {
+    if (!websiteRecord) return;
+    
+    const newContent = { ...websiteRecord.content, general: info };
+    const updates: any = {
+      content: newContent
+    };
+    
+    if (siteName) {
+      updates.site_name = siteName;
+    }
+
+    try {
+      const { error: updateError } = await supabase
+        .from('websites')
+        .update(updates)
+        .eq('customer_id', customerId);
+
+      if (updateError) throw updateError;
+
+      // Optimistic update
+      setWebsiteRecord({ 
+        ...websiteRecord, 
+        content: newContent,
+        site_name: siteName || websiteRecord.site_name
+      });
+    } catch (err: any) {
+      console.error('Error updating general info:', err);
+      throw err;
+    }
+  };
+
   const value: WebsiteContextType = {
     website: websiteRecord?.content || null,
     websiteRecord,
@@ -383,6 +425,7 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
     updateAbout,
     updateGallery,
     updateStaticContent,
+    updateGeneralInfo,
     reload: loadWebsite,
   };
 

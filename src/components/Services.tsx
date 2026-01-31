@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { Scissors } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface Service {
   title: string;
@@ -15,6 +16,8 @@ interface Service {
   icon_bg_shape: 'rounded' | 'circle';
   icon_bg_padding: number;
   text_align: 'left' | 'center' | 'right';
+  price?: string;
+  duration?: number;
 }
 
 interface ServicesProps {
@@ -22,13 +25,33 @@ interface ServicesProps {
 }
 
 export default function Services({ instanceId = 1 }: ServicesProps) {
+  const { website } = useWebsite();
   const [services, setServices] = useState<Service[]>([]);
   const [sectionContent, setSectionContent] = useState({ title: 'Our Services', subtitle: 'Premium hair care services delivered by experienced professionals' });
 
   useEffect(() => {
-    loadServices();
+    if (website?.services && website.services.length > 0) {
+      const mappedServices = website.services.map(s => ({
+        title: s.name,
+        description: s.description,
+        price: s.price,
+        duration: s.duration,
+        icon: 'Scissors',
+        icon_color: '#000000',
+        icon_enabled: true,
+        icon_size: 24,
+        icon_bg_enabled: false,
+        icon_bg_color: '#ffffff',
+        icon_bg_shape: 'rounded' as const,
+        icon_bg_padding: 8,
+        text_align: 'left' as const
+      }));
+      setServices(mappedServices);
+    } else {
+      loadServices();
+    }
     loadSectionContent();
-  }, [instanceId]);
+  }, [instanceId, website]);
 
   const loadSectionContent = async () => {
     const { data } = await supabase
@@ -44,6 +67,8 @@ export default function Services({ instanceId = 1 }: ServicesProps) {
   };
 
   const loadServices = async () => {
+    if (website?.services && website.services.length > 0) return;
+
     const { data } = await supabase
       .from('services')
       .select('title, description, icon, icon_color, icon_enabled, icon_size, icon_bg_enabled, icon_bg_color, icon_bg_shape, icon_bg_padding, text_align')

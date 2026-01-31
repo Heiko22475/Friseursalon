@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface ContactData {
   street: string;
@@ -15,14 +16,55 @@ interface Hour {
 }
 
 export default function Contact() {
+  const { website } = useWebsite();
   const [contact, setContact] = useState<ContactData | null>(null);
   const [hours, setHours] = useState<Hour[]>([]);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (website?.contact) {
+        setContact({
+            street: website.contact.street,
+            city: `${website.contact.postal_code} ${website.contact.city}`,
+            phone: website.contact.phone,
+            email: website.contact.email
+        });
+    }
+
+    if (website?.hours) {
+        // Map simplified dictionary to array for now, or adapt component
+        // The old component expects array {day, hours}
+        // The new context uses website.hours { tuesday: '...', ... } AND website.business_hours array
+        // Prefer website.business_hours if available as it is more structured
+        if (website.business_hours && website.business_hours.length > 0) {
+             const mappedHours = website.business_hours
+                .filter(h => h.is_open)
+                .map(h => ({
+                    day: h.day_name,
+                    hours: `${h.open_time} - ${h.close_time}`
+                }));
+             setHours(mappedHours);
+        } else {
+             // Fallback to simple object mapping if business_hours not populated
+            const h = website.hours;
+            const simpleHours = [
+                { day: 'Dienstag', hours: h.tuesday },
+                { day: 'Mittwoch', hours: h.wednesday },
+                { day: 'Donnerstag', hours: h.thursday },
+                { day: 'Freitag', hours: h.friday },
+                { day: 'Samstag', hours: h.saturday },
+            ].filter(d => d.hours);
+            setHours(simpleHours);
+        }
+    }
+
+    if (!website?.contact && !website?.hours) {
+        loadData();
+    }
+  }, [website]);
 
   const loadData = async () => {
+    if (website?.contact) return;
+    /*
     const [contactRes, hoursRes] = await Promise.all([
       supabase.from('contact').select('street, city, phone, email').single(),
       supabase.from('hours').select('day, hours').order('display_order')
@@ -30,6 +72,7 @@ export default function Contact() {
 
     if (contactRes.data) setContact(contactRes.data);
     if (hoursRes.data) setHours(hoursRes.data);
+    */
   };
 
   return (

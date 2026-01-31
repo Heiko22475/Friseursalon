@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Facebook, Instagram } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useWebsite } from '../contexts/WebsiteContext';
 
 interface GeneralData {
   name: string;
@@ -13,14 +14,30 @@ interface ContactData {
 }
 
 export default function Footer() {
+  const { website, websiteRecord } = useWebsite();
   const [general, setGeneral] = useState<GeneralData | null>(null);
   const [contact, setContact] = useState<ContactData | null>(null);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (website || websiteRecord) {
+        setGeneral({
+            name: websiteRecord?.site_name || 'Salon',
+            tagline: website?.general?.tagline || ''
+        });
+        if (website.contact) {
+            setContact({
+                instagram: website.contact.instagram || '',
+                instagram_url: website.contact.instagram_url || ''
+            });
+        }
+    } else {
+        loadData();
+    }
+  }, [website]);
 
   const loadData = async () => {
+    if (website) return;
+    /*
     const [generalRes, contactRes] = await Promise.all([
       supabase.from('general').select('name, tagline').single(),
       supabase.from('contact').select('instagram, instagram_url').single()
@@ -28,6 +45,7 @@ export default function Footer() {
 
     if (generalRes.data) setGeneral(generalRes.data);
     if (contactRes.data) setContact(contactRes.data);
+    */
   };
 
   return (

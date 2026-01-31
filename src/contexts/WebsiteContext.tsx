@@ -127,7 +127,7 @@ export interface LogoText {
   y: number;
   fontFamily: string;
   fontSize: number;
-  fontWeight: 'normal' | 'bold';
+  fontWeight: '300' | '400' | '500' | '600' | '700' | '800';
   color: string;
   letterSpacing?: number;
 }

@@ -22,7 +22,8 @@ Dashboard: https://supabase.com/dashboard/project/bcboebhicfsscxrqumyk
 
 
 
-
+## Ressourcen für images: 
+https://de.freepik.com/vektoren-kostenlos/frau-frisur-design_1068949.htm#fromView=search&page=1&position=1&uuid=32c7ebeb-1544-4bd9-b103-e171bfb92b0e&query=damenfrisure+svg+schnittdateien
 
 
 ## 📋 Voraussetzungen

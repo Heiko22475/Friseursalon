@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Database, Layout, Palette, Settings, FolderOpen } from 'lucide-react';
+import { LogOut, Database, Layout, Palette, Settings, FolderOpen, Sparkles } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -17,6 +17,7 @@ export const AdminDashboard: React.FC = () => {
   const sections = [
     { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
     { id: 'media', name: 'Mediathek', icon: FolderOpen, path: '/admin/media', enabled: true, featured: false },
+    { id: 'logos', name: 'Logo-Designer', icon: Sparkles, path: '/admin/logos', enabled: true, featured: false },
     { id: 'settings', name: 'Website-Einstellungen', icon: Settings, path: '/admin/settings', enabled: true, featured: false },
     { id: 'theme', name: 'Theme Editor', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
     { id: 'export', name: 'Daten Export/Import', icon: Database, path: '/admin/export', enabled: true },

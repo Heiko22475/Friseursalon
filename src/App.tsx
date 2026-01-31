@@ -31,6 +31,7 @@ import { GridEditor } from './components/admin/GridEditor';
 // import { default as GalleryEditorOld } from './components/admin/GalleryEditor';
 import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
+import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
 import { DynamicPage } from './components/DynamicPage';
@@ -311,6 +312,22 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <MediaLibrary />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/logos"
+            element={
+              <ProtectedRoute>
+                <LogoList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/logos/:id"
+            element={
+              <ProtectedRoute>
+                <LogoEditor />
               </ProtectedRoute>
             }
           />

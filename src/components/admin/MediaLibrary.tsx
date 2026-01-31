@@ -32,7 +32,7 @@ interface MediaFolder {
   media_files?: { count: number }[];
 }
 
-interface MediaFile {
+export interface MediaFile {
   id: string;
   folder_id: string;
   category_id: string;

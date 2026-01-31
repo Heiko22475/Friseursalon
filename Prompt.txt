@@ -244,3 +244,92 @@ Live-Vorschau togglebar.
 16) Ich möchte die Reihenfolge in den Viewports festlegen können. 
 
 
+CMS Features
+1) Der Fokus soll später auch auf andere Bereiche ausgewählt werden können 
+aber ähnlich gestaltet werden. 
+Die Benutzer sind nicht technik-affin, aber wir werden die Webseite erst einmal 
+für die Webseite bauen. Hinterher sollten die Benutzer aber verstehen, 
+wie sie das CMS bedienen können. 
+Ich benötige ein ausgeklügeltes Hilfe-System für jede Funktionalität. 
+Zum Beispiel möchte ich die Auswahl der Bausteine visualisieren, das heißt 
+ein Bild für jeden Baustein zur Verfügung stellen. 
+Ich möchte ggf. das CMS-System auch verkaufen können. Ich habe bereits eine 
+Web-Domain dafür. 
+2) Erst mal keine Buchungs-Funktion aber ein Kontakt-Formular. 
+3) Keine solchen Funktionen. 
+4) Content: Ich möchte die Möglichkeit geben, eine Notiz zu erstellen, 
+zum Beispiel eine Popup-Notiz mit Freitext (Überschriften etc). 
+Zum Beispiel wenn man aus Krankheitsgründen das Geschäft schließen muss. 
+5) Wir benötigen SEO-Tools, gut dokumentiert und mit verständlichem Hilfetext, 
+so dass auch Profis wissen, wie sie das SEO einrichten. 
+Das SEO soll gut funktionieren, so dass die Seite im Internet gefunden wird. 
+6) Es soll Symbole für z.B. Facebook instagramm geben. Sie sollen im Header, Footer und 
+Content-Bereich eingesetzt werden könnnen. 
+7) Call-to-Action haben wir ja schon im Header. A propros Header: hier soll es 
+auch mehrere Varianten geben, ebenso Footer. Gehen wir in der Blocklist von oben nach  unten, 
+aber Header und Footer auch mit ziemlich hoher priorität, 
+8) Ein Block könnte ähnlich wie der Hero ausgestattet sein, so dass das image auch
+nicht über die Gesamtfläche geht. Bei genauerer Überlegung könnte das auch der 
+Hero-Editor sein, der erweitert wird. 
+Keine Templates, Versionierung erst einmal nicht vorsehen, dazu haben wir 
+ex/imports. 
+kein a/b-Testing. 
+9) Zunächst kein Rollen-System. Ich als Superadmin möchte eine Möglichkeit haben, 
+eine Zip-Datei mit allen Zip-Exporten aller Kundenwebsites Downzuloaden 
+10) erst einmal kein PWA/App
+
+Außerdem: Ich benötige eine vollständige Consent-Maske. 
+Außerdem möchte ich eine Google-Analytics-Unterstüzung auf der Admin-Seite 
+einsetzen. -> Aktivierung eines Google-Analytics oder Google-Tagmanager-Schnipsels
+mit zugehöriger Eingabe von relevanten Daten (id's). 
+
+Rückfragen 2
+1) A und B, nice to have geführte tour erst einmal keine Videos, aber eine FAQ-Seite
+2) Wenn du Mini-Preview erstellen kannst, dann gerne. Wenn du gute Bilder erstellen kannst
+dann mache dies vorzugsweise. Kategorien für Bausteine wären gut. 
+3) Header: A) B) c) Hamburger auch möglich. d) Auswahl zwischen Sticky und transparent
+e) nice to have. 
+Prio: A) B)
+
+4) A/B/c
+5) Bei Jedem Besuch erscheinen, Mitte der SEite, kein Zeitraum, nur eine Ankündigung
+6) Alle Kategorien, generiere Texte, Standard-Banner unten, passende Designs togglebar. 
+Sprache Deutsch, Texte editierbar. 
+7) SEO: Die wichtigsten aber auch einfachsten zuerst. Eine Sitemap.xml-Generierung wäre super. 
+Ich kenne mich da nicht so aus. 
+8) Tracking-Code sollte eingebunden werden können. Damit benötigen Wir
+auch keine Eingabe für Id's und ähnliches. Ein Analytics-Dashboard: 
+hier haben wir das Problem, dass man nicht weiß, woher der Aufruf kommmt (Benutzer selbst oder Kunden des Benutzers, oder geht das?)
+9) Ja, unterstütze wenn möclich alle, aber nur LInks unterstützen. 
+10) Auf der Webseite erst einmal ein "normales" Kontaktformular mit den üblichen FEldern. 
+Aber es sollte für onboarding-Kunden auch einen ganz speziellen Bereich geben, 
+über den sie Bilder und Texte heraufladen können. 
+Nachrichten sollen per email und per Admin-Inbox versendet werden können. 
+Spamschutz: Der Nutzer soll nichts mitbekommen - Honeypot? 
+
+
+11) Alle bis auf D)
+12) Alle Card-Typen
+13) erst einmal manuell, ist es möglich, es täglich beispielsweise in der Google cloud zu speichern - wenn ja, dann setz das um. 
+
+Zusätzlich: Die Hauptseite muss barrierefrei sein!
+
+3. Feedback
+
+Onboarding-Kunden: Kunden des CMS, Website-Köufer
+Anmeldung zwanglos per Kundennummer. 
+Verschiedene Text-Kategorien, Upload Bilder und Logo getrennt
+
+2) SMTP (für erfahrene Benutzer. E-Mail-Adresse konfigurierbar - Datenbank-Tabelle "website")
+
+3) erst einmal keine Admin-Box
+
+4) AA als Barrierefreiheit
+
+5) Ich habe ein Google Cloud konto - Bitte dokumentiere, wie ich das einrichte. 
+
+6) FAQ-Bereich im Admin-Bereich, pflegbar im Super-Admin-Bereich (Datenbank-Tabelle). Schreibe zahlreiche Texte dafür, auch mit Suche. 
+FAQ-Bereich auch als Baustein, ohne Suche. Speicherung im JSON. 
+
+
+

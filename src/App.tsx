@@ -33,6 +33,9 @@ import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEdi
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
 import { HeroV2Editor } from './components/admin/HeroV2Editor';
+import { CardTeamEditorPage } from './components/admin/CardTeamEditorPage';
+import { CardServiceEditorPage } from './components/admin/CardServiceEditorPage';
+import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEditorPage';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
 import { DynamicPage } from './components/DynamicPage';
@@ -337,6 +340,30 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <HeroV2Editor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/card-team/:pageId/:blockId"
+            element={
+              <ProtectedRoute>
+                <CardTeamEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/card-service/:pageId/:blockId"
+            element={
+              <ProtectedRoute>
+                <CardServiceEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/card-testimonial/:pageId/:blockId"
+            element={
+              <ProtectedRoute>
+                <CardTestimonialEditorPage />
               </ProtectedRoute>
             }
           />

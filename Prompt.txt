@@ -179,3 +179,12 @@ When you export a user, take the images/documents/videos from the json.
 Also, when you import a user, write the medias to the database, but just as an 
 info. The database has to be consistent to the json files, but most important is 
 the data in the json. 
+
+
+Prompt 15: 
+Die User sollen sich logos erstellen können. 
+Dazu benötigen sie Im Admin Bereich ein Button wo man eine Seite aufrufen kann
+Mit der man Logos bearbeiten kann Das soll dann so aussehen dass man Sich ein Bild aus der Mediathek Auswählt Und Beim ein oder 2 Schriftzüge dranhängen kann Es muss möglich sein dass man dann so eine Zeichen oberfläche bekommt Und auf dieser Zeichenoberfläche kann man eben das Bild einfügen Und auch ein bis 2 Texte einfügen Diese Texte sollte man dann unterschiedlicher Schrift Art Sobald das eine Schriftart gibt. Auswählen können ob sie fett ist oder in welcher Farbe.
+An solchen Logo Entwurf kann man dann eben eine Liste abspeichern und diese Liste kann man pflegen indem man Logos auch löschen kann Und in einer Kleinen anzeigen Kleinanzicht muss dann das Logo sehen sein. 
+Das heißt man hat dazu eine Liste wo das Logo als Miniatur zu sehen ist, und man dieses Logo Löschen oder editieren kann. 
+Schreibe als erstes ein Konzept dazu. 

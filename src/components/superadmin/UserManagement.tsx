@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Trash2, Download, Upload, Plus, ArrowLeft } from 'lucide-react';
+import { Trash2, Download, Upload, Plus, ArrowLeft, Edit2 } from 'lucide-react';
 import { createDefaultWebsiteContent } from '../../lib/defaultTemplate';
 import JSZip from 'jszip';
 import { Modal } from '../admin/Modal';
@@ -10,6 +10,7 @@ interface WebsiteRecord {
   id: string; // UUID
   customer_id: string; // 6-digit ID
   site_name: string;
+  domain_name?: string | null;
   is_published: boolean;
   created_at: string;
   content: any; // The big JSON
@@ -25,6 +26,7 @@ export const UserManagement: React.FC = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newCustomerId, setNewCustomerId] = useState('');
   const [newSiteName, setNewSiteName] = useState('');
+  const [newDomainName, setNewDomainName] = useState('');
   const [creating, setCreating] = useState(false);
 
   // Restore State
@@ -36,6 +38,13 @@ export const UserManagement: React.FC = () => {
 
   // Localhost selection
   const [localhostCustomerId, setLocalhostCustomerId] = useState<string | null>(null);
+
+  // Edit User State
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<WebsiteRecord | null>(null);
+  const [editSiteName, setEditSiteName] = useState('');
+  const [editDomainName, setEditDomainName] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -98,6 +107,7 @@ export const UserManagement: React.FC = () => {
   const openCreateModal = () => {
     setNewCustomerId(generateRandomId());
     setNewSiteName('');
+    setNewDomainName('');
     setIsCreateOpen(true);
   };
 
@@ -114,6 +124,7 @@ export const UserManagement: React.FC = () => {
       const { error } = await supabase.from('websites').insert({
         customer_id: newCustomerId,
         site_name: newSiteName,
+        domain_name: newDomainName || null,
         content: content,
         is_published: false
       });
@@ -128,6 +139,39 @@ export const UserManagement: React.FC = () => {
       alert('Fehler beim Erstellen: ' + error.message);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const openEditModal = (user: WebsiteRecord) => {
+    setEditingUser(user);
+    setEditSiteName(user.site_name);
+    setEditDomainName(user.domain_name || '');
+    setIsEditOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingUser) return;
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('websites')
+        .update({
+          site_name: editSiteName,
+          domain_name: editDomainName || null
+        })
+        .eq('id', editingUser.id);
+
+      if (error) throw error;
+
+      setIsEditOpen(false);
+      setEditingUser(null);
+      loadUsers();
+    } catch (error: any) {
+      console.error('Error updating user:', error);
+      alert('Fehler beim Speichern: ' + error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -164,6 +208,7 @@ export const UserManagement: React.FC = () => {
       zip.file("site_info.json", JSON.stringify({
         customer_id: user.customer_id,
         site_name: user.site_name,
+        domain_name: user.domain_name || null,
         created_at: user.created_at
       }, null, 2));
 
@@ -351,7 +396,13 @@ export const UserManagement: React.FC = () => {
       
       const websiteContent = JSON.parse(websiteJsonString);
 
-      // 2. Update Website Record
+      // 2. Read site_info for domain_name
+      let siteInfo: any = null;
+      if (unzipped.file("site_info.json")) {
+        siteInfo = JSON.parse(await unzipped.file("site_info.json")!.async("string"));
+      }
+
+      // 3. Update Website Record
       setRestoreStatus('Aktualisiere Datenbank...');
       
       // Check if user exists, if not create, if yes update
@@ -364,19 +415,24 @@ export const UserManagement: React.FC = () => {
       if (existingUser) {
         await supabase
           .from('websites')
-          .update({ content: websiteContent })
+          .update({ 
+            content: websiteContent,
+            site_name: siteInfo?.site_name || existingUser.site_name,
+            domain_name: siteInfo?.domain_name || existingUser.domain_name
+          })
           .eq('customer_id', restoreCustomerId);
       } else {
          // Create new if strictly restoring to new ID
          await supabase.from('websites').insert({
             customer_id: restoreCustomerId,
-            site_name: websiteContent.general?.name || 'Restored Site',
+            site_name: siteInfo?.site_name || websiteContent.general?.name || 'Restored Site',
+            domain_name: siteInfo?.domain_name || null,
             content: websiteContent,
             is_published: false
          });
       }
 
-      // 3. Restore Images from ZIP and upload to storage
+      // 4. Restore Images from ZIP and upload to storage
       const imagesFolder = unzipped.folder("images");
       const uploadedFiles: { filename: string, storagePath: string, mimeType: string, size: number }[] = [];
       
@@ -419,23 +475,20 @@ export const UserManagement: React.FC = () => {
         await syncMediaToDatabase(restoreCustomerId, uploadedFiles);
       }
       
-      // 4. URL Fixup in JSON
+      // 5. URL Fixup in JSON
       // If we have old ID:
-      if (unzipped.file("site_info.json")) {
-         const siteInfo = JSON.parse(await unzipped.file("site_info.json")!.async("string"));
-         const oldId = siteInfo.customer_id;
-         if (oldId && oldId !== restoreCustomerId) {
-             setRestoreStatus('Passe Bild-URLs an...');
-             // Naive string replace on stringified JSON
-             const fixedJsonStr = websiteJsonString.replaceAll(`/${oldId}/`, `/${restoreCustomerId}/`);
-             const fixedContent = JSON.parse(fixedJsonStr);
-             
-             // Update DB again
-             await supabase
-                .from('websites')
-                .update({ content: fixedContent })
-                .eq('customer_id', restoreCustomerId);
-         }
+      if (siteInfo?.customer_id && siteInfo.customer_id !== restoreCustomerId) {
+         setRestoreStatus('Passe Bild-URLs an...');
+         // Naive string replace on stringified JSON
+         const fixedJsonStr = websiteJsonString.split(`/${siteInfo.customer_id}/`).join(`/${restoreCustomerId}/`);
+         const fixedContent = JSON.parse(fixedJsonStr);
+         
+         // Update DB again
+         const { error: fixupError } = await supabase
+            .from('websites')
+            .update({ content: fixedContent })
+            .eq('customer_id', restoreCustomerId);
+         if (fixupError) throw fixupError;
       }
 
       setRestoreStatus('Fertig!');
@@ -461,26 +514,46 @@ export const UserManagement: React.FC = () => {
              <button onClick={() => navigate('/superadmin')} className="text-gray-500 hover:text-gray-700">
                 <ArrowLeft className="w-5 h-5" />
              </button>
-             <h1 className="text-xl font-bold text-gray-900">User Management</h1>
+             <div>
+               <h1 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                 BeautifulCMS
+               </h1>
+               <p className="text-sm text-gray-500">User Management</p>
+             </div>
           </div>
-          <button
-            onClick={openCreateModal}
-            className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition"
-          >
-            <Plus className="w-4 h-4" />
-            Create User
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                setRestoreCustomerId('');
+                setRestoreFile(null);
+                setRestoreStatus('');
+                setIsRestoreOpen(true);
+              }}
+              className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition"
+            >
+              <Upload className="w-4 h-4" />
+              Import Website
+            </button>
+            <button
+              onClick={openCreateModal}
+              className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition"
+            >
+              <Plus className="w-4 h-4" />
+              Create User
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Localhost</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -499,10 +572,18 @@ export const UserManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.customer_id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.site_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{user.domain_name || '—'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-3">
+                    <button
+                        onClick={() => openEditModal(user)}
+                        title="Bearbeiten"
+                        className="text-violet-600 hover:text-violet-900"
+                    >
+                        <Edit2 className="w-5 h-5" />
+                    </button>
                     <button
                         onClick={() => handleExport(user)}
                         title="Backup/Export"
@@ -556,8 +637,20 @@ export const UserManagement: React.FC = () => {
                     type="text" 
                     value={newSiteName} 
                     onChange={e => setNewSiteName(e.target.value)}
+                    placeholder="z.B. Friseursalon Sarah"
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 />
+            </div>
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Domain Name</label>
+                <input 
+                    type="text" 
+                    value={newDomainName} 
+                    onChange={e => setNewDomainName(e.target.value)}
+                    placeholder="z.B. www.salon-sarah.de"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                />
+                <p className="mt-1 text-xs text-gray-500">Optional - Die Domain unter der die Website erreichbar sein wird</p>
             </div>
             <div className="flex justify-end gap-3 mt-6">
                 <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 border rounded-md">Cancel</button>
@@ -608,6 +701,53 @@ export const UserManagement: React.FC = () => {
                     className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50"
                 >
                     {restoring ? 'Restoring...' : 'Restore Website'}
+                </button>
+            </div>
+        </div>
+      </Modal>
+
+      {/* Edit Website Modal */}
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Website bearbeiten">
+        <div className="space-y-4">
+            {editingUser && (
+              <div className="bg-gray-50 p-3 rounded-md">
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Customer ID:</span> {editingUser.customer_id}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Erstellt:</span> {new Date(editingUser.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Site Name</label>
+                <input 
+                    type="text" 
+                    value={editSiteName} 
+                    onChange={e => setEditSiteName(e.target.value)}
+                    placeholder="z.B. Friseursalon Sarah"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Domain Name</label>
+                <input 
+                    type="text" 
+                    value={editDomainName} 
+                    onChange={e => setEditDomainName(e.target.value)}
+                    placeholder="z.B. www.salon-sarah.de"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                />
+                <p className="mt-1 text-xs text-gray-500">Die Domain unter der die Website erreichbar sein wird</p>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+                <button onClick={() => setIsEditOpen(false)} className="px-4 py-2 border rounded-md">Abbrechen</button>
+                <button 
+                    onClick={handleSaveEdit} 
+                    disabled={saving || !editSiteName}
+                    className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 disabled:opacity-50"
+                >
+                    {saving ? 'Speichern...' : 'Speichern'}
                 </button>
             </div>
         </div>

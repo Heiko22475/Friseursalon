@@ -56,12 +56,14 @@ interface MediaLibraryProps {
   mode?: 'admin' | 'select';
   onSelect?: (files: MediaFile[]) => void;
   onCancel?: () => void;
+  stockOnly?: boolean;
 }
 
 export const MediaLibrary: React.FC<MediaLibraryProps> = ({ 
   mode = 'admin', 
   onSelect,
-  onCancel 
+  onCancel,
+  stockOnly = false
 }) => {
   const navigate = useNavigate();
   const { customerId } = useWebsite();
@@ -283,7 +285,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
       if (error) throw error;
 
-      loadFiles(selectedFolder.id); 
+      loadFiles(selectedFolder.id);
+      if (selectedCategory) loadFolders(selectedCategory.id);
       setClipboard(null);
     } catch (error) {
       console.error('Error moving files:', error);
@@ -346,7 +349,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           {mode === 'admin' ? (
-            <button onClick={() => navigate('/admin')} className="p-2 hover:bg-gray-100 rounded-full">
+            <button onClick={() => navigate(stockOnly ? '/superadmin' : '/admin')} className="p-2 hover:bg-gray-100 rounded-full">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
           ) : (
@@ -355,7 +358,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
             </button>
           )}
           <h1 className="text-xl font-bold text-gray-800">
-            {mode === 'select' ? 'Bild auswählen' : 'Mediathek'}
+            {mode === 'select' ? 'Bild auswählen' : (stockOnly ? 'Stockphotos' : 'Mediathek')}
           </h1>
         </div>
         <div className="flex items-center gap-3">
@@ -442,16 +445,18 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 </div>
             )}
 
-          <button
-            onClick={() => {
-              setUploadKey(k => k + 1);
-              setIsUploadOpen(true);
-            }}
-            className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm"
-          >
-            <Upload className="w-4 h-4" />
-            Upload
-          </button>
+          {(selectedCategory?.name !== 'stockphotos' || stockOnly) && (
+            <button
+              onClick={() => {
+                setUploadKey(k => k + 1);
+                setIsUploadOpen(true);
+              }}
+              className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm"
+            >
+              <Upload className="w-4 h-4" />
+              Upload
+            </button>
+          )}
         </div>
       </div>
 
@@ -464,7 +469,9 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
               Bereiche
             </h3>
             <div className="space-y-1">
-              {categories.map((cat) => {
+              {categories
+                .filter(cat => stockOnly ? cat.name === 'stockphotos' : true)
+                .map((cat) => {
                 const isActive = selectedCategory?.id === cat.id;
                 // Icon mapping
                 let Icon = Image;

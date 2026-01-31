@@ -116,6 +116,42 @@ export interface StaticContent {
   terms: string;
 }
 
+// =====================================================
+// LOGO DESIGNER TYPES
+// =====================================================
+
+export interface LogoText {
+  id: string;
+  content: string;
+  x: number;
+  y: number;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: 'normal' | 'bold';
+  color: string;
+  letterSpacing?: number;
+}
+
+export interface LogoDesign {
+  id: string;
+  name: string;
+  createdAt: string;
+  canvas: {
+    width: number;
+    height: number;
+    backgroundColor: string;
+  };
+  image?: {
+    url: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  texts: LogoText[];
+  thumbnail?: string;
+}
+
 export interface SiteSettings {
   header_type: 'simple' | 'centered' | 'split';
   theme: {
@@ -136,6 +172,7 @@ export interface Website {
   gallery: Gallery;
   static_content: StaticContent;
   general: GeneralInfo;
+  logos?: LogoDesign[];
 }
 
 export interface GeneralInfo {
@@ -150,6 +187,7 @@ export interface WebsiteRecord {
   id: string;
   customer_id: string;
   site_name: string;
+  domain_name?: string | null;
   is_published: boolean;
   content: Website;
   created_at: string;
@@ -190,6 +228,12 @@ interface WebsiteContextType {
   updateGallery: (gallery: Gallery) => Promise<void>;
   updateStaticContent: (content: Partial<StaticContent>) => Promise<void>;
   updateGeneralInfo: (info: GeneralInfo, siteName?: string) => Promise<void>;
+  
+  // Logo methods
+  updateLogos: (logos: LogoDesign[]) => Promise<void>;
+  addLogo: (logo: LogoDesign) => Promise<void>;
+  updateLogo: (logoId: string, updates: Partial<LogoDesign>) => Promise<void>;
+  deleteLogo: (logoId: string) => Promise<void>;
   
   // Reload from DB
   reload: () => Promise<void>;
@@ -402,6 +446,35 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
     }
   };
 
+  // =====================================================
+  // LOGO METHODS
+  // =====================================================
+
+  const updateLogos = async (logos: LogoDesign[]) => {
+    await updateWebsite({ logos });
+  };
+
+  const addLogo = async (logo: LogoDesign) => {
+    if (!websiteRecord) return;
+    const currentLogos = websiteRecord.content.logos || [];
+    await updateWebsite({ logos: [...currentLogos, logo] });
+  };
+
+  const updateLogo = async (logoId: string, updates: Partial<LogoDesign>) => {
+    if (!websiteRecord) return;
+    const currentLogos = websiteRecord.content.logos || [];
+    const updatedLogos = currentLogos.map(logo => 
+      logo.id === logoId ? { ...logo, ...updates } : logo
+    );
+    await updateWebsite({ logos: updatedLogos });
+  };
+
+  const deleteLogo = async (logoId: string) => {
+    if (!websiteRecord) return;
+    const currentLogos = websiteRecord.content.logos || [];
+    await updateWebsite({ logos: currentLogos.filter(l => l.id !== logoId) });
+  };
+
   const value: WebsiteContextType = {
     website: websiteRecord?.content || null,
     websiteRecord,
@@ -426,6 +499,10 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
     updateGallery,
     updateStaticContent,
     updateGeneralInfo,
+    updateLogos,
+    addLogo,
+    updateLogo,
+    deleteLogo,
     reload: loadWebsite,
   };
 

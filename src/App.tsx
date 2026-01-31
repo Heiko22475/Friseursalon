@@ -330,6 +330,14 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/superadmin/stockphotos"
+            element={
+              <ProtectedRoute>
+                <MediaLibrary stockOnly={true} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </WebsiteProvider>

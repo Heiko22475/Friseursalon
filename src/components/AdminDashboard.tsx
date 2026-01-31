@@ -1,10 +1,12 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, FileText, Users, Clock, DollarSign, Star, Info, Image, Database, Layout, Layers, Palette, Settings, FolderOpen } from 'lucide-react';
+import { LogOut, Database, Layout, Palette, Settings, FolderOpen } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
+  const { websiteRecord } = useWebsite();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -26,7 +28,19 @@ export const AdminDashboard: React.FC = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">CMS Dashboard</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
+                BeautifulCMS
+              </h1>
+              {websiteRecord && (
+                <span className="text-gray-400 text-lg">
+                  — {websiteRecord.site_name}
+                  {(websiteRecord as any).domain_name && (
+                    <span className="text-gray-300 ml-2">({(websiteRecord as any).domain_name})</span>
+                  )}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-600 mt-1">
               Angemeldet als: {user?.email}
             </p>

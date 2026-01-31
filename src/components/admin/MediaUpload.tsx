@@ -38,6 +38,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
 }) => {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const uploadCountRef = React.useRef({ total: 0, completed: 0 });
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -175,6 +176,10 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
     }
 
     setIsUploading(true);
+    
+    // Count files to upload (exclude duplicates)
+    const toUpload = files.filter(f => f.status !== 'duplicate');
+    uploadCountRef.current = { total: toUpload.length, completed: 0 };
 
     for (const uploadFile of files) {
       // Skip duplicates
@@ -251,26 +256,24 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
           status: 'success',
           progress: 100,
         });
+        uploadCountRef.current.completed++;
       } catch (error: any) {
         console.error('Upload error:', error);
         updateFile(uploadFile.id, {
           status: 'error',
           error: error.message || 'Upload fehlgeschlagen',
         });
+        uploadCountRef.current.completed++;
       }
     }
 
     setIsUploading(false);
 
-    // Check if all successful
-    const allSuccess = files.every(
-      (f) => f.status === 'success' || f.status === 'error'
-    );
-    if (allSuccess) {
-      setTimeout(() => {
-        onComplete();
-      }, 1000);
-    }
+    // All uploads finished - clear list and notify parent
+    setTimeout(() => {
+      setFiles([]);
+      onComplete();
+    }, 1000);
   };
 
   const formatFileSize = (bytes: number): string => {

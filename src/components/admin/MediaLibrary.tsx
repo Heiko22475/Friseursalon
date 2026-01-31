@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useWebsite } from '../../contexts/WebsiteContext';
 import { 
   ArrowLeft, Upload, Image, Video, Palette, FileText, 
   LayoutGrid, List as ListIcon, FolderPlus, Folder, Trash2, 
@@ -63,6 +64,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   onCancel 
 }) => {
   const navigate = useNavigate();
+  const { customerId } = useWebsite();
+  
   const [categories, setCategories] = useState<MediaCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<MediaCategory | null>(null);
   const [folders, setFolders] = useState<MediaFolder[]>([]);
@@ -70,7 +73,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [customerId, setCustomerId] = useState<string>('000000');
+  const [uploadKey, setUploadKey] = useState(0);
   
   // New Features States
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -88,12 +91,12 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   }, []);
 
   useEffect(() => {
-    if (selectedCategory) {
+    if (selectedCategory && customerId) {
       loadFolders(selectedCategory.id);
-      setSelectedFolder(null); // Reset folder seleciton when category changes
+      setSelectedFolder(null); // Reset folder selection when category changes
       setSelectedIds([]); // Reset selection on category change
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, customerId]);
 
   useEffect(() => {
     if (selectedFolder) {
@@ -106,16 +109,6 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
   const loadData = async () => {
     try {
-      // Load customer ID
-      const { data: settings } = await supabase
-        .from('site_settings')
-        .select('customer_id')
-        .single();
-      
-      if (settings?.customer_id) {
-        setCustomerId(settings.customer_id);
-      }
-
       // Load categories
       const { data: cats, error: catsError } = await supabase
         .from('media_categories')
@@ -138,8 +131,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
   const loadFolders = async (categoryId: string) => {
     try {
-      // Use explicit join with alias if needed, or check if relation exists.
-      // Assuming 'media_files' is the relation name derived from table name.
+      // Load folders for this customer OR stock folders (shared)
       const { data, error } = await supabase
         .from('media_folders')
         .select(`
@@ -147,6 +139,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
           media_files:media_files(count)
         `)
         .eq('category_id', categoryId)
+        .or(`customer_id.eq.${customerId},customer_id.eq.stock`)
         .order('display_order'); 
 
       if (error) throw error;
@@ -186,6 +179,10 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
     if (selectedFolder) {
       loadFiles(selectedFolder.id);
     }
+    // Reload folders to update file counts
+    if (selectedCategory) {
+      loadFolders(selectedCategory.id);
+    }
   };
 
   const handleAddFolder = async () => {
@@ -197,8 +194,9 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
     try {
       const newFolder = {
         category_id: selectedCategory.id,
+        customer_id: customerId,
         name: name,
-        path: `/${name}`, 
+        path: `${customerId}/${selectedCategory.name}/${name}`, 
         display_order: folders.length
       };
 
@@ -319,6 +317,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
         if (error) throw error;
 
         if (selectedFolder) loadFiles(selectedFolder.id);
+        if (selectedCategory) loadFolders(selectedCategory.id);
         setSelectedIds([]);
         setConfirmOpen(false);
       } catch (error) {
@@ -444,7 +443,10 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
             )}
 
           <button
-            onClick={() => setIsUploadOpen(true)}
+            onClick={() => {
+              setUploadKey(k => k + 1);
+              setIsUploadOpen(true);
+            }}
             className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm"
           >
             <Upload className="w-4 h-4" />
@@ -601,8 +603,9 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
         title={`Upload → ${selectedCategory?.display_name || ''} / ${selectedFolder?.name || ''}`}
         maxWidth="max-w-3xl"
       >
-        {selectedFolder && selectedCategory ? (
+        {selectedFolder && selectedCategory && isUploadOpen ? (
           <MediaUpload
+            key={`upload-${uploadKey}`}
             folderId={selectedFolder.id}
             category={selectedCategory}
             customerId={customerId}

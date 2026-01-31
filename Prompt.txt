@@ -144,9 +144,38 @@ Ich möchte einen Button, um dann die neue Webseite anzulegen.
 Es wird dann ein neues Template angelegt. Mit der Hauptseite, einem Header und Footer und einem Hero-Block. 
 Außerdem einer Datenschutz- und einer Impressum-Seite. 
 
+
 Prompt 13: 
 Ich möchte die Theme-Vorschläge in der Datenbank bearbeiten können
-Dazu benötige ich 
 Sie bestehen nun nur noch aus drei Grundfarben, von daher hätte ich gerne nur noch 
 3 Farbeinträge in der DB, 2 können gelöscht werden. 
+Die Theme-Einträge, die die Nutzer ausgewählt haben, sollen nicht in der Datenbank, 
+sondern im JSON gespeichert werden. 
 
+# existing theme page (user)
+The admin/theme page does not need the json export function - the jsons of the 
+user should be included in the main Json export file. 
+The "Presets anzeigen" button should show the user defined presets on the top, 
+and then the presets from the database. It should be visible which presets come from the 
+user and which presets from the predefinition in the database. 
+
+# superuser page "theming"
+On tho superuser page i'd like a similar theme editor page (same component?)
+But just for the predefined themes. With the randomizer. I want to add predefined 
+themes manually and delete them. 
+
+Prompt 14: 
+I want to explain what this application is: It is a SaaS-Application 
+for multiple websites, so there are domains that are connected to the applications. 
+E.g. haarfein.de. Each domain should lead to 
+this app in a way that each domain sees the webpage that is configured in the Data.
+Also, each customer has the admin panel to administrate his website (CMS)
+I as the superadmin has the superadmin site. 
+Please advise how we should configure the routing, 
+I want to host the webpage on vercel. 
+
+The media information of the user in the database is for documentation only. 
+When you export a user, take the images/documents/videos from the json. 
+Also, when you import a user, write the medias to the database, but just as an 
+info. The database has to be consistent to the json files, but most important is 
+the data in the json. 

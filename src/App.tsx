@@ -30,8 +30,9 @@ import { StaticContentEditorNew as StaticContentEditor } from './components/admi
 import { GridEditor } from './components/admin/GridEditor';
 // import { default as GalleryEditorOld } from './components/admin/GalleryEditor';
 import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
-import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
+import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
+import { UserManagement } from './components/superadmin/UserManagement';
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 
@@ -44,6 +45,47 @@ function AppContent() {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
+  }
+
+  // Handle Special Routes that don't need a customer context (e.g. SuperAdmin)
+  // Or if no customer is found (404 / Landing Page)
+  if (!customerId) {
+      // Check if trying to access Super Admin
+      if (window.location.pathname.startsWith('/superadmin') || window.location.pathname.startsWith('/login')) {
+         return (
+             <Router>
+                 <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/superadmin"
+                        element={
+                        <ProtectedRoute>
+                            <SuperAdminDashboard />
+                        </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/superadmin/users"
+                        element={
+                        <ProtectedRoute>
+                            <UserManagement />
+                        </ProtectedRoute>
+                        }
+                    />
+                    <Route path="*" element={<Login />} />
+                 </Routes>
+             </Router>
+         )
+      }
+
+      return (
+          <div className="min-h-screen flex items-center justify-center bg-gray-100">
+              <div className="text-center">
+                  <h1 className="text-2xl font-bold text-gray-900">Webseite nicht gefunden</h1>
+                  <p className="text-gray-600 mt-2">Die Domain {window.location.hostname} ist noch nicht konfiguriert.</p>
+              </div>
+          </div>
+      )
   }
 
   return (
@@ -269,6 +311,22 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <MediaLibrary />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin"
+            element={
+              <ProtectedRoute>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/users"
+            element={
+              <ProtectedRoute>
+                <UserManagement />
               </ProtectedRoute>
             }
           />

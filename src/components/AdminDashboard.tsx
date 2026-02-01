@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Database, Layout, Palette, Settings, FolderOpen, Sparkles } from 'lucide-react';
+import { LogOut, Database, Layout, Palette, Settings, FolderOpen, Sparkles, Type } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -20,6 +20,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'logos', name: 'Logo-Designer', icon: Sparkles, path: '/admin/logos', enabled: true, featured: false },
     { id: 'settings', name: 'Website-Einstellungen', icon: Settings, path: '/admin/settings', enabled: true, featured: false },
     { id: 'theme', name: 'Theme Editor', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
+    { id: 'typography', name: 'Typographie', icon: Type, path: '/admin/typography', enabled: true, featured: false },
     { id: 'export', name: 'Daten Export/Import', icon: Database, path: '/admin/export', enabled: true },
   ];
 

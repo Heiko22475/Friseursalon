@@ -36,6 +36,7 @@ interface MediaGridProps {
   selectedIds: string[];
   onToggleSelect: (id: string) => void;
   onSelect?: (file: MediaFile) => void;
+  readOnly?: boolean; // New prop to hide delete buttons
 }
 
 export const MediaGrid: React.FC<MediaGridProps> = ({
@@ -44,7 +45,8 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   viewMode,
   selectedIds,
   onToggleSelect,
-  onSelect
+  onSelect,
+  readOnly = false
 }) => {
   const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null);
 
@@ -181,16 +183,18 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                         >
                           <Download className="w-5 h-5" />
                         </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(file.id, file.storage_path);
-                          }}
-                          className="text-red-400 hover:text-red-900"
-                          title="Löschen"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                        {!readOnly && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(file.id, file.storage_path);
+                            }}
+                            className="text-red-400 hover:text-red-900"
+                            title="Löschen"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -274,16 +278,18 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                             >
                             <Download className="w-5 h-5 text-gray-700" />
                             </button>
-                            <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(file.id, file.storage_path);
-                            }}
-                            className="p-2 bg-white rounded-lg hover:bg-red-50 transition"
-                            title="Löschen"
-                            >
-                            <Trash2 className="w-5 h-5 text-red-500" />
-                            </button>
+                            {!readOnly && (
+                              <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDelete(file.id, file.storage_path);
+                              }}
+                              className="p-2 bg-white rounded-lg hover:bg-red-50 transition"
+                              title="Löschen"
+                              >
+                              <Trash2 className="w-5 h-5 text-red-500" />
+                              </button>
+                            )}
                         </>
                     )}
                   </div>

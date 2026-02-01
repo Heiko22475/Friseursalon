@@ -179,6 +179,7 @@ export interface Website {
   static_content: StaticContent;
   general: GeneralInfo;
   logos?: LogoDesign[];
+  typography?: import('../types/typography').TypographyConfig;
 }
 
 export interface GeneralInfo {

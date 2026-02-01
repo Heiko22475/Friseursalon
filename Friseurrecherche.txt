@@ -1,0 +1,19 @@
+Hier habe ich mal per Google Gemini recherchiert: 
+
+Friseurläden ausfindig machen: 
+Gemini: 
+Ermittle 20 Friseurläden in Frankfurt und Umgebung, die eine gute Google-Bewertung 
+haben, aber kein Website haben und auch keine starke Social-Media Präsenz als
+Webseiten-Ersatz. 
+
+Dokument ist hier gespeichert: 
+
+
+
+
+
+Mit emergent.sh gemachte Website: 
+https://app.emergent.sh/chat
+https://relax-haarstudio.preview.emergentagent.com/
+Hat referenzen auf treatwell. 
+

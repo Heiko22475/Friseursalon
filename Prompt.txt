@@ -342,6 +342,26 @@ Baustein "Über uns"
 Baustein "Öffnungszeiten"
 
 
+Prompt: 
+Stelle sicher, dass beim Löschen eines Benutzers die Medien und Referenzen in der Datenbank ebenfalls gelöscht werden. 
+Stelle sicher, dass, wenn ich als Superadministrator die Stockphotos ändere, diese Stockphotos nicht 
+in den User-Daten von Benutzern landen. 
+Stelle sicher, dass in der Admin-Seite eines Benutzers in der Mediathek unter Stockphotos
+die vom Superadmin definierten Medien angezeigt werden. 
+
+
+Prompt: 
+Mit den Karten bin ich nicht zufrieden. 
+Beispielsweise hatte ich doch mal einen Icon-Selektor, wo ist der hin???
+
+Bitte wieder herstellen. 
+Ich hätte gerne eine Generic Card, mit einer Preview der Karte rechts. 
+Schreibe ein Konzept 
+
+Feedback zu Cards: 
+Die Texteingaben sollen den TipTap-editor 
+
+
 
 
 

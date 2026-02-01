@@ -15,6 +15,7 @@ import { Grid } from '../Grid';
 import { CardTeam } from '../blocks/CardTeam';
 import { CardService } from '../blocks/CardService';
 import { CardTestimonial } from '../blocks/CardTestimonial';
+import { GenericCard } from '../blocks/GenericCard';
 
 interface PageBlock {
   id: string;
@@ -39,6 +40,7 @@ const AVAILABLE_BLOCKS = [
   { block_type: 'card-team', block_name: 'Team-Karten', can_repeat: true },
   { block_type: 'card-service', block_name: 'Service-Karten', can_repeat: true },
   { block_type: 'card-testimonial', block_name: 'Bewertungs-Karten', can_repeat: true },
+  { block_type: 'generic-card', block_name: 'Flexible Karten', can_repeat: true },
 ];
 
 export const BlockManagerNew: React.FC = () => {
@@ -205,6 +207,8 @@ export const BlockManagerNew: React.FC = () => {
         return <CardService config={block.config as any} instanceId={instanceId} />;
       case 'card-testimonial':
         return <CardTestimonial config={block.config as any} instanceId={instanceId} />;
+      case 'generic-card':
+        return <GenericCard config={block.config as any} instanceId={instanceId} />;
       default:
         return <div className="p-8 text-center text-gray-500">Keine Vorschau verfügbar</div>;
     }
@@ -225,6 +229,9 @@ export const BlockManagerNew: React.FC = () => {
     }
     if (block.type === 'card-testimonial') {
       return `/admin/card-testimonial/${pageId}/${block.id}`;
+    }
+    if (block.type === 'generic-card') {
+      return `/admin/generic-card/${pageId}/${block.id}`;
     }
     
     const editorMap: { [key: string]: string } = {

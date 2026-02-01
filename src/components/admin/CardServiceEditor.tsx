@@ -28,6 +28,7 @@ import {
   FONT_WEIGHT_VALUES
 } from '../../types/Cards';
 import { ColorValue } from '../../types/theme';
+import { IconPicker } from './IconPicker';
 
 // ===== SECTION COMPONENT =====
 
@@ -362,12 +363,13 @@ const ServiceItemEditor: React.FC<ServiceItemEditorProps> = ({
               onChange={(title) => update({ title })}
               placeholder="z.B. Herrenschnitt"
             />
-            <TextInput
-              label="Icon (Lucide Name)"
-              value={item.icon || ''}
-              onChange={(icon) => update({ icon })}
-              placeholder="z.B. Scissors"
-            />
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Icon</label>
+              <IconPicker
+                value={item.icon || 'Scissors'}
+                onChange={(icon) => update({ icon })}
+              />
+            </div>
           </div>
 
           <TextInput

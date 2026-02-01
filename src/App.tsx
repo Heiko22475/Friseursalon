@@ -36,10 +36,12 @@ import { HeroEditor } from './components/admin/HeroEditor';
 import { CardTeamEditorPage } from './components/admin/CardTeamEditorPage';
 import { CardServiceEditorPage } from './components/admin/CardServiceEditorPage';
 import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEditorPage';
+import { GenericCardEditorPage } from './components/admin/GenericCardEditorPage';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
+import { TypographyEditor } from './components/admin/TypographyEditor';
 
 function AppContent() {
   const { customerId, loading } = useCustomerId();
@@ -314,6 +316,14 @@ function AppContent() {
             }
           />
           <Route
+            path="/admin/typography"
+            element={
+              <ProtectedRoute>
+                <TypographyEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/media"
             element={
               <ProtectedRoute>
@@ -370,6 +380,14 @@ function AppContent() {
             }
           />
           <Route
+            path="/admin/generic-card/:pageId/:blockId"
+            element={
+              <ProtectedRoute>
+                <GenericCardEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/superadmin"
             element={
               <ProtectedRoute>
@@ -389,7 +407,7 @@ function AppContent() {
             path="/superadmin/stockphotos"
             element={
               <ProtectedRoute>
-                <MediaLibrary stockOnly={true} />
+                <MediaLibrary stockOnly={true} isSuperAdmin={true} />
               </ProtectedRoute>
             }
           />

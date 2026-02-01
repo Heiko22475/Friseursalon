@@ -176,23 +176,80 @@ export const UserManagement: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: string, customerId: string) => {
-    if (!window.confirm(`Möchten Sie den Benutzer ${customerId} wirklich löschen? Dies kann nicht rückgängig gemacht werden.`)) {
+    if (!window.confirm(`Möchten Sie den Benutzer ${customerId} wirklich löschen? Dies kann nicht rückgängig gemacht werden.\n\nAlle zugehörigen Medien und Daten werden ebenfalls gelöscht.`)) {
       return;
     }
 
     try {
-      // 1. Delete website record
+      // 1. Delete all media files from storage for this customer
+      const { data: storageFiles } = await supabase.storage
+        .from('media-customer')
+        .list(customerId, { limit: 1000 });
+      
+      if (storageFiles && storageFiles.length > 0) {
+        // Recursively delete all files in customer folder
+        const deleteStorageRecursively = async (path: string) => {
+          const { data: items } = await supabase.storage
+            .from('media-customer')
+            .list(path, { limit: 1000 });
+          
+          if (items) {
+            for (const item of items) {
+              const itemPath = `${path}/${item.name}`;
+              if (item.id === null) {
+                // It's a folder, recurse
+                await deleteStorageRecursively(itemPath);
+              } else {
+                // It's a file, delete it
+                await supabase.storage.from('media-customer').remove([itemPath]);
+              }
+            }
+          }
+        };
+        
+        await deleteStorageRecursively(customerId);
+        // Finally remove the customer folder itself
+        await supabase.storage.from('media-customer').remove([customerId]);
+      }
+
+      // 2. Delete media_files records for this customer
+      const { data: customerFolders } = await supabase
+        .from('media_folders')
+        .select('id')
+        .eq('customer_id', customerId);
+      
+      if (customerFolders && customerFolders.length > 0) {
+        const folderIds = customerFolders.map(f => f.id);
+        
+        // Delete all files in these folders
+        await supabase
+          .from('media_files')
+          .delete()
+          .in('folder_id', folderIds);
+        
+        // Delete the folders
+        await supabase
+          .from('media_folders')
+          .delete()
+          .eq('customer_id', customerId);
+      }
+
+      // 3. Delete user_media records for this customer
+      await supabase
+        .from('user_media')
+        .delete()
+        .eq('customer_id', customerId);
+
+      // 4. Delete website record
       const { error } = await supabase
         .from('websites')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
-
-      // 2. Cleanup Storage? (Optional but recommended)
-      // This is complex as we need to list all files. Skipping for 'MVP' as prompt says "Delete Page" (website record).
       
       loadUsers();
+      alert(`Benutzer ${customerId} wurde erfolgreich gelöscht.`);
     } catch (error) {
       console.error('Error deleting user:', error);
       alert('Fehler beim Löschen');

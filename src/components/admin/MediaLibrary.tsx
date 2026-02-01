@@ -57,16 +57,23 @@ interface MediaLibraryProps {
   onSelect?: (files: MediaFile[]) => void;
   onCancel?: () => void;
   stockOnly?: boolean;
+  isSuperAdmin?: boolean; // New prop to distinguish superadmin editing stockphotos
+  singleSelect?: boolean; // When true, clicking an image immediately calls onSelect with that image
 }
 
 export const MediaLibrary: React.FC<MediaLibraryProps> = ({ 
   mode = 'admin', 
   onSelect,
   onCancel,
-  stockOnly = false
+  stockOnly = false,
+  isSuperAdmin = false,
+  singleSelect = false
 }) => {
   const navigate = useNavigate();
   const { customerId } = useWebsite();
+  
+  // For stockOnly mode (superadmin editing stockphotos), use 'stock' as customer_id
+  const effectiveCustomerId = (stockOnly && isSuperAdmin) ? 'stock' : customerId;
   
   const [categories, setCategories] = useState<MediaCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<MediaCategory | null>(null);
@@ -120,9 +127,14 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
       if (catsError) throw catsError;
       setCategories(cats || []);
       
-      // Select first category by default
+      // Select category: stockphotos if stockOnly mode, otherwise first category
       if (cats && cats.length > 0) {
-        setSelectedCategory(cats[0]);
+        if (stockOnly) {
+          const stockCategory = cats.find(c => c.name === 'stockphotos');
+          setSelectedCategory(stockCategory || cats[0]);
+        } else {
+          setSelectedCategory(cats[0]);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -133,16 +145,30 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
   const loadFolders = async (categoryId: string) => {
     try {
-      // Load folders for this customer OR stock folders (shared)
-      const { data, error } = await supabase
+      // For stockphotos category, only load 'stock' customer folders
+      // For other categories, load user's folders
+      const isStockCategory = categories.find(c => c.id === categoryId)?.name === 'stockphotos';
+      
+      let query = supabase
         .from('media_folders')
         .select(`
           *,
           media_files:media_files(count)
         `)
-        .eq('category_id', categoryId)
-        .or(`customer_id.eq.${customerId},customer_id.eq.stock`)
-        .order('display_order'); 
+        .eq('category_id', categoryId);
+      
+      if (isStockCategory) {
+        // Stockphotos are always from 'stock' customer
+        query = query.eq('customer_id', 'stock');
+      } else if (stockOnly && isSuperAdmin) {
+        // Superadmin editing stockphotos uses 'stock' customer
+        query = query.eq('customer_id', 'stock');
+      } else {
+        // Normal user sees their own folders
+        query = query.eq('customer_id', effectiveCustomerId);
+      }
+      
+      const { data, error } = await query.order('display_order');
 
       if (error) throw error;
       setFolders(data || []);
@@ -190,15 +216,25 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   const handleAddFolder = async () => {
     if (!selectedCategory) return;
     
+    // Check if this is a stockphotos category - only superadmin can add folders
+    const isStockCategory = selectedCategory.name === 'stockphotos';
+    if (isStockCategory && !isSuperAdmin) {
+      alert('Stockphoto-Ordner können nur vom Superadmin erstellt werden.');
+      return;
+    }
+    
     const name = window.prompt("Name des neuen Ordners:");
     if (!name) return;
 
     try {
+      // Use 'stock' for stockphotos category, otherwise use effectiveCustomerId
+      const folderCustomerId = isStockCategory ? 'stock' : effectiveCustomerId;
+      
       const newFolder = {
         category_id: selectedCategory.id,
-        customer_id: customerId,
+        customer_id: folderCustomerId,
         name: name,
-        path: `${customerId}/${selectedCategory.name}/${name}`, 
+        path: `${folderCustomerId}/${selectedCategory.name}/${name}`, 
         display_order: folders.length
       };
 
@@ -219,6 +255,13 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   };
 
   const handleDeleteFolder = async (folder: MediaFolder) => {
+    // Check if this is stockphotos category - only superadmin can delete folders
+    const isStockCategory = selectedCategory?.name === 'stockphotos';
+    if (isStockCategory && !isSuperAdmin) {
+      alert('Stockphoto-Ordner können nur vom Superadmin gelöscht werden.');
+      return;
+    }
+    
     setConfirmTitle('Ordner löschen');
     setConfirmMessage(`Möchten Sie den Ordner "${folder.name}" und alle enthaltenen Dateien löschen?`);
     setConfirmAction(() => async () => {
@@ -255,12 +298,20 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   };
 
   const handleToggleSelect = (id: string) => {
-    setSelectedIds(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    // In single select mode, only allow one selection at a time
+    if (singleSelect) {
+      setSelectedIds(prev => prev.includes(id) ? [] : [id]);
+    } else {
+      setSelectedIds(prev => 
+        prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+      );
+    }
   };
 
   const handleSelectAll = (select: boolean) => {
+    // Don't allow select all in single select mode
+    if (singleSelect) return;
+    
     if (select) {
       setSelectedIds(files.map(f => f.id));
     } else {
@@ -297,6 +348,13 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   const handleDeleteFiles = async (fileIds: string[]) => {
     const idsToDelete = fileIds.length > 0 ? fileIds : selectedIds;
     if (idsToDelete.length === 0) return;
+
+    // Check if this is stockphotos category - only superadmin can delete
+    const isStockCategory = selectedCategory?.name === 'stockphotos';
+    if (isStockCategory && !isSuperAdmin) {
+      alert('Stockphotos können nur vom Superadmin gelöscht werden.');
+      return;
+    }
 
     setConfirmTitle(idsToDelete.length > 1 ? 'Dateien löschen' : 'Datei löschen');
     setConfirmMessage(`Möchten Sie ${idsToDelete.length} Datei(en) wirklich löschen?`);
@@ -348,7 +406,16 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
       {/* Header */}
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
-          {mode === 'admin' ? (
+          {/* Single Select Mode: Show cancel button with text */}
+          {singleSelect && mode === 'select' ? (
+            <button 
+              onClick={onCancel} 
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+            >
+              <XSquare className="w-5 h-5" />
+              <span>Abbrechen</span>
+            </button>
+          ) : mode === 'admin' ? (
             <button onClick={() => navigate(stockOnly ? '/superadmin' : '/admin')} className="p-2 hover:bg-gray-100 rounded-full">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
@@ -358,12 +425,14 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
             </button>
           )}
           <h1 className="text-xl font-bold text-gray-800">
-            {mode === 'select' ? 'Bild auswählen' : (stockOnly ? 'Stockphotos' : 'Mediathek')}
+            {mode === 'select' 
+              ? (singleSelect ? 'Bild auswählen' : 'Bilder auswählen') 
+              : (stockOnly ? 'Stockphotos' : 'Mediathek')}
           </h1>
         </div>
         <div className="flex items-center gap-3">
-            {/* Selection Confirmation for Picker Mode */}
-            {mode === 'select' && selectedIds.length > 0 && onSelect && (
+            {/* Selection Confirmation for Picker Mode (Multi-select only) */}
+            {mode === 'select' && !singleSelect && selectedIds.length > 0 && onSelect && (
               <button
                 onClick={() => {
                    const selectedFiles = files.filter(f => selectedIds.includes(f.id));
@@ -373,6 +442,20 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
               >
                  <CheckSquare className="w-4 h-4" />
                  {selectedIds.length} übernehmen
+              </button>
+            )}
+            
+            {/* Single Select: Show selected image preview and confirm button */}
+            {mode === 'select' && singleSelect && selectedIds.length > 0 && onSelect && (
+              <button
+                onClick={() => {
+                   const selectedFiles = files.filter(f => selectedIds.includes(f.id));
+                   onSelect(selectedFiles);
+                }}
+                className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition shadow-sm font-medium"
+              >
+                 <CheckSquare className="w-4 h-4" />
+                 Übernehmen
               </button>
             )}
 
@@ -394,24 +477,28 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 </button>
             </div>
 
-            {/* Actions for Selection (Admin Mode) */}
+            {/* Actions for Selection (Admin Mode) - Hide delete/cut for stockphotos unless superadmin */}
             {mode === 'admin' && selectedIds.length > 0 && (
                 <div className="flex items-center gap-2 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100">
                    <span className="text-sm font-medium text-rose-700 mr-2">{selectedIds.length} ausgewählt</span>
-                   <button 
-                     onClick={handleCutFiles}
-                     className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
-                     title="Ausschneiden"
-                   >
-                     <Scissors size={18} />
-                   </button>
-                   <button 
-                     onClick={() => handleDeleteFiles(selectedIds)}
-                     className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
-                     title="Löschen"
-                   >
-                     <Trash2 size={18} />
-                   </button>
+                   {(selectedCategory?.name !== 'stockphotos' || isSuperAdmin) && (
+                     <>
+                       <button 
+                         onClick={handleCutFiles}
+                         className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                         title="Ausschneiden"
+                       >
+                         <Scissors size={18} />
+                       </button>
+                       <button 
+                         onClick={() => handleDeleteFiles(selectedIds)}
+                         className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                         title="Löschen"
+                       >
+                         <Trash2 size={18} />
+                       </button>
+                     </>
+                   )}
                    <button 
                      onClick={() => handleSelectAll(false)}
                      className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
@@ -445,7 +532,11 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 </div>
             )}
 
-          {(selectedCategory?.name !== 'stockphotos' || stockOnly) && (
+          {/* Show upload button: 
+              - Not for stockphotos category unless superadmin
+              - Or when stockOnly is true (superadmin stockphotos page)
+          */}
+          {((selectedCategory?.name !== 'stockphotos') || (stockOnly && isSuperAdmin)) && (
             <button
               onClick={() => {
                 setUploadKey(k => k + 1);
@@ -503,13 +594,16 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Ordner
                 </h3>
-                <button 
-                  onClick={handleAddFolder}
-                  className="p-1 text-gray-400 hover:text-rose-500 transition"
-                  title="Neuer Ordner"
-                >
-                  <FolderPlus className="w-4 h-4" />
-                </button>
+                {/* Hide folder creation for stockphotos unless superadmin */}
+                {(selectedCategory?.name !== 'stockphotos' || isSuperAdmin) && (
+                  <button 
+                    onClick={handleAddFolder}
+                    className="p-1 text-gray-400 hover:text-rose-500 transition"
+                    title="Neuer Ordner"
+                  >
+                    <FolderPlus className="w-4 h-4" />
+                  </button>
+                )}
              </div>
             
             <div className="space-y-1">
@@ -536,13 +630,16 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                           </span>
                         </span>
                     </button>
-                    <button
-                        onClick={() => handleDeleteFolder(folder)}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition"
-                        title="Ordner löschen"
-                    >
-                        <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Hide delete button for stockphotos folders unless superadmin */}
+                    {(selectedCategory?.name !== 'stockphotos' || isSuperAdmin) && (
+                      <button
+                          onClick={() => handleDeleteFolder(folder)}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition"
+                          title="Ordner löschen"
+                      >
+                          <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -565,14 +662,17 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                             {files.length} Dateien
                         </span>
                     </h2>
-                    <div className="flex items-center gap-2">
-                        <button 
-                           onClick={() => handleSelectAll(true)}
-                           className="text-sm text-rose-600 hover:text-rose-700"
-                        >
-                            Alle auswählen
-                        </button>
-                    </div>
+                    {/* Hide "Select all" in single select mode */}
+                    {!singleSelect && (
+                      <div className="flex items-center gap-2">
+                          <button 
+                             onClick={() => handleSelectAll(true)}
+                             className="text-sm text-rose-600 hover:text-rose-700"
+                          >
+                              Alle auswählen
+                          </button>
+                      </div>
+                    )}
                 </div>
 
                 <MediaGrid
@@ -582,6 +682,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                   viewMode={viewMode}
                   selectedIds={selectedIds}
                   onToggleSelect={handleToggleSelect}
+                  readOnly={selectedCategory?.name === 'stockphotos' && !isSuperAdmin}
                   onSelect={(file: MediaFile) => {
                      if (mode === 'select' && onSelect) {
                         onSelect([file]);

@@ -7,11 +7,11 @@ import {
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
 import {
-  HeroV2Config, HeroButton, HeroText, HeroLogo,
+  HeroConfig, HeroButton, HeroText, HeroLogo,
   Viewport, Position,
   HorizontalPosition, VerticalPosition, ButtonVariant, ButtonSize, ButtonBorderRadius,
-  createDefaultHeroV2Config, createDefaultResponsivePosition, getResponsiveValue
-} from '../../types/HeroV2';
+  createDefaultHeroConfig, createDefaultResponsivePosition, getResponsiveValue
+} from '../../types/Hero';
 
 // Position label mappings
 const horizontalLabels: Record<HorizontalPosition, string> = {
@@ -30,12 +30,12 @@ const verticalLabels: Record<VerticalPosition, string> = {
   'bottom': 'Unten (90%)'
 };
 
-interface HeroV2EditorProps {
+interface HeroEditorProps {
   pageId?: string;
   blockId?: string;
 }
 
-export const HeroV2Editor: React.FC<HeroV2EditorProps> = (props) => {
+export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
   const navigate = useNavigate();
   const params = useParams<{ pageId: string; blockId: string }>();
   const { website, updatePage } = useWebsite();
@@ -44,7 +44,7 @@ export const HeroV2Editor: React.FC<HeroV2EditorProps> = (props) => {
   const pageId = props.pageId || params.pageId || '';
   const blockId = props.blockId || params.blockId || '';
   
-  const [config, setConfig] = useState<HeroV2Config>(createDefaultHeroV2Config());
+  const [config, setConfig] = useState<HeroConfig>(createDefaultHeroConfig());
   const [activeViewport, setActiveViewport] = useState<Viewport>('desktop');
   const [showPreview, setShowPreview] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -63,7 +63,7 @@ export const HeroV2Editor: React.FC<HeroV2EditorProps> = (props) => {
       if (page) {
         const block = page.blocks.find(b => b.id === blockId);
         if (block && block.config) {
-          setConfig({ ...createDefaultHeroV2Config(), ...block.config });
+          setConfig({ ...createDefaultHeroConfig(), ...block.config });
         }
       }
     }
@@ -497,7 +497,7 @@ export const HeroV2Editor: React.FC<HeroV2EditorProps> = (props) => {
         {/* Preview Panel */}
         {showPreview && (
           <div className="w-1/2 bg-gray-200 p-4 overflow-auto">
-            <HeroV2Preview config={config} viewport={activeViewport} logos={website?.logos || []} />
+            <HeroPreview config={config} viewport={activeViewport} logos={website?.logos || []} />
           </div>
         )}
       </div>
@@ -1030,13 +1030,13 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
 };
 
 // Preview component
-interface HeroV2PreviewProps {
-  config: HeroV2Config;
+interface HeroPreviewProps {
+  config: HeroConfig;
   viewport: Viewport;
   logos: Array<{ id: string; name: string; thumbnail?: string; canvas: { width: number; height: number; backgroundColor: string }; image?: any; texts: any[] }>;
 }
 
-const HeroV2Preview: React.FC<HeroV2PreviewProps> = ({ config, viewport, logos }) => {
+const HeroPreview: React.FC<HeroPreviewProps> = ({ config, viewport, logos }) => {
   const height = getResponsiveValue(config.height, viewport);
   const viewportWidth = viewport === 'mobile' ? '375px' : viewport === 'tablet' ? '768px' : '100%';
 
@@ -1235,4 +1235,4 @@ const getVerticalPercent = (position: Position): number => {
   return basePercents[position.vertical] + position.offsetY;
 };
 
-export default HeroV2Editor;
+export default HeroEditor;

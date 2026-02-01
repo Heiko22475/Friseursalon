@@ -1,64 +1,144 @@
-Kontext:
-Ich baue ein CMS mit React + Tailwind. Persistenz über Supabase (Postgres). 
-Bitte implementiere ein Farbsystem (Design Tokens), davon zunächst den UI-Editor, 
-der mit Features wie Farbpallete bearbeiten aber auch eine datenbank-Gespeicherter
-Liste hat, mit der man die aktuelle Einstellung überschreiben kann (Warnung!). 
-Der FarbEditor soll auf der Hauptseite aufrufbar sein. 
+Friseursalon Sarah Soriano
+Hübscher Salon mit Vintage-Charme und einer gemütlichen Atmosphäre. Wir legen Wert auf persönliche Beratung und nehmen uns Zeit für jeden Kunden.
 
+Award-Winning Team
+Recognized for excellence in styling and customer service
 
-Ziel-Funktionalität:
-1) Palette (Systemfarben):
-   - Genau 5 Hauptfarben: primary1..primary5
-   - Jede Hauptfarbe hat:
-     - base (pflicht)
-     - accents (optional, z.B. accent1..accent3 ODER light/dark/muted). vom Programm her berechnet, nicht in der DB gespeichert
-   - Farben werden als HEX gespeichert (normalisiert #RRGGBB)
-   - In der Datenbank-Tabelle für die Palette soll es für die 5 Hauptfarben jeweils ein Tabellenfeld geben
-2) Text-Mapping:
-   - Für jedes Paletten-Token (z.B. palette.primary1.base, palette.primary1.accents.accent1) muss eine zugeordnete Textfarbe existieren:
-     - Modus "auto" (berechne beste Textfarbe für Kontrast)
-     - Modus "custom" (User wählt Hex)
-3) Semantik-/Standardfarben:
-   - Standardfarben sind Tokens wie:
-     link, linkHover, pageBg, contentBg, cardBg, border, headingText, bodyText, mutedText,
-     buttonPrimaryBg, buttonPrimaryText, buttonSecondaryBg, buttonSecondaryText, focusRing
-   - Jede Standardfarbe ist ein ColorValue:
-     - { kind: "tokenRef", ref: "palette.primary1.base" | "semantic.link" ... }
-     - { kind: "custom", hex: "#..." }
-   - In der UI muss ein UnifiedColorPicker existieren mit 3 Quellen:
-     (A) Semantik (Standardfarben)
-     (B) Palette (Hauptfarben + Akzente)
-     (C) Custom (frei wählbar; optional begrenzen/Warning)
-4) Token-Auflösung:
-   - Implementiere resolveColor(ColorValue, tokenStore) -> HEX
-   - Erkenne und verhindere Zyklen (cycle detection) bei tokenRef.
-   - Implementiere resolveSemanticToken(name) -> ColorValue -> HEX
-5) Tailwind Integration:
-   - Exportiere CSS-Variablen (z.B. :root { --c-link: #...; --c-primary-1: #... })
-   - Nutze Tailwind so, dass Komponenten Farben via CSS vars nutzen können:
-     z.B. className="bg-[var(--c-card-bg)] text-[var(--c-body-text)]"
-   - Baue eine Preview-Area (Cards, Buttons, Links, Section backgrounds), die live aus Tokens gerendert wird.
-7) UX/Editor-Seite:
-   Die Seite sollte eine Tabelle zeigen: 1. Zeile: die 5 Hauptfarben (base), 2.Zeile Akzentfarbe hell (geignet beispielsweise für Hintergründe), 3. Zeile Akzentfarbe dunkel (z.B. für Hintergründe)
-   - Ich möchte vordefinierte Paletten anbieten können, die in der Datenbank gespeichert sind und aufgelistet werden. 
-   - die 5 Primärfarben sollten mit einem Colorpicker ausgewählt werden können. 
-   - In den Palettenfeldern sollten zu jeder Primär / Hell / Dunkelfarbe ebenfalls 
-   eine Beispielschrift stehen, die man auch ändern kann. 
-   
-Technische Vorgaben
+Top bewertet
+4,9 Sterne bei 42 Google-Rezensionen
 
-- Keine Hardcoded-Farben in UI-Komponenten: immer via resolveColor + CSS vars.
-- Token-Refs als stabile Strings, z.B. "palette.primary1.base", "palette.primary1.accents.accent1", "semantic.link".
-- Bitte erzeuge:
-  1) Types: ThemeTokens, Palette, SemanticTokens, ColorValue, TextMapping
-  2) Utilities: color parsing/normalize, luminance/contrast, autoTextColor, resolveColor, cycle detection
-  4) UI components: UnifiedColorPicker, PaletteEditor, TextMappingEditor, SemanticColorsEditor, ThemePreview
+Premium Products
+Using only the finest professional-grade products
 
-Output von dir:
-- Zuerst Architekturüberblick
+15+
 
-Wichtige Semantik-Defaults:
-- Lege sinnvolle Default-Werte an, die ohne Custom gut aussehen (z.B. pageBg hell, contentBg neutral, link = primary1.base, cardBg = contentBg leicht abgesetzt).
-- Auto-Textfarbe soll min. 4.5:1 anstreben; falls nicht erreichbar, Warning anzeigen und bestmögliche Wahl treffen.
+Years Experience
 
-Bevor wir beginnen, gib Kommentare, wie gut du das findest und stelle Rückfragen. 
+4.9★
+
+Google Bewertung
+
+"Sarah ist eine tolle Friseurin! Sehr professionell und freundlich."
+5.0 Sterne bei 3 Google-Rezensionen
+"Wunderschöne Brautfrisur und sehr entspannte Atmosphäre!"
+
+- Braut 2025
+
+"Kompetente Beratung und tolles Ergebnis. Immer wieder gerne!"
+
+- Stammkundin
+
+Pricing
+Professional services at competitive prices
+
+Get In Touch
+Book your appointment or reach out with any questions
+
+Name
+Your name
+Email
+your@email.com
+Phone
++49 123 456789
+Message
+Tell us about your desired service...
+Send Message
+Visit Us
+Address
+
+Am Heimatmuseum 5
+35440 Linden
+
+Phone
+
+06403 9143550
+
+Email
+
+info@sarah-soriano.de
+
+Opening Hours
+
+Dienstag: 08:30–13:00, 14:30–18:00
+Mittwoch: 08:30–13:00, 14:30–19:00
+Donnerstag: 08:30–13:00, 14:30–18:00
+Freitag: 08:30–13:00, 14:30–18:00
+Samstag: 08:30–13:00
+
+Get In Touch
+Book your appointment or reach out with any questions
+
+Name
+Your name
+Email
+your@email.com
+Phone
++49 123 456789
+Message
+Tell us about your desired service...
+Send Message
+Visit Us
+Address
+
+Am Heimatmuseum 5
+35440 Linden
+
+Phone
+
+06403 9143550
+
+Email
+
+info@sarah-soriano.de
+
+Opening Hours
+
+Dienstag: 08:30–13:00, 14:30–18:00
+Mittwoch: 08:30–13:00, 14:30–19:00
+Donnerstag: 08:30–13:00, 14:30–18:00
+Freitag: 08:30–13:00, 14:30–18:00
+Samstag: 08:30–13:00
+
+Our Services
+Premium hair care services delivered by experienced professionals
+
+<span>lkmk.</span>
+Bodymassage
+Massier...
+
+Ganzkörpermassage
+Massier massier massier
+
+<span>Massage</span>
+Meine Massage
+
+<span>f und so</span>
+ölkjölkj
+
+Brustmassage
+Weitere Leistungen
+Vielfältige Dienstleistungen für die ganze Familie.
+
+Brautfrisuren
+Traumhafte Frisuren für den schönsten Tag im Leben.
+
+Kopfmassage
+Balayage & Color
+Professionelle Färbetechniken für natürliche und moderne Looks.
+
+Haarstyling
+Individuelles Styling für jeden Anlass und persönlichen Stil.
+
+Friseursalon Sarah Soriano
+Quick Links
+Home
+Services
+About
+Gallery
+Services
+Pricing
+Book Appointment
+Contact
+Follow Us
+@sarahsoriano_salon
+

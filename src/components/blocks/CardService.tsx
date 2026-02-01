@@ -16,7 +16,7 @@ import {
   getResponsiveValue
 } from '../../types/Cards';
 import { ColorValue } from '../../types/theme';
-import { Viewport } from '../../types/HeroV2';
+import { Viewport } from '../../types/Hero';
 
 // ===== HELPER: Color Value zu CSS =====
 

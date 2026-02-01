@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useWebsite, LogoDesign } from '../../contexts/WebsiteContext';
 import {
-  HeroV2Config, HeroButton, HeroText, HeroLogo,
+  HeroConfig, HeroButton, HeroText, HeroLogo,
   Viewport, Position, HorizontalPosition, VerticalPosition,
-  getResponsiveValue, createDefaultHeroV2Config
-} from '../../types/HeroV2';
+  getResponsiveValue, createDefaultHeroConfig
+} from '../../types/Hero';
 
-interface HeroV2Props {
-  config?: HeroV2Config;
+interface HeroProps {
+  config?: HeroConfig;
   instanceId?: number;
 }
 
-export const HeroV2: React.FC<HeroV2Props> = ({ config: propConfig, instanceId }) => {
+export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId }) => {
   const { website } = useWebsite();
   const [currentViewport, setCurrentViewport] = useState<Viewport>('desktop');
   
   // Get config from props or default
-  const config = propConfig || createDefaultHeroV2Config();
+  const config = propConfig || createDefaultHeroConfig();
   const logos = website?.logos || [];
 
   // Detect viewport
@@ -383,4 +383,4 @@ const getPositionStyle = (position: Position): React.CSSProperties => {
   };
 };
 
-export default HeroV2;
+export default Hero;

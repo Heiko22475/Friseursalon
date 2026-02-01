@@ -3,10 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, Edit } from 'lucide-react';
 import { Modal } from './Modal';
-import Hero from '../Hero';
-import { HeroV2 } from '../blocks/HeroV2';
+import { Hero } from '../blocks/Hero';
 import Services from '../Services';
-import About from '../About';
 import Gallery from '../Gallery';
 import Reviews from '../Reviews';
 import Pricing from '../Pricing';
@@ -29,15 +27,12 @@ interface PageBlock {
 
 // Available block types
 const AVAILABLE_BLOCKS = [
-  { block_type: 'hero', block_name: 'Hero-Banner', can_repeat: false },
-  { block_type: 'hero-v2', block_name: 'Hero V2 (Neu)', can_repeat: true },
+  { block_type: 'hero', block_name: 'Hero-Banner', can_repeat: true },
   { block_type: 'services', block_name: 'Leistungen', can_repeat: true },
-  { block_type: 'about', block_name: 'Über uns', can_repeat: false },
   { block_type: 'gallery', block_name: 'Galerie', can_repeat: true },
   { block_type: 'reviews', block_name: 'Bewertungen', can_repeat: true },
   { block_type: 'pricing', block_name: 'Preise', can_repeat: true },
   { block_type: 'contact', block_name: 'Kontakt', can_repeat: false },
-  { block_type: 'hours', block_name: 'Öffnungszeiten', can_repeat: false },
   { block_type: 'static-content', block_name: 'Statischer Inhalt', can_repeat: true },
   { block_type: 'grid', block_name: 'Raster/Grid', can_repeat: true },
   // Card Building Blocks
@@ -189,20 +184,15 @@ export const BlockManagerNew: React.FC = () => {
     
     switch (block.type) {
       case 'hero':
-        return <Hero />;
-      case 'hero-v2':
-        return <HeroV2 config={block.config as any} instanceId={instanceId} />;
+        return <Hero config={block.config as any} instanceId={instanceId} />;
       case 'services':
         return <Services instanceId={instanceId} />;
-      case 'about':
-        return <About />;
       case 'gallery':
         return <Gallery instanceId={instanceId} />;
       case 'reviews':
         return <Reviews instanceId={instanceId} />;
       case 'pricing':
         return <Pricing instanceId={instanceId} />;
-      case 'hours':
       case 'contact':
         return <Contact />;
       case 'static-content':
@@ -221,9 +211,9 @@ export const BlockManagerNew: React.FC = () => {
   };
 
   const getBlockEditor = (block: PageBlock) => {
-    // Special case for hero-v2 which needs pageId and blockId
-    if (block.type === 'hero-v2') {
-      return `/admin/hero-v2/${pageId}/${block.id}`;
+    // Hero blocks with pageId and blockId
+    if (block.type === 'hero') {
+      return `/admin/hero/${pageId}/${block.id}`;
     }
     
     // Card blocks with pageId and blockId
@@ -238,13 +228,10 @@ export const BlockManagerNew: React.FC = () => {
     }
     
     const editorMap: { [key: string]: string } = {
-      hero: 'general',
       services: 'services',
-      about: 'about',
       gallery: 'gallery',
       reviews: 'reviews',
       pricing: 'pricing',
-      hours: 'hours',
       contact: 'contact',
       'static-content': 'static-content',
       'grid': 'grid',

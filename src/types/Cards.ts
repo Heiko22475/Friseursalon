@@ -3,7 +3,7 @@
 // Konfigurierbare Karten mit Theming-Unterstützung
 // =====================================================
 
-import { ResponsiveNumber } from './HeroV2';
+import { ResponsiveNumber } from './Hero';
 import { ColorValue } from './theme';
 
 // ===== GEMEINSAME STYLE-OPTIONEN =====
@@ -516,4 +516,4 @@ export const createDefaultCardTestimonialConfig = (): CardTestimonialConfig => (
 
 // ===== RESPONSIVE HELPER =====
 
-export { getResponsiveValue } from './HeroV2';
+export { getResponsiveValue } from './Hero';

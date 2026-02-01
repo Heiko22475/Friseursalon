@@ -3,9 +3,7 @@ import { supabase } from '../lib/supabase';
 import { GridLayout } from './admin/GridLayoutSelector';
 
 // Import all block components
-import Hero from './Hero';
 import Services from './Services';
-import About from './About';
 import Gallery from './Gallery';
 import Reviews from './Reviews';
 import Pricing from './Pricing';
@@ -90,13 +88,10 @@ export const Grid: React.FC<GridProps> = ({ instanceId }) => {
 
   const renderBlock = (blockType: string, instanceId: number) => {
     const blockMap: Record<string, React.ComponentType<any>> = {
-      'hero': Hero,
       'services': Services,
-      'about': About,
       'gallery': Gallery,
       'reviews': Reviews,
       'pricing': Pricing,
-      'hours': Contact,
       'contact': Contact,
       'static-content': StaticContent,
     };

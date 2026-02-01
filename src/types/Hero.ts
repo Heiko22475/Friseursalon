@@ -1,5 +1,5 @@
 // =====================================================
-// HERO V2 TYPES
+// HERO TYPES
 // =====================================================
 
 // Viewport types
@@ -104,8 +104,8 @@ export interface HeroOverlay {
   opacity: number; // 0-100
 }
 
-// Main Hero V2 configuration
-export interface HeroV2Config {
+// Main Hero configuration
+export interface HeroConfig {
   // Background image
   backgroundImage: string; // URL from media library
   backgroundPosition: {
@@ -150,7 +150,7 @@ export const createDefaultResponsivePosition = (): ResponsivePosition => ({
   desktop: createDefaultPosition()
 });
 
-export const createDefaultHeroV2Config = (): HeroV2Config => ({
+export const createDefaultHeroConfig = (): HeroConfig => ({
   backgroundImage: '',
   backgroundPosition: { x: 50, y: 50 },
   overlay: {

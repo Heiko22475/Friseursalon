@@ -3,9 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Modal } from './Modal';
-import Hero from '../Hero';
 import Services from '../Services';
-import About from '../About';
 import Gallery from '../Gallery';
 import Reviews from '../Reviews';
 import Pricing from '../Pricing';
@@ -243,19 +241,14 @@ export const BlockManager: React.FC = () => {
     const instanceId = block.block_instance_id;
     
     switch (block.block_type) {
-      case 'hero':
-        return <Hero />;
       case 'services':
         return <Services instanceId={instanceId} />;
-      case 'about':
-        return <About />;
       case 'gallery':
         return <Gallery instanceId={instanceId} />;
       case 'reviews':
         return <Reviews instanceId={instanceId} />;
       case 'pricing':
         return <Pricing instanceId={instanceId} />;
-      case 'hours':
       case 'contact':
         return <Contact />;
       case 'static-content':
@@ -269,13 +262,10 @@ export const BlockManager: React.FC = () => {
 
   const getBlockEditor = (blockType: string, instanceId: number) => {
     const editorMap: { [key: string]: string } = {
-      hero: 'general',
       services: 'services',
-      about: 'about',
       gallery: 'gallery',
       reviews: 'reviews',
       pricing: 'pricing',
-      hours: 'hours',
       contact: 'contact',
       'static-content': 'static-content',
       'grid': 'grid',

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebsite } from '../contexts/WebsiteContext';
 import Header from './Header';
-import Hero from './Hero';
-import { HeroV2 } from './blocks/HeroV2';
+import { Hero } from './blocks/Hero';
 import Services from './Services';
-import About from './About';
 import Reviews from './Reviews';
 import Gallery from './Gallery';
 import Pricing from './Pricing';
@@ -80,21 +78,15 @@ export const DynamicPage: React.FC = () => {
     
     switch (block.type) {
       case 'hero':
-        return <div key={key} id="hero"><Hero /></div>;
-      case 'hero-v2':
-        return <div key={key} id={`hero-v2-${instanceId}`}><HeroV2 config={block.config} instanceId={instanceId} /></div>;
+        return <div key={key} id={`hero-${instanceId}`}><Hero config={block.config} instanceId={instanceId} /></div>;
       case 'services':
         return <div key={key} id="services"><Services instanceId={instanceId} /></div>;
-      case 'about':
-        return <div key={key} id="about"><About /></div>;
       case 'gallery':
         return <div key={key} id="gallery"><Gallery instanceId={instanceId} /></div>;
       case 'reviews':
         return <div key={key} id="reviews"><Reviews instanceId={instanceId} /></div>;
       case 'pricing':
         return <div key={key} id="pricing"><Pricing instanceId={instanceId} /></div>;
-      case 'hours':
-        return <div key={key} id="hours"><Contact /></div>;
       case 'contact':
         return <div key={key} id="contact"><Contact /></div>;
       case 'static-content':

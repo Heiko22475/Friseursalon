@@ -14,11 +14,11 @@ import { ServicesEditorNew as ServicesEditor } from './components/admin/Services
 // import { ContactEditor as ContactEditorOld } from './components/admin/ContactEditor';
 import { ContactEditorNew as ContactEditor } from './components/admin/ContactEditorNew';
 // import { HoursEditor as HoursEditorOld } from './components/admin/HoursEditor';
-import { HoursEditorNew as HoursEditor } from './components/admin/HoursEditorNew';
+// import { HoursEditorNew as HoursEditor } from './components/admin/HoursEditorNew'; // REMOVED
 // import { ReviewsEditor as ReviewsEditorOld } from './components/admin/ReviewsEditor';
 import { ReviewsEditorNew as ReviewsEditor } from './components/admin/ReviewsEditorNew';
 // import { AboutEditor as AboutEditorOld } from './components/admin/AboutEditor';
-import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew';
+// import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew'; // REMOVED
 import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
 // import { PageManager as PageManagerOld } from './components/admin/PageManager';
@@ -32,7 +32,7 @@ import { GridEditor } from './components/admin/GridEditor';
 import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
-import { HeroV2Editor } from './components/admin/HeroV2Editor';
+import { HeroEditor } from './components/admin/HeroEditor';
 import { CardTeamEditorPage } from './components/admin/CardTeamEditorPage';
 import { CardServiceEditorPage } from './components/admin/CardServiceEditorPage';
 import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEditorPage';
@@ -167,14 +167,15 @@ function AppContent() {
               </ProtectedRoute>
             }
           /> */}
-          <Route
+          {/* Hours Editor - REMOVED */}
+          {/* <Route
             path="/admin/hours"
             element={
               <ProtectedRoute>
                 <HoursEditor />
               </ProtectedRoute>
             }
-          />
+          /> */}
           {/* <Route
             path="/admin/hours-old"
             element={
@@ -199,14 +200,15 @@ function AppContent() {
               </ProtectedRoute>
             }
           /> */}
-          <Route
+          {/* About Editor - REMOVED */}
+          {/* <Route
             path="/admin/about"
             element={
               <ProtectedRoute>
                 <AboutEditor />
               </ProtectedRoute>
             }
-          />
+          /> */}
           {/* <Route
             path="/admin/about-old"
             element={
@@ -336,10 +338,10 @@ function AppContent() {
             }
           />
           <Route
-            path="/admin/hero-v2/:pageId/:blockId"
+            path="/admin/hero/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <HeroV2Editor />
+                <HeroEditor />
               </ProtectedRoute>
             }
           />

@@ -333,3 +333,15 @@ FAQ-Bereich auch als Baustein, ohne Suche. Speicherung im JSON.
 
 
 
+Prompt: 
+1. 
+Der alte Hero-Baustein ist nicht mehr nötig - er kann gelöscht werden (editor - frontend)
+Der neue Hero-Baustein ist dann nicht mehr V2 (neu).  
+2. Ebenso entfernen: 
+Baustein "Über uns"
+Baustein "Öffnungszeiten"
+
+
+
+
+

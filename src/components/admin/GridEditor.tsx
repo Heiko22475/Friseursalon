@@ -7,9 +7,7 @@ import { BlockList, BlockItem } from './BlockList';
 import { Modal } from './Modal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
-import Hero from '../Hero';
 import Services from '../Services';
-import About from '../About';
 import Gallery from '../Gallery';
 import Reviews from '../Reviews';
 import Pricing from '../Pricing';
@@ -288,13 +286,10 @@ export const GridEditor: React.FC = () => {
   const getBlockEditor = (blockType: string, instanceId: number): string | null => {
     const editorMap: Record<string, string> = {
       'services': `/admin/services?instance=${instanceId}`,
-      'about': `/admin/about?instance=${instanceId}`,
       'gallery': `/admin/gallery?instance=${instanceId}`,
       'reviews': `/admin/reviews?instance=${instanceId}`,
       'pricing': `/admin/pricing?instance=${instanceId}`,
-      'hours': `/admin/hours?instance=${instanceId}`,
       'contact': `/admin/contact?instance=${instanceId}`,
-      'hero': `/admin/hero?instance=${instanceId}`,
       'static-content': `/admin/static-content?instance=${instanceId}`,
     };
     return editorMap[blockType] || null;
@@ -628,19 +623,14 @@ export const GridEditor: React.FC = () => {
 // Render actual block preview
 const renderBlockPreview = (blockType: string, instanceId: number) => {
   switch (blockType) {
-    case 'hero':
-      return <Hero />;
     case 'services':
       return <Services instanceId={instanceId} />;
-    case 'about':
-      return <About />;
     case 'gallery':
       return <Gallery instanceId={instanceId} />;
     case 'reviews':
       return <Reviews instanceId={instanceId} />;
     case 'pricing':
       return <Pricing instanceId={instanceId} />;
-    case 'hours':
     case 'contact':
       return <Contact />;
     case 'static-content':

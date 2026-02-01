@@ -21,7 +21,6 @@ import {
   Shadow,
   Spacing,
   FontSize,
-  createDefaultCardTestimonialConfig,
   BORDER_RADIUS_VALUES,
   SHADOW_VALUES,
   SPACING_VALUES,
@@ -623,7 +622,7 @@ export const CardTestimonialEditor: React.FC<CardTestimonialEditorProps> = ({ co
               />
               <NumberInput
                 label="Spalten (Tablet)"
-                value={config.grid.columns.tablet}
+                value={config.grid.columns.tablet ?? config.grid.columns.desktop}
                 onChange={(v) =>
                   updateGrid({ columns: { ...config.grid.columns, tablet: v } })
                 }
@@ -632,7 +631,7 @@ export const CardTestimonialEditor: React.FC<CardTestimonialEditorProps> = ({ co
               />
               <NumberInput
                 label="Spalten (Mobile)"
-                value={config.grid.columns.mobile}
+                value={config.grid.columns.mobile ?? 1}
                 onChange={(v) =>
                   updateGrid({ columns: { ...config.grid.columns, mobile: v } })
                 }
@@ -698,7 +697,7 @@ export const CardTestimonialEditor: React.FC<CardTestimonialEditorProps> = ({ co
           <NumberInput
             label="Rahmenbreite"
             value={config.cardStyle.borderWidth}
-            onChange={(borderWidth) => updateCardStyle({ borderWidth })}
+            onChange={(borderWidth) => updateCardStyle({ borderWidth: borderWidth as 0 | 1 | 2 | 3 | 4 })}
             min={0}
             max={8}
           />
@@ -726,7 +725,7 @@ export const CardTestimonialEditor: React.FC<CardTestimonialEditorProps> = ({ co
           <NumberInput
             label="Transition (ms)"
             value={config.cardStyle.transitionDuration}
-            onChange={(transitionDuration) => updateCardStyle({ transitionDuration })}
+            onChange={(transitionDuration) => updateCardStyle({ transitionDuration: transitionDuration as 150 | 200 | 300 | 500 })}
             min={0}
             max={1000}
             step={50}

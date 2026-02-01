@@ -5,10 +5,10 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Palette as PaletteIcon, Save, Plus, Trash2, Download, Upload, Shuffle, Wand2 } from 'lucide-react';
+import { ArrowLeft, Palette as PaletteIcon, Save, Download, Shuffle, Wand2 } from 'lucide-react';
 import { ThemeTokens, Palette, PalettePreset } from '../types/theme';
 import { generatePalette, HARMONY_TYPES, HarmonyType } from '../utils/color-generator';
-import { autoTextColor, getReadableTextColors } from '../utils/color-utils';
+import { getReadableTextColors } from '../utils/color-utils';
 import {
   getActiveTheme,
   getAllPalettes,
@@ -17,9 +17,7 @@ import {
   updateAccentConfigs,
   updateSemanticToken,
   setActiveTheme,
-  createTheme,
   getAllThemes,
-  deleteTheme,
 } from '../services/theme-service';
 import { generateCSSVariables, injectCSSVariables, resolveColor } from '../utils/token-resolver';
 import PaletteEditor from './admin/theme/PaletteEditor';
@@ -36,7 +34,7 @@ export default function ThemeManager() {
   const [theme, setTheme] = useState<ThemeTokens | null>(null);
   const [allPalettes, setAllPalettes] = useState<Palette[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('palette');
-  const [themes, setThemes] = useState<any[]>([]);
+  const [_themes, setThemes] = useState<any[]>([]);
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('analogous');
   const [showPresets, setShowPresets] = useState(false);
   const [selectedSemanticToken, setSelectedSemanticToken] = useState<string | null>('link');

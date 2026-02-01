@@ -42,7 +42,7 @@ export const CardTeamEditorPage: React.FC = () => {
     }
   }, [block]);
 
-  const showMessage = (msg: string, isError = false) => {
+  const showMessage = (msg: string, _isError = false) => {
     setMessage(msg);
     setTimeout(() => setMessage(''), 3000);
   };

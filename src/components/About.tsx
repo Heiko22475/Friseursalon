@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Award, Heart, Star } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useWebsite } from '../contexts/WebsiteContext';
 
 interface AboutData {

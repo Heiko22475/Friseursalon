@@ -4,7 +4,7 @@
 // =====================================================
 
 import { ThemeTokens } from '../../../types/theme';
-import { resolveColor, resolveTextColor } from '../../../utils/token-resolver';
+import { resolveColor } from '../../../utils/token-resolver';
 
 interface ThemePreviewProps {
   theme: ThemeTokens;

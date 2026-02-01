@@ -14,15 +14,6 @@ import {
   ColorValue,
 } from '../types/theme';
 
-// ===== HELPER: Convert DB row to ColorValue =====
-
-function dbToColorValue(value: any): ColorValue {
-  if (!value || typeof value !== 'object') {
-    return { kind: 'custom', hex: '#000000' };
-  }
-  return value as ColorValue;
-}
-
 // ===== ACTIVE THEME =====
 
 /**
@@ -158,13 +149,13 @@ export async function getThemeById(themeId: string): Promise<ThemeTokens | null>
     }
 
     // Get text mappings
-    const { data: textMappings, error: textError } = await supabase
+    const { data: textMappings } = await supabase
       .from('text_mappings')
       .select('*')
       .eq('theme_id', theme.id);
 
     // Get accent configs
-    const { data: accentConfigs, error: accentError } = await supabase
+    const { data: accentConfigs } = await supabase
       .from('accent_configs')
       .select('*')
       .eq('palette_id', palette.id);

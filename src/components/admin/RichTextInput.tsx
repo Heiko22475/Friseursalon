@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Document from '@tiptap/extension-document';

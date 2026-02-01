@@ -27,7 +27,7 @@ export const useCustomerId = () => {
           }
 
           // Fallback for dev if no 'localhost' entry exists: Get FIRST user
-          const { data, error } = await supabase
+          const { data } = await supabase
              .from('websites')
              .select('customer_id')
              .limit(1)
@@ -36,7 +36,7 @@ export const useCustomerId = () => {
           if (data) setCustomerId(data.customer_id);
         } else {
           // 2. Production Domain Lookup
-          const { data, error } = await supabase
+          const { data } = await supabase
             .from('websites')
             .select('customer_id')
             .eq('domain', hostname)

@@ -5,7 +5,7 @@ import { ArrowLeft, Save, Eye, Award, Heart, Star } from 'lucide-react';
 import { Modal } from './Modal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
-import { getReadableTextColors, getAdaptiveTextColors } from '../../utils/color-utils';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface AboutData {
   id?: string;

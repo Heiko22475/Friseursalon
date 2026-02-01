@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useWebsite } from '../contexts/WebsiteContext';
 
 interface ContactData {

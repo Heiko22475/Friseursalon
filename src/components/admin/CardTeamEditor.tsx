@@ -6,9 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  ArrowLeft, Save, Plus, Trash2, GripVertical, Eye, EyeOff,
-  ChevronDown, ChevronUp, User, Palette, Layout, Type, Image,
-  Instagram, Facebook, Linkedin, Twitter, Mail, Phone
+  ArrowLeft, Save, Plus, Trash2, GripVertical,
+  ChevronDown, ChevronUp, User, Palette, Layout, Type, Image, Instagram
 } from 'lucide-react';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
@@ -20,14 +19,9 @@ import {
   Spacing,
   FontSize,
   FontWeight,
-  BORDER_RADIUS_VALUES,
-  SHADOW_VALUES,
-  SPACING_VALUES,
-  FONT_SIZE_VALUES,
   createDefaultCardTeamConfig
 } from '../../types/Cards';
 import { ColorValue } from '../../types/theme';
-import { Viewport } from '../../types/HeroV2';
 
 // ===== COLOR PICKER =====
 
@@ -410,6 +404,8 @@ const TeamMemberEditor: React.FC<TeamMemberEditorProps> = ({
 interface CardTeamEditorProps {
   pageId?: string;
   blockId?: string;
+  config?: CardTeamConfig;
+  onChange?: React.Dispatch<React.SetStateAction<CardTeamConfig | null>>;
 }
 
 export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
@@ -424,7 +420,6 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
   const [saving, setSaving] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [selectedMemberForImage, setSelectedMemberForImage] = useState<string | null>(null);
-  const [activeViewport, setActiveViewport] = useState<Viewport>('desktop');
   const [expandedSections, setExpandedSections] = useState({
     members: true,
     layout: false,
@@ -509,9 +504,9 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
   };
 
   // Handle media select
-  const handleMediaSelect = (file: MediaFile) => {
-    if (selectedMemberForImage) {
-      updateMember(selectedMemberForImage, { image: file.url });
+  const handleMediaSelect = (files: MediaFile[]) => {
+    if (selectedMemberForImage && files.length > 0) {
+      updateMember(selectedMemberForImage, { image: files[0].file_url });
     }
     setShowMediaLibrary(false);
     setSelectedMemberForImage(null);
@@ -1118,7 +1113,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
       {showMediaLibrary && (
         <MediaLibrary
           onSelect={handleMediaSelect}
-          onClose={() => {
+          onCancel={() => {
             setShowMediaLibrary(false);
             setSelectedMemberForImage(null);
           }}

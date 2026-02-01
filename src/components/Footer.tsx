@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Facebook, Instagram } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useWebsite } from '../contexts/WebsiteContext';
 
 interface GeneralData {
@@ -24,7 +23,7 @@ export default function Footer() {
             name: websiteRecord?.site_name || 'Salon',
             tagline: website?.general?.tagline || ''
         });
-        if (website.contact) {
+        if (website?.contact) {
             setContact({
                 instagram: website.contact.instagram || '',
                 instagram_url: website.contact.instagram_url || ''

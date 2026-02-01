@@ -7,7 +7,6 @@ import { BlockList, BlockItem } from './BlockList';
 import { Modal } from './Modal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
-import { getAdaptiveTextColors } from '../../utils/color-utils';
 import Hero from '../Hero';
 import Services from '../Services';
 import About from '../About';
@@ -271,7 +270,7 @@ export const GridEditor: React.FC = () => {
     }
   };
 
-  const toggleEnabled = async (block: GridBlock) => {
+  const toggleEnabled = async (block: BlockItem) => {
     try {
       const { error } = await supabase
         .from('grid_blocks')

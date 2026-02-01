@@ -28,15 +28,15 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
   ];
 
   // Get theme palette colors
-  const getPaletteColors = () => {
+  const getPaletteColors = (): Array<{name: string; color: string}> => {
     if (!theme) return [];
     
-    const colors = [];
+    const colors: Array<{name: string; color: string}> = [];
     for (let i = 1; i <= 5; i++) {
       const primary = `primary${i}` as keyof typeof theme.palette;
       const baseColor = theme.palette[primary];
       
-      if (baseColor) {
+      if (baseColor && typeof baseColor === 'string') {
         colors.push({
           name: `Primär ${i}`,
           color: baseColor,
@@ -52,10 +52,10 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
           theme
         );
         
-        if (accent1) {
+        if (accent1 && typeof accent1 === 'string') {
           colors.push({ name: `P${i} Hell`, color: accent1 });
         }
-        if (accent2) {
+        if (accent2 && typeof accent2 === 'string') {
           colors.push({ name: `P${i} Dunkel`, color: accent2 });
         }
       }

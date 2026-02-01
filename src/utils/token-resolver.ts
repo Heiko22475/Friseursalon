@@ -9,7 +9,6 @@ import {
   SemanticTokens,
   Palette,
   AccentConfig,
-  TextMapping,
   ValidationError,
   ThemeValidation,
   CSSVariables,

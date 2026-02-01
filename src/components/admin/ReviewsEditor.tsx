@@ -306,13 +306,13 @@ export const ReviewsEditor: React.FC = () => {
         maxWidth="w-[1024px]"
       >
         {(() => {
-          const customProps = backgroundColor ? getAdaptiveTextColors(backgroundColor) : {};
+          const cssVars = backgroundColor ? getAdaptiveTextColors(backgroundColor) : { '--text-primary': '#ffffff', '--text-secondary': '#e2e8f0', '--text-muted': '#9CA3AF' };
           return (
             <div 
               className="py-8 px-4 rounded-xl"
               style={{ 
                 backgroundColor: backgroundColor || '#0f172a',
-                ...customProps as React.CSSProperties
+                ...cssVars as React.CSSProperties
               }}
             >
           <div className="max-w-4xl mx-auto text-center">
@@ -326,7 +326,7 @@ export const ReviewsEditor: React.FC = () => {
               <>
                 <blockquote 
                   className="text-2xl md:text-3xl font-serif italic mb-8 leading-relaxed"
-                  style={{ color: textColors?.heading || '#ffffff' }}
+                  style={{ color: cssVars['--text-primary'] }}
                 >
                   "{reviews[0].text}"
                 </blockquote>

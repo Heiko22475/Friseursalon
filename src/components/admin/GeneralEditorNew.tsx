@@ -6,7 +6,6 @@ import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
 import { getAdaptiveTextColors } from '../../utils/color-utils';
 import { useWebsite, GeneralInfo } from '../../contexts/WebsiteContext';
-import { supabase } from '../../lib/supabase';
 
 export const GeneralEditorNew: React.FC = () => {
   const navigate = useNavigate();

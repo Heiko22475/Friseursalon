@@ -3,9 +3,9 @@
 // 5×3 Grid Editor with Preset Palette Grid
 // =====================================================
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Palette, AccentConfig, PalettePreset } from '../../../types/theme';
-import { generateAccent, autoTextColor, hexToHsl } from '../../../utils/color-utils';
+import { generateAccent, autoTextColor } from '../../../utils/color-utils';
 
 interface PaletteEditorProps {
   palette: Palette;

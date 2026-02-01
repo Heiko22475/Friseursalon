@@ -281,7 +281,7 @@ export default function UnifiedColorPicker({
                 <TextContrastPreview
                   bgColor={resolvedColor}
                   selectedColor={value.kind === 'custom' ? value.hex : undefined}
-                  onSelectContrast={(weight, color) => {
+                  onSelectContrast={(_weight, color) => {
                     handleCustomHexChange(color);
                   }}
                 />

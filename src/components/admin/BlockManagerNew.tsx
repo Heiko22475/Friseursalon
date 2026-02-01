@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWebsite } from '../../contexts/WebsiteContext';
-import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, EyeOff, Edit } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, Edit } from 'lucide-react';
 import { Modal } from './Modal';
 import Hero from '../Hero';
 import { HeroV2 } from '../blocks/HeroV2';
@@ -22,8 +22,8 @@ interface PageBlock {
   id: string;
   type: string;
   position: number;
-  config?: any;
-  content?: any;
+  config: Record<string, any>;
+  content: Record<string, any>;
   created_at?: string;
 }
 
@@ -191,7 +191,7 @@ export const BlockManagerNew: React.FC = () => {
       case 'hero':
         return <Hero />;
       case 'hero-v2':
-        return <HeroV2 config={block.config} instanceId={instanceId} />;
+        return <HeroV2 config={block.config as any} instanceId={instanceId} />;
       case 'services':
         return <Services instanceId={instanceId} />;
       case 'about':
@@ -210,11 +210,11 @@ export const BlockManagerNew: React.FC = () => {
       case 'grid':
         return <Grid instanceId={instanceId} />;
       case 'card-team':
-        return <CardTeam config={block.config} instanceId={instanceId} />;
+        return <CardTeam config={block.config as any} instanceId={instanceId} />;
       case 'card-service':
-        return <CardService config={block.config} instanceId={instanceId} />;
+        return <CardService config={block.config as any} instanceId={instanceId} />;
       case 'card-testimonial':
-        return <CardTestimonial config={block.config} instanceId={instanceId} />;
+        return <CardTestimonial config={block.config as any} instanceId={instanceId} />;
       default:
         return <div className="p-8 text-center text-gray-500">Keine Vorschau verfügbar</div>;
     }

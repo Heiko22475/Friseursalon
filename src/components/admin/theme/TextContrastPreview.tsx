@@ -3,7 +3,7 @@
 // Shows recommended text colors for a background
 // =====================================================
 
-import { generateTextContrasts, TextContrastSet } from '../../../utils/text-contrast-generator';
+import { generateTextContrasts } from '../../../utils/text-contrast-generator';
 import { Check } from 'lucide-react';
 
 interface TextContrastPreviewProps {

@@ -3,13 +3,6 @@ import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWebsite } from '../contexts/WebsiteContext';
 
-interface Page {
-  id: string;
-  slug: string;
-  title: string;
-  display_order: number;
-}
-
 interface Block {
   type: string;
 }

@@ -9,6 +9,7 @@ import * as LucideIcons from 'lucide-react';
 import { Scissors } from 'lucide-react';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
+import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 interface Service {
   id?: string;

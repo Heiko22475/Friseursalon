@@ -200,7 +200,7 @@ export const SettingsEditor: React.FC = () => {
 
             <button
               onClick={handleSave}
-              disabled={saving || (data.customer_id && !validateCustomerId(data.customer_id))}
+              disabled={saving || Boolean(data.customer_id && !validateCustomerId(data.customer_id))}
               className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-5 h-5" />

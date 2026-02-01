@@ -52,6 +52,12 @@ export interface Contact {
   facebook_url: string | null;
   instagram_url: string | null;
   google_maps_url: string | null;
+  // Additional social media URLs
+  tiktok_url?: string | null;
+  youtube_url?: string | null;
+  twitter_url?: string | null;
+  linkedin_url?: string | null;
+  whatsapp?: string | null;
 }
 
 export interface BusinessHour {

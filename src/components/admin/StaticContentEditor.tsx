@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Eye, Highlighter, Type, PaintBucket, Eraser } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Highlighter, Eraser } from 'lucide-react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -11,7 +11,6 @@ import { Modal } from './Modal';
 import StaticContent from '../StaticContent';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
-import { getAdaptiveTextColors } from '../../utils/color-utils';
 
 import { Color } from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
@@ -29,7 +28,7 @@ export const StaticContentEditor: React.FC = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // Load Active Theme Colors
-  const { theme, getBrandColor, getAccentColor } = useActiveTheme();
+  const { getBrandColor, getAccentColor } = useActiveTheme();
 
   const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ blockType: 'static-content', instanceId });
 

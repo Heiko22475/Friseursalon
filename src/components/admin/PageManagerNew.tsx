@@ -248,7 +248,7 @@ export const PageManagerNew: React.FC = () => {
                 <React.Fragment key={page.id}>
                   {/* Home Icon */}
                   <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
-                    {page.is_home && <Home size={20} className="text-rose-600" title="Homepage" />}
+                    {page.is_home && <Home size={20} className="text-rose-600" aria-label="Homepage" />}
                   </div>
 
                   {/* Page Info */}
@@ -350,10 +350,7 @@ export const PageManagerNew: React.FC = () => {
         )}
 
         {/* Edit Modal */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <h2 className="text-2xl font-bold mb-4">
-            {editingId ? 'Seite bearbeiten' : 'Neue Seite'}
-          </h2>
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Seite bearbeiten' : 'Neue Seite'}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Titel</label>

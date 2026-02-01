@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { ThemeTokens, Palette, SemanticTokens } from '../types/theme';
+import { ThemeTokens, SemanticTokens } from '../types/theme';
 import { resolveColor } from '../utils/token-resolver';
 
 /**

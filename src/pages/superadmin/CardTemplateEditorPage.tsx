@@ -9,7 +9,7 @@ import { ArrowLeft, Save, Settings, Paintbrush, Code } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import {
   GenericCardConfig,
-  createDefaultGenericCardConfig,
+  createTemplateCardConfig,
 } from '../../types/GenericCard';
 import { GenericCard } from '../../components/blocks/GenericCard';
 import { CardConfigEditor } from '../../components/admin/CardConfigEditor';
@@ -43,7 +43,7 @@ export const CardTemplateEditorPage: React.FC = () => {
   const [template, setTemplate] = useState<CardTemplate>({
     name: '',
     description: '',
-    config: createDefaultGenericCardConfig(),
+    config: createTemplateCardConfig(),
     category: 'general',
     is_active: true,
   });
@@ -392,7 +392,7 @@ export const CardTemplateEditorPage: React.FC = () => {
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => {
-                    setTemplate({ ...template, config: createDefaultGenericCardConfig() });
+                    setTemplate({ ...template, config: createTemplateCardConfig() });
                   }}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
                 >

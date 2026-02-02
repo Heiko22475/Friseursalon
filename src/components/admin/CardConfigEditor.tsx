@@ -277,7 +277,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                 onClick={() => setShowMediaLibrary(true)}
                 className="w-full py-2 border-2 border-dashed rounded-lg hover:border-rose-500 transition text-sm text-gray-500"
               >
-                Bild auswählen
+                Stockfoto auswählen
               </button>
             )}
           </div>
@@ -331,26 +331,15 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
         </div>
       )}
 
-      {/* Media Library Modal */}
+      {/* Media Library Modal (Stock Photos Only) */}
       {showMediaLibrary && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-6xl w-full max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Mediathek</h3>
-              <button
-                onClick={() => setShowMediaLibrary(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <MediaLibrary
-                onSelect={handleMediaSelect}
-              />
-            </div>
-          </div>
-        </div>
+        <MediaLibrary
+          mode="select"
+          onSelect={handleMediaSelect}
+          onCancel={() => setShowMediaLibrary(false)}
+          stockOnly={true}
+          singleSelect={true}
+        />
       )}
     </div>
   );

@@ -5,18 +5,31 @@ import {
   Viewport, Position, HorizontalPosition, VerticalPosition,
   getResponsiveValue, createDefaultHeroConfig
 } from '../../types/Hero';
+import { EditableText } from '../admin/EditableText';
 
 interface HeroProps {
   config?: HeroConfig;
   instanceId?: number;
+  blockId?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId }) => {
+export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId, blockId }) => {
   const { website } = useWebsite();
   const [currentViewport, setCurrentViewport] = useState<Viewport>('desktop');
   
-  // Get config from props or default
-  const config = propConfig || createDefaultHeroConfig();
+  // Get config from props or default - ensure all required fields exist
+  const defaultConfig = createDefaultHeroConfig();
+  const config: HeroConfig = propConfig ? {
+    ...defaultConfig,
+    ...propConfig,
+    height: propConfig.height || defaultConfig.height,
+    logos: propConfig.logos || defaultConfig.logos,
+    texts: propConfig.texts || defaultConfig.texts,
+    buttons: propConfig.buttons || defaultConfig.buttons,
+    overlay: propConfig.overlay || defaultConfig.overlay,
+    backgroundPosition: propConfig.backgroundPosition || defaultConfig.backgroundPosition,
+  } : defaultConfig;
+  
   const logos = website?.logos || [];
 
   // Detect viewport
@@ -115,13 +128,18 @@ export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId }) =>
         })}
 
         {/* Texts on Image */}
-        {onImageTexts.map((text) => (
-          <TextRenderer
-            key={text.id}
-            text={text}
-            viewport={currentViewport}
-          />
-        ))}
+        {onImageTexts.map((text, index) => {
+          const textIndex = config.texts.findIndex(t => t.id === text.id);
+          return (
+            <TextRenderer
+              key={text.id}
+              text={text}
+              viewport={currentViewport}
+              blockId={blockId}
+              textIndex={textIndex}
+            />
+          );
+        })}
 
         {/* Buttons on Image */}
         {onImageButtons.map((button) => (
@@ -151,9 +169,27 @@ export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId }) =>
             })}
 
             {/* Texts below */}
-            {belowImageTexts.map((text) => {
+            {belowImageTexts.map((text, index) => {
               const fontSize = getResponsiveValue(text.fontSize, currentViewport);
-              return (
+              const textIndex = config.texts.findIndex(t => t.id === text.id);
+              
+              return blockId ? (
+                <EditableText
+                  key={text.id}
+                  blockId={blockId}
+                  fieldPath={`texts[${textIndex}].content`}
+                  value={text.content}
+                  as="div"
+                  className="whitespace-pre-wrap"
+                  style={{
+                    fontFamily: text.fontFamily,
+                    fontSize: `${fontSize}px`,
+                    fontWeight: text.fontWeight,
+                    color: text.color
+                  }}
+                  multiline
+                />
+              ) : (
                 <div
                   key={text.id}
                   className="whitespace-pre-wrap"
@@ -273,13 +309,36 @@ const LogoSvg: React.FC<LogoSvgProps> = ({ logo, scale }) => {
 interface TextRendererProps {
   text: HeroText;
   viewport: Viewport;
+  blockId?: string;
+  textIndex: number;
 }
 
-const TextRenderer: React.FC<TextRendererProps> = ({ text, viewport }) => {
+const TextRenderer: React.FC<TextRendererProps> = ({ text, viewport, blockId, textIndex }) => {
   const position = getResponsiveValue(text.position, viewport);
   const fontSize = getResponsiveValue(text.fontSize, viewport);
   
   const posStyle = getPositionStyle(position);
+
+  if (blockId) {
+    return (
+      <div className="absolute" style={posStyle}>
+        <EditableText
+          blockId={blockId}
+          fieldPath={`texts[${textIndex}].content`}
+          value={text.content}
+          as="div"
+          className="whitespace-pre-wrap text-center max-w-[90%]"
+          style={{
+            fontFamily: text.fontFamily,
+            fontSize: `${fontSize}px`,
+            fontWeight: text.fontWeight,
+            color: text.color
+          }}
+          multiline
+        />
+      </div>
+    );
+  }
 
   return (
     <div 

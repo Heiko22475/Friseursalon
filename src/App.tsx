@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { WebsiteProvider } from './contexts/WebsiteContext';
+import { EditModeProvider } from './contexts/EditModeContext';
 import { useCustomerId } from './hooks/useCustomerId';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
@@ -438,7 +439,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <EditModeProvider>
+        <AppContent />
+      </EditModeProvider>
     </AuthProvider>
   );
 }

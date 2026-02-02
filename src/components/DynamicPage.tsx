@@ -12,6 +12,7 @@ import StaticContent from './StaticContent';
 import { Grid } from './Grid';
 import { GenericCard } from './blocks/GenericCard';
 import Footer from './Footer';
+import { EditModeToggle } from './admin/EditModeToggle';
 
 interface PageBlock {
   id: string;
@@ -79,7 +80,7 @@ export const DynamicPage: React.FC = () => {
     
     switch (block.type) {
       case 'hero':
-        return <div key={key} id={`hero-${instanceId}`}><Hero config={block.config} instanceId={instanceId} /></div>;
+        return <div key={key} id={`hero-${instanceId}`}><Hero config={block.config} instanceId={instanceId} blockId={block.id} /></div>;
       case 'services':
         return <div key={key} id="services"><Services instanceId={instanceId} /></div>;
       case 'gallery':
@@ -127,6 +128,9 @@ export const DynamicPage: React.FC = () => {
         .sort((a, b) => a.position - b.position)
         .map((block) => renderBlock(block))}
       <Footer />
+      
+      {/* Edit Mode Toggle (nur für Admins) */}
+      <EditModeToggle />
     </div>
   );
 };

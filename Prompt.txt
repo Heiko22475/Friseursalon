@@ -359,7 +359,57 @@ Ich hätte gerne eine Generic Card, mit einer Preview der Karte rechts.
 Schreibe ein Konzept 
 
 Feedback zu Cards: 
-Die Texteingaben sollen den TipTap-editor 
+
+Der Baustein soll auch eine Typografie-Auswahl-möglichkeiten bekommen 
+(typografie-Picker). 
+Das Karten-Styling sollte eine Thame-Auswahl-Picker bekommen, um Hintergrund 
+und Rahmen Farben zu sezten.
+Außerdem sollte man auch die Option haben, keine Farbe zu setzen.  
+
+
+Feedback: 
+Alle Textfelder sollen mit der TipTap-Komponente umgesetzt werden. 
+Alle Colorpicker sollen mit dem Theme-Auswahl-Picker ausgerüstet werden. 
+
+
+1) Der Backbutton auf dem Generic Block editor führt zu einem falschen link: 
+http://localhost:5173/admin/pages/f4f28093-15aa-4187-83ad-562ba5bfb5d1/blocks
+2) Unter der Bereichseinstellung sollte es eine Bereichsweite Typografie-Einstellung
+geben. 
+3) Die Typografie-Einstellung (oberstes Akkordeon) in den KartenStyles kann entfallen. 
+4) Bei dem Kartenstyling soll festgelegt werden, wie dick der Rand in Pixel sein soll
+Standard: 0px. 
+5) Der Farb-Picker enthält nicht die Farbabstufungen und ist auch sonst buggy: 
+Die Theme-Farben werden bei Auswahl nicht gesetzt. 
+
+
+Bei dem Bild funktioniert das Padding Und der Margin nach unten nicht.
+Außerdem Ist die Overline Eine Schrift Zwischen Dem Bild und der Headline.
+Für diese Overline benötige ich dann eben auch unten einen Text den ich eintragen kann.
+Und eben auch eine Schriftart die ich setzen kann
+Und eben auch eine Schriftart die ich setzen kann
+Für die Beschreibung muss ich eine Schriftart setzen können.
+
+Ich hatte auch einmal eine bessere Funktionalität für das Icon Styling.
+Und zwar konnte ich sagen dass das Icon einen Hintergrund hatte Und konnte auch die Farbe des Hintergrundsätzen und setzen ob des der Hintergrund ist oder rechteckig mit abgerundeten Ecken.
+Das Padding Des Iconhintergrungs möchte ich auch setzen können. 
+
+Ich als Superadministrator möchte auch selber vordefinierte Karten erstellen können, 
+die ich als Liste den Benutzern zur Verfügung stellen möchte. 
+Das wäre dann ein weiterer Punkt im Superadmin bereich, 
+in dem ich wie der Benutzer einzelne Karten bearbeiten kann.
+Da gäbe es dann eine Liste von Karten-Entwürfen, die ich mir ansehen kann.
+Die Kartenentwürfe sollen dann auch einen Namen und eine Beschreibung haben können.   
+Bei Auswahl auf einen solchen Kartenentwurf öffnet sich der Editor, wie ihn auch 
+die Kunden sehen. 
+Die Karteninformationen sollen dann in einer DB-Tabelle "General" als JSON
+gespeichert werden können. Stelle sicher, dass das gleiche Datenmodell
+in den Karten des Kunden und des Superadmin gilt, auch wenn ich noch etwas an dem 
+Datenmodell ändere. 
+
+
+
+
 
 
 

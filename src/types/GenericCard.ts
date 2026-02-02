@@ -28,6 +28,7 @@ export interface GenericCardItem {
   id: string;
   
   // Content
+  overline?: string; // Small text above title
   title: string;
   subtitle?: string;
   description?: string; // HTML content from WYSIWYG
@@ -136,6 +137,58 @@ export type CardLayoutVariant =
   | 'overlay'       // Content overlays image
   | 'minimal';      // Just content, no media
 
+// ===== CARD TYPOGRAPHY CONFIG =====
+
+export interface CardTypographyConfig {
+  enabled: boolean;
+  titleFont: string;          // Font ID
+  titleWeight: number;
+  bodyFont: string;           // Font ID
+  bodyWeight: number;
+}
+
+// ===== FONT SIZE CONFIG =====
+
+export interface FontSizeConfig {
+  desktop?: number;
+  tablet?: number;
+  mobile?: number;
+}
+
+// ===== CONTENT ELEMENT STYLES =====
+
+export interface ContentElementStyle {
+  color?: ColorValue;
+  marginBottom: number; // in px
+}
+
+export interface ImageElementStyle extends ContentElementStyle {
+  padding: number; // in px
+  enabled: boolean;
+}
+
+export interface OverlineStyle extends ContentElementStyle {
+  enabled: boolean;
+  font?: string;
+  fontSize?: FontSizeConfig;
+}
+
+export interface TitleStyle extends ContentElementStyle {
+  font?: string;
+  fontSize?: FontSizeConfig;
+}
+
+export interface SubtitleStyle extends ContentElementStyle {
+  enabled: boolean;
+  fontSize?: FontSizeConfig;
+}
+
+export interface DescriptionStyle extends ContentElementStyle {
+  enabled: boolean;
+  font?: string;
+  fontSize?: FontSizeConfig;
+}
+
 // ===== GENERIC CARD CONFIG =====
 
 export interface GenericCardConfig {
@@ -147,17 +200,27 @@ export interface GenericCardConfig {
   cardLayoutVariant: CardLayoutVariant;
   grid: CardGridConfig;
   
+  // Typography
+  typography: CardTypographyConfig;
+  
   // Card Base Style
   cardStyle: CardBaseStyle;
   
   // Image Style
   imageStyle: CardImageStyle;
   showImage: boolean;
+  imageElementStyle: ImageElementStyle;
   
   // Icon Style (alternative to image)
   iconStyle: IconStyle;
   
-  // Text Style
+  // Content Element Styles
+  overlineStyle: OverlineStyle;
+  titleStyle: TitleStyle;
+  subtitleStyle: SubtitleStyle;
+  descriptionStyle: DescriptionStyle;
+  
+  // Text Style (legacy)
   textStyle: CardTextStyle;
   showSubtitle: boolean;
   showDescription: boolean;
@@ -236,6 +299,43 @@ export const createDefaultSocialStyle = (): SocialStyle => ({
   gap: 'sm',
 });
 
+export const createDefaultCardTypography = (): CardTypographyConfig => ({
+  enabled: false,
+  titleFont: 'inter',
+  titleWeight: 600,
+  bodyFont: 'inter',
+  bodyWeight: 400,
+});
+
+export const createDefaultImageElementStyle = (): ImageElementStyle => ({
+  enabled: true,
+  padding: 0,
+  marginBottom: 16,
+});
+
+export const createDefaultOverlineStyle = (): OverlineStyle => ({
+  enabled: false,
+  color: { kind: 'tokenRef', ref: 'semantic.mutedText' },
+  marginBottom: 8,
+});
+
+export const createDefaultTitleStyle = (): TitleStyle => ({
+  color: { kind: 'tokenRef', ref: 'semantic.headingText' },
+  marginBottom: 8,
+});
+
+export const createDefaultSubtitleStyle = (): SubtitleStyle => ({
+  enabled: true,
+  color: { kind: 'tokenRef', ref: 'semantic.mutedText' },
+  marginBottom: 12,
+});
+
+export const createDefaultDescriptionStyle = (): DescriptionStyle => ({
+  enabled: true,
+  color: { kind: 'tokenRef', ref: 'semantic.bodyText' },
+  marginBottom: 16,
+});
+
 export const createDefaultGenericCardItem = (): GenericCardItem => ({
   id: crypto.randomUUID(),
   title: 'Neue Karte',
@@ -247,10 +347,16 @@ export const createDefaultGenericCardConfig = (): GenericCardConfig => ({
   layout: 'grid',
   cardLayoutVariant: 'vertical',
   grid: createDefaultCardGridConfig(),
+  typography: createDefaultCardTypography(),
   cardStyle: createDefaultCardBaseStyle(),
   imageStyle: createDefaultCardImageStyle(),
   showImage: true,
+  imageElementStyle: createDefaultImageElementStyle(),
   iconStyle: createDefaultIconStyle(),
+  overlineStyle: createDefaultOverlineStyle(),
+  titleStyle: createDefaultTitleStyle(),
+  subtitleStyle: createDefaultSubtitleStyle(),
+  descriptionStyle: createDefaultDescriptionStyle(),
   textStyle: createDefaultCardTextStyle(),
   showSubtitle: true,
   showDescription: true,

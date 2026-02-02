@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, LogOut, Palette } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export const SuperAdminDashboard: React.FC = () => {
@@ -63,6 +64,21 @@ export const SuperAdminDashboard: React.FC = () => {
             </div>
             <p className="text-gray-500">
               Manage shared stock photos available to all customers.
+            </p>
+          </button>
+
+          <button
+            onClick={() => navigate('/superadmin/card-templates')}
+            className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-100 text-left group"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-rose-100 text-rose-600 rounded-lg group-hover:bg-rose-600 group-hover:text-white transition">
+                <LayoutGrid className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Karten-Vorlagen</h3>
+            </div>
+            <p className="text-gray-500">
+              Vordefinierte Karten-Entwürfe für alle Benutzer verwalten.
             </p>
           </button>
         </div>

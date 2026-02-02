@@ -14,47 +14,28 @@ import { useWebsite } from '../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
 import { IconPicker } from './IconPicker';
 import { RichTextInput } from './RichTextInput';
+import { ThemeColorPicker } from './ThemeColorPicker';
+import { FontPicker } from './FontPicker';
+import { FontPickerWithSize } from './FontPickerWithSize';
 import {
   GenericCardConfig,
   GenericCardItem,
+  CardTypographyConfig,
+  ImageElementStyle,
+  OverlineStyle,
+  TitleStyle,
+  SubtitleStyle,
+  DescriptionStyle,
   createDefaultGenericCardConfig,
   createDefaultGenericCardItem,
+  createDefaultCardTypography,
+  createDefaultImageElementStyle,
+  createDefaultOverlineStyle,
+  createDefaultTitleStyle,
+  createDefaultSubtitleStyle,
+  createDefaultDescriptionStyle,
 } from '../../types/GenericCard';
 import { GenericCard } from '../blocks/GenericCard';
-import { ColorValue } from '../../types/theme';
-
-// ===== COLOR PICKER =====
-
-interface ColorPickerProps {
-  label: string;
-  value: ColorValue;
-  onChange: (value: ColorValue) => void;
-}
-
-const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => {
-  const currentColor = value.kind === 'custom' ? value.hex : '#000000';
-
-  return (
-    <div>
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
-      <div className="flex gap-2">
-        <input
-          type="color"
-          value={currentColor}
-          onChange={(e) => onChange({ kind: 'custom', hex: e.target.value })}
-          className="w-10 h-10 rounded border cursor-pointer"
-        />
-        <input
-          type="text"
-          value={currentColor}
-          onChange={(e) => onChange({ kind: 'custom', hex: e.target.value })}
-          className="flex-1 px-2 py-1 border rounded text-sm font-mono"
-          placeholder="#000000"
-        />
-      </div>
-    </div>
-  );
-};
 
 // ===== SECTION COMPONENT =====
 
@@ -63,24 +44,97 @@ interface SectionProps {
   icon: React.ReactNode;
   defaultOpen?: boolean;
   children: React.ReactNode;
+  nested?: boolean;
+  // Optional toggle in header
+  toggleEnabled?: boolean;
+  toggleValue?: boolean;
+  onToggleChange?: (value: boolean) => void;
+  toggleLabel?: string;
 }
 
-const Section: React.FC<SectionProps> = ({ title, icon, defaultOpen = false, children }) => {
+const Section: React.FC<SectionProps> = ({ 
+  title, 
+  icon, 
+  defaultOpen = false, 
+  children, 
+  nested = false,
+  toggleEnabled = false,
+  toggleValue = false,
+  onToggleChange,
+  toggleLabel
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleChange) {
+      onToggleChange(!toggleValue);
+    }
+  };
+
+  return (
+    <div className={`border border-gray-200 rounded-lg overflow-hidden ${nested ? 'bg-gray-50' : 'bg-white'}`}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between p-3 ${nested ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'} transition`}
+      >
+        <div className={`flex items-center gap-2 ${nested ? 'text-sm' : ''} font-medium text-gray-700`}>
+          {icon}
+          {title}
+        </div>
+        <div className="flex items-center gap-3">
+          {toggleEnabled && (
+            <div 
+              className="flex items-center gap-2"
+              onClick={handleToggleClick}
+            >
+              {toggleLabel && <span className="text-xs text-gray-500">{toggleLabel}</span>}
+              <div
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                  toggleValue ? 'bg-rose-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition ${
+                    toggleValue ? 'translate-x-5' : 'translate-x-1'
+                  }`}
+                />
+              </div>
+            </div>
+          )}
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </div>
+      </button>
+      {isOpen && <div className={`p-4 space-y-4 border-t ${nested ? 'bg-white' : ''}`}>{children}</div>}
+    </div>
+  );
+};
+
+// ===== COLLAPSIBLE GROUP =====
+
+interface CollapsibleGroupProps {
+  title: string;
+  icon: React.ReactNode;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}
+
+const CollapsibleGroup: React.FC<CollapsibleGroupProps> = ({ title, icon, defaultOpen = false, children }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition"
+        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition"
       >
-        <div className="flex items-center gap-2 font-medium text-gray-700">
+        <div className="flex items-center gap-2 font-semibold text-gray-800">
           {icon}
           {title}
         </div>
-        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
       </button>
-      {isOpen && <div className="p-4 space-y-4 border-t">{children}</div>}
+      {isOpen && <div className="p-4 space-y-3 border-t bg-gray-50/50">{children}</div>}
     </div>
   );
 };
@@ -116,27 +170,7 @@ const Select: React.FC<SelectProps> = ({ label, value, options, onChange }) => (
   </div>
 );
 
-// ===== TEXT INPUT =====
 
-interface TextInputProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}
-
-const TextInput: React.FC<TextInputProps> = ({ label, value, onChange, placeholder }) => (
-  <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-    />
-  </div>
-);
 
 // ===== NUMBER INPUT =====
 
@@ -294,19 +328,25 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
         <div className="p-4 space-y-4 border-t">
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
-            <TextInput
+            <RichTextInput
+              label="Overline"
+              value={item.overline || ''}
+              onChange={(overline) => update({ overline })}
+              placeholder="z.B. PREMIUM"
+            />
+            <RichTextInput
               label="Titel"
               value={item.title}
               onChange={(title) => update({ title })}
               placeholder="z.B. Premium Service"
             />
-            <TextInput
-              label="Untertitel"
-              value={item.subtitle || ''}
-              onChange={(subtitle) => update({ subtitle })}
-              placeholder="z.B. Unser Bestseller"
-            />
           </div>
+          <RichTextInput
+            label="Untertitel"
+            value={item.subtitle || ''}
+            onChange={(subtitle) => update({ subtitle })}
+            placeholder="z.B. Unser Bestseller"
+          />
 
           {/* Description with WYSIWYG */}
           <div>
@@ -379,7 +419,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
               min={0}
               step={0.01}
             />
-            <TextInput
+            <RichTextInput
               label="Preis-Einheit"
               value={item.priceUnit || ''}
               onChange={(priceUnit) => update({ priceUnit })}
@@ -450,13 +490,13 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
           {/* CTA */}
           <div className="grid grid-cols-2 gap-4">
-            <TextInput
+            <RichTextInput
               label="Button-Text"
               value={item.ctaText || ''}
               onChange={(ctaText) => update({ ctaText })}
               placeholder="z.B. Jetzt buchen"
             />
-            <TextInput
+            <RichTextInput
               label="Button-Link"
               value={item.ctaUrl || ''}
               onChange={(ctaUrl) => update({ ctaUrl })}
@@ -634,6 +674,78 @@ export const GenericCardEditorPage: React.FC = () => {
     );
   };
 
+  const updateTypography = (updates: Partial<CardTypographyConfig>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        typography: { 
+          ...(prev.typography || createDefaultCardTypography()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
+  const updateImageElementStyle = (updates: Partial<ImageElementStyle>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        imageElementStyle: { 
+          ...(prev.imageElementStyle || createDefaultImageElementStyle()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
+  const updateOverlineStyle = (updates: Partial<OverlineStyle>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        overlineStyle: { 
+          ...(prev.overlineStyle || createDefaultOverlineStyle()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
+  const updateTitleStyle = (updates: Partial<TitleStyle>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        titleStyle: { 
+          ...(prev.titleStyle || createDefaultTitleStyle()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
+  const updateSubtitleStyle = (updates: Partial<SubtitleStyle>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        subtitleStyle: { 
+          ...(prev.subtitleStyle || createDefaultSubtitleStyle()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
+  const updateDescriptionStyle = (updates: Partial<DescriptionStyle>) => {
+    setConfig((prev) =>
+      prev ? { 
+        ...prev, 
+        descriptionStyle: { 
+          ...(prev.descriptionStyle || createDefaultDescriptionStyle()), 
+          ...updates 
+        } 
+      } : null
+    );
+  };
+
   // Item management
   const addItem = () => {
     if (!config) return;
@@ -702,7 +814,7 @@ export const GenericCardEditorPage: React.FC = () => {
         <div className="max-w-[1800px] mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate(`/admin/pages/${pageId}/blocks`)}
+              onClick={() => navigate('/admin/pages')}
               className="p-2 hover:bg-gray-100 rounded-lg"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -751,12 +863,12 @@ export const GenericCardEditorPage: React.FC = () => {
                 />
                 {config.sectionStyle.showHeader && (
                   <>
-                    <TextInput
+                    <RichTextInput
                       label="Titel"
                       value={config.sectionStyle.title || ''}
                       onChange={(title) => updateSectionStyle({ title })}
                     />
-                    <TextInput
+                    <RichTextInput
                       label="Untertitel"
                       value={config.sectionStyle.subtitle || ''}
                       onChange={(subtitle) => updateSectionStyle({ subtitle })}
@@ -773,11 +885,60 @@ export const GenericCardEditorPage: React.FC = () => {
                     />
                   </>
                 )}
-                <ColorPicker
+                <ThemeColorPicker
                   label="Hintergrundfarbe"
                   value={config.sectionStyle.backgroundColor}
-                  onChange={(backgroundColor) => updateSectionStyle({ backgroundColor })}
+                  onChange={(backgroundColor) => updateSectionStyle({ backgroundColor: backgroundColor === null ? undefined : backgroundColor })}
+                  allowNoColor
                 />
+
+                {/* Section Typography */}
+                <div className="pt-4 border-t border-gray-200">
+                  <Toggle
+                    label="Eigene Typografie verwenden"
+                    value={config.typography?.enabled ?? false}
+                    onChange={(enabled) => updateTypography({ enabled })}
+                  />
+                  {config.typography?.enabled && (
+                    <div className="mt-3 space-y-3">
+                      <FontPicker
+                        label="Titel-Schriftart"
+                        value={config.typography.titleFont || 'inter'}
+                        onChange={(titleFont) => updateTypography({ titleFont })}
+                      />
+                      <Select
+                        label="Titel-Schriftstärke"
+                        value={String(config.typography.titleWeight || 600)}
+                        options={[
+                          { value: '300', label: 'Light (300)' },
+                          { value: '400', label: 'Normal (400)' },
+                          { value: '500', label: 'Medium (500)' },
+                          { value: '600', label: 'Semibold (600)' },
+                          { value: '700', label: 'Bold (700)' },
+                          { value: '800', label: 'Extrabold (800)' },
+                        ]}
+                        onChange={(val) => updateTypography({ titleWeight: Number(val) })}
+                      />
+                      <FontPicker
+                        label="Text-Schriftart"
+                        value={config.typography.bodyFont || 'inter'}
+                        onChange={(bodyFont) => updateTypography({ bodyFont })}
+                      />
+                      <Select
+                        label="Text-Schriftstärke"
+                        value={String(config.typography.bodyWeight || 400)}
+                        options={[
+                          { value: '300', label: 'Light (300)' },
+                          { value: '400', label: 'Normal (400)' },
+                          { value: '500', label: 'Medium (500)' },
+                          { value: '600', label: 'Semibold (600)' },
+                          { value: '700', label: 'Bold (700)' },
+                        ]}
+                        onChange={(val) => updateTypography({ bodyWeight: Number(val) })}
+                      />
+                    </div>
+                  )}
+                </div>
               </Section>
 
               {/* Layout Settings */}
@@ -840,239 +1001,406 @@ export const GenericCardEditorPage: React.FC = () => {
                 />
               </Section>
 
-              {/* Card Style */}
-              <Section title="Karten-Styling" icon={<Palette className="w-4 h-4" />}>
-                <div className="grid grid-cols-2 gap-4">
-                  <ColorPicker
-                    label="Hintergrundfarbe"
-                    value={config.cardStyle.backgroundColor}
-                    onChange={(backgroundColor) => updateCardStyle({ backgroundColor })}
-                  />
-                  <ColorPicker
-                    label="Rahmenfarbe"
-                    value={config.cardStyle.borderColor}
-                    onChange={(borderColor) => updateCardStyle({ borderColor })}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Select
-                    label="Ecken-Radius"
-                    value={config.cardStyle.borderRadius}
-                    options={[
-                      { value: 'none', label: 'Keine' },
-                      { value: 'sm', label: 'Klein' },
-                      { value: 'md', label: 'Mittel' },
-                      { value: 'lg', label: 'Groß' },
-                      { value: 'xl', label: 'Sehr groß' },
-                      { value: '2xl', label: 'Extra groß' },
-                    ]}
-                    onChange={(borderRadius: any) => updateCardStyle({ borderRadius })}
-                  />
-                  <Select
-                    label="Schatten"
-                    value={config.cardStyle.shadow}
-                    options={[
-                      { value: 'none', label: 'Kein' },
-                      { value: 'sm', label: 'Klein' },
-                      { value: 'md', label: 'Mittel' },
-                      { value: 'lg', label: 'Groß' },
-                      { value: 'xl', label: 'Sehr groß' },
-                    ]}
-                    onChange={(shadow: any) => updateCardStyle({ shadow })}
-                  />
-                </div>
-                <Select
-                  label="Hover-Effekt"
-                  value={config.cardStyle.hoverEffect}
-                  options={[
-                    { value: 'none', label: 'Keiner' },
-                    { value: 'lift', label: 'Anheben' },
-                    { value: 'glow', label: 'Leuchten' },
-                    { value: 'scale', label: 'Vergrößern' },
-                    { value: 'border', label: 'Rahmen' },
-                  ]}
-                  onChange={(hoverEffect: any) => updateCardStyle({ hoverEffect })}
-                />
-              </Section>
-
-              {/* Content Options */}
-              <Section title="Inhalt anzeigen" icon={<Type className="w-4 h-4" />}>
-                <div className="grid grid-cols-2 gap-4">
-                  <Toggle
-                    label="Bild anzeigen"
-                    value={config.showImage}
-                    onChange={(showImage) => updateConfig({ showImage })}
-                  />
-                  <Toggle
-                    label="Untertitel anzeigen"
-                    value={config.showSubtitle}
-                    onChange={(showSubtitle) => updateConfig({ showSubtitle })}
-                  />
-                  <Toggle
-                    label="Beschreibung anzeigen"
-                    value={config.showDescription}
-                    onChange={(showDescription) => updateConfig({ showDescription })}
-                  />
-                  <Toggle
-                    label="Button anzeigen"
-                    value={config.showButton}
-                    onChange={(showButton) => updateConfig({ showButton })}
-                  />
-                </div>
-              </Section>
-
-              {/* Icon Style */}
-              <Section title="Icon-Styling" icon={<Star className="w-4 h-4" />}>
-                <Toggle
-                  label="Icon aktivieren"
-                  value={config.iconStyle.enabled}
-                  onChange={(enabled) => updateIconStyle({ enabled })}
-                />
-                {config.iconStyle.enabled && (
-                  <>
+              {/* ===== STYLING GROUP ===== */}
+              <CollapsibleGroup title="Styling-Optionen" icon={<Palette className="w-5 h-5" />} defaultOpen>
+                {/* Card Style */}
+                <Section title="Karten-Styling" icon={<Palette className="w-4 h-4" />} nested>
+                  <div className="grid grid-cols-2 gap-4">
+                    <ThemeColorPicker
+                      label="Hintergrundfarbe"
+                      value={config.cardStyle.backgroundColor}
+                      onChange={(backgroundColor) => updateCardStyle({ backgroundColor: backgroundColor === null ? undefined : backgroundColor })}
+                      allowNoColor
+                    />
+                    <ThemeColorPicker
+                      label="Rahmenfarbe"
+                      value={config.cardStyle.borderColor}
+                      onChange={(borderColor) => updateCardStyle({ borderColor: borderColor === null ? undefined : borderColor })}
+                      allowNoColor
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <Select
-                      label="Größe"
-                      value={config.iconStyle.size}
+                      label="Ecken-Radius"
+                      value={config.cardStyle.borderRadius}
                       options={[
+                        { value: 'none', label: 'Keine' },
                         { value: 'sm', label: 'Klein' },
                         { value: 'md', label: 'Mittel' },
                         { value: 'lg', label: 'Groß' },
                         { value: 'xl', label: 'Sehr groß' },
                         { value: '2xl', label: 'Extra groß' },
                       ]}
-                      onChange={(size: any) => updateIconStyle({ size })}
+                      onChange={(borderRadius: any) => updateCardStyle({ borderRadius })}
                     />
-                    <ColorPicker
-                      label="Farbe"
-                      value={config.iconStyle.color}
-                      onChange={(color) => updateIconStyle({ color })}
-                    />
-                    <Toggle
-                      label="Hintergrund aktivieren"
-                      value={config.iconStyle.backgroundEnabled}
-                      onChange={(backgroundEnabled) => updateIconStyle({ backgroundEnabled })}
-                    />
-                  </>
-                )}
-              </Section>
-
-              {/* Price Style */}
-              <Section title="Preis-Styling" icon={<DollarSign className="w-4 h-4" />}>
-                <Toggle
-                  label="Preis anzeigen"
-                  value={config.priceStyle.enabled}
-                  onChange={(enabled) => updatePriceStyle({ enabled })}
-                />
-                {config.priceStyle.enabled && (
-                  <>
                     <Select
-                      label="Position"
-                      value={config.priceStyle.position}
+                      label="Rahmenbreite"
+                      value={String(config.cardStyle.borderWidth ?? 0)}
                       options={[
-                        { value: 'top-right', label: 'Oben rechts (Badge)' },
-                        { value: 'below-title', label: 'Unter dem Titel' },
-                        { value: 'bottom', label: 'Unten' },
+                        { value: '0', label: '0px (Keine)' },
+                        { value: '1', label: '1px' },
+                        { value: '2', label: '2px' },
+                        { value: '3', label: '3px' },
+                        { value: '4', label: '4px' },
                       ]}
-                      onChange={(position: any) => updatePriceStyle({ position })}
+                      onChange={(borderWidth: any) => updateCardStyle({ borderWidth: Number(borderWidth) as 0 | 1 | 2 | 3 | 4 })}
                     />
-                    <ColorPicker
-                      label="Farbe"
-                      value={config.priceStyle.color}
-                      onChange={(color) => updatePriceStyle({ color })}
-                    />
-                    <Toggle
-                      label="Alten Preis anzeigen"
-                      value={config.priceStyle.showOriginalPrice}
-                      onChange={(showOriginalPrice) => updatePriceStyle({ showOriginalPrice })}
-                    />
-                  </>
-                )}
-              </Section>
-
-              {/* Rating Style */}
-              <Section title="Bewertungs-Styling" icon={<Star className="w-4 h-4" />}>
-                <Toggle
-                  label="Bewertung anzeigen"
-                  value={config.ratingStyle.enabled}
-                  onChange={(enabled) => updateRatingStyle({ enabled })}
-                />
-                {config.ratingStyle.enabled && (
-                  <>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <Select
-                      label="Stil"
-                      value={config.ratingStyle.style}
+                      label="Schatten"
+                      value={config.cardStyle.shadow}
                       options={[
-                        { value: 'stars', label: 'Sterne' },
-                        { value: 'hearts', label: 'Herzen' },
-                        { value: 'numbers', label: 'Zahlen' },
+                        { value: 'none', label: 'Kein' },
+                        { value: 'sm', label: 'Klein' },
+                        { value: 'md', label: 'Mittel' },
+                        { value: 'lg', label: 'Groß' },
+                        { value: 'xl', label: 'Sehr groß' },
                       ]}
-                      onChange={(style: any) => updateRatingStyle({ style })}
+                      onChange={(shadow: any) => updateCardStyle({ shadow })}
                     />
-                    <ColorPicker
-                      label="Gefüllte Farbe"
-                      value={config.ratingStyle.filledColor}
-                      onChange={(filledColor) => updateRatingStyle({ filledColor })}
+                    <Select
+                      label="Hover-Effekt"
+                      value={config.cardStyle.hoverEffect}
+                      options={[
+                        { value: 'none', label: 'Keiner' },
+                        { value: 'lift', label: 'Anheben' },
+                        { value: 'glow', label: 'Leuchten' },
+                        { value: 'scale', label: 'Vergrößern' },
+                        { value: 'border', label: 'Rahmen' },
+                      ]}
+                      onChange={(hoverEffect: any) => updateCardStyle({ hoverEffect })}
                     />
-                  </>
-                )}
-              </Section>
+                  </div>
+                </Section>
 
-              {/* Features Style */}
-              <Section title="Features-Styling" icon={<List className="w-4 h-4" />}>
-                <Toggle
-                  label="Features anzeigen"
-                  value={config.featuresStyle.enabled}
-                  onChange={(enabled) => updateFeaturesStyle({ enabled })}
-                />
-                {config.featuresStyle.enabled && (
-                  <>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Feature-Icon</label>
-                      <IconPicker
-                        value={config.featuresStyle.icon}
-                        onChange={(icon) => updateFeaturesStyle({ icon })}
+                {/* Image Style */}
+                <Section 
+                  title="Bild" 
+                  icon={<ImageIcon className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.imageElementStyle?.enabled ?? config.showImage}
+                  onToggleChange={(enabled) => {
+                    updateImageElementStyle({ enabled });
+                    updateConfig({ showImage: enabled });
+                  }}
+                >
+                  <NumberInput
+                    label="Innenabstand (Padding in px)"
+                    value={config.imageElementStyle?.padding ?? 0}
+                    onChange={(padding) => updateImageElementStyle({ padding: padding ?? 0 })}
+                    min={0}
+                    placeholder="0"
+                  />
+                  <NumberInput
+                    label="Abstand nach unten (Margin in px)"
+                    value={config.imageElementStyle?.marginBottom ?? 16}
+                    onChange={(marginBottom) => updateImageElementStyle({ marginBottom: marginBottom ?? 16 })}
+                    min={0}
+                    placeholder="16"
+                  />
+                </Section>
+
+                {/* Overline Style */}
+                <Section 
+                  title="Overline" 
+                  icon={<Type className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.overlineStyle?.enabled ?? false}
+                  onToggleChange={(enabled) => updateOverlineStyle({ enabled })}
+                >
+                  <ThemeColorPicker
+                    label="Textfarbe"
+                    value={config.overlineStyle?.color ?? null}
+                    onChange={(color) => updateOverlineStyle({ color: color === null ? undefined : color })}
+                    allowNoColor
+                  />
+                  <FontPickerWithSize
+                    label="Schriftart und Größe"
+                    fontValue={config.overlineStyle?.font || config.typography?.bodyFont || 'inter'}
+                    onFontChange={(font) => updateOverlineStyle({ font })}
+                    sizeValue={config.overlineStyle?.fontSize}
+                    onSizeChange={(fontSize) => updateOverlineStyle({ fontSize })}
+                    defaultSize={12}
+                  />
+                  <NumberInput
+                    label="Abstand nach unten (Margin in px)"
+                    value={config.overlineStyle?.marginBottom ?? 8}
+                    onChange={(marginBottom) => updateOverlineStyle({ marginBottom: marginBottom ?? 8 })}
+                    min={0}
+                    placeholder="8"
+                  />
+                </Section>
+
+                {/* Title Style */}
+                <Section title="Überschrift" icon={<Type className="w-4 h-4" />} nested>
+                  <ThemeColorPicker
+                    label="Textfarbe"
+                    value={config.titleStyle?.color ?? null}
+                    onChange={(color) => updateTitleStyle({ color: color === null ? undefined : color })}
+                    allowNoColor
+                  />
+                  <FontPickerWithSize
+                    label="Schriftart und Größe"
+                    fontValue={config.titleStyle?.font || config.typography?.titleFont || 'inter'}
+                    onFontChange={(font) => updateTitleStyle({ font })}
+                    sizeValue={config.titleStyle?.fontSize}
+                    onSizeChange={(fontSize) => updateTitleStyle({ fontSize })}
+                    defaultSize={24}
+                  />
+                  <NumberInput
+                    label="Abstand nach unten (Margin in px)"
+                    value={config.titleStyle?.marginBottom ?? 8}
+                    onChange={(marginBottom) => updateTitleStyle({ marginBottom: marginBottom ?? 8 })}
+                    min={0}
+                    placeholder="8"
+                  />
+                </Section>
+
+                {/* Subtitle Style */}
+                <Section 
+                  title="Untertitel" 
+                  icon={<Type className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.subtitleStyle?.enabled ?? config.showSubtitle}
+                  onToggleChange={(enabled) => {
+                    updateSubtitleStyle({ enabled });
+                    updateConfig({ showSubtitle: enabled });
+                  }}
+                >
+                  <ThemeColorPicker
+                    label="Textfarbe"
+                    value={config.subtitleStyle?.color ?? null}
+                    onChange={(color) => updateSubtitleStyle({ color: color === null ? undefined : color })}
+                    allowNoColor
+                  />
+                  <NumberInput
+                    label="Abstand nach unten (Margin in px)"
+                    value={config.subtitleStyle?.marginBottom ?? 12}
+                    onChange={(marginBottom) => updateSubtitleStyle({ marginBottom: marginBottom ?? 12 })}
+                    min={0}
+                    placeholder="12"
+                  />
+                </Section>
+
+                {/* Description Style */}
+                <Section 
+                  title="Beschreibung" 
+                  icon={<Type className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.descriptionStyle?.enabled ?? config.showDescription}
+                  onToggleChange={(enabled) => {
+                    updateDescriptionStyle({ enabled });
+                    updateConfig({ showDescription: enabled });
+                  }}
+                >
+                  <ThemeColorPicker
+                    label="Textfarbe"
+                    value={config.descriptionStyle?.color ?? null}
+                    onChange={(color) => updateDescriptionStyle({ color: color === null ? undefined : color })}
+                    allowNoColor
+                  />
+                  <FontPickerWithSize
+                    label="Schriftart und Größe"
+                    fontValue={config.descriptionStyle?.font || config.typography?.bodyFont || 'inter'}
+                    onFontChange={(font) => updateDescriptionStyle({ font })}
+                    sizeValue={config.descriptionStyle?.fontSize}
+                    onSizeChange={(fontSize) => updateDescriptionStyle({ fontSize })}
+                    defaultSize={14}
+                  />
+                  <NumberInput
+                    label="Abstand nach unten (Margin in px)"
+                    value={config.descriptionStyle?.marginBottom ?? 16}
+                    onChange={(marginBottom) => updateDescriptionStyle({ marginBottom: marginBottom ?? 16 })}
+                    min={0}
+                    placeholder="16"
+                  />
+                </Section>
+
+                {/* Icon Style */}
+                <Section 
+                  title="Icon-Styling" 
+                  icon={<Star className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.iconStyle.enabled}
+                  onToggleChange={(enabled) => updateIconStyle({ enabled })}
+                >
+                  <Select
+                    label="Größe"
+                    value={config.iconStyle.size}
+                    options={[
+                      { value: 'sm', label: 'Klein' },
+                      { value: 'md', label: 'Mittel' },
+                      { value: 'lg', label: 'Groß' },
+                      { value: 'xl', label: 'Sehr groß' },
+                      { value: '2xl', label: 'Extra groß' },
+                    ]}
+                    onChange={(size: any) => updateIconStyle({ size })}
+                  />
+                  <ThemeColorPicker
+                    label="Icon-Farbe"
+                    value={config.iconStyle.color}
+                    onChange={(color) => updateIconStyle({ color: color || { kind: 'custom', hex: '#000000' } })}
+                  />
+                  <Toggle
+                    label="Hintergrund aktivieren"
+                    value={config.iconStyle.backgroundEnabled}
+                    onChange={(backgroundEnabled) => updateIconStyle({ backgroundEnabled })}
+                  />
+                  {config.iconStyle.backgroundEnabled && (
+                    <>
+                      <ThemeColorPicker
+                        label="Hintergrundfarbe"
+                        value={config.iconStyle.backgroundColor ?? null}
+                        onChange={(backgroundColor) => updateIconStyle({ backgroundColor: backgroundColor === null ? undefined : backgroundColor })}
+                        allowNoColor
                       />
-                    </div>
-                    <ColorPicker
-                      label="Icon-Farbe"
-                      value={config.featuresStyle.iconColor}
-                      onChange={(iconColor) => updateFeaturesStyle({ iconColor })}
-                    />
-                  </>
-                )}
-              </Section>
+                      <Select
+                        label="Form"
+                        value={config.iconStyle.backgroundShape}
+                        options={[
+                          { value: 'circle', label: 'Rund' },
+                          { value: 'rounded', label: 'Rechteckig (abgerundet)' },
+                          { value: 'square', label: 'Rechteckig' },
+                        ]}
+                        onChange={(backgroundShape: any) => updateIconStyle({ backgroundShape })}
+                      />
+                      <Select
+                        label="Hintergrund-Padding"
+                        value={config.iconStyle.backgroundPadding}
+                        options={[
+                          { value: 'xs', label: 'Sehr klein' },
+                          { value: 'sm', label: 'Klein' },
+                          { value: 'md', label: 'Mittel' },
+                          { value: 'lg', label: 'Groß' },
+                          { value: 'xl', label: 'Sehr groß' },
+                        ]}
+                        onChange={(backgroundPadding: any) => updateIconStyle({ backgroundPadding })}
+                      />
+                    </>
+                  )}
+                </Section>
 
-              {/* Social Style */}
-              <Section title="Social-Styling" icon={<Share2 className="w-4 h-4" />}>
-                <Toggle
-                  label="Social Links anzeigen"
-                  value={config.socialStyle.enabled}
-                  onChange={(enabled) => updateSocialStyle({ enabled })}
-                />
-                {config.socialStyle.enabled && (
-                  <>
-                    <Select
-                      label="Stil"
-                      value={config.socialStyle.iconStyle}
-                      options={[
-                        { value: 'filled', label: 'Gefüllt' },
-                        { value: 'outline', label: 'Umrandet' },
-                        { value: 'ghost', label: 'Transparent' },
-                      ]}
-                      onChange={(iconStyle: any) => updateSocialStyle({ iconStyle })}
-                    />
-                    <ColorPicker
-                      label="Farbe"
-                      value={config.socialStyle.iconColor}
-                      onChange={(iconColor) => updateSocialStyle({ iconColor })}
-                    />
-                  </>
-                )}
-              </Section>
+                {/* Price Style */}
+                <Section 
+                  title="Preis-Styling" 
+                  icon={<DollarSign className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.priceStyle.enabled}
+                  onToggleChange={(enabled) => updatePriceStyle({ enabled })}
+                >
+                  <Select
+                    label="Position"
+                    value={config.priceStyle.position}
+                    options={[
+                      { value: 'top-right', label: 'Oben rechts (Badge)' },
+                      { value: 'below-title', label: 'Unter dem Titel' },
+                      { value: 'bottom', label: 'Unten' },
+                    ]}
+                    onChange={(position: any) => updatePriceStyle({ position })}
+                  />
+                  <ThemeColorPicker
+                    label="Farbe"
+                    value={config.priceStyle.color}
+                    onChange={(color) => updatePriceStyle({ color: color || { kind: 'custom', hex: '#000000' } })}
+                  />
+                  <Toggle
+                    label="Alten Preis anzeigen"
+                    value={config.priceStyle.showOriginalPrice}
+                    onChange={(showOriginalPrice) => updatePriceStyle({ showOriginalPrice })}
+                  />
+                </Section>
 
-              {/* Button Style */}
-              {config.showButton && (
-                <Section title="Button-Styling" icon={<MousePointer className="w-4 h-4" />}>
+                {/* Rating Style */}
+                <Section 
+                  title="Bewertungs-Styling" 
+                  icon={<Star className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.ratingStyle.enabled}
+                  onToggleChange={(enabled) => updateRatingStyle({ enabled })}
+                >
+                  <Select
+                    label="Stil"
+                    value={config.ratingStyle.style}
+                    options={[
+                      { value: 'stars', label: 'Sterne' },
+                      { value: 'hearts', label: 'Herzen' },
+                      { value: 'numbers', label: 'Zahlen' },
+                    ]}
+                    onChange={(style: any) => updateRatingStyle({ style })}
+                  />
+                  <ThemeColorPicker
+                    label="Gefüllte Farbe"
+                    value={config.ratingStyle.filledColor}
+                    onChange={(filledColor) => updateRatingStyle({ filledColor: filledColor || { kind: 'custom', hex: '#FBBF24' } })}
+                  />
+                </Section>
+
+                {/* Features Style */}
+                <Section 
+                  title="Features-Styling" 
+                  icon={<List className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.featuresStyle.enabled}
+                  onToggleChange={(enabled) => updateFeaturesStyle({ enabled })}
+                >
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Feature-Icon</label>
+                    <IconPicker
+                      value={config.featuresStyle.icon}
+                      onChange={(icon) => updateFeaturesStyle({ icon })}
+                    />
+                  </div>
+                  <ThemeColorPicker
+                    label="Icon-Farbe"
+                    value={config.featuresStyle.iconColor}
+                    onChange={(iconColor) => updateFeaturesStyle({ iconColor: iconColor || { kind: 'custom', hex: '#10B981' } })}
+                  />
+                </Section>
+
+                {/* Social Style */}
+                <Section 
+                  title="Social-Styling" 
+                  icon={<Share2 className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.socialStyle.enabled}
+                  onToggleChange={(enabled) => updateSocialStyle({ enabled })}
+                >
+                  <Select
+                    label="Stil"
+                    value={config.socialStyle.iconStyle}
+                    options={[
+                      { value: 'filled', label: 'Gefüllt' },
+                      { value: 'outline', label: 'Umrandet' },
+                      { value: 'ghost', label: 'Transparent' },
+                    ]}
+                    onChange={(iconStyle: any) => updateSocialStyle({ iconStyle })}
+                  />
+                  <ThemeColorPicker
+                    label="Farbe"
+                    value={config.socialStyle.iconColor}
+                    onChange={(iconColor) => updateSocialStyle({ iconColor: iconColor || { kind: 'custom', hex: '#6B7280' } })}
+                  />
+                </Section>
+
+                {/* Button Style */}
+                <Section 
+                  title="Button-Styling" 
+                  icon={<MousePointer className="w-4 h-4" />} 
+                  nested
+                  toggleEnabled
+                  toggleValue={config.showButton}
+                  onToggleChange={(showButton) => updateConfig({ showButton })}
+                >
                   <Select
                     label="Variante"
                     value={config.buttonStyle.variant}
@@ -1084,15 +1412,16 @@ export const GenericCardEditorPage: React.FC = () => {
                     ]}
                     onChange={(variant: any) => updateButtonStyle({ variant })}
                   />
-                  <ColorPicker
+                  <ThemeColorPicker
                     label="Hintergrundfarbe"
                     value={config.buttonStyle.backgroundColor}
-                    onChange={(backgroundColor) => updateButtonStyle({ backgroundColor })}
+                    onChange={(backgroundColor) => updateButtonStyle({ backgroundColor: backgroundColor === null ? undefined : backgroundColor })}
+                    allowNoColor
                   />
-                  <ColorPicker
+                  <ThemeColorPicker
                     label="Textfarbe"
                     value={config.buttonStyle.textColor}
-                    onChange={(textColor) => updateButtonStyle({ textColor })}
+                    onChange={(textColor) => updateButtonStyle({ textColor: textColor || { kind: 'custom', hex: '#FFFFFF' } })}
                   />
                   <Toggle
                     label="Volle Breite"
@@ -1100,7 +1429,7 @@ export const GenericCardEditorPage: React.FC = () => {
                     onChange={(fullWidth) => updateButtonStyle({ fullWidth })}
                   />
                 </Section>
-              )}
+              </CollapsibleGroup>
 
               {/* Cards */}
               <Section title={`Karten (${config.items.length})`} icon={<Layout className="w-4 h-4" />} defaultOpen>

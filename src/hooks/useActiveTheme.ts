@@ -50,14 +50,20 @@ export function useActiveTheme() {
       
       if (semanticError) throw semanticError;
 
+      // 4. Fetch Accent Configs
+      const { data: accentData, error: accentError } = await supabase
+        .from('accent_configs')
+        .select('*')
+        .eq('palette_id', themeData.palette_id);
+      
+      if (accentError) throw accentError;
+
       // Construct ThemeTokens object (simplified for usage)
       const fullTheme: ThemeTokens = {
         ...themeData,
         palette: paletteData,
         semantic_tokens: semanticData,
-        // We might not need accent configs here unless we re-calculate
-        // For editor usage, we mostly need resolved colors
-        accent_configs: [], 
+        accent_configs: accentData || [],
         text_mappings: []
       };
 

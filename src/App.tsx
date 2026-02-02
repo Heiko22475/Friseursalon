@@ -39,6 +39,8 @@ import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEdi
 import { GenericCardEditorPage } from './components/admin/GenericCardEditorPage';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
+import { CardTemplatesPage } from './pages/superadmin/CardTemplatesPage';
+import { CardTemplateEditorPage } from './pages/superadmin/CardTemplateEditorPage';
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 import { TypographyEditor } from './components/admin/TypographyEditor';
@@ -408,6 +410,22 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <MediaLibrary stockOnly={true} isSuperAdmin={true} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/card-templates"
+            element={
+              <ProtectedRoute>
+                <CardTemplatesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/card-templates/:templateId"
+            element={
+              <ProtectedRoute>
+                <CardTemplateEditorPage />
               </ProtectedRoute>
             }
           />

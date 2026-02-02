@@ -22,10 +22,12 @@ import {
 } from '../../types/Cards';
 import { ColorValue } from '../../types/theme';
 import { Viewport } from '../../types/Hero';
+import { useViewport, getResponsiveFontSize } from '../../hooks/useViewport';
 
 // ===== HELPER: Color Value zu CSS =====
 
-const useColorValue = (color: ColorValue): string => {
+const useColorValue = (color: ColorValue | undefined, defaultColor: string = 'transparent'): string => {
+  if (!color) return defaultColor;
   if (color.kind === 'custom') {
     return color.hex;
   }
@@ -40,7 +42,7 @@ const useColorValue = (color: ColorValue): string => {
     'semantic.buttonPrimaryText': '#FFFFFF',
     'semantic.success': '#10B981',
   };
-  return tokenDefaults[color.ref] || '#000000';
+  return tokenDefaults[color.ref] || defaultColor;
 };
 
 // ===== HELPER: Aspect Ratio =====
@@ -232,6 +234,9 @@ interface SingleCardProps {
 const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
   const { cardStyle, imageStyle, textStyle, iconStyle, priceStyle, cardLayoutVariant, showImage, showSubtitle, showDescription, showButton, buttonStyle } = config;
 
+  // Get current viewport
+  const viewport = useViewport();
+
   // Colors
   const bgColor = useColorValue(cardStyle.backgroundColor);
   const borderColor = useColorValue(cardStyle.borderColor);
@@ -243,6 +248,12 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
   const buttonBorderColor = useColorValue(buttonStyle.borderColor);
   const iconColor = useColorValue(iconStyle.color);
   const priceColor = useColorValue(priceStyle.color);
+
+  // Responsive font sizes
+  const overlineFontSize = getResponsiveFontSize(config.overlineStyle?.fontSize, viewport, 12);
+  const titleFontSize = getResponsiveFontSize(config.titleStyle?.fontSize, viewport, 24);
+  const subtitleFontSize = getResponsiveFontSize(config.subtitleStyle?.fontSize, viewport, 16);
+  const descriptionFontSize = getResponsiveFontSize(config.descriptionStyle?.fontSize, viewport, 14);
 
   // Icon Background
   const iconBgColor = iconStyle.backgroundEnabled && iconStyle.backgroundColor
@@ -267,20 +278,32 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
   // Render Media (Image or Icon)
   const renderMedia = () => {
     if (item.image && showImage) {
+      const hasNoPadding = (config.imageElementStyle?.padding ?? 0) === 0;
+      const borderRadiusValue = BORDER_RADIUS_VALUES[imageStyle.borderRadius];
+      
       return (
         <div
-          className="relative overflow-hidden"
           style={{
-            ...getAspectRatioStyle(imageStyle.aspectRatio),
-            borderRadius: BORDER_RADIUS_VALUES[imageStyle.borderRadius],
+            padding: `${config.imageElementStyle?.padding ?? 0}px`,
+            marginBottom: `${config.imageElementStyle?.marginBottom ?? 16}px`,
           }}
         >
-          <img
-            src={item.image}
-            alt={item.title}
-            className="absolute inset-0 w-full h-full"
-            style={{ objectFit: imageStyle.fit }}
-          />
+          <div
+            className="relative overflow-hidden"
+            style={{
+              ...getAspectRatioStyle(imageStyle.aspectRatio),
+              borderRadius: hasNoPadding 
+                ? `${borderRadiusValue} ${borderRadiusValue} 0 0`
+                : borderRadiusValue,
+            }}
+          >
+            <img
+              src={item.image}
+              alt={item.title}
+              className="absolute inset-0 w-full h-full"
+              style={{ objectFit: imageStyle.fit }}
+            />
+          </div>
         </div>
       );
     }
@@ -383,6 +406,9 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
     );
   }
 
+  // Calculate card padding for negative margin
+  const cardPaddingValue = SPACING_VALUES[cardStyle.padding];
+
   return (
     <div
       className={`relative ${getHoverEffectClass(cardStyle.hoverEffect)} ${isHorizontal ? 'flex gap-4' : ''}`}
@@ -393,19 +419,48 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
 
       {/* Media */}
       {cardLayoutVariant !== 'minimal' && (
-        <div className={isHorizontal ? 'w-1/3 flex-shrink-0' : 'mb-4'}>
+        <div 
+          className={isHorizontal ? 'w-1/3 flex-shrink-0' : ''}
+          style={{
+            margin: config.imageElementStyle?.padding === 0 
+              ? `-${cardPaddingValue} -${cardPaddingValue} ${config.imageElementStyle?.marginBottom ?? 16}px -${cardPaddingValue}`
+              : undefined,
+            marginBottom: config.imageElementStyle?.padding !== 0 
+              ? `${config.imageElementStyle?.marginBottom ?? 16}px`
+              : undefined,
+          }}
+        >
           {renderMedia()}
         </div>
       )}
 
       {/* Content */}
       <div className={`flex flex-col gap-2 ${isHorizontal ? 'flex-1' : ''}`} style={{ textAlign: textStyle.titleAlign }}>
+        {/* Overline */}
+        {item.overline && config.overlineStyle?.enabled && (
+          <p
+            style={{
+              color: useColorValue(config.overlineStyle?.color),
+              fontSize: `${overlineFontSize}px`,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: `${config.overlineStyle?.marginBottom ?? 8}px`,
+              fontFamily: config.overlineStyle?.font || config.typography?.bodyFont || 'inherit',
+            }}
+          >
+            {item.overline}
+          </p>
+        )}
+
         {/* Title */}
         <h3
           style={{
             color: titleColor,
-            fontSize: FONT_SIZE_VALUES[textStyle.titleSize],
+            fontSize: `${titleFontSize}px`,
             fontWeight: FONT_WEIGHT_VALUES[textStyle.titleWeight],
+            marginBottom: `${config.titleStyle?.marginBottom ?? 8}px`,
+            fontFamily: config.titleStyle?.font || config.typography?.titleFont || 'inherit',
           }}
         >
           {item.title}
@@ -416,8 +471,9 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
           <p
             style={{
               color: subtitleColor,
-              fontSize: FONT_SIZE_VALUES[textStyle.subtitleSize],
+              fontSize: `${subtitleFontSize}px`,
               fontWeight: FONT_WEIGHT_VALUES[textStyle.subtitleWeight],
+              marginBottom: `${config.subtitleStyle?.marginBottom ?? 12}px`,
             }}
           >
             {item.subtitle}
@@ -436,7 +492,9 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
             className={config.descriptionLineClamp ? `line-clamp-${config.descriptionLineClamp}` : ''}
             style={{
               color: descriptionColor,
-              fontSize: FONT_SIZE_VALUES[textStyle.descriptionSize],
+              fontSize: `${descriptionFontSize}px`,
+              marginBottom: `${config.descriptionStyle?.marginBottom ?? 16}px`,
+              fontFamily: config.descriptionStyle?.font || config.typography?.bodyFont || 'inherit',
             }}
             dangerouslySetInnerHTML={{ __html: item.description }}
           />

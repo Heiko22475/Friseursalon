@@ -598,6 +598,21 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
           ]}
           onChange={(gap: any) => updateGrid({ gap })}
         />
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">
+            Maximale Breite des Grids
+          </label>
+          <input
+            type="text"
+            value={config.grid.maxWidth || '1200px'}
+            onChange={(e) => updateGrid({ maxWidth: e.target.value })}
+            placeholder="z.B. 1200px, 80rem, 100%"
+            className="w-full px-3 py-2 border rounded-lg text-sm"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            CSS-Wert für die maximale Container-Breite (Standard: 1200px)
+          </p>
+        </div>
       </Section>
 
       {/* Styling Group */}

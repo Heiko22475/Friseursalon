@@ -408,6 +408,23 @@ in den Karten des Kunden und des Superadmin gilt, auch wenn ich noch etwas an de
 Datenmodell ändere. 
 
 
+Nächste Requests Im Admin-Bereich: 
+Wenn das Padding des Bildes mit 0 angegeben wird, dann müssen die 
+Borderradiusse des Bildes  oben der Borderradiusse der Karte entsprechen. 
+Wenn ich ein Padding von 1 eingebe, sollte ebenfalls der Margin so gewählt werden, 
+dass das Bild nur 1 Pixel vom Kartenrand weit weg ist. 
+
+Es sollte eine Einstellung in den Layout-Eigenschaften geben, wie breit 
+das Kartengrid maximal breit sein kann, z.B. 1200px (Standardwert)
+
+Jetzt möchte ich einen extra Button auf der Vorschau, mit dem ich ein Popup-Fenster
+für eine zusätzliche Vorschau offnen kann. 
+Dieses Vorschaufenster soll 3 Buttons haben, um zwischen desktop, tablet und mobil zu 
+wechseln. 
+Desktop: Inhalts-Breite wie in der Maximalbreite des Kartengrids angegeben, 
+Tablet= 1023px breite, Mobil: 360px breite. 
+
+
 
 
 

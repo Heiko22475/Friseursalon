@@ -278,14 +278,22 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
   // Render Media (Image or Icon)
   const renderMedia = () => {
     if (item.image && showImage) {
-      const hasNoPadding = (config.imageElementStyle?.padding ?? 0) === 0;
-      const borderRadiusValue = BORDER_RADIUS_VALUES[imageStyle.borderRadius];
+      const imagePadding = config.imageElementStyle?.padding ?? 0;
+      const hasNoPadding = imagePadding === 0;
+      
+      // When padding is 0, use card's border-radius for top corners
+      // When padding > 0, use image's own border-radius
+      const borderRadiusValue = hasNoPadding 
+        ? BORDER_RADIUS_VALUES[cardStyle.borderRadius]
+        : BORDER_RADIUS_VALUES[imageStyle.borderRadius];
       
       return (
         <div
           style={{
-            padding: `${config.imageElementStyle?.padding ?? 0}px`,
-            marginBottom: `${config.imageElementStyle?.marginBottom ?? 16}px`,
+            padding: `${imagePadding}px`,
+            marginBottom: imagePadding === 0 
+              ? undefined 
+              : `${config.imageElementStyle?.marginBottom ?? 16}px`,
           }}
         >
           <div
@@ -408,6 +416,7 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
 
   // Calculate card padding for negative margin
   const cardPaddingValue = SPACING_VALUES[cardStyle.padding];
+  const imagePadding = config.imageElementStyle?.padding ?? 0;
 
   return (
     <div
@@ -422,12 +431,11 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
         <div 
           className={isHorizontal ? 'w-1/3 flex-shrink-0' : ''}
           style={{
-            margin: config.imageElementStyle?.padding === 0 
+            // When imagePadding is 0: full negative margin to edges
+            // When imagePadding > 0: calculate margin to achieve exact pixel distance
+            margin: imagePadding === 0 
               ? `-${cardPaddingValue} -${cardPaddingValue} ${config.imageElementStyle?.marginBottom ?? 16}px -${cardPaddingValue}`
-              : undefined,
-            marginBottom: config.imageElementStyle?.padding !== 0 
-              ? `${config.imageElementStyle?.marginBottom ?? 16}px`
-              : undefined,
+              : `calc(-${cardPaddingValue} + ${imagePadding}px) calc(-${cardPaddingValue} + ${imagePadding}px) ${config.imageElementStyle?.marginBottom ?? 16}px calc(-${cardPaddingValue} + ${imagePadding}px)`,
           }}
         >
           {renderMedia()}
@@ -643,16 +651,21 @@ export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, in
 
         {/* Cards Grid/List */}
         <div
-          className={layout === 'list' ? 'flex flex-col' : 'grid'}
-          style={{
-            gridTemplateColumns: layout !== 'list' ? getGridColumns() : undefined,
-            gap: SPACING_VALUES[grid.gap],
-            alignItems: grid.alignItems,
-          }}
+          className="mx-auto"
+          style={{ maxWidth: grid.maxWidth || '1200px' }}
         >
-          {sortedItems.map((item) => (
-            <SingleCard key={item.id} item={item} config={config} />
-          ))}
+          <div
+            className={layout === 'list' ? 'flex flex-col' : 'grid'}
+            style={{
+              gridTemplateColumns: layout !== 'list' ? getGridColumns() : undefined,
+              gap: SPACING_VALUES[grid.gap],
+              alignItems: grid.alignItems,
+            }}
+          >
+            {sortedItems.map((item) => (
+              <SingleCard key={item.id} item={item} config={config} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

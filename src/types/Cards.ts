@@ -157,6 +157,7 @@ export interface CardGridConfig {
   columns: ResponsiveNumber; // 1-6
   gap: Spacing;
   alignItems: 'start' | 'center' | 'end' | 'stretch';
+  maxWidth?: string; // z.B. '1200px', '80rem', '100%'
 }
 
 // ===== SECTION-STIL (Container für Karten) =====
@@ -394,7 +395,8 @@ export const createDefaultCardTextStyle = (): CardTextStyle => ({
 export const createDefaultCardGridConfig = (): CardGridConfig => ({
   columns: { desktop: 3, tablet: 2, mobile: 1 },
   gap: 'lg',
-  alignItems: 'stretch'
+  alignItems: 'stretch',
+  maxWidth: '1200px'
 });
 
 export const createDefaultSectionStyle = (): CardSectionStyle => ({

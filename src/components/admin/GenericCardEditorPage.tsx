@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Save, Plus, Trash2, GripVertical,
   ChevronDown, ChevronUp, Image as ImageIcon, Type, Palette,
-  Layout, DollarSign, Star, List, Share2, MousePointer, Settings
+  Layout, DollarSign, Star, List, Share2, MousePointer, Settings, Maximize2
 } from 'lucide-react';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
@@ -17,6 +17,7 @@ import { RichTextInput } from './RichTextInput';
 import { ThemeColorPicker } from './ThemeColorPicker';
 import { FontPicker } from './FontPicker';
 import { FontPickerWithSize } from './FontPickerWithSize';
+import { CardPreviewModal } from './CardPreviewModal';
 import {
   GenericCardConfig,
   GenericCardItem,
@@ -584,6 +585,7 @@ export const GenericCardEditorPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [initialConfig, setInitialConfig] = useState<string>('');
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Load config
   useEffect(() => {
@@ -824,27 +826,36 @@ export const GenericCardEditorPage: React.FC = () => {
               <p className="text-sm text-gray-500">Flexible Karten für jeden Zweck</p>
             </div>
           </div>
-          <button
-            onClick={handleSave}
-            disabled={saving || !hasChanges}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition ${
-              hasChanges && !saving
-                ? 'bg-rose-500 text-white hover:bg-rose-600'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            {saving ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Speichern...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Speichern
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowPreviewModal(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            >
+              <Maximize2 className="w-4 h-4" />
+              Responsive Vorschau
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving || !hasChanges}
+              className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition ${
+                hasChanges && !saving
+                  ? 'bg-rose-500 text-white hover:bg-rose-600'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {saving ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Speichern...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Speichern
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1476,6 +1487,14 @@ export const GenericCardEditorPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <CardPreviewModal
+          config={config}
+          onClose={() => setShowPreviewModal(false)}
+        />
+      )}
     </div>
   );
 };

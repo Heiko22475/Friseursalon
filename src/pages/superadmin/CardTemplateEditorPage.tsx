@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Settings, Paintbrush, Code } from 'lucide-react';
+import { ArrowLeft, Save, Settings, Paintbrush, Code, Maximize2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import {
   GenericCardConfig,
@@ -13,6 +13,7 @@ import {
 } from '../../types/GenericCard';
 import { GenericCard } from '../../components/blocks/GenericCard';
 import { CardConfigEditor } from '../../components/admin/CardConfigEditor';
+import { CardPreviewModal } from '../../components/admin/CardPreviewModal';
 
 // ===== TYPES =====
 
@@ -50,6 +51,7 @@ export const CardTemplateEditorPage: React.FC = () => {
   const [loading, setLoading] = useState(!isNewTemplate);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'settings' | 'visual' | 'json'>('settings');
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Load template if editing
   useEffect(() => {
@@ -172,14 +174,23 @@ export const CardTemplateEditorPage: React.FC = () => {
               </div>
             </div>
             
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition disabled:opacity-50 font-medium"
-            >
-              <Save className="w-4 h-4" />
-              {saving ? 'Speichert...' : 'Speichern'}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowPreviewModal(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                <Maximize2 className="w-4 h-4" />
+                Responsive Vorschau
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition disabled:opacity-50 font-medium"
+              >
+                <Save className="w-4 h-4" />
+                {saving ? 'Speichert...' : 'Speichern'}
+              </button>
+            </div>
           </div>
 
           {/* Tabs */}
@@ -431,6 +442,14 @@ export const CardTemplateEditorPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <CardPreviewModal
+          config={template.config}
+          onClose={() => setShowPreviewModal(false)}
+        />
+      )}
     </div>
   );
 };

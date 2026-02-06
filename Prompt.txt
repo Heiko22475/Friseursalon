@@ -425,7 +425,57 @@ Desktop: Inhalts-Breite wie in der Maximalbreite des Kartengrids angegeben,
 Tablet= 1023px breite, Mobil: 360px breite. 
 
 
+Prompt: 
+#Layout
+In der Kartenübersicht der Superadmin Kartentemplates 
+benötigt die Vorschau der Karte etwas mehr platz. 
+Die Vorschaukarte ist oben und unten abgeschnitten. 
+Setze die ActionIcons vertikal an die linke seite. Bearbeiten soll ein Stift-Icon werden. 
+Auf diese Weise sparen wir nach unten Platz. 
+Die beiden Info-Badges "Allgemein" und inaktiv können auf der rechten Seite neben dem 
+Titel in einer Zeile angeordnet werden. Darunter dann die Beschreibung. 
+# Vorbefüllung
+Wenn ich ein neues Kartentemplate anlege, soll sie schon vorbefüllt sein. 
+Ein Stockfoto soll ausgewählt sein. Nimm das erste, das du findest. 
+Das Icon "Star" soll ausgewählt sein. 
+Das Overline-Feld soll "Overline" haben. 
+Titel: "Beispiel-Karte"
+Untertitel: "Untertitel"
+Beschreibung "Lorem ipsum dolor sid amet". 
 
+#Medienpicker
+Der Dialog zum Auswählen des Bildes sollte ein Popup sein (per createPortal)
+anstelle unten drangehängt zu werden. 
+
+#Icon 
+Es soll die horizontale Ausrichtung des Icons festgelegt werden können: 
+links, mitte, rechts. 
+
+# Layout: 
+Die mobile Ansicht funktioniert in der Mobil-Ansicht nicht richtig. 
+Wenn ich auswähle, dass in der Mobilansicht nur eine Karte in einer 
+Row angezeigt werden soll, wird in der Vorschau die Karte in einem 
+dreispaltigen Grid dargestellt. 
+
+
+
+In dem Akkordion lassen sich Bild und Untertitel nicht per Switch an- 
+und ausschalten. 
+
+Bei dem Icon in der Karte, kalkuliere bitte eine Margin nach oben ein, 
+mit der Größe des Icons, und ebenfalls eine Margin nach unten, 
+hin zu der Overline/Titel. 
+
+Die Fonts und Schriftfarben werden nich in der Karte angezeigt/geändert
+z.B. Titel, Overline, ...
+
+Das hier funktioniert noch nicht? :
+"Updated CardTemplateEditorPage to
+ load the first stock photo on component mount and pass it to the config"
+Das Photo wurde noch nicht ausgesucht.  
+
+Die Karten zum Anzeigen der Template-Karte sollte 80px höher sein, 
+um die Template-Karte richtig anzuzeigen. 
 
 
 

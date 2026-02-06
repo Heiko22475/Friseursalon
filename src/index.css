@@ -29,6 +29,14 @@ body {
   line-height: 1.75;
 }
 
+/* Inline Rich Text Editor */
+.rich-text-editor-inline .rich-text-input-editor {
+  min-height: 120px;
+  font-size: 18px;
+  line-height: 1.6;
+  padding: 12px;
+}
+
 .tiptap-editor h2 {
   font-size: 1.875rem;
   font-weight: 700;

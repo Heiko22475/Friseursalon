@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { GenericCardConfig } from '../../types/GenericCard';
 import { GenericCard } from '../blocks/GenericCard';
+import { ViewportProvider } from '../../hooks/useViewport';
 
 interface CardPreviewModalProps {
   config: GenericCardConfig;
@@ -89,7 +90,9 @@ export const CardPreviewModal: React.FC<CardPreviewModalProps> = ({ config, onCl
                 transition: 'width 0.3s ease',
               }}
             >
-              <GenericCard config={config} />
+              <ViewportProvider value={viewport}>
+                <GenericCard config={config} />
+              </ViewportProvider>
             </div>
           </div>
         </div>

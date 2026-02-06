@@ -75,6 +75,7 @@ export interface IconStyle {
   backgroundEnabled: boolean;
   backgroundShape: 'circle' | 'square' | 'rounded';
   backgroundPadding: Spacing;
+  horizontalAlign?: 'left' | 'center' | 'right';
 }
 
 // ===== PRICE STYLE =====
@@ -180,6 +181,7 @@ export interface TitleStyle extends ContentElementStyle {
 
 export interface SubtitleStyle extends ContentElementStyle {
   enabled: boolean;
+  font?: string;
   fontSize?: FontSizeConfig;
 }
 
@@ -373,32 +375,18 @@ export const createDefaultGenericCardConfig = (): GenericCardConfig => ({
   },
 });
 
-// Template-Konfiguration mit Beispiel-Karten für Vorschau
-export const createTemplateCardConfig = (): GenericCardConfig => ({
+// Template-Konfiguration mit Beispiel-Karte für Vorschau
+export const createTemplateCardConfig = (firstStockPhotoUrl?: string): GenericCardConfig => ({
   items: [
     {
       id: crypto.randomUUID(),
-      title: 'Beispiel-Karte 1',
+      overline: 'Overline',
+      title: 'Beispiel-Karte',
       subtitle: 'Untertitel',
-      description: 'Dies ist eine Beispielbeschreibung für die erste Karte.',
+      description: 'Lorem ipsum dolor sid amet',
       icon: 'Star',
+      image: firstStockPhotoUrl,
       order: 0,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: 'Beispiel-Karte 2',
-      subtitle: 'Untertitel',
-      description: 'Dies ist eine Beispielbeschreibung für die zweite Karte.',
-      icon: 'Heart',
-      order: 1,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: 'Beispiel-Karte 3',
-      subtitle: 'Untertitel',
-      description: 'Dies ist eine Beispielbeschreibung für die dritte Karte.',
-      icon: 'Sparkles',
-      order: 2,
     },
   ],
   layout: 'grid',
@@ -407,7 +395,7 @@ export const createTemplateCardConfig = (): GenericCardConfig => ({
   typography: createDefaultCardTypography(),
   cardStyle: createDefaultCardBaseStyle(),
   imageStyle: createDefaultCardImageStyle(),
-  showImage: false,
+  showImage: !!firstStockPhotoUrl,
   imageElementStyle: createDefaultImageElementStyle(),
   iconStyle: {
     enabled: true,
@@ -417,6 +405,7 @@ export const createTemplateCardConfig = (): GenericCardConfig => ({
     backgroundColor: { kind: 'custom', hex: '#FEE2E2' },
     backgroundShape: 'circle',
     backgroundPadding: 'md',
+    horizontalAlign: 'center',
   },
   overlineStyle: createDefaultOverlineStyle(),
   titleStyle: createDefaultTitleStyle(),

@@ -14,6 +14,7 @@ import {
 import { GenericCard } from '../../components/blocks/GenericCard';
 import { CardConfigEditor } from '../../components/admin/CardConfigEditor';
 import { CardPreviewModal } from '../../components/admin/CardPreviewModal';
+import { loadStockPhotos } from '../../lib/mediaSync';
 
 // ===== TYPES =====
 
@@ -44,14 +45,41 @@ export const CardTemplateEditorPage: React.FC = () => {
   const [template, setTemplate] = useState<CardTemplate>({
     name: '',
     description: '',
-    config: createTemplateCardConfig(),
+    config: createTemplateCardConfig(), // Will be updated by useEffect for new templates
     category: 'general',
     is_active: true,
   });
-  const [loading, setLoading] = useState(!isNewTemplate);
+  const [loading, setLoading] = useState(true); // Start with loading true
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'settings' | 'visual' | 'json'>('settings');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  // Load first stock photo for new templates
+  useEffect(() => {
+    if (isNewTemplate) {
+      loadFirstStockPhoto();
+    } else {
+      setLoading(false);
+    }
+  }, [isNewTemplate]);
+
+  const loadFirstStockPhoto = async () => {
+    try {
+      const stockPhotos = await loadStockPhotos();
+      if (stockPhotos && stockPhotos.length > 0) {
+        const firstPhotoUrl = stockPhotos[0].url;
+        setTemplate(prev => ({
+          ...prev,
+          config: createTemplateCardConfig(firstPhotoUrl),
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading stock photo:', error);
+      // Continue without photo if loading fails
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load template if editing
   useEffect(() => {

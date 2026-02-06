@@ -6,6 +6,8 @@
 import React, { useMemo } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { Star, Heart } from 'lucide-react';
+import { EditableText } from '../admin/EditableText';
+import { getFontById } from '../../data/fonts';
 
 import {
   GenericCardConfig,
@@ -21,8 +23,15 @@ import {
   getResponsiveValue,
 } from '../../types/Cards';
 import { ColorValue } from '../../types/theme';
-import { Viewport } from '../../types/Hero';
 import { useViewport, getResponsiveFontSize } from '../../hooks/useViewport';
+
+// ===== HELPER: Font ID to Font Name =====
+
+const getFontName = (fontId: string | undefined, fallback: string = 'inherit'): string => {
+  if (!fontId) return fallback;
+  const font = getFontById(fontId);
+  return font ? `${font.name}, ${font.fallback}` : fallback;
+};
 
 // ===== HELPER: Color Value zu CSS =====
 
@@ -229,20 +238,22 @@ const SocialLinksDisplay: React.FC<SocialLinksDisplayProps> = ({ links, config }
 interface SingleCardProps {
   item: GenericCardItem;
   config: GenericCardConfig;
+  blockId?: string;
 }
 
-const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
+const SingleCard: React.FC<SingleCardProps> = ({ item, config, blockId }) => {
   const { cardStyle, imageStyle, textStyle, iconStyle, priceStyle, cardLayoutVariant, showImage, showSubtitle, showDescription, showButton, buttonStyle } = config;
 
   // Get current viewport
   const viewport = useViewport();
 
-  // Colors
+  // Colors from individual style objects
   const bgColor = useColorValue(cardStyle.backgroundColor);
   const borderColor = useColorValue(cardStyle.borderColor);
-  const titleColor = useColorValue(textStyle.titleColor);
-  const subtitleColor = useColorValue(textStyle.subtitleColor);
-  const descriptionColor = useColorValue(textStyle.descriptionColor);
+  const overlineColor = useColorValue(config.overlineStyle?.color);
+  const titleColor = useColorValue(config.titleStyle?.color);
+  const subtitleColor = useColorValue(config.subtitleStyle?.color);
+  const descriptionColor = useColorValue(config.descriptionStyle?.color);
   const buttonBgColor = useColorValue(buttonStyle.backgroundColor);
   const buttonTextColor = useColorValue(buttonStyle.textColor);
   const buttonBorderColor = useColorValue(buttonStyle.borderColor);
@@ -323,15 +334,28 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
         rounded: 'rounded-lg',
       }[iconStyle.backgroundShape];
 
+      const alignClass = iconStyle.horizontalAlign === 'left' 
+        ? 'justify-start' 
+        : iconStyle.horizontalAlign === 'right' 
+          ? 'justify-end' 
+          : 'justify-center';
+
+      // Calculate margins based on icon size
+      const iconSizeValue = iconSizes[iconStyle.size];
+      const marginTop = `${iconSizeValue}px`;
+      const marginBottom = `${iconSizeValue}px`;
+
       return (
-        <div
-          className={`inline-flex items-center justify-center ${iconStyle.backgroundEnabled ? bgShapeClass : ''}`}
-          style={{
-            backgroundColor: iconBgColor,
-            padding: iconStyle.backgroundEnabled ? SPACING_VALUES[iconStyle.backgroundPadding] : 0,
-          }}
-        >
-          <DynamicIcon name={item.icon} size={iconSizes[iconStyle.size]} color={iconColor} />
+        <div className={`flex ${alignClass}`} style={{ marginTop, marginBottom }}>
+          <div
+            className={`inline-flex items-center justify-center ${iconStyle.backgroundEnabled ? bgShapeClass : ''}`}
+            style={{
+              backgroundColor: iconBgColor,
+              padding: iconStyle.backgroundEnabled ? SPACING_VALUES[iconStyle.backgroundPadding] : 0,
+            }}
+          >
+            <DynamicIcon name={item.icon} size={iconSizes[iconStyle.size]} color={iconColor} />
+          </div>
         </div>
       );
     }
@@ -446,46 +470,100 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
       <div className={`flex flex-col gap-2 ${isHorizontal ? 'flex-1' : ''}`} style={{ textAlign: textStyle.titleAlign }}>
         {/* Overline */}
         {item.overline && config.overlineStyle?.enabled && (
-          <p
-            style={{
-              color: useColorValue(config.overlineStyle?.color),
-              fontSize: `${overlineFontSize}px`,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: `${config.overlineStyle?.marginBottom ?? 8}px`,
-              fontFamily: config.overlineStyle?.font || config.typography?.bodyFont || 'inherit',
-            }}
-          >
-            {item.overline}
-          </p>
+          blockId ? (
+            <EditableText
+              blockId={blockId}
+              fieldPath={`items.${config.items.findIndex(i => i.id === item.id)}.overline`}
+              value={item.overline}
+              as="p"
+              multiline={false}
+              style={{
+                color: overlineColor,
+                fontSize: `${overlineFontSize}px`,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: `${config.overlineStyle?.marginBottom ?? 8}px`,
+                fontFamily: getFontName(config.overlineStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            />
+          ) : (
+            <p
+              style={{
+                color: overlineColor,
+                fontSize: `${overlineFontSize}px`,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: `${config.overlineStyle?.marginBottom ?? 8}px`,
+                fontFamily: getFontName(config.overlineStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            >
+              {item.overline}
+            </p>
+          )
         )}
 
         {/* Title */}
-        <h3
-          style={{
-            color: titleColor,
-            fontSize: `${titleFontSize}px`,
-            fontWeight: FONT_WEIGHT_VALUES[textStyle.titleWeight],
-            marginBottom: `${config.titleStyle?.marginBottom ?? 8}px`,
-            fontFamily: config.titleStyle?.font || config.typography?.titleFont || 'inherit',
-          }}
-        >
-          {item.title}
-        </h3>
+        {blockId ? (
+          <EditableText
+            blockId={blockId}
+            fieldPath={`items.${config.items.findIndex(i => i.id === item.id)}.title`}
+            value={item.title}
+            as="h3"
+            multiline={false}
+            style={{
+              color: titleColor,
+              fontSize: `${titleFontSize}px`,
+              fontWeight: FONT_WEIGHT_VALUES[textStyle.titleWeight],
+              marginBottom: `${config.titleStyle?.marginBottom ?? 8}px`,
+              fontFamily: getFontName(config.titleStyle?.font, getFontName(config.typography?.titleFont)),
+            }}
+          />
+        ) : (
+          <h3
+            style={{
+              color: titleColor,
+              fontSize: `${titleFontSize}px`,
+              fontWeight: FONT_WEIGHT_VALUES[textStyle.titleWeight],
+              marginBottom: `${config.titleStyle?.marginBottom ?? 8}px`,
+              fontFamily: getFontName(config.titleStyle?.font, getFontName(config.typography?.titleFont)),
+            }}
+          >
+            {item.title}
+          </h3>
+        )}
 
         {/* Subtitle */}
         {item.subtitle && showSubtitle && (
-          <p
-            style={{
-              color: subtitleColor,
-              fontSize: `${subtitleFontSize}px`,
-              fontWeight: FONT_WEIGHT_VALUES[textStyle.subtitleWeight],
-              marginBottom: `${config.subtitleStyle?.marginBottom ?? 12}px`,
-            }}
-          >
-            {item.subtitle}
-          </p>
+          blockId ? (
+            <EditableText
+              blockId={blockId}
+              fieldPath={`items.${config.items.findIndex(i => i.id === item.id)}.subtitle`}
+              value={item.subtitle}
+              as="p"
+              multiline={false}
+              style={{
+                color: subtitleColor,
+                fontSize: `${subtitleFontSize}px`,
+                fontWeight: FONT_WEIGHT_VALUES[textStyle.subtitleWeight],
+                marginBottom: `${config.subtitleStyle?.marginBottom ?? 12}px`,
+                fontFamily: getFontName(config.subtitleStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            />
+          ) : (
+            <p
+              style={{
+                color: subtitleColor,
+                fontSize: `${subtitleFontSize}px`,
+                fontWeight: FONT_WEIGHT_VALUES[textStyle.subtitleWeight],
+                marginBottom: `${config.subtitleStyle?.marginBottom ?? 12}px`,
+                fontFamily: getFontName(config.subtitleStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            >
+              {item.subtitle}
+            </p>
+          )
         )}
 
         {/* Price (below title) */}
@@ -496,16 +574,34 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
 
         {/* Description */}
         {item.description && showDescription && (
-          <div
-            className={config.descriptionLineClamp ? `line-clamp-${config.descriptionLineClamp}` : ''}
-            style={{
-              color: descriptionColor,
-              fontSize: `${descriptionFontSize}px`,
-              marginBottom: `${config.descriptionStyle?.marginBottom ?? 16}px`,
-              fontFamily: config.descriptionStyle?.font || config.typography?.bodyFont || 'inherit',
-            }}
-            dangerouslySetInnerHTML={{ __html: item.description }}
-          />
+          blockId ? (
+            <EditableText
+              blockId={blockId}
+              fieldPath={`items.${config.items.findIndex(i => i.id === item.id)}.description`}
+              value={item.description}
+              as="div"
+              multiline={true}
+              className={config.descriptionLineClamp ? `line-clamp-${config.descriptionLineClamp}` : ''}
+              style={{
+                color: descriptionColor,
+                fontSize: `${descriptionFontSize}px`,
+                marginBottom: `${config.descriptionStyle?.marginBottom ?? 12}px`,
+                fontFamily: getFontName(config.descriptionStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            />
+          ) : (
+            <div
+              className={config.descriptionLineClamp ? `line-clamp-${config.descriptionLineClamp}` : ''}
+              style={{
+                color: descriptionColor,
+                fontSize: `${descriptionFontSize}px`,
+                marginBottom: `${config.descriptionStyle?.marginBottom ?? 12}px`,
+                fontFamily: getFontName(config.descriptionStyle?.font, getFontName(config.typography?.bodyFont)),
+              }}
+            >
+              {item.description}
+            </div>
+          )
         )}
 
         {/* Features */}
@@ -564,12 +660,16 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config }) => {
 interface GenericCardProps {
   config?: GenericCardConfig;
   instanceId?: number;
+  blockId?: string;
 }
 
-export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, instanceId }) => {
+export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, instanceId, blockId }) => {
   const config = propConfig || createDefaultGenericCardConfig();
 
   const { items, sectionStyle, grid, layout } = config;
+
+  // Get current viewport for responsive columns
+  const viewport = useViewport();
 
   // Section colors
   const sectionBgColor = useColorValue(sectionStyle.backgroundColor);
@@ -583,7 +683,6 @@ export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, in
 
   // Grid columns
   const getGridColumns = (): string => {
-    const viewport: Viewport = 'desktop';
     const cols = getResponsiveValue(grid.columns, viewport);
     return `repeat(${cols}, minmax(0, 1fr))`;
   };
@@ -631,20 +730,26 @@ export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, in
         {sectionStyle.showHeader && (
           <div className={`mb-12 text-${sectionStyle.headerAlign}`}>
             {sectionStyle.title && (
-              <h2
+              <EditableText
+                blockId={instanceId?.toString() || 'generic-card'}
+                fieldPath="sectionStyle.title"
+                value={sectionStyle.title}
+                as="h2"
                 className="text-3xl md:text-4xl font-bold mb-4"
                 style={{ color: titleColor }}
-              >
-                {sectionStyle.title}
-              </h2>
+                multiline={false}
+              />
             )}
             {sectionStyle.subtitle && (
-              <p
+              <EditableText
+                blockId={instanceId?.toString() || 'generic-card'}
+                fieldPath="sectionStyle.subtitle"
+                value={sectionStyle.subtitle}
+                as="p"
                 className="text-lg max-w-2xl mx-auto"
                 style={{ color: subtitleColor }}
-              >
-                {sectionStyle.subtitle}
-              </p>
+                multiline={false}
+              />
             )}
           </div>
         )}
@@ -663,7 +768,7 @@ export const GenericCard: React.FC<GenericCardProps> = ({ config: propConfig, in
             }}
           >
             {sortedItems.map((item) => (
-              <SingleCard key={item.id} item={item} config={config} />
+              <SingleCard key={item.id} item={item} config={config} blockId={blockId} />
             ))}
           </div>
         </div>

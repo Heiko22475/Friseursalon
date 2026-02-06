@@ -96,7 +96,7 @@ export const DynamicPage: React.FC = () => {
       case 'grid':
         return <div key={key} id="grid"><Grid instanceId={instanceId} /></div>;
       case 'generic-card':
-        return <div key={key} id={`generic-card-${instanceId}`}><GenericCard config={block.config} instanceId={instanceId} /></div>;
+        return <div key={key} id={`generic-card-${instanceId}`}><GenericCard config={block.config} instanceId={instanceId} blockId={block.id} /></div>;
       default:
         return null;
     }

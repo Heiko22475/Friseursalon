@@ -7,10 +7,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, Edit, Trash2, Copy, Search,
-  Grid3x3, LayoutGrid, ArrowLeft
+  LayoutGrid, ArrowLeft
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { GenericCardConfig } from '../../types/GenericCard';
+import { GenericCard } from '../../components/blocks/GenericCard';
 
 // ===== TYPES =====
 
@@ -247,80 +248,107 @@ export const CardTemplatesPage: React.FC = () => {
             {filteredTemplates.map((template) => (
               <div
                 key={template.id}
-                className="bg-white rounded-xl shadow-sm border hover:shadow-md transition"
+                className="bg-white rounded-xl shadow-sm border hover:shadow-md transition flex"
               >
-                {/* Preview */}
-                <div className="aspect-video bg-gradient-to-br from-rose-50 to-pink-50 rounded-t-xl flex items-center justify-center">
-                  {template.preview_image ? (
-                    <img
-                      src={template.preview_image}
-                      alt={template.name}
-                      className="w-full h-full object-cover rounded-t-xl"
-                    />
-                  ) : (
-                    <Grid3x3 className="w-16 h-16 text-rose-300" />
-                  )}
+                {/* Vertical Action Bar (Left Side) */}
+                <div className="flex flex-col gap-2 p-3 bg-gray-50 border-r">
+                  <button
+                    onClick={() => navigate(`/superadmin/card-templates/${template.id}`)}
+                    className="p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
+                    title="Bearbeiten"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                  
+                  <button
+                    onClick={() => handleDuplicate(template)}
+                    className="p-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+                    title="Duplizieren"
+                  >
+                    <Copy className="w-5 h-5" />
+                  </button>
+                  
+                  <button
+                    onClick={() => setShowDeleteDialog(template.id)}
+                    className="p-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
+                    title="Löschen"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {/* Content */}
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">
+                {/* Main Content Area */}
+                <div className="flex-1">
+                  {/* Preview */}
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-tr-xl overflow-hidden" style={{ height: '272px' }}>
+                    {template.preview_image ? (
+                      <img
+                        src={template.preview_image}
+                        alt={template.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-white overflow-hidden p-3">
+                        {/* Render single card preview */}
+                        <div className="w-full" style={{ maxHeight: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                          <div style={{ width: '100%', maxWidth: '220px', transform: 'scale(0.9)' }}>
+                            <GenericCard 
+                              config={{
+                                ...template.config,
+                                items: template.config.items.slice(0, 1), // Only first card
+                                layout: 'list', // Force single column layout
+                                grid: {
+                                  ...template.config.grid,
+                                  columns: { desktop: 1, tablet: 1, mobile: 1 }, // Single column
+                                  gap: 'none',
+                                },
+                                sectionStyle: {
+                                  ...template.config.sectionStyle,
+                                  showHeader: false, // Hide section header
+                                  paddingY: 'none',
+                                  paddingX: 'none',
+                                }
+                              }} 
+                              instanceId={0} 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info Section */}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-gray-900 flex-1">
                         {template.name}
                       </h3>
-                      {template.description && (
-                        <p className="text-sm text-gray-500 line-clamp-2">
-                          {template.description}
-                        </p>
-                      )}
+                      
+                      {/* Badges (Right Side) */}
+                      <div className="flex gap-2 ml-2">
+                        <span className={`px-2 py-1 rounded text-xs font-medium bg-${getCategoryColor(template.category)}-100 text-${getCategoryColor(template.category)}-700`}>
+                          {CATEGORIES.find(c => c.value === template.category)?.label || template.category}
+                        </span>
+                        
+                        <button
+                          onClick={() => handleToggleActive(template.id, template.is_active)}
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            template.is_active
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-gray-100 text-gray-500'
+                          }`}
+                        >
+                          {template.is_active ? 'Aktiv' : 'Inaktiv'}
+                        </button>
+                      </div>
                     </div>
-                    
-                    {/* Status Badge */}
-                    <button
-                      onClick={() => handleToggleActive(template.id, template.is_active)}
-                      className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
-                        template.is_active
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}
-                    >
-                      {template.is_active ? 'Aktiv' : 'Inaktiv'}
-                    </button>
-                  </div>
 
-                  {/* Category */}
-                  <div className="mb-4">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium bg-${getCategoryColor(template.category)}-100 text-${getCategoryColor(template.category)}-700`}>
-                      {CATEGORIES.find(c => c.value === template.category)?.label || template.category}
-                    </span>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => navigate(`/superadmin/card-templates/${template.id}`)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition text-sm"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Bearbeiten
-                    </button>
-                    
-                    <button
-                      onClick={() => handleDuplicate(template)}
-                      className="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                      title="Duplizieren"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                    
-                    <button
-                      onClick={() => setShowDeleteDialog(template.id)}
-                      className="px-3 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
-                      title="Löschen"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {/* Description */}
+                    {template.description && (
+                      <p className="text-sm text-gray-500 line-clamp-2">
+                        {template.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

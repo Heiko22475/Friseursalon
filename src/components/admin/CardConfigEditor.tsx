@@ -751,6 +751,14 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
             onChange={(color) => updateSubtitleStyle({ color: color === null ? undefined : color })}
             allowNoColor
           />
+          <FontPickerWithSize
+            label="Schriftart und Größe"
+            fontValue={config.subtitleStyle?.font || config.typography?.bodyFont || 'inter'}
+            onFontChange={(font) => updateSubtitleStyle({ font })}
+            sizeValue={config.subtitleStyle?.fontSize}
+            onSizeChange={(fontSize) => updateSubtitleStyle({ fontSize })}
+            defaultSize={16}
+          />
         </Section>
 
         {/* Description Style */}
@@ -801,6 +809,16 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
               { value: '2xl', label: 'Extra groß' },
             ]}
             onChange={(size: any) => updateIconStyle({ size })}
+          />
+          <Select
+            label="Horizontale Ausrichtung"
+            value={config.iconStyle.horizontalAlign || 'center'}
+            options={[
+              { value: 'left', label: 'Links' },
+              { value: 'center', label: 'Mitte' },
+              { value: 'right', label: 'Rechts' },
+            ]}
+            onChange={(horizontalAlign: any) => updateIconStyle({ horizontalAlign })}
           />
           <ThemeColorPicker
             label="Icon-Farbe"

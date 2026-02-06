@@ -199,9 +199,8 @@ export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId, bloc
                     fontWeight: text.fontWeight,
                     color: text.color
                   }}
-                >
-                  {text.content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: text.content }}
+                />
               );
             })}
 
@@ -350,9 +349,8 @@ const TextRenderer: React.FC<TextRendererProps> = ({ text, viewport, blockId, te
         fontWeight: text.fontWeight,
         color: text.color
       }}
-    >
-      {text.content}
-    </div>
+      dangerouslySetInnerHTML={{ __html: text.content }}
+    />
   );
 };
 

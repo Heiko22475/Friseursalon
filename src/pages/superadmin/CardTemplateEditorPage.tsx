@@ -33,6 +33,11 @@ const CATEGORIES = [
   { value: 'product', label: 'Produkte' },
   { value: 'team', label: 'Team' },
   { value: 'business', label: 'Business' },
+  { value: 'testimonial', label: 'Bewertungen' },
+  { value: 'portfolio', label: 'Portfolio' },
+  { value: 'pricing', label: 'Preise' },
+  { value: 'feature', label: 'Features' },
+  { value: 'offer', label: 'Angebote' },
 ];
 
 // ===== MAIN COMPONENT =====

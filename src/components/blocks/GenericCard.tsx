@@ -498,9 +498,8 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config, blockId }) => {
                 marginBottom: `${config.overlineStyle?.marginBottom ?? 8}px`,
                 fontFamily: getFontName(config.overlineStyle?.font, getFontName(config.typography?.bodyFont)),
               }}
-            >
-              {item.overline}
-            </p>
+              dangerouslySetInnerHTML={{ __html: item.overline }}
+            />
           )
         )}
 
@@ -529,9 +528,8 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config, blockId }) => {
               marginBottom: `${config.titleStyle?.marginBottom ?? 8}px`,
               fontFamily: getFontName(config.titleStyle?.font, getFontName(config.typography?.titleFont)),
             }}
-          >
-            {item.title}
-          </h3>
+            dangerouslySetInnerHTML={{ __html: item.title }}
+          />
         )}
 
         {/* Subtitle */}
@@ -560,9 +558,8 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config, blockId }) => {
                 marginBottom: `${config.subtitleStyle?.marginBottom ?? 12}px`,
                 fontFamily: getFontName(config.subtitleStyle?.font, getFontName(config.typography?.bodyFont)),
               }}
-            >
-              {item.subtitle}
-            </p>
+              dangerouslySetInnerHTML={{ __html: item.subtitle }}
+            />
           )
         )}
 
@@ -598,9 +595,8 @@ const SingleCard: React.FC<SingleCardProps> = ({ item, config, blockId }) => {
                 marginBottom: `${config.descriptionStyle?.marginBottom ?? 12}px`,
                 fontFamily: getFontName(config.descriptionStyle?.font, getFontName(config.typography?.bodyFont)),
               }}
-            >
-              {item.description}
-            </div>
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            />
           )
         )}
 

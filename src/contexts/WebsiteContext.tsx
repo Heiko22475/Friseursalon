@@ -24,6 +24,11 @@ export interface Block {
   config: Record<string, any>;
   content: Record<string, any>;
   created_at?: string;
+  // Template reference (for generic-card blocks)
+  templateId?: string;
+  templateName?: string;
+  templateCategory?: string;
+  customized?: boolean;
 }
 
 export interface Page {

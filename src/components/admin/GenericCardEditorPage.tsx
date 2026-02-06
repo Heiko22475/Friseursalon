@@ -8,9 +8,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Save, Plus, Trash2, GripVertical,
   ChevronDown, ChevronUp, Image as ImageIcon, Type, Palette,
-  Layout, DollarSign, Star, List, Share2, MousePointer, Settings, Maximize2
+  Layout, DollarSign, Star, List, Share2, MousePointer, Settings, Maximize2,
+  Info, RefreshCw
 } from 'lucide-react';
 import { useWebsite } from '../../contexts/WebsiteContext';
+import { supabase } from '../../lib/supabase';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
 import { IconPicker } from './IconPicker';
 import { RichTextInput } from './RichTextInput';
@@ -586,6 +588,9 @@ export const GenericCardEditorPage: React.FC = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [initialConfig, setInitialConfig] = useState<string>('');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [templateInfo, setTemplateInfo] = useState<{ id: string; name: string; category: string } | null>(null);
+  const [customized, setCustomized] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   // Load config
   useEffect(() => {
@@ -599,6 +604,19 @@ export const GenericCardEditorPage: React.FC = () => {
 
       setConfig(loadedConfig);
       setInitialConfig(JSON.stringify(loadedConfig));
+
+      // Load template info if available
+      if (block?.templateId && block?.templateName) {
+        setTemplateInfo({
+          id: block.templateId,
+          name: block.templateName,
+          category: block.templateCategory || '',
+        });
+        setCustomized(block.customized !== false); // Default to false if not set
+      } else {
+        setTemplateInfo(null);
+        setCustomized(true); // No template = custom
+      }
     }
   }, [loading, website, pageId, blockId]);
 
@@ -774,6 +792,64 @@ export const GenericCardEditorPage: React.FC = () => {
     });
   };
 
+  // Reset to template
+  const handleResetToTemplate = async () => {
+    if (!templateInfo || !website || !pageId || !blockId) return;
+
+    if (!confirm(
+      `Möchten Sie alle Änderungen verwerfen und zur Vorlage "${templateInfo.name}" zurückkehren? Dies kann nicht rückgängig gemacht werden.`
+    )) {
+      return;
+    }
+
+    setResetting(true);
+    try {
+      // Fetch template from database
+      const { data: template, error } = await supabase
+        .from('card_templates')
+        .select('*')
+        .eq('id', templateInfo.id)
+        .single();
+
+      if (error || !template) {
+        console.error('Error fetching template:', error);
+        alert('Fehler beim Laden der Vorlage!');
+        return;
+      }
+
+      // Update config with template config
+      const templateConfig = template.config as GenericCardConfig;
+      setConfig(templateConfig);
+
+      // Update the block with template config and reset customized flag
+      const updatedPages = website.pages.map((page) => {
+        if (page.id !== pageId) return page;
+        return {
+          ...page,
+          blocks: page.blocks.map((block) => {
+            if (block.id !== blockId) return block;
+            return {
+              ...block,
+              config: templateConfig,
+              customized: false,
+            };
+          }),
+        };
+      });
+
+      await updatePages(updatedPages);
+      setInitialConfig(JSON.stringify(templateConfig));
+      setCustomized(false);
+      setHasChanges(false);
+      alert('Erfolgreich zur Vorlage zurückgesetzt!');
+    } catch (error) {
+      console.error('Error resetting to template:', error);
+      alert('Fehler beim Zurücksetzen!');
+    } finally {
+      setResetting(false);
+    }
+  };
+
   // Save
   const handleSave = async () => {
     if (!config || !website || !pageId || !blockId) return;
@@ -786,7 +862,12 @@ export const GenericCardEditorPage: React.FC = () => {
           ...page,
           blocks: page.blocks.map((block) => {
             if (block.id !== blockId) return block;
-            return { ...block, config };
+            return {
+              ...block,
+              config,
+              // Mark as customized if template exists and changes are made
+              ...(templateInfo && { customized: true }),
+            };
           }),
         };
       });
@@ -794,6 +875,10 @@ export const GenericCardEditorPage: React.FC = () => {
       await updatePages(updatedPages);
       setInitialConfig(JSON.stringify(config));
       setHasChanges(false);
+      // Mark as customized locally after save
+      if (templateInfo) {
+        setCustomized(true);
+      }
     } catch (error) {
       console.error('Error saving:', error);
     } finally {
@@ -862,6 +947,66 @@ export const GenericCardEditorPage: React.FC = () => {
       {/* Main Content */}
       <div className="pt-20 pb-8">
         <div className="max-w-[1800px] mx-auto px-6">
+          {/* Template Info Banner */}
+          {templateInfo && (
+            <div className={`mb-4 p-4 rounded-lg border-2 flex items-start gap-3 ${
+              customized 
+                ? 'bg-amber-50 border-amber-300' 
+                : 'bg-blue-50 border-blue-300'
+            }`}>
+              <Info className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                customized ? 'text-amber-600' : 'text-blue-600'
+              }`} />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold ${
+                    customized ? 'text-amber-900' : 'text-blue-900'
+                  }`}>
+                    {customized ? 'Angepasste Karte' : 'Basiert auf Vorlage'}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    customized 
+                      ? 'bg-amber-200 text-amber-800' 
+                      : 'bg-blue-200 text-blue-800'
+                  }`}>
+                    {templateInfo.name}
+                  </span>
+                  {templateInfo.category && (
+                    <span className="text-xs text-gray-500">
+                      ({templateInfo.category})
+                    </span>
+                  )}
+                </div>
+                <p className={`text-sm mt-1 ${
+                  customized ? 'text-amber-700' : 'text-blue-700'
+                }`}>
+                  {customized 
+                    ? 'Diese Karte basiert auf einer Vorlage, wurde aber angepasst. Sie k\u00f6nnen alle \u00c4nderungen verwerfen und zur urspr\u00fcnglichen Vorlage zur\u00fcckkehren.'
+                    : 'Diese Karte verwendet die Vorlage ohne \u00c4nderungen. \u00c4nderungen werden beim Speichern als Anpassung markiert.'}
+                </p>
+              </div>
+              {customized && (
+                <button
+                  onClick={handleResetToTemplate}
+                  disabled={resetting}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex-shrink-0"
+                >
+                  {resetting ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Zur\u00fccksetzen...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Zur Vorlage zur\u00fccksetzen
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="flex gap-6" style={{ minHeight: 'calc(100vh - 140px)' }}>
             {/* Editor Panel - 55% */}
             <div className="w-[55%] space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 140px)' }}>

@@ -35,6 +35,11 @@ const CATEGORIES = [
   { value: 'product', label: 'Produkte', color: 'green' },
   { value: 'team', label: 'Team', color: 'purple' },
   { value: 'business', label: 'Business', color: 'orange' },
+  { value: 'testimonial', label: 'Bewertungen', color: 'yellow' },
+  { value: 'portfolio', label: 'Portfolio', color: 'indigo' },
+  { value: 'pricing', label: 'Preise', color: 'rose' },
+  { value: 'feature', label: 'Features', color: 'teal' },
+  { value: 'offer', label: 'Angebote', color: 'red' },
   { value: 'general', label: 'Allgemein', color: 'gray' },
 ];
 

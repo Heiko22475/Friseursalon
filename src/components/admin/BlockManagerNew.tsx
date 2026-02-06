@@ -16,6 +16,8 @@ import { CardTeam } from '../blocks/CardTeam';
 import { CardService } from '../blocks/CardService';
 import { CardTestimonial } from '../blocks/CardTestimonial';
 import { GenericCard } from '../blocks/GenericCard';
+import { CardTemplateSelectionDialog } from './CardTemplateSelectionDialog';
+import type { CardTemplate } from './CardTemplateSelectionDialog';
 
 interface PageBlock {
   id: string;
@@ -54,6 +56,7 @@ export const BlockManagerNew: React.FC = () => {
   const [selectedBlockType, setSelectedBlockType] = useState('');
   const [message, setMessage] = useState('');
   const [previewBlock, setPreviewBlock] = useState<PageBlock | null>(null);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
 
   // Find the current page
   const page = useMemo(() => {
@@ -92,6 +95,13 @@ export const BlockManagerNew: React.FC = () => {
         }
       }
 
+      // For generic-card blocks, show template selection dialog
+      if (selectedBlockType === 'generic-card') {
+        setIsModalOpen(false);
+        setShowTemplateDialog(true);
+        return;
+      }
+
       // Get next position
       const nextPosition = pageBlocks.length > 0
         ? Math.max(...pageBlocks.map(pb => pb.position)) + 1
@@ -121,6 +131,60 @@ export const BlockManagerNew: React.FC = () => {
 
       showMessage('Baustein erfolgreich hinzugefügt!');
       setIsModalOpen(false);
+      setSelectedBlockType('');
+    } catch (error: any) {
+      console.error('Error adding block:', error);
+      showMessage(error.message || 'Fehler beim Hinzufügen!');
+    }
+  };
+
+  const handleTemplateSelect = async (template: CardTemplate | null) => {
+    if (!page || !pages) return;
+
+    try {
+      // Get next position
+      const nextPosition = pageBlocks.length > 0
+        ? Math.max(...pageBlocks.map(pb => pb.position)) + 1
+        : 0;
+
+      // Create new block with template data
+      const newBlock: PageBlock = {
+        id: crypto.randomUUID(),
+        type: 'generic-card',
+        position: nextPosition,
+        config: template ? template.config : {},
+        content: {},
+        // Add template metadata if template was selected
+        ...(template && {
+          templateId: template.id,
+          templateName: template.name,
+          templateCategory: template.category,
+          customized: false,
+        }),
+        // Mark as customized if no template (started from scratch)
+        ...(!template && {
+          customized: true,
+        }),
+      };
+
+      // Update the page with the new block
+      const updatedPages = pages.map(p => {
+        if (p.id === pageId) {
+          return {
+            ...p,
+            blocks: [...(p.blocks || []), newBlock],
+          };
+        }
+        return p;
+      });
+
+      await updatePages(updatedPages);
+
+      showMessage(template 
+        ? `Baustein mit Vorlage "${template.name}" erfolgreich hinzugefügt!`
+        : 'Baustein erfolgreich hinzugefügt!'
+      );
+      setShowTemplateDialog(false);
       setSelectedBlockType('');
     } catch (error: any) {
       console.error('Error adding block:', error);
@@ -474,6 +538,16 @@ export const BlockManagerNew: React.FC = () => {
             </div>
           </Modal>
         )}
+
+        {/* Template Selection Dialog */}
+        <CardTemplateSelectionDialog
+          isOpen={showTemplateDialog}
+          onClose={() => {
+            setShowTemplateDialog(false);
+            setSelectedBlockType('');
+          }}
+          onSelect={handleTemplateSelect}
+        />
       </div>
     </div>
   );

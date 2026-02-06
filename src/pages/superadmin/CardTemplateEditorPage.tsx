@@ -15,6 +15,7 @@ import { GenericCard } from '../../components/blocks/GenericCard';
 import { CardConfigEditor } from '../../components/admin/CardConfigEditor';
 import { CardPreviewModal } from '../../components/admin/CardPreviewModal';
 import { loadStockPhotos } from '../../lib/mediaSync';
+import { useConfirmDialog } from '../../components/admin/ConfirmDialog';
 
 // ===== TYPES =====
 
@@ -46,6 +47,7 @@ export const CardTemplateEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const { templateId } = useParams<{ templateId: string }>();
   const isNewTemplate = templateId === 'new';
+  const { Dialog, success: showSuccess, error: showError, alert: showAlert } = useConfirmDialog();
 
   const [template, setTemplate] = useState<CardTemplate>({
     name: '',
@@ -114,7 +116,7 @@ export const CardTemplateEditorPage: React.FC = () => {
       });
     } catch (error) {
       console.error('Error loading template:', error);
-      alert('Fehler beim Laden der Vorlage');
+      await showError('Fehler', 'Fehler beim Laden der Vorlage');
       navigate('/superadmin/card-templates');
     } finally {
       setLoading(false);
@@ -124,7 +126,7 @@ export const CardTemplateEditorPage: React.FC = () => {
   const handleSave = async () => {
     // Validate
     if (!template.name.trim()) {
-      alert('Bitte geben Sie einen Namen ein');
+      await showAlert('Hinweis', 'Bitte geben Sie einen Namen ein');
       return;
     }
 
@@ -145,7 +147,7 @@ export const CardTemplateEditorPage: React.FC = () => {
 
         if (error) throw error;
         
-        alert('Vorlage erfolgreich erstellt');
+        await showSuccess('Erfolgreich', 'Vorlage erfolgreich erstellt');
       } else {
         // Update existing template
         const { error } = await supabase
@@ -161,13 +163,13 @@ export const CardTemplateEditorPage: React.FC = () => {
 
         if (error) throw error;
         
-        alert('Vorlage erfolgreich gespeichert');
+        await showSuccess('Erfolgreich', 'Vorlage erfolgreich gespeichert');
       }
 
       navigate('/superadmin/card-templates');
     } catch (error) {
       console.error('Error saving template:', error);
-      alert('Fehler beim Speichern der Vorlage');
+      await showError('Fehler', 'Fehler beim Speichern der Vorlage');
     } finally {
       setSaving(false);
     }
@@ -186,6 +188,7 @@ export const CardTemplateEditorPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Dialog />
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-[1800px] mx-auto px-6 py-4">
@@ -443,10 +446,10 @@ export const CardTemplateEditorPage: React.FC = () => {
                   Standard-Konfiguration laden
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     const formatted = JSON.stringify(template.config, null, 2);
                     navigator.clipboard.writeText(formatted);
-                    alert('Konfiguration in Zwischenablage kopiert!');
+                    await showSuccess('Kopiert', 'Konfiguration in Zwischenablage kopiert!');
                   }}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
                 >

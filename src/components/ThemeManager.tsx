@@ -24,11 +24,14 @@ import PaletteEditor from './admin/theme/PaletteEditor';
 import ThemePreview from './admin/theme/ThemePreview';
 import UnifiedColorPicker from './admin/theme/UnifiedColorPicker';
 import { SemanticTokens, ColorValue } from '../types/theme';
+import { useConfirmDialog } from './admin/ConfirmDialog';
 
 type Tab = 'palette' | 'semantic' | 'preview';
 
 export default function ThemeManager() {
   const navigate = useNavigate();
+  const { Dialog, confirm, success: showSuccess, error: showError } = useConfirmDialog();
+  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [theme, setTheme] = useState<ThemeTokens | null>(null);
@@ -158,10 +161,10 @@ export default function ThemeManager() {
         }
       }
 
-      alert('Theme erfolgreich gespeichert! Klicken Sie auf "Anwenden", um es auf der Webseite zu aktivieren.');
+      await showSuccess('Theme gespeichert', 'Theme erfolgreich gespeichert! Klicken Sie auf "Anwenden", um es auf der Webseite zu aktivieren.');
     } catch (error) {
       console.error('Failed to save theme:', error);
-      alert('Fehler beim Speichern des Themes.');
+      await showError('Fehler', 'Fehler beim Speichern des Themes.');
     } finally {
       setSaving(false);
     }
@@ -171,21 +174,20 @@ export default function ThemeManager() {
   const handleApply = async () => {
     if (!theme) return;
 
-    const confirmed = window.confirm(
-      'Möchten Sie dieses Theme wirklich auf der Webseite anwenden?\n\n' +
-      'Das Theme wird für alle Besucher sichtbar sein.'
+    await confirm(
+      'Theme anwenden',
+      'Möchten Sie dieses Theme wirklich auf der Webseite anwenden?\n\nDas Theme wird für alle Besucher sichtbar sein.',
+      async () => {
+        try {
+          await setActiveTheme(theme.id);
+          await showSuccess('Theme angewendet', 'Theme wurde erfolgreich auf der Webseite angewendet!');
+          await loadData(); // Reload to update active status
+        } catch (error) {
+          console.error('Failed to apply theme:', error);
+          await showError('Fehler', 'Fehler beim Anwenden des Themes.');
+        }
+      }
     );
-
-    if (!confirmed) return;
-
-    try {
-      await setActiveTheme(theme.id);
-      alert('Theme wurde erfolgreich auf der Webseite angewendet!');
-      await loadData(); // Reload to update active status
-    } catch (error) {
-      console.error('Failed to apply theme:', error);
-      alert('Fehler beim Anwenden des Themes.');
-    }
   };
 
   // Save as new preset
@@ -207,10 +209,10 @@ export default function ThemeManager() {
     });
 
     if (newPalette) {
-      alert('Palette gespeichert!');
+      await showSuccess('Palette gespeichert', 'Palette gespeichert!');
       await loadData();
     } else {
-      alert('Fehler beim Speichern der Palette.');
+      await showError('Fehler', 'Fehler beim Speichern der Palette.');
     }
   };
 
@@ -300,6 +302,7 @@ export default function ThemeManager() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Dialog />
       {/* Header - Navigation */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

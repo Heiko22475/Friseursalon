@@ -20,6 +20,7 @@ import { ThemeColorPicker } from './ThemeColorPicker';
 import { FontPicker } from './FontPicker';
 import { FontPickerWithSize } from './FontPickerWithSize';
 import { CardPreviewModal } from './CardPreviewModal';
+import { useConfirmDialog } from './ConfirmDialog';
 import {
   GenericCardConfig,
   GenericCardItem,
@@ -582,6 +583,7 @@ export const GenericCardEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const { pageId, blockId } = useParams<{ pageId: string; blockId: string }>();
   const { website, updatePages, loading } = useWebsite();
+  const { Dialog, confirm, success: showSuccess, error: showError } = useConfirmDialog();
 
   const [config, setConfig] = useState<GenericCardConfig | null>(null);
   const [saving, setSaving] = useState(false);
@@ -796,58 +798,59 @@ export const GenericCardEditorPage: React.FC = () => {
   const handleResetToTemplate = async () => {
     if (!templateInfo || !website || !pageId || !blockId) return;
 
-    if (!confirm(
-      `Möchten Sie alle Änderungen verwerfen und zur Vorlage "${templateInfo.name}" zurückkehren? Dies kann nicht rückgängig gemacht werden.`
-    )) {
-      return;
-    }
+    await confirm(
+      'Zur Vorlage zurückkehren',
+      `Möchten Sie alle Änderungen verwerfen und zur Vorlage "${templateInfo.name}" zurückkehren? Dies kann nicht rückgängig gemacht werden.`,
+      async () => {
+        setResetting(true);
+        try {
+          // Fetch template from database
+          const { data: template, error } = await supabase
+            .from('card_templates')
+            .select('*')
+            .eq('id', templateInfo.id)
+            .single();
 
-    setResetting(true);
-    try {
-      // Fetch template from database
-      const { data: template, error } = await supabase
-        .from('card_templates')
-        .select('*')
-        .eq('id', templateInfo.id)
-        .single();
+          if (error || !template) {
+            console.error('Error fetching template:', error);
+            await showError('Fehler', 'Fehler beim Laden der Vorlage!');
+            return;
+          }
 
-      if (error || !template) {
-        console.error('Error fetching template:', error);
-        alert('Fehler beim Laden der Vorlage!');
-        return;
-      }
+          // Update config with template config
+          const templateConfig = template.config as GenericCardConfig;
+          setConfig(templateConfig);
 
-      // Update config with template config
-      const templateConfig = template.config as GenericCardConfig;
-      setConfig(templateConfig);
-
-      // Update the block with template config and reset customized flag
-      const updatedPages = website.pages.map((page) => {
-        if (page.id !== pageId) return page;
-        return {
-          ...page,
-          blocks: page.blocks.map((block) => {
-            if (block.id !== blockId) return block;
+          // Update the block with template config and reset customized flag
+          const updatedPages = website.pages.map((page) => {
+            if (page.id !== pageId) return page;
             return {
-              ...block,
-              config: templateConfig,
-              customized: false,
+              ...page,
+              blocks: page.blocks.map((block) => {
+                if (block.id !== blockId) return block;
+                return {
+                  ...block,
+                  config: templateConfig,
+                  customized: false,
+                };
+              }),
             };
-          }),
-        };
-      });
+          });
 
-      await updatePages(updatedPages);
-      setInitialConfig(JSON.stringify(templateConfig));
-      setCustomized(false);
-      setHasChanges(false);
-      alert('Erfolgreich zur Vorlage zurückgesetzt!');
-    } catch (error) {
-      console.error('Error resetting to template:', error);
-      alert('Fehler beim Zurücksetzen!');
-    } finally {
-      setResetting(false);
-    }
+          await updatePages(updatedPages);
+          setInitialConfig(JSON.stringify(templateConfig));
+          setCustomized(false);
+          setHasChanges(false);
+          await showSuccess('Erfolgreich', 'Erfolgreich zur Vorlage zurückgesetzt!');
+        } catch (error) {
+          console.error('Error resetting to template:', error);
+          await showError('Fehler', 'Fehler beim Zurücksetzen!');
+        } finally {
+          setResetting(false);
+        }
+      },
+      { isDangerous: true, confirmText: 'Zurücksetzen' }
+    );
   };
 
   // Save
@@ -896,6 +899,7 @@ export const GenericCardEditorPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Dialog />
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-40">
         <div className="max-w-[1800px] mx-auto px-6 py-4 flex items-center justify-between">

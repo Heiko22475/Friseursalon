@@ -12,6 +12,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import { GenericCardConfig } from '../../types/GenericCard';
 import { GenericCard } from '../../components/blocks/GenericCard';
+import { useConfirmDialog } from '../../components/admin/ConfirmDialog';
 
 // ===== TYPES =====
 
@@ -52,11 +53,12 @@ const getCategoryColor = (category: string) => {
 
 export const CardTemplatesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { Dialog, confirm, error: showError } = useConfirmDialog();
+  
   const [templates, setTemplates] = useState<CardTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
 
   // Load templates
   useEffect(() => {
@@ -75,7 +77,7 @@ export const CardTemplatesPage: React.FC = () => {
       setTemplates(data || []);
     } catch (error) {
       console.error('Error loading templates:', error);
-      alert('Fehler beim Laden der Vorlagen');
+      await showError('Fehler', 'Fehler beim Laden der Vorlagen');
     } finally {
       setLoading(false);
     }
@@ -90,21 +92,27 @@ export const CardTemplatesPage: React.FC = () => {
   });
 
   // Delete template
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('card_templates')
-        .delete()
-        .eq('id', id);
+  const handleDelete = async (template: CardTemplate) => {
+    await confirm(
+      'Vorlage löschen',
+      `Möchten Sie die Vorlage "${template.name}" wirklich löschen? Dies kann nicht rückgängig gemacht werden.`,
+      async () => {
+        try {
+          const { error } = await supabase
+            .from('card_templates')
+            .delete()
+            .eq('id', template.id);
 
-      if (error) throw error;
-      
-      setTemplates(prev => prev.filter(t => t.id !== id));
-      setShowDeleteDialog(null);
-    } catch (error) {
-      console.error('Error deleting template:', error);
-      alert('Fehler beim Löschen der Vorlage');
-    }
+          if (error) throw error;
+          
+          setTemplates(prev => prev.filter(t => t.id !== template.id));
+        } catch (error) {
+          console.error('Error deleting template:', error);
+          await showError('Fehler', 'Fehler beim Löschen der Vorlage');
+        }
+      },
+      { isDangerous: true, confirmText: 'Löschen' }
+    );
   };
 
   // Duplicate template
@@ -127,7 +135,7 @@ export const CardTemplatesPage: React.FC = () => {
       setTemplates(prev => [data, ...prev]);
     } catch (error) {
       console.error('Error duplicating template:', error);
-      alert('Fehler beim Duplizieren der Vorlage');
+      await showError('Fehler', 'Fehler beim Duplizieren der Vorlage');
     }
   };
 
@@ -146,12 +154,13 @@ export const CardTemplatesPage: React.FC = () => {
       ));
     } catch (error) {
       console.error('Error toggling active status:', error);
-      alert('Fehler beim Aktualisieren des Status');
+      await showError('Fehler', 'Fehler beim Aktualisieren des Status');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Dialog />
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -274,7 +283,7 @@ export const CardTemplatesPage: React.FC = () => {
                   </button>
                   
                   <button
-                    onClick={() => setShowDeleteDialog(template.id)}
+                    onClick={() => handleDelete(template)}
                     className="p-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
                     title="Löschen"
                   >
@@ -361,34 +370,6 @@ export const CardTemplatesPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Vorlage löschen?
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Möchten Sie diese Karten-Vorlage wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteDialog(null)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-              >
-                Abbrechen
-              </button>
-              <button
-                onClick={() => handleDelete(showDeleteDialog)}
-                className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-              >
-                Löschen
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

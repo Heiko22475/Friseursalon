@@ -5,6 +5,7 @@ import { Trash2, Download, Upload, Plus, ArrowLeft, Edit2 } from 'lucide-react';
 import { createDefaultWebsiteContent } from '../../lib/defaultTemplate';
 import JSZip from 'jszip';
 import { Modal } from '../admin/Modal';
+import { useConfirmDialog } from '../admin/ConfirmDialog';
 
 interface WebsiteRecord {
   id: string; // UUID
@@ -19,6 +20,8 @@ interface WebsiteRecord {
 
 export const UserManagement: React.FC = () => {
   const navigate = useNavigate();
+  const { Dialog, confirm, success: showSuccess, error: showError, alert: showAlert } = useConfirmDialog();
+  
   const [users, setUsers] = useState<WebsiteRecord[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -66,7 +69,7 @@ export const UserManagement: React.FC = () => {
       setLocalhostCustomerId(localhostUser?.customer_id || null);
     } catch (error) {
       console.error('Error loading users:', error);
-      alert('Fehler beim Laden der Benutzer');
+      await showError('Fehler', 'Fehler beim Laden der Benutzer');
     } finally {
       setLoading(false);
     }
@@ -100,7 +103,7 @@ export const UserManagement: React.FC = () => {
       setLocalhostCustomerId(customerId);
     } catch (error: any) {
       console.error('Error setting localhost:', error);
-      alert('Fehler beim Setzen von localhost: ' + (error?.message || error?.code || 'Unknown error. Check if "domain" column exists in websites table.'));
+      await showError('Fehler', 'Fehler beim Setzen von localhost: ' + (error?.message || error?.code || 'Unknown error. Check if "domain" column exists in websites table.'));
     }
   };
 
@@ -113,7 +116,7 @@ export const UserManagement: React.FC = () => {
 
   const handleCreateUser = async () => {
     if (!newCustomerId || !newSiteName) {
-      alert('Bitte füllen Sie alle Felder aus');
+      await showAlert('Hinweis', 'Bitte füllen Sie alle Felder aus');
       return;
     }
 
@@ -133,10 +136,10 @@ export const UserManagement: React.FC = () => {
 
       setIsCreateOpen(false);
       loadUsers();
-      alert('Benutzer erfolgreich angelegt!');
+      await showSuccess('Erfolgreich', 'Benutzer erfolgreich angelegt!');
     } catch (error: any) {
       console.error('Error creating user:', error);
-      alert('Fehler beim Erstellen: ' + error.message);
+      await showError('Fehler', 'Fehler beim Erstellen: ' + error.message);
     } finally {
       setCreating(false);
     }
@@ -169,91 +172,94 @@ export const UserManagement: React.FC = () => {
       loadUsers();
     } catch (error: any) {
       console.error('Error updating user:', error);
-      alert('Fehler beim Speichern: ' + error.message);
+      await showError('Fehler', 'Fehler beim Speichern: ' + error.message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteUser = async (id: string, customerId: string) => {
-    if (!window.confirm(`Möchten Sie den Benutzer ${customerId} wirklich löschen? Dies kann nicht rückgängig gemacht werden.\n\nAlle zugehörigen Medien und Daten werden ebenfalls gelöscht.`)) {
-      return;
-    }
-
-    try {
-      // 1. Delete all media files from storage for this customer
-      const { data: storageFiles } = await supabase.storage
-        .from('media-customer')
-        .list(customerId, { limit: 1000 });
-      
-      if (storageFiles && storageFiles.length > 0) {
-        // Recursively delete all files in customer folder
-        const deleteStorageRecursively = async (path: string) => {
-          const { data: items } = await supabase.storage
+    await confirm(
+      'Benutzer löschen',
+      `Möchten Sie den Benutzer ${customerId} wirklich löschen? Dies kann nicht rückgängig gemacht werden.\n\nAlle zugehörigen Medien und Daten werden ebenfalls gelöscht.`,
+      async () => {
+        try {
+          // 1. Delete all media files from storage for this customer
+          const { data: storageFiles } = await supabase.storage
             .from('media-customer')
-            .list(path, { limit: 1000 });
+            .list(customerId, { limit: 1000 });
           
-          if (items) {
-            for (const item of items) {
-              const itemPath = `${path}/${item.name}`;
-              if (item.id === null) {
-                // It's a folder, recurse
-                await deleteStorageRecursively(itemPath);
-              } else {
-                // It's a file, delete it
-                await supabase.storage.from('media-customer').remove([itemPath]);
+          if (storageFiles && storageFiles.length > 0) {
+            // Recursively delete all files in customer folder
+            const deleteStorageRecursively = async (path: string) => {
+              const { data: items } = await supabase.storage
+                .from('media-customer')
+                .list(path, { limit: 1000 });
+              
+              if (items) {
+                for (const item of items) {
+                  const itemPath = `${path}/${item.name}`;
+                  if (item.id === null) {
+                    // It's a folder, recurse
+                    await deleteStorageRecursively(itemPath);
+                  } else {
+                    // It's a file, delete it
+                    await supabase.storage.from('media-customer').remove([itemPath]);
+                  }
+                }
               }
-            }
+            };
+            
+            await deleteStorageRecursively(customerId);
+            // Finally remove the customer folder itself
+            await supabase.storage.from('media-customer').remove([customerId]);
           }
-        };
-        
-        await deleteStorageRecursively(customerId);
-        // Finally remove the customer folder itself
-        await supabase.storage.from('media-customer').remove([customerId]);
-      }
 
-      // 2. Delete media_files records for this customer
-      const { data: customerFolders } = await supabase
-        .from('media_folders')
-        .select('id')
-        .eq('customer_id', customerId);
-      
-      if (customerFolders && customerFolders.length > 0) {
-        const folderIds = customerFolders.map(f => f.id);
-        
-        // Delete all files in these folders
-        await supabase
-          .from('media_files')
-          .delete()
-          .in('folder_id', folderIds);
-        
-        // Delete the folders
-        await supabase
-          .from('media_folders')
-          .delete()
-          .eq('customer_id', customerId);
-      }
+          // 2. Delete media_files records for this customer
+          const { data: customerFolders } = await supabase
+            .from('media_folders')
+            .select('id')
+            .eq('customer_id', customerId);
+          
+          if (customerFolders && customerFolders.length > 0) {
+            const folderIds = customerFolders.map(f => f.id);
+            
+            // Delete all files in these folders
+            await supabase
+              .from('media_files')
+              .delete()
+              .in('folder_id', folderIds);
+            
+            // Delete the folders
+            await supabase
+              .from('media_folders')
+              .delete()
+              .eq('customer_id', customerId);
+          }
 
-      // 3. Delete user_media records for this customer
-      await supabase
-        .from('user_media')
-        .delete()
-        .eq('customer_id', customerId);
+          // 3. Delete user_media records for this customer
+          await supabase
+            .from('user_media')
+            .delete()
+            .eq('customer_id', customerId);
 
-      // 4. Delete website record
-      const { error } = await supabase
-        .from('websites')
-        .delete()
-        .eq('id', id);
+          // 4. Delete website record
+          const { error } = await supabase
+            .from('websites')
+            .delete()
+            .eq('id', id);
 
-      if (error) throw error;
-      
-      loadUsers();
-      alert(`Benutzer ${customerId} wurde erfolgreich gelöscht.`);
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Fehler beim Löschen');
-    }
+          if (error) throw error;
+          
+          loadUsers();
+          await showSuccess('Erfolgreich gelöscht', `Benutzer ${customerId} wurde erfolgreich gelöscht.`);
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          await showError('Fehler', 'Fehler beim Löschen');
+        }
+      },
+      { isDangerous: true, confirmText: 'Löschen' }
+    );
   };
 
   const handleExport = async (user: WebsiteRecord) => {
@@ -390,23 +396,21 @@ export const UserManagement: React.FC = () => {
 
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Export fehlgeschlagen');
+      await showError('Fehler', 'Export fehlgeschlagen');
     }
   };
 
   const handleExportAll = async () => {
     try {
       if (users.length === 0) {
-        alert('Keine Benutzer zum Exportieren vorhanden.');
+        await showAlert('Hinweis', 'Keine Benutzer zum Exportieren vorhanden.');
         return;
       }
 
-      const confirmed = window.confirm(
-        `Möchten Sie alle ${users.length} Websites exportieren?\n\n` +
-        `Dies kann einige Minuten dauern und wird eine große ZIP-Datei erstellen.`
-      );
-
-      if (!confirmed) return;
+      await confirm(
+        'Alle Websites exportieren',
+        `Möchten Sie alle ${users.length} Websites exportieren?\n\nDies kann einige Minuten dauern und wird eine große ZIP-Datei erstellen.`,
+        async () => {
 
       setLoading(true);
       const masterZip = new JSZip();
@@ -585,11 +589,14 @@ Each folder contains a complete website backup:
       a.click();
       window.URL.revokeObjectURL(url);
 
-      alert(`Export abgeschlossen!\n\n${successCount} Websites erfolgreich exportiert.\n${failCount} Fehler.`);
+      await showSuccess('Export abgeschlossen', `${successCount} Websites erfolgreich exportiert.${failCount > 0 ? `\n${failCount} Fehler.` : ''}`);
+        },
+        { confirmText: 'Exportieren' }
+      );
       
     } catch (error) {
       console.error('Bulk export failed:', error);
-      alert('Bulk-Export fehlgeschlagen: ' + (error as Error).message);
+      await showError('Fehler', 'Bulk-Export fehlgeschlagen: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -797,6 +804,7 @@ Each folder contains a complete website backup:
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Dialog />
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useWebsite, LogoDesign, LogoText } from '../../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from '../MediaLibrary';
+import { useConfirmDialog } from '../ConfirmDialog';
 
 // Available fonts for the logo designer
 const AVAILABLE_FONTS = [
@@ -37,6 +38,7 @@ export const LogoEditor: React.FC = () => {
   const { id } = useParams();
   const isNew = id === 'new';
   const { website, addLogo, updateLogo } = useWebsite();
+  const { Dialog, error: showError } = useConfirmDialog();
   
   const canvasRef = useRef<HTMLDivElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -358,7 +360,7 @@ export const LogoEditor: React.FC = () => {
       navigate('/admin/logos');
     } catch (error) {
       console.error('Error saving logo:', error);
-      alert('Fehler beim Speichern des Logos');
+      await showError('Fehler', 'Fehler beim Speichern des Logos');
     } finally {
       setSaving(false);
     }
@@ -371,6 +373,7 @@ export const LogoEditor: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Dialog />
       {/* Header */}
       <div className="bg-white border-b px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">

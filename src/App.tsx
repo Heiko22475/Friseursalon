@@ -22,6 +22,7 @@ import { ReviewsEditorNew as ReviewsEditor } from './components/admin/ReviewsEdi
 // import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew'; // REMOVED
 import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
+import { BackupAndRestore } from './components/admin/BackupAndRestore';
 // import { PageManager as PageManagerOld } from './components/admin/PageManager';
 import { PageManagerNew as PageManager } from './components/admin/PageManagerNew';
 // import { BlockManager as BlockManagerOld } from './components/admin/BlockManager';
@@ -40,6 +41,7 @@ import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEdi
 import { GenericCardEditorPage } from './components/admin/GenericCardEditorPage';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
+import { SuperAdminDataExport } from './components/superadmin/SuperAdminDataExport';
 import { CardTemplatesPage } from './pages/superadmin/CardTemplatesPage';
 import { CardTemplateEditorPage } from './pages/superadmin/CardTemplateEditorPage';
 import { DynamicPage } from './components/DynamicPage';
@@ -223,18 +225,18 @@ function AppContent() {
             }
           /> */}
           <Route
-            path="/admin/pricing"
-            element={
-              <ProtectedRoute>
-                <PricingEditor />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/admin/export"
             element={
               <ProtectedRoute>
                 <DataExport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/backup"
+            element={
+              <ProtectedRoute>
+                <BackupAndRestore />
               </ProtectedRoute>
             }
           />
@@ -427,6 +429,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <CardTemplateEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/data-export"
+            element={
+              <ProtectedRoute>
+                <SuperAdminDataExport />
               </ProtectedRoute>
             }
           />

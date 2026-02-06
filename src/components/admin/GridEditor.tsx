@@ -5,6 +5,7 @@ import { ArrowLeft, Save, Plus, Eye } from 'lucide-react';
 import { GridLayoutSelector, GridLayout, getColumnCount } from './GridLayoutSelector';
 import { BlockList, BlockItem } from './BlockList';
 import { Modal } from './Modal';
+import { GridPreviewModal } from './GridPreviewModal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
 import Services from '../Services';
@@ -559,62 +560,28 @@ export const GridEditor: React.FC = () => {
         </Modal>
 
         {/* Preview Modal */}
-        <Modal
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-          title="Grid Vorschau - Responsive"
-          maxWidth="max-w-[1400px]"
-        >
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <p className="text-sm text-blue-800 font-semibold mb-2">📱 Responsive Verhalten:</p>
-            <ul className="text-xs text-blue-700 space-y-1">
-              <li>• <strong>Mobile (&lt; 768px):</strong> 1 Spalte (alle Bausteine untereinander)</li>
-              <li>• <strong>Tablet (768px - 1023px):</strong> {columnCount > 2 ? '2 Spalten (50:50)' : '2 Spalten (50:50 für bessere Lesbarkeit)'}</li>
-              <li>• <strong>Desktop (&gt; 1024px):</strong> Volles {columnCount}-Spalten Layout ({config.layout_type})</li>
-            </ul>
-          </div>
-          <div
-            style={{
-              maxWidth: '1300px',
-              width: '100%',
-              margin: '0 auto',
-              paddingTop: `${config.padding_top}px`,
-              paddingBottom: `${config.padding_bottom}px`,
-              paddingLeft: `${config.margin_left}px`,
-              paddingRight: `${config.margin_right}px`,
-              backgroundColor: backgroundColor || undefined,
+        {showPreview && (
+          <GridPreviewModal
+            columnCount={columnCount}
+            layoutType={config.layout_type}
+            config={{
+              gap: config.gap,
+              padding_top: config.padding_top,
+              padding_bottom: config.padding_bottom,
+              margin_left: config.margin_left,
+              margin_right: config.margin_right,
             }}
+            backgroundColor={backgroundColor}
+            getGridTemplateColumns={getGridTemplateColumns}
+            onClose={() => setShowPreview(false)}
           >
-            <div
-              className="grid-preview-container"
-              style={{
-                display: 'grid',
-                gap: `${config.gap}px`,
-              }}
-            >
-              {visibleBlocks.map((block) => (
-                <div key={block.id} style={{ minWidth: '280px', containerType: 'inline-size' }}>
-                  {renderBlockPreview(block.block_type, block.block_instance_id)}
-                </div>
-              ))}
-            </div>
-            <style>{`
-              .grid-preview-container {
-                grid-template-columns: 1fr;
-              }
-              @media (min-width: 768px) and (max-width: 1023px) {
-                .grid-preview-container {
-                  grid-template-columns: ${columnCount > 2 ? '1fr 1fr' : '1fr 1fr'};
-                }
-              }
-              @media (min-width: 1024px) {
-                .grid-preview-container {
-                  grid-template-columns: ${getGridTemplateColumns(config.layout_type)};
-                }
-              }
-            `}</style>
-          </div>
-        </Modal>
+            {visibleBlocks.map((block) => (
+              <div key={block.id} style={{ minWidth: '0' }}>
+                {renderBlockPreview(block.block_type, block.block_instance_id)}
+              </div>
+            ))}
+          </GridPreviewModal>
+        )}
       </div>
     </div>
   );

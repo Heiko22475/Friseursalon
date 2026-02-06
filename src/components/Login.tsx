@@ -18,6 +18,10 @@ export const Login: React.FC = () => {
 
     try {
       await signIn(email, password);
+      
+      // Set flag to show backup reminder after successful login
+      localStorage.setItem('showBackupReminder', 'true');
+      
       navigate('/admin');
     } catch (err) {
       setError('Login fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.');

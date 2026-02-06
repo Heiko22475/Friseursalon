@@ -260,18 +260,16 @@ export const UserManagement: React.FC = () => {
     try {
       const zip = new JSZip();
       
-      // 1. Add website.json
-      zip.file("website.json", JSON.stringify(user.content, null, 2));
-      zip.file("site_info.json", JSON.stringify({
-        customer_id: user.customer_id,
-        site_name: user.site_name,
-        domain_name: user.domain_name || null,
-        created_at: user.created_at
-      }, null, 2));
-
-      const imagesFolder = zip.folder("images");
-      let count = 0;
+      const mediaFolder = zip.folder("media");
+      let mediaCount = 0;
+      let mediaSizeBytes = 0;
       const downloadedUrls = new Set<string>();
+      
+      // Count blocks for stats
+      const countBlocks = (pages: any[]): number => {
+        if (!pages) return 0;
+        return pages.reduce((sum, page) => sum + (page.blocks?.length || 0), 0);
+      };
 
       // Helper function to download image by URL
       const downloadImageByUrl = async (url: string, filename?: string) => {
@@ -290,9 +288,10 @@ export const UserManagement: React.FC = () => {
           if (!response.ok) return;
           
           const blob = await response.blob();
-          if (imagesFolder && blob.size > 0) {
-            imagesFolder.file(filename, blob);
-            count++;
+          if (mediaFolder && blob.size > 0) {
+            mediaFolder.file(filename, blob);
+            mediaCount++;
+            mediaSizeBytes += blob.size;
           }
         } catch (err) {
           console.warn('Could not download:', url, err);
@@ -344,11 +343,43 @@ export const UserManagement: React.FC = () => {
         await downloadImageByUrl(url);
       }
       
-      console.log(`Exported ${count} files from JSON content`);
+      console.log(`Exported ${mediaCount} files from JSON content`);
 
-      // Generate Zip
-      const content = await zip.generateAsync({ type: "blob" });
+      // 1. Create backup_info.json with comprehensive metadata
+      const backupInfo = {
+        backupId: crypto.randomUUID(),
+        customerId: user.customer_id,
+        domain: user.domain_name || user.domain || undefined,
+        createdAt: new Date().toISOString(),
+        version: '1.0' as const,
+        description: `Superadmin export vom ${new Date().toLocaleDateString('de-DE')}`,
+        stats: {
+          pageCount: user.content?.pages?.length || 0,
+          blockCount: countBlocks(user.content?.pages || []),
+          mediaFileCount: mediaCount,
+          mediaSizeBytes: mediaSizeBytes,
+          hasTheme: !!user.content?.theme,
+          hasNavigation: !!user.content?.navigation,
+        },
+      };
+      zip.file("backup_info.json", JSON.stringify(backupInfo, null, 2));
+
+      // 2. Add website.json (same format as admin)
+      zip.file("website.json", JSON.stringify({
+        customer_id: user.customer_id,
+        domain: user.domain_name || user.domain || null,
+        created_at: user.created_at,
+        content: user.content
+      }, null, 2));
+
+      // 3. Generate Zip
+      const content = await zip.generateAsync({ 
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      });
       
+      // 4.
       // Trigger Download
       const url = window.URL.createObjectURL(content);
       const a = document.createElement('a');
@@ -360,6 +391,207 @@ export const UserManagement: React.FC = () => {
     } catch (error) {
       console.error('Export failed:', error);
       alert('Export fehlgeschlagen');
+    }
+  };
+
+  const handleExportAll = async () => {
+    try {
+      if (users.length === 0) {
+        alert('Keine Benutzer zum Exportieren vorhanden.');
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Möchten Sie alle ${users.length} Websites exportieren?\n\n` +
+        `Dies kann einige Minuten dauern und wird eine große ZIP-Datei erstellen.`
+      );
+
+      if (!confirmed) return;
+
+      setLoading(true);
+      const masterZip = new JSZip();
+      let successCount = 0;
+      let failCount = 0;
+
+      for (let i = 0; i < users.length; i++) {
+        const user = users[i];
+        
+        try {
+          console.log(`Exporting ${i + 1}/${users.length}: ${user.customer_id}`);
+          
+          // Create individual backup ZIP (same logic as handleExport)
+          const userZip = new JSZip();
+          const mediaFolder = userZip.folder("media");
+          let mediaCount = 0;
+          let mediaSizeBytes = 0;
+          const downloadedUrls = new Set<string>();
+
+          // Count blocks for stats
+          const countBlocks = (pages: any[]): number => {
+            if (!pages) return 0;
+            return pages.reduce((sum, page) => sum + (page.blocks?.length || 0), 0);
+          };
+
+          // Helper function to download image by URL
+          const downloadImageByUrl = async (url: string, filename?: string) => {
+            if (!url || downloadedUrls.has(url)) return;
+            downloadedUrls.add(url);
+            
+            try {
+              if (!filename) {
+                const urlParts = url.split('/');
+                filename = urlParts[urlParts.length - 1].split('?')[0];
+              }
+              
+              const response = await fetch(url);
+              if (!response.ok) return;
+              
+              const blob = await response.blob();
+              if (mediaFolder && blob.size > 0) {
+                mediaFolder.file(filename, blob);
+                mediaCount++;
+                mediaSizeBytes += blob.size;
+              }
+            } catch (err) {
+              console.warn('Could not download:', url, err);
+            }
+          };
+
+          // Extract image URLs
+          const extractImageUrls = (obj: any): string[] => {
+            const urls: string[] = [];
+            
+            const traverse = (item: any) => {
+              if (!item) return;
+              
+              if (typeof item === 'string') {
+                if (item.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i) || 
+                    item.includes('/storage/v1/object/')) {
+                  urls.push(item);
+                }
+              } else if (Array.isArray(item)) {
+                item.forEach(traverse);
+              } else if (typeof item === 'object') {
+                if (item.url) traverse(item.url);
+                if (item.image_url) traverse(item.image_url);
+                if (item.imageUrl) traverse(item.imageUrl);
+                if (item.src) traverse(item.src);
+                if (item.image) traverse(item.image);
+                if (item.backgroundImage) traverse(item.backgroundImage);
+                if (item.logo) traverse(item.logo);
+                if (item.avatar) traverse(item.avatar);
+                if (item.photo) traverse(item.photo);
+                
+                Object.values(item).forEach(traverse);
+              }
+            };
+            
+            traverse(obj);
+            return [...new Set(urls)];
+          };
+
+          const contentImageUrls = extractImageUrls(user.content);
+          
+          // Download all images
+          for (const url of contentImageUrls) {
+            await downloadImageByUrl(url);
+          }
+
+          // Create backup_info.json
+          const backupInfo = {
+            backupId: crypto.randomUUID(),
+            customerId: user.customer_id,
+            domain: user.domain_name || user.domain || undefined,
+            createdAt: new Date().toISOString(),
+            version: '1.0' as const,
+            description: `Bulk export vom ${new Date().toLocaleDateString('de-DE')}`,
+            stats: {
+              pageCount: user.content?.pages?.length || 0,
+              blockCount: countBlocks(user.content?.pages || []),
+              mediaFileCount: mediaCount,
+              mediaSizeBytes: mediaSizeBytes,
+              hasTheme: !!user.content?.theme,
+              hasNavigation: !!user.content?.navigation,
+            },
+          };
+          userZip.file("backup_info.json", JSON.stringify(backupInfo, null, 2));
+
+          // Add website.json
+          userZip.file("website.json", JSON.stringify({
+            customer_id: user.customer_id,
+            domain: user.domain_name || user.domain || null,
+            created_at: user.created_at,
+            content: user.content
+          }, null, 2));
+
+          // Generate individual ZIP as blob
+          const userZipBlob = await userZip.generateAsync({ 
+            type: "blob",
+            compression: "DEFLATE",
+            compressionOptions: { level: 6 }
+          });
+
+          // Add to master ZIP
+          const folderName = `${user.customer_id}_${user.site_name.replace(/[^a-zA-Z0-9]/g, '_')}`;
+          masterZip.file(`${folderName}/backup_${user.customer_id}.zip`, userZipBlob);
+          
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to export ${user.customer_id}:`, error);
+          failCount++;
+        }
+      }
+
+      // Add README to master ZIP
+      const readme = `# BeautifulCMS - Bulk Website Export
+Generated: ${new Date().toISOString()}
+
+## Export Summary
+- Total websites: ${users.length}
+- Successfully exported: ${successCount}
+- Failed: ${failCount}
+
+## Structure
+Each folder contains a complete website backup:
+- backup_info.json: Metadata and statistics
+- website.json: Complete website content
+- media/: All images and media files
+
+## To Restore
+1. Go to SuperAdmin → User Management
+2. Click "Import Website" for the target user
+3. Upload the individual backup ZIP from this archive
+
+## Notes
+- Each backup is a complete, self-contained website export
+- Backups can be restored individually
+- Media files are included in each backup
+`;
+
+      masterZip.file('README.txt', readme);
+
+      // Generate and download master ZIP
+      console.log('Generating master ZIP...');
+      const masterBlob = await masterZip.generateAsync({ 
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      });
+      
+      const url = window.URL.createObjectURL(masterBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `all_websites_${new Date().toISOString().split('T')[0]}.zip`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      alert(`Export abgeschlossen!\n\n${successCount} Websites erfolgreich exportiert.\n${failCount} Fehler.`);
+      
+    } catch (error) {
+      console.error('Bulk export failed:', error);
+      alert('Bulk-Export fehlgeschlagen: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -579,6 +811,15 @@ export const UserManagement: React.FC = () => {
              </div>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleExportAll}
+              disabled={loading || users.length === 0}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              title="Alle Websites exportieren"
+            >
+              <Download className="w-4 h-4" />
+              Export All ({users.length})
+            </button>
             <button
               onClick={() => {
                 setRestoreCustomerId('');

@@ -20,7 +20,6 @@ import { ContactEditorNew as ContactEditor } from './components/admin/ContactEdi
 import { ReviewsEditorNew as ReviewsEditor } from './components/admin/ReviewsEditorNew';
 // import { AboutEditor as AboutEditorOld } from './components/admin/AboutEditor';
 // import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew'; // REMOVED
-import { PricingEditor } from './components/admin/PricingEditor';
 import { DataExport } from './components/admin/DataExport';
 import { BackupAndRestore } from './components/admin/BackupAndRestore';
 // import { PageManager as PageManagerOld } from './components/admin/PageManager';

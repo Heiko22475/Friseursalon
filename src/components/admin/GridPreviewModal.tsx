@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
+import type { GridLayout } from './GridLayoutSelector';
 
 interface GridPreviewModalProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ interface GridPreviewModalProps {
     margin_right: number;
   };
   backgroundColor?: string;
-  getGridTemplateColumns: (layoutType: string) => string;
+  getGridTemplateColumns: (layout: GridLayout) => string;
   onClose: () => void;
 }
 
@@ -50,7 +51,7 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
   const getGridColumns = (): string => {
     switch (viewport) {
       case 'desktop':
-        return getGridTemplateColumns(layoutType);
+        return getGridTemplateColumns(layoutType as GridLayout);
       case 'tablet':
         return columnCount > 2 ? '1fr 1fr' : '1fr 1fr';
       case 'mobile':

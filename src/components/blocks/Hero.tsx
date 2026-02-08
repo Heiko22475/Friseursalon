@@ -128,7 +128,7 @@ export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId, bloc
         })}
 
         {/* Texts on Image */}
-        {onImageTexts.map((text, index) => {
+        {onImageTexts.map((text) => {
           const textIndex = config.texts.findIndex(t => t.id === text.id);
           return (
             <TextRenderer
@@ -169,7 +169,7 @@ export const Hero: React.FC<HeroProps> = ({ config: propConfig, instanceId, bloc
             })}
 
             {/* Texts below */}
-            {belowImageTexts.map((text, index) => {
+            {belowImageTexts.map((text) => {
               const fontSize = getResponsiveValue(text.fontSize, currentViewport);
               const textIndex = config.texts.findIndex(t => t.id === text.id);
               

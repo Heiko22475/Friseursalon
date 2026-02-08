@@ -14,11 +14,21 @@ Eine moderne, responsive Website für Friseursalons mit integriertem Content Man
 
 # Supabase
 
-Supabase-Postgres-passwort: 
-
+Supabase-Postgres-passwort für Friseursalon: 
 #Raphaelsupabase
-
 Dashboard: https://supabase.com/dashboard/project/bcboebhicfsscxrqumyk
+
+Supabase-Postgres-passwort für WebseiteLernen: 
+#Raphaelsupabase
+Dashboard: https://supabase.com/dashboard/project/tdxvsruunslksdznivrb
+
+
+
+Aber wie, mit Github eingeloggt? 
+
+
+77 Style Salon, Bad Hersfeld, Badestube 6a
+
 
 
 

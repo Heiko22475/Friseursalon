@@ -7,10 +7,7 @@ import JSZip from 'jszip';
 import { supabase } from './supabase';
 import { extractImageUrls, getFilenameFromUrl } from './mediaExtractor';
 import { 
-  batchUploadMediaFiles, 
-  downloadFileAsBlob, 
-  replaceImageUrls,
-  batchCreateMediaDatabaseEntries 
+  downloadFileAsBlob
 } from './mediaUploader';
 import type {
   BackupInfo,

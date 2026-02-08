@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Database, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive } from 'lucide-react';
+import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive } from 'lucide-react';
 import { useConfirmDialog } from './admin/ConfirmDialog';
 
 export const AdminDashboard: React.FC = () => {

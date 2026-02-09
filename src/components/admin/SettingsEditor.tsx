@@ -100,29 +100,29 @@ export const SettingsEditor: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center gap-4">
           <button
             onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
+            className="flex items-center gap-2 transition" style={{ color: 'var(--admin-text-secondary)' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
           </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-8">
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)' }}>
           <div className="flex items-center gap-3 mb-6">
-            <Settings className="w-8 h-8 text-rose-500" />
-            <h1 className="text-3xl font-bold text-gray-900">
+            <Settings className="w-8 h-8" style={{ color: 'var(--admin-accent-text)' }} />
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--admin-text-heading)' }}>
               Website-Einstellungen
             </h1>
           </div>
@@ -141,20 +141,20 @@ export const SettingsEditor: React.FC = () => {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 Website-Name
               </label>
               <input
                 type="text"
                 value={data.site_name}
                 onChange={(e) => setData({ ...data, site_name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg focus:ring-2 focus:border-transparent" style={{ border: '1px solid var(--admin-border-strong)' }}
                 placeholder="z.B. Friseursalon Sarah Soriano"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 Kunden-ID
               </label>
               <input
@@ -168,10 +168,10 @@ export const SettingsEditor: React.FC = () => {
                   }
                 }}
                 maxLength={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent font-mono text-lg"
+                className="w-full px-4 py-3 rounded-lg focus:ring-2 focus:border-transparent font-mono text-lg" style={{ border: '1px solid var(--admin-border-strong)' }}
                 placeholder="123456"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm mt-1" style={{ color: 'var(--admin-text-muted)' }}>
                 6-stellige Kundennummer (nur Ziffern)
               </p>
               {data.customer_id && !validateCustomerId(data.customer_id) && (
@@ -182,18 +182,18 @@ export const SettingsEditor: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 Header-Typ
               </label>
               <select
                 value={data.header_type}
                 onChange={(e) => setData({ ...data, header_type: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg focus:ring-2 focus:border-transparent" style={{ border: '1px solid var(--admin-border-strong)' }}
               >
                 <option value="single-page">Single-Page (One-Pager)</option>
                 <option value="multi-page">Multi-Page (Mehrere Seiten)</option>
               </select>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm mt-1" style={{ color: 'var(--admin-text-muted)' }}>
                 Single-Page: Alle Inhalte auf einer Seite | Multi-Page: Separate Unterseiten
               </p>
             </div>
@@ -201,7 +201,7 @@ export const SettingsEditor: React.FC = () => {
             <button
               onClick={handleSave}
               disabled={saving || Boolean(data.customer_id && !validateCustomerId(data.customer_id))}
-              className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed" style={{ backgroundColor: 'var(--admin-accent)' }}
             >
               <Save className="w-5 h-5" />
               {saving ? 'Speichern...' : 'Speichern'}

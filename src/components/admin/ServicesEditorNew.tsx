@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Star, GripVertical, Save } from 'lucide-react';
+import { Plus, Trash2, Star, GripVertical, Save } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import type { Service } from '../../contexts/WebsiteContext';
 
 export const ServicesEditorNew: React.FC = () => {
-  const navigate = useNavigate();
   const { website, updateServices, addService, deleteService, updateService } = useWebsite();
   const [saving, setSaving] = useState(false);
 
@@ -82,43 +81,34 @@ export const ServicesEditorNew: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/admin')}
-              className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Leistungen (NEU)</h1>
-              <p className="text-sm text-gray-600">
-                WebsiteContext - {services.length} Leistungen
-              </p>
-            </div>
-          </div>
-
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Leistungen"
+        subtitle={`${services.length} Leistungen`}
+        sticky
+        actions={
           <button
             onClick={handleAdd}
-            className="flex items-center gap-2 bg-rose-500 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-rose-600 transition"
+            className="flex items-center gap-2 text-white px-6 py-2.5 rounded-lg font-semibold transition"
+            style={{ backgroundColor: 'var(--admin-accent)' }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
           >
             <Plus className="w-5 h-5" />
             Neue Leistung
           </button>
-        </div>
-      </header>
+        }
+      />
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         {services.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-500 mb-4">Noch keine Leistungen vorhanden</p>
+          <div className="rounded-lg p-12 text-center" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+            <p className="mb-4" style={{ color: 'var(--admin-text-muted)' }}>Noch keine Leistungen vorhanden</p>
             <button
               onClick={handleAdd}
-              className="text-rose-500 hover:text-rose-600 font-medium"
+              className="font-medium"
+              style={{ color: 'var(--admin-accent)' }}
             >
               Erste Leistung erstellen
             </button>
@@ -130,7 +120,8 @@ export const ServicesEditorNew: React.FC = () => {
               .map((service, index) => (
                 <div
                   key={service.id}
-                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition"
+                  className="rounded-lg p-6 transition"
+                  style={{ backgroundColor: 'var(--admin-bg-card)' }}
                 >
                   <div className="flex items-start gap-4">
                     {/* Reorder Buttons */}
@@ -138,7 +129,8 @@ export const ServicesEditorNew: React.FC = () => {
                       <button
                         onClick={() => moveUp(index)}
                         disabled={index === 0}
-                        className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                        className="disabled:opacity-30"
+                        style={{ color: 'var(--admin-text-faint)' }}
                         title="Nach oben"
                       >
                         <GripVertical className="w-5 h-5 rotate-90" />
@@ -146,7 +138,8 @@ export const ServicesEditorNew: React.FC = () => {
                       <button
                         onClick={() => moveDown(index)}
                         disabled={index === services.length - 1}
-                        className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                        className="disabled:opacity-30"
+                        style={{ color: 'var(--admin-text-faint)' }}
                         title="Nach unten"
                       >
                         <GripVertical className="w-5 h-5 -rotate-90" />
@@ -157,7 +150,7 @@ export const ServicesEditorNew: React.FC = () => {
                     <div className="flex-1 space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                             Name
                           </label>
                           <input
@@ -166,13 +159,14 @@ export const ServicesEditorNew: React.FC = () => {
                             onChange={(e) =>
                               handleUpdate(service.id, 'name', e.target.value)
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full rounded-lg px-3 py-2"
+                            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                             placeholder="z.B. Herrenhaarschnitt"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                             Kategorie
                           </label>
                           <input
@@ -181,14 +175,15 @@ export const ServicesEditorNew: React.FC = () => {
                             onChange={(e) =>
                               handleUpdate(service.id, 'category', e.target.value)
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full rounded-lg px-3 py-2"
+                            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                             placeholder="z.B. Herren"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                           Beschreibung
                         </label>
                         <textarea
@@ -196,7 +191,8 @@ export const ServicesEditorNew: React.FC = () => {
                           onChange={(e) =>
                             handleUpdate(service.id, 'description', e.target.value)
                           }
-                          className="w-full border rounded-lg px-3 py-2"
+                          className="w-full rounded-lg px-3 py-2"
+                          style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                           placeholder="Beschreibung der Leistung..."
                           rows={3}
                         />
@@ -204,7 +200,7 @@ export const ServicesEditorNew: React.FC = () => {
 
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                             Preis (€)
                           </label>
                           <input
@@ -213,13 +209,14 @@ export const ServicesEditorNew: React.FC = () => {
                             onChange={(e) =>
                               handleUpdate(service.id, 'price', e.target.value)
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full rounded-lg px-3 py-2"
+                            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                             placeholder="35"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                             Dauer (Min.)
                           </label>
                           <input
@@ -232,13 +229,14 @@ export const ServicesEditorNew: React.FC = () => {
                                 parseInt(e.target.value) || 0
                               )
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full rounded-lg px-3 py-2"
+                            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                             placeholder="45"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                             Featured
                           </label>
                           <label className="flex items-center gap-2 mt-2">
@@ -252,14 +250,16 @@ export const ServicesEditorNew: React.FC = () => {
                                   e.target.checked
                                 )
                               }
-                              className="w-5 h-5 text-rose-500 rounded"
+                              className="w-5 h-5 rounded"
+                              style={{ accentColor: 'var(--admin-accent)' }}
                             />
                             <Star
                               className={`w-5 h-5 ${
                                 service.is_featured
                                   ? 'text-yellow-500 fill-yellow-500'
-                                  : 'text-gray-300'
+                                  : ''
                               }`}
+                              style={!service.is_featured ? { color: 'var(--admin-text-faint)' } : {}}
                             />
                           </label>
                         </div>
@@ -269,7 +269,8 @@ export const ServicesEditorNew: React.FC = () => {
                     {/* Delete Button */}
                     <button
                       onClick={() => handleDelete(service.id)}
-                      className="text-red-500 hover:text-red-700 transition"
+                      className="transition"
+                      style={{ color: 'var(--admin-danger)' }}
                       title="Löschen"
                     >
                       <Trash2 className="w-5 h-5" />

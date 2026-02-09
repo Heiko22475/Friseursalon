@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Trash2, Download, Upload, Plus, ArrowLeft, Edit2 } from 'lucide-react';
+import { Trash2, Download, Upload, Plus, Edit2, Users } from 'lucide-react';
 import { createDefaultWebsiteContent } from '../../lib/defaultTemplate';
 import JSZip from 'jszip';
 import { Modal } from '../admin/Modal';
 import { useConfirmDialog } from '../admin/ConfirmDialog';
+import { AdminHeader } from '../admin/AdminHeader';
 
 interface WebsiteRecord {
   id: string; // UUID
@@ -19,7 +19,6 @@ interface WebsiteRecord {
 }
 
 export const UserManagement: React.FC = () => {
-  const navigate = useNavigate();
   const { Dialog, confirm, success: showSuccess, error: showError, alert: showAlert } = useConfirmDialog();
   
   const [users, setUsers] = useState<WebsiteRecord[]>([]);
@@ -803,26 +802,21 @@ Each folder contains a complete website backup:
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Dialog />
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-             <button onClick={() => navigate('/superadmin')} className="text-gray-500 hover:text-gray-700">
-                <ArrowLeft className="w-5 h-5" />
-             </button>
-             <div>
-               <h1 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                 BeautifulCMS
-               </h1>
-               <p className="text-sm text-gray-500">User Management</p>
-             </div>
-          </div>
+      <AdminHeader
+        title="User Management"
+        icon={Users}
+        backTo="/superadmin"
+        actions={
           <div className="flex items-center gap-3">
             <button
               onClick={handleExportAll}
               disabled={loading || users.length === 0}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               title="Alle Websites exportieren"
             >
               <Download className="w-4 h-4" />
@@ -835,65 +829,72 @@ Each folder contains a complete website backup:
                 setRestoreStatus('');
                 setIsRestoreOpen(true);
               }}
-              className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg transition"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Upload className="w-4 h-4" />
               Import Website
             </button>
             <button
               onClick={openCreateModal}
-              className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg transition"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Plus className="w-4 h-4" />
               Create User
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="rounded-lg overflow-hidden overflow-x-auto" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+          <table className="min-w-full" style={{ borderColor: 'var(--admin-border)' }}>
+            <thead style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
               <tr>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Localhost</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider w-20" style={{ color: 'var(--admin-text-muted)' }}>Localhost</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Customer ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Site Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Domain</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Created</th>
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {users.map((user) => (
-                <tr key={user.id} className={localhostCustomerId === user.customer_id ? 'bg-green-50' : ''}>
+                <tr key={user.id} style={{ borderTop: '1px solid var(--admin-border)', backgroundColor: localhostCustomerId === user.customer_id ? 'var(--admin-success-bg)' : undefined }}>
                   <td className="px-4 py-4 text-center">
                     <input
                       type="radio"
                       name="localhost-selection"
                       checked={localhostCustomerId === user.customer_id}
                       onChange={() => handleSetLocalhost(user.customer_id)}
-                      className="w-4 h-4 text-violet-600 focus:ring-violet-500 cursor-pointer"
+                      className="w-4 h-4 cursor-pointer"
+                      style={{ accentColor: 'var(--admin-accent)' }}
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.customer_id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.site_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{user.domain_name || '—'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: 'var(--admin-text-heading)' }}>{user.customer_id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--admin-text-muted)' }}>{user.site_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--admin-text-muted)' }}>{user.domain_name || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--admin-text-muted)' }}>
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-3">
                     <button
                         onClick={() => openEditModal(user)}
                         title="Bearbeiten"
-                        className="text-violet-600 hover:text-violet-900"
+                        style={{ color: 'var(--admin-accent)' }}
                     >
                         <Edit2 className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => handleExport(user)}
                         title="Backup/Export"
-                        className="text-blue-600 hover:text-blue-900"
+                        style={{ color: 'var(--admin-accent)' }}
                     >
                         <Download className="w-5 h-5" />
                     </button>
@@ -903,14 +904,14 @@ Each folder contains a complete website backup:
                             setIsRestoreOpen(true);
                         }}
                         title="Restore"
-                        className="text-orange-600 hover:text-orange-900"
+                        style={{ color: 'var(--admin-accent)' }}
                     >
                         <Upload className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => handleDeleteUser(user.id, user.customer_id)}
                         title="Delete"
-                        className="text-red-600 hover:text-red-900"
+                        style={{ color: 'var(--admin-danger)' }}
                     >
                         <Trash2 className="w-5 h-5" />
                     </button>
@@ -920,7 +921,7 @@ Each folder contains a complete website backup:
             </tbody>
           </table>
           {users.length === 0 && !loading && (
-             <div className="p-8 text-center text-gray-500">No users found.</div>
+             <div className="p-8 text-center" style={{ color: 'var(--admin-text-muted)' }}>No users found.</div>
           )}
         </div>
       </div>
@@ -929,41 +930,45 @@ Each folder contains a complete website backup:
       <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Neuen Benutzer anlegen">
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Customer ID</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Customer ID</label>
                 <input 
                     type="text" 
                     value={newCustomerId} 
                     onChange={e => setNewCustomerId(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Site Name</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Site Name</label>
                 <input 
                     type="text" 
                     value={newSiteName} 
                     onChange={e => setNewSiteName(e.target.value)}
                     placeholder="z.B. Friseursalon Sarah"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Domain Name</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Domain Name</label>
                 <input 
                     type="text" 
                     value={newDomainName} 
                     onChange={e => setNewDomainName(e.target.value)}
                     placeholder="z.B. www.salon-sarah.de"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
-                <p className="mt-1 text-xs text-gray-500">Optional - Die Domain unter der die Website erreichbar sein wird</p>
+                <p className="mt-1 text-xs" style={{ color: 'var(--admin-text-muted)' }}>Optional - Die Domain unter der die Website erreichbar sein wird</p>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-                <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 border rounded-md">Cancel</button>
+                <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded-md" style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}>Cancel</button>
                 <button 
                     onClick={handleCreateUser} 
                     disabled={creating}
-                    className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 disabled:opacity-50"
+                    className="px-4 py-2 text-white rounded-md disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--admin-accent)' }}
                 >
                     {creating ? 'Creating...' : 'Create'}
                 </button>
@@ -974,37 +979,40 @@ Each folder contains a complete website backup:
       {/* Restore Modal */}
       <Modal isOpen={isRestoreOpen} onClose={() => setIsRestoreOpen(false)} title="Website Wiederherstellen / Importieren">
          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                Laden Sie ein Zip-Backup hoch, um die Website für <strong>{restoreCustomerId}</strong> wiederherzustellen.
                Dies überschreibt die aktuelle Konfiguration!
             </p>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Ziel Customer ID</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Ziel Customer ID</label>
                 <input 
                     type="text" 
                     value={restoreCustomerId} 
                     onChange={e => setRestoreCustomerId(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-gray-100"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-surface)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Backup Zip-Datei</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Backup Zip-Datei</label>
                 <input 
                     type="file" 
                     accept=".zip"
                     onChange={e => setRestoreFile(e.target.files?.[0] || null)}
                     className="mt-1 block w-full"
+                    style={{ color: 'var(--admin-text)' }}
                 />
             </div>
             {restoreStatus && (
-                <div className="text-sm text-blue-600 font-medium">{restoreStatus}</div>
+                <div className="text-sm font-medium" style={{ color: 'var(--admin-accent)' }}>{restoreStatus}</div>
             )}
             <div className="flex justify-end gap-3 mt-6">
-                <button onClick={() => setIsRestoreOpen(false)} className="px-4 py-2 border rounded-md">Cancel</button>
+                <button onClick={() => setIsRestoreOpen(false)} className="px-4 py-2 rounded-md" style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}>Cancel</button>
                 <button 
                     onClick={handleRestore} 
                     disabled={restoring || !restoreFile}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50"
+                    className="px-4 py-2 text-white rounded-md disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--admin-accent)' }}
                 >
                     {restoring ? 'Restoring...' : 'Restore Website'}
                 </button>
@@ -1016,42 +1024,45 @@ Each folder contains a complete website backup:
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Website bearbeiten">
         <div className="space-y-4">
             {editingUser && (
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-600">
+              <div className="p-3 rounded-md" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+                <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                   <span className="font-medium">Customer ID:</span> {editingUser.customer_id}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                   <span className="font-medium">Erstellt:</span> {new Date(editingUser.created_at).toLocaleDateString()}
                 </p>
               </div>
             )}
             <div>
-                <label className="block text-sm font-medium text-gray-700">Site Name</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Site Name</label>
                 <input 
                     type="text" 
                     value={editSiteName} 
                     onChange={e => setEditSiteName(e.target.value)}
                     placeholder="z.B. Friseursalon Sarah"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Domain Name</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Domain Name</label>
                 <input 
                     type="text" 
                     value={editDomainName} 
                     onChange={e => setEditDomainName(e.target.value)}
                     placeholder="z.B. www.salon-sarah.de"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className="mt-1 block w-full rounded-md p-2"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
-                <p className="mt-1 text-xs text-gray-500">Die Domain unter der die Website erreichbar sein wird</p>
+                <p className="mt-1 text-xs" style={{ color: 'var(--admin-text-muted)' }}>Die Domain unter der die Website erreichbar sein wird</p>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-                <button onClick={() => setIsEditOpen(false)} className="px-4 py-2 border rounded-md">Abbrechen</button>
+                <button onClick={() => setIsEditOpen(false)} className="px-4 py-2 rounded-md" style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}>Abbrechen</button>
                 <button 
                     onClick={handleSaveEdit} 
                     disabled={saving || !editSiteName}
-                    className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 disabled:opacity-50"
+                    className="px-4 py-2 text-white rounded-md disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--admin-accent)' }}
                 >
                     {saving ? 'Speichern...' : 'Speichern'}
                 </button>

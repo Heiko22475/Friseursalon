@@ -1,0 +1,127 @@
+/* ============================================
+   Admin Theme System — CSS Custom Properties
+   ============================================
+   Two themes: dark (default) and light (rose-accent).
+   Applied via .admin-theme-dark / .admin-theme-light on wrapper.
+   Usage in Tailwind: bg-[var(--admin-bg)] etc.
+   ============================================ */
+
+/* Dark Theme (default) */
+.admin-theme-dark {
+  --admin-bg: #13131b;
+  --admin-bg-surface: #1a1a2a;
+  --admin-bg-card: #1e1e2e;
+  --admin-bg-input: #2d2d3d;
+  --admin-bg-hover: #252535;
+  --admin-bg-selected: rgba(59, 130, 246, 0.08);
+  --admin-border: #2d2d3d;
+  --admin-border-strong: #3d3d4d;
+  --admin-text: #d1d5db;
+  --admin-text-heading: #e5e7eb;
+  --admin-text-secondary: #9ca3af;
+  --admin-text-muted: #6b7280;
+  --admin-text-faint: #4a4a5a;
+  --admin-accent: #3b82f6;
+  --admin-accent-hover: #2563eb;
+  --admin-accent-light: #60a5fa;
+  --admin-accent-bg: rgba(59, 130, 246, 0.12);
+  --admin-accent-text: #60a5fa;
+  --admin-danger: #ef4444;
+  --admin-danger-hover: #dc2626;
+  --admin-danger-bg: rgba(239, 68, 68, 0.1);
+  --admin-success: #22c55e;
+  --admin-success-bg: rgba(34, 197, 94, 0.1);
+  --admin-warning: #f59e0b;
+  --admin-warning-bg: rgba(245, 158, 11, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #1a1a2a;
+  --admin-scrollbar-thumb: #3d3d4d;
+  color-scheme: dark;
+}
+
+/* Light Theme (rose accent, similar to original) */
+.admin-theme-light {
+  --admin-bg: #f9fafb;
+  --admin-bg-surface: #ffffff;
+  --admin-bg-card: #ffffff;
+  --admin-bg-input: #f3f4f6;
+  --admin-bg-hover: #f9fafb;
+  --admin-bg-selected: rgba(225, 29, 72, 0.05);
+  --admin-border: #e5e7eb;
+  --admin-border-strong: #d1d5db;
+  --admin-text: #374151;
+  --admin-text-heading: #111827;
+  --admin-text-secondary: #6b7280;
+  --admin-text-muted: #9ca3af;
+  --admin-text-faint: #d1d5db;
+  --admin-accent: #e11d48;
+  --admin-accent-hover: #be123c;
+  --admin-accent-light: #fb7185;
+  --admin-accent-bg: rgba(225, 29, 72, 0.06);
+  --admin-accent-text: #e11d48;
+  --admin-danger: #dc2626;
+  --admin-danger-hover: #b91c1c;
+  --admin-danger-bg: rgba(220, 38, 38, 0.06);
+  --admin-success: #16a34a;
+  --admin-success-bg: rgba(22, 163, 74, 0.06);
+  --admin-warning: #d97706;
+  --admin-warning-bg: rgba(217, 119, 6, 0.06);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --admin-overlay: rgba(0, 0, 0, 0.5);
+  --admin-scrollbar-track: #f3f4f6;
+  --admin-scrollbar-thumb: #d1d5db;
+  color-scheme: light;
+}
+
+/* ---- Global admin area styles ---- */
+.admin-theme-dark,
+.admin-theme-light {
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Scrollbar styling */
+.admin-theme-dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-theme-dark ::-webkit-scrollbar-track {
+  background: var(--admin-scrollbar-track);
+}
+.admin-theme-dark ::-webkit-scrollbar-thumb {
+  background: var(--admin-scrollbar-thumb);
+  border-radius: 4px;
+}
+.admin-theme-dark ::-webkit-scrollbar-thumb:hover {
+  background: #4a4a5a;
+}
+
+/* Input focus styling */
+.admin-theme-dark input:focus,
+.admin-theme-dark textarea:focus,
+.admin-theme-dark select:focus {
+  border-color: var(--admin-accent) !important;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--admin-accent-bg);
+}
+
+.admin-theme-light input:focus,
+.admin-theme-light textarea:focus,
+.admin-theme-light select:focus {
+  border-color: var(--admin-accent) !important;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--admin-accent-bg);
+}
+
+/* Selection color */
+.admin-theme-dark ::selection {
+  background: rgba(59, 130, 246, 0.3);
+}
+.admin-theme-light ::selection {
+  background: rgba(225, 29, 72, 0.2);
+}

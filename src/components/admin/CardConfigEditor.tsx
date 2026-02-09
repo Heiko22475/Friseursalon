@@ -69,12 +69,15 @@ const Section: React.FC<SectionProps> = ({
   };
 
   return (
-    <div className={`border border-gray-200 rounded-lg overflow-hidden ${nested ? 'bg-gray-50' : 'bg-white'}`}>
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)', backgroundColor: nested ? 'var(--admin-bg-surface)' : 'var(--admin-bg-card)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-3 ${nested ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'} transition`}
+        className="w-full flex items-center justify-between p-3 transition"
+        style={{ backgroundColor: nested ? 'var(--admin-bg-input)' : 'var(--admin-bg-surface)' }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = nested ? 'var(--admin-bg-input)' : 'var(--admin-bg-surface)'}
       >
-        <div className={`flex items-center gap-2 ${nested ? 'text-sm' : ''} font-medium text-gray-700`}>
+        <div className={`flex items-center gap-2 ${nested ? 'text-sm' : ''} font-medium`} style={{ color: 'var(--admin-text-secondary)' }}>
           {icon}
           {title}
         </div>
@@ -84,11 +87,10 @@ const Section: React.FC<SectionProps> = ({
               className="flex items-center gap-2"
               onClick={handleToggleClick}
             >
-              {toggleLabel && <span className="text-xs text-gray-500">{toggleLabel}</span>}
+              {toggleLabel && <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{toggleLabel}</span>}
               <div
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
-                  toggleValue ? 'bg-rose-500' : 'bg-gray-300'
-                }`}
+                className="relative inline-flex h-5 w-9 items-center rounded-full transition"
+                style={{ backgroundColor: toggleValue ? 'var(--admin-accent)' : 'var(--admin-border-strong)' }}
               >
                 <span
                   className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition ${
@@ -101,7 +103,7 @@ const Section: React.FC<SectionProps> = ({
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </button>
-      {isOpen && <div className={`p-4 space-y-4 border-t ${nested ? 'bg-white' : ''}`}>{children}</div>}
+      {isOpen && <div className="p-4 space-y-4" style={{ borderTop: '1px solid var(--admin-border)', backgroundColor: nested ? 'var(--admin-bg-card)' : undefined }}>{children}</div>}
     </div>
   );
 };
@@ -117,18 +119,19 @@ const CollapsibleGroup: React.FC<CollapsibleGroupProps> = ({ title, icon, defaul
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-card)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition"
+        className="w-full flex items-center justify-between p-4 transition hover:opacity-90"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
       >
-        <div className="flex items-center gap-2 font-semibold text-gray-800">
+        <div className="flex items-center gap-2 font-semibold" style={{ color: 'var(--admin-text-heading)' }}>
           {icon}
           {title}
         </div>
         {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
       </button>
-      {isOpen && <div className="p-4 space-y-3 border-t bg-gray-50/50">{children}</div>}
+      {isOpen && <div className="p-4 space-y-3" style={{ borderTop: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>{children}</div>}
     </div>
   );
 };
@@ -147,7 +150,7 @@ interface SelectProps {
 
 const Select: React.FC<SelectProps> = ({ label, value, options, onChange }) => (
   <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
+    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -173,7 +176,7 @@ interface NumberInputProps {
 
 const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, placeholder, min, step }) => (
   <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
+    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
     <input
       type="number"
       value={value ?? ''}
@@ -194,13 +197,12 @@ interface ToggleProps {
 
 const Toggle: React.FC<ToggleProps> = ({ label, value, onChange }) => (
   <label className="flex items-center justify-between cursor-pointer">
-    <span className="text-sm text-gray-700">{label}</span>
+    <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>{label}</span>
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-        value ? 'bg-rose-500' : 'bg-gray-200'
-      }`}
+      className="relative inline-flex h-6 w-11 items-center rounded-full transition"
+      style={{ backgroundColor: value ? 'var(--admin-accent)' : 'var(--admin-bg-input)' }}
     >
       <span
         className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
@@ -236,11 +238,11 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
   };
 
   return (
-    <div className="border rounded-lg bg-white">
+    <div className="border rounded-lg" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
       {/* Header */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50 border-b">
-        <button className="cursor-move p-1 hover:bg-gray-200 rounded">
-          <GripVertical className="w-4 h-4 text-gray-400" />
+      <div className="flex items-center gap-2 p-3" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
+        <button className="cursor-move p-1 rounded" style={{ color: 'var(--admin-text-muted)' }}>
+          <GripVertical className="w-4 h-4" />
         </button>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -261,7 +263,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
         <div className="p-4 space-y-4">
           {/* Image */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Bild</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Bild</label>
             {item.image ? (
               <div className="relative">
                 <img src={item.image} alt="" className="w-full h-32 object-cover rounded-lg" />
@@ -275,7 +277,10 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
             ) : (
               <button
                 onClick={() => setShowMediaLibrary(true)}
-                className="w-full py-2 border-2 border-dashed rounded-lg hover:border-rose-500 transition text-sm text-gray-500"
+                className="w-full py-2 border-2 border-dashed rounded-lg transition text-sm"
+                style={{ color: 'var(--admin-text-muted)', borderColor: 'var(--admin-border)' }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--admin-accent)'}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--admin-border)'}
               >
                 Stockfoto auswählen
               </button>
@@ -283,7 +288,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Icon</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Icon</label>
             <IconPicker
               value={item.icon || ''}
               onChange={(icon) => update({ icon })}
@@ -318,15 +323,16 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
           {/* Button - Simplified to just one text field as button is set in config globally */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Button-Text (optional)</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Button-Text (optional)</label>
             <input
               type="text"
               value={item.title}
               placeholder="Wird durch Karten-Konfiguration gesteuert"
               disabled
-              className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 text-gray-500"
+              className="w-full px-3 py-2 border rounded-lg text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-muted)', borderColor: 'var(--admin-border)' }}
             />
-            <p className="text-xs text-gray-500 mt-1">Button-Styling wird global in der Karten-Konfiguration festgelegt</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>Button-Styling wird global in der Karten-Konfiguration festgelegt</p>
           </div>
         </div>
       )}
@@ -504,7 +510,7 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
         />
 
         {/* Typography */}
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4" style={{ borderTop: '1px solid var(--admin-border)' }}>
           <Toggle
             label="Eigene Typografie verwenden"
             value={config.typography?.enabled ?? false}
@@ -599,7 +605,7 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
           onChange={(gap: any) => updateGrid({ gap })}
         />
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>
             Maximale Breite des Grids
           </label>
           <input
@@ -609,7 +615,7 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
             placeholder="z.B. 1200px, 80rem, 100%"
             className="w-full px-3 py-2 border rounded-lg text-sm"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>
             CSS-Wert für die maximale Container-Breite (Standard: 1200px)
           </p>
         </div>
@@ -926,7 +932,10 @@ export const CardConfigEditor: React.FC<CardConfigEditorProps> = ({ config, onCh
           ))}
           <button
             onClick={addItem}
-            className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-rose-500 hover:text-rose-500 transition flex items-center justify-center gap-2"
+            className="w-full py-3 border-2 border-dashed rounded-lg transition flex items-center justify-center gap-2"
+            style={{ borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--admin-accent)'; e.currentTarget.style.color = 'var(--admin-accent-text)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--admin-border-strong)'; e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
           >
             <Plus className="w-4 h-4" />
             Neue Karte hinzufügen

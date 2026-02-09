@@ -105,15 +105,15 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl w-full max-w-7xl max-h-[90vh] flex flex-col shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'var(--admin-overlay)' }}>
+      <div className="rounded-xl w-full max-w-7xl max-h-[90vh] flex flex-col" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)' }}>
         {/* Header */}
-        <div className="p-6 border-b">
+        <div className="p-6 border-b" style={{ borderColor: 'var(--admin-border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Kartenvorlage auswählen</h2>
+            <h2 className="text-2xl font-bold" style={{ color: 'var(--admin-text-heading)' }}>Kartenvorlage auswählen</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition"
+              className="p-2 rounded-full transition admin-hover-bg"
               title="Schließen"
             >
               <X className="w-5 h-5" />
@@ -124,13 +124,14 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
           <div className="flex gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Vorlagen durchsuchen..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent"
+                style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)', '--tw-ring-color': 'var(--admin-accent)' } as React.CSSProperties}
               />
             </div>
 
@@ -138,7 +139,8 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)', '--tw-ring-color': 'var(--admin-accent)' } as React.CSSProperties}
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -154,18 +156,18 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="inline-block w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
-                <p className="mt-4 text-gray-500">Lade Vorlagen...</p>
+                <div className="inline-block w-8 h-8 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--admin-accent)', borderTopColor: 'transparent' }} />
+                <p className="mt-4" style={{ color: 'var(--admin-text-muted)' }}>Lade Vorlagen...</p>
               </div>
             </div>
           ) : filteredTemplates.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <LayoutGrid className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <LayoutGrid className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--admin-text-muted)' }} />
+                <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
                   Keine Vorlagen gefunden
                 </h3>
-                <p className="text-gray-500">
+                <p style={{ color: 'var(--admin-text-muted)' }}>
                   {searchQuery || selectedCategory !== 'all'
                     ? 'Versuchen Sie eine andere Suche oder Kategorie'
                     : 'Es sind noch keine Vorlagen verfügbar'}
@@ -177,11 +179,12 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
               {filteredTemplates.map((template) => (
                 <div
                   key={template.id}
-                  className="bg-white border rounded-xl hover:shadow-lg transition cursor-pointer group"
+                  className="border rounded-xl transition cursor-pointer group hover:shadow-lg"
+                  style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}
                   onClick={() => onSelect(template)}
                 >
                   {/* Preview */}
-                  <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-xl overflow-hidden p-4">
+                  <div className="h-48 rounded-t-xl overflow-hidden p-4" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
                     <div className="w-full h-full flex items-center justify-center">
                       <div style={{ maxWidth: '200px', transform: 'scale(0.8)' }}>
                         <GenericCard
@@ -209,7 +212,7 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
                   {/* Info */}
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 flex-1 group-hover:text-rose-600 transition">
+                      <h3 className="font-semibold flex-1 transition" style={{ color: 'var(--admin-text-heading)' }}>
                         {template.name}
                       </h3>
                       <span
@@ -223,7 +226,7 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
                     </div>
 
                     {template.description && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--admin-text-secondary)' }}>
                         {template.description}
                       </p>
                     )}
@@ -233,7 +236,8 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
                         e.stopPropagation();
                         onSelect(template);
                       }}
-                      className="w-full px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition font-medium"
+                      className="w-full px-4 py-2 text-white rounded-lg transition font-medium"
+                      style={{ backgroundColor: 'var(--admin-accent)' }}
                     >
                       Auswählen
                     </button>
@@ -245,20 +249,22 @@ export const CardTemplateSelectionDialog: React.FC<CardTemplateSelectionDialogPr
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t bg-gray-50 flex items-center justify-between">
+        <div className="p-6 border-t flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
           <button
             onClick={() => onSelect(null)}
-            className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+            className="px-6 py-3 border-2 rounded-lg transition font-medium admin-hover-bg"
+            style={{ borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-secondary)' }}
           >
             Ohne Vorlage starten
           </button>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
             {filteredTemplates.length} {filteredTemplates.length === 1 ? 'Vorlage' : 'Vorlagen'}{' '}
             verfügbar
           </div>
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium"
+            className="px-6 py-3 text-white rounded-lg transition font-medium"
+            style={{ backgroundColor: 'var(--admin-text-heading)' }}
           >
             Abbrechen
           </button>

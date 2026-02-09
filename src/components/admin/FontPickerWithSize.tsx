@@ -81,7 +81,7 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       {/* Label */}
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
 
       {/* Font Selection */}
       <FontPicker
@@ -95,7 +95,10 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
         <button
           type="button"
           onClick={() => setShowSizeControls(!showSizeControls)}
-          className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition"
+          className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition"
+          style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
         >
           <span className="flex items-center gap-2">
             <Type className="w-4 h-4" />
@@ -111,7 +114,7 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
 
       {/* Size Controls */}
       {showSizeControls && onSizeChange && (
-        <div className="border border-gray-200 rounded-lg p-4 space-y-4 bg-gray-50">
+        <div className="border rounded-lg p-4 space-y-4" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
           {/* Viewport Tabs */}
           <div className="flex gap-2">
             {VIEWPORTS.map((vp) => (
@@ -119,11 +122,11 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
                 key={vp.value}
                 type="button"
                 onClick={() => setActiveViewport(vp.value)}
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                  activeViewport === vp.value
-                    ? 'bg-rose-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                }`}
+                className="flex-1 px-3 py-2 rounded-lg text-sm font-medium transition"
+                style={activeViewport === vp.value
+                  ? { backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' }
+                  : { backgroundColor: 'var(--admin-bg-card)', color: 'var(--admin-text-secondary)' }
+                }
               >
                 <span className="mr-1">{vp.icon}</span>
                 {vp.label}
@@ -134,7 +137,7 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
           {/* Size Input for Active Viewport */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-gray-600">
+              <label className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>
                 Schriftgröße für {VIEWPORTS.find((v) => v.value === activeViewport)?.label}
               </label>
               {sizeValue[activeViewport] && (
@@ -157,7 +160,8 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
                 onChange={(e) =>
                   handleSizeChange(activeViewport, parseInt(e.target.value))
                 }
-                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                className="flex-1 h-2 rounded-lg appearance-none cursor-pointer"
+                style={{ backgroundColor: 'var(--admin-bg-input)', accentColor: 'var(--admin-accent)' } as React.CSSProperties}
               />
               <div className="flex items-center gap-1">
                 <input
@@ -168,16 +172,19 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
                   onChange={(e) =>
                     handleSizeChange(activeViewport, parseInt(e.target.value) || defaultSize)
                   }
-                  className="w-16 px-2 py-1 text-sm border border-gray-300 rounded text-center"
+                  className="w-16 px-2 py-1 text-sm border rounded text-center"
+                  style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)' }}
                 />
-                <span className="text-xs text-gray-500">px</span>
+                <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>px</span>
               </div>
             </div>
 
             {/* Preview */}
             <div
-              className="p-3 bg-white rounded border border-gray-200 text-center"
+              className="p-3 rounded border text-center"
               style={{
+                backgroundColor: 'var(--admin-bg-card)',
+                borderColor: 'var(--admin-border)',
                 fontFamily: selectedFont
                   ? `'${selectedFont.name}', ${selectedFont.fallback}`
                   : 'inherit',
@@ -189,19 +196,19 @@ export const FontPickerWithSize: React.FC<FontPickerWithSizeProps> = ({
           </div>
 
           {/* Size Summary */}
-          <div className="pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Konfigurierte Größen:</p>
+          <div className="pt-3 border-t" style={{ borderColor: 'var(--admin-border)' }}>
+            <p className="text-xs mb-2" style={{ color: 'var(--admin-text-muted)' }}>Konfigurierte Größen:</p>
             <div className="grid grid-cols-3 gap-2">
               {VIEWPORTS.map((vp) => {
                 const size = sizeValue[vp.value];
                 return (
                   <div
                     key={vp.value}
-                    className={`px-2 py-1 rounded text-xs text-center ${
-                      size
-                        ? 'bg-rose-100 text-rose-700'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}
+                    className="px-2 py-1 rounded text-xs text-center"
+                    style={size
+                      ? { backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)' }
+                      : { backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-muted)' }
+                    }
                   >
                     {vp.icon} {size ? `${size}px` : `${defaultSize}px (Standard)`}
                   </div>

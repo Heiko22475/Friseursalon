@@ -29,8 +29,8 @@ function ColorCell({ color, label, isEditable, onChange }: ColorCellProps) {
   return (
     <div className="relative group">
       <div
-        className="h-20 rounded border-2 border-gray-300 shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105"
-        style={{ backgroundColor: color }}
+        className="h-20 rounded border-2 overflow-hidden cursor-pointer transition-transform hover:scale-105"
+        style={{ backgroundColor: color, borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
       >
         {isEditable && onChange && (
           <input
@@ -123,14 +123,17 @@ export default function PaletteEditor({
 
       {/* Preset Grid */}
       {showPresets && presets.length > 0 && (
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h4 className="text-sm font-medium text-gray-700 mb-3">Preset-Paletten</h4>
+        <div className="p-4 rounded-lg border" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
+          <h4 className="text-sm font-medium mb-3" style={{ color: 'var(--admin-text-secondary)' }}>Preset-Paletten</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {presets.map((preset) => (
               <button
                 key={preset.id}
                 onClick={() => handlePresetSelect(preset)}
-                className="flex flex-col gap-2 p-3 bg-white border border-gray-300 rounded-lg hover:border-rose-500 hover:shadow-md transition-all text-left"
+                className="flex flex-col gap-2 p-3 border rounded-lg transition-all text-left hover:shadow-lg"
+                style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--admin-border-strong)')}
               >
                 <div className="flex gap-1 h-10">
                   {preset.colors.map((color, idx) => (
@@ -141,7 +144,7 @@ export default function PaletteEditor({
                     />
                   ))}
                 </div>
-                <span className="text-xs font-medium text-gray-700">{preset.name}</span>
+                <span className="text-xs font-medium" style={{ color: 'var(--admin-text-secondary)' }}>{preset.name}</span>
               </button>
             ))}
           </div>
@@ -151,7 +154,7 @@ export default function PaletteEditor({
       {/* Refactored Layout: Table-Like per Primary */}
       <div className="space-y-6">
         <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-4">Marken-Identität & Autom. Abstufungen</h4>
+          <h4 className="text-sm font-medium mb-4" style={{ color: 'var(--admin-text-secondary)' }}>Marken-Identität & Autom. Abstufungen</h4>
           
           <div className="flex flex-col gap-6">
             {[1, 2, 3].map((primaryNum) => {
@@ -169,12 +172,12 @@ export default function PaletteEditor({
               const isEditing = editingAccents?.primary === primaryNum;
 
               return (
-                <div key={primaryNum} className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div key={primaryNum} className="p-4 border rounded-lg" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)', boxShadow: 'var(--admin-shadow)' }}>
                   {/* Row Header & Main Color */}
                   <div className="flex items-start gap-6">
                     {/* Primary Control (Left) */}
                     <div className="w-48 flex-shrink-0">
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">{colLabel}</label>
+                      <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>{colLabel}</label>
                       <div className="space-y-2">
                         <ColorCell
                           color={baseColor}
@@ -187,7 +190,8 @@ export default function PaletteEditor({
                               type="color"
                               value={baseColor}
                               onChange={(e) => handlePrimaryChange(primaryNum, e.target.value.toUpperCase())}
-                              className="w-full h-10 rounded-md border border-gray-300 cursor-pointer"
+                              className="w-full h-10 rounded-md border cursor-pointer"
+                              style={{ borderColor: 'var(--admin-border-strong)' }}
                               title="Farbe wählen"
                             />
                         </div>
@@ -197,14 +201,16 @@ export default function PaletteEditor({
                     {/* Accents (Right - Table-like) */}
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
-                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Automatische Abstufungen</label>
+                         <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>Automatische Abstufungen</label>
                          <button
                             onClick={() => setEditingAccents(isEditing ? null : { primary: primaryNum, accent: 1 })}
-                            className={`px-3 py-1 text-xs font-medium rounded border transition-colors ${
-                              isEditing 
-                                ? 'bg-rose-50 border-rose-200 text-rose-700' 
-                                : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
-                            }`}
+                            className="px-3 py-1 text-xs font-medium rounded border transition-colors"
+                            style={isEditing
+                              ? { backgroundColor: 'var(--admin-accent-bg)', borderColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' }
+                              : { backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-secondary)' }
+                            }
+                            onMouseEnter={(e) => { if (!isEditing) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                            onMouseLeave={(e) => { if (!isEditing) e.currentTarget.style.backgroundColor = 'var(--admin-bg-card)'; }}
                          >
                             {isEditing ? 'Schließen' : 'Anpassen'}
                          </button>
@@ -213,15 +219,15 @@ export default function PaletteEditor({
                       <div className="grid grid-cols-3 gap-4">
                         {/* Accent 1 */}
                         <div className="space-y-1">
-                           <div className="h-16 rounded border border-gray-200" style={{ backgroundColor: accent1Color }}></div>
+                           <div className="h-16 rounded border" style={{ backgroundColor: accent1Color, borderColor: 'var(--admin-border)' }}></div>
                         </div>
                         {/* Accent 2 */}
                         <div className="space-y-1">
-                           <div className="h-16 rounded border border-gray-200" style={{ backgroundColor: accent2Color }}></div>
+                           <div className="h-16 rounded border" style={{ backgroundColor: accent2Color, borderColor: 'var(--admin-border)' }}></div>
                         </div>
                         {/* Accent 3 */}
                         <div className="space-y-1">
-                           <div className="h-16 rounded border border-gray-200" style={{ backgroundColor: accent3Color }}></div>
+                           <div className="h-16 rounded border" style={{ backgroundColor: accent3Color, borderColor: 'var(--admin-border)' }}></div>
                         </div>
                       </div>
                     </div>
@@ -229,7 +235,7 @@ export default function PaletteEditor({
 
                   {/* HSL Sliders (Collapsible Area) */}
                   {isEditing && (
-                    <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-200" style={{ borderColor: 'var(--admin-border)' }}>
                       {[1, 2, 3].map(accNum => {
                         const config = accentConfigs.find(
                           c => c.primary_number === primaryNum && c.accent_number === accNum
@@ -237,8 +243,8 @@ export default function PaletteEditor({
                         if (!config) return null;
 
                         return (
-                          <div key={accNum} className="space-y-3 bg-gray-50 p-3 rounded-md">
-                             <div className="text-xs font-bold text-gray-700">
+                          <div key={accNum} className="space-y-3 p-3 rounded-md" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+                             <div className="text-xs font-bold" style={{ color: 'var(--admin-text-secondary)' }}>
                                 {accNum === 1 && 'Heller Akzent'}
                                 {accNum === 2 && 'Dunkler Akzent'}
                                 {accNum === 3 && 'Gedämpft'}
@@ -247,33 +253,36 @@ export default function PaletteEditor({
                              {/* HSL Controls */}
                              <div className="space-y-2">
                                 <div>
-                                  <label className="text-[10px] text-gray-500 flex justify-between">
+                                  <label className="text-[10px] flex justify-between" style={{ color: 'var(--admin-text-muted)' }}>
                                     <span>Farbton (Hue)</span>
                                     <span>{config.hue_shift}°</span>
                                   </label>
                                   <input type="range" min="-180" max="180" value={config.hue_shift}
                                     onChange={(e) => handleAccentConfigChange(primaryNum, accNum as any, 'hue_shift', parseInt(e.target.value))}
-                                    className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full h-1 rounded-lg appearance-none cursor-pointer"
+                                    style={{ backgroundColor: 'var(--admin-bg-input)' }}
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-[10px] text-gray-500 flex justify-between">
+                                  <label className="text-[10px] flex justify-between" style={{ color: 'var(--admin-text-muted)' }}>
                                     <span>Sättigung</span>
                                     <span>{config.saturation_shift}%</span>
                                   </label>
                                   <input type="range" min="-100" max="100" value={config.saturation_shift}
                                     onChange={(e) => handleAccentConfigChange(primaryNum, accNum as any, 'saturation_shift', parseInt(e.target.value))}
-                                    className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full h-1 rounded-lg appearance-none cursor-pointer"
+                                    style={{ backgroundColor: 'var(--admin-bg-input)' }}
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-[10px] text-gray-500 flex justify-between">
+                                  <label className="text-[10px] flex justify-between" style={{ color: 'var(--admin-text-muted)' }}>
                                     <span>Helligkeit</span>
                                     <span>{config.lightness_shift}%</span>
                                   </label>
                                   <input type="range" min="-100" max="100" value={config.lightness_shift}
                                     onChange={(e) => handleAccentConfigChange(primaryNum, accNum as any, 'lightness_shift', parseInt(e.target.value))}
-                                    className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full h-1 rounded-lg appearance-none cursor-pointer"
+                                    style={{ backgroundColor: 'var(--admin-bg-input)' }}
                                   />
                                 </div>
                              </div>

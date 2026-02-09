@@ -91,7 +91,7 @@ export default function UnifiedColorPicker({
   return (
     <div className="space-y-3">
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>
           {label}
         </label>
       )}
@@ -99,15 +99,15 @@ export default function UnifiedColorPicker({
       {/* Color Preview */}
       <div className="flex items-center gap-3">
         <div
-          className="w-12 h-12 rounded border-2 border-gray-300 shadow-sm"
-          style={{ backgroundColor: resolvedColor || '#000000' }}
+          className="w-12 h-12 rounded border-2"
+          style={{ backgroundColor: resolvedColor || '#000000', borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
         />
         <div className="flex-1">
-          <div className="text-sm font-mono text-gray-600">
+          <div className="text-sm font-mono" style={{ color: 'var(--admin-text-secondary)' }}>
             {resolvedColor || 'N/A'}
           </div>
           {value.kind === 'tokenRef' && (
-            <div className="text-xs text-gray-500 truncate">
+            <div className="text-xs truncate" style={{ color: 'var(--admin-text-muted)' }}>
               {value.ref}
             </div>
           )}
@@ -127,34 +127,34 @@ export default function UnifiedColorPicker({
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b" style={{ borderColor: 'var(--admin-border)' }}>
         <button
           onClick={() => setActiveTab('semantic')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'semantic'
-              ? 'border-rose-500 text-rose-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
+          className="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+          style={{
+            borderColor: activeTab === 'semantic' ? 'var(--admin-accent)' : 'transparent',
+            color: activeTab === 'semantic' ? 'var(--admin-accent-text)' : 'var(--admin-text-muted)'
+          }}
         >
           Semantik
         </button>
         <button
           onClick={() => setActiveTab('palette')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'palette'
-              ? 'border-rose-500 text-rose-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
+          className="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+          style={{
+            borderColor: activeTab === 'palette' ? 'var(--admin-accent)' : 'transparent',
+            color: activeTab === 'palette' ? 'var(--admin-accent-text)' : 'var(--admin-text-muted)'
+          }}
         >
           Palette
         </button>
         <button
           onClick={() => setActiveTab('custom')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'custom'
-              ? 'border-rose-500 text-rose-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
+          className="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+          style={{
+            borderColor: activeTab === 'custom' ? 'var(--admin-accent)' : 'transparent',
+            color: activeTab === 'custom' ? 'var(--admin-accent-text)' : 'var(--admin-text-muted)'
+          }}
         >
           Custom
         </button>
@@ -173,15 +173,15 @@ export default function UnifiedColorPicker({
                 <button
                   key={token.ref}
                   onClick={() => handleTokenSelect(token.ref)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
-                    isSelected
-                      ? 'bg-rose-50 border border-rose-200'
-                      : 'hover:bg-gray-50 border border-transparent'
-                  }`}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors border"
+                  style={{
+                    backgroundColor: isSelected ? 'var(--admin-accent-bg)' : undefined,
+                    borderColor: isSelected ? 'var(--admin-accent-light)' : 'transparent'
+                  }}
                 >
                   <div
-                    className="w-8 h-8 rounded border border-gray-300 flex-shrink-0"
-                    style={{ backgroundColor: tokenColor || '#000000' }}
+                    className="w-8 h-8 rounded border flex-shrink-0"
+                    style={{ backgroundColor: tokenColor || '#000000', borderColor: 'var(--admin-border-strong)' }}
                   />
                   <span className="flex-1 text-left">{token.label}</span>
                 </button>
@@ -193,7 +193,7 @@ export default function UnifiedColorPicker({
         {/* Palette Tab */}
         {activeTab === 'palette' && (
           <div className="space-y-4 pt-2">
-             <div className="grid grid-cols-[1fr_repeat(3,2rem)] gap-3 px-1 mb-2 text-[10px] uppercase tracking-wider text-gray-500 font-medium text-center">
+             <div className="grid grid-cols-[1fr_repeat(3,2rem)] gap-3 px-1 mb-2 text-[10px] uppercase tracking-wider font-medium text-center" style={{ color: 'var(--admin-text-muted)' }}>
                 <div className="text-left pl-2">Basis</div>
                 <div>1</div>
                 <div>2</div>
@@ -209,17 +209,18 @@ export default function UnifiedColorPicker({
                    {/* Base Color (with label) */}
                    <button
                      onClick={() => handleTokenSelect(baseRef)}
-                     className={`flex items-center gap-3 px-2 py-1.5 rounded border transition-all w-full text-left ${
-                       isBaseSelected 
-                        ? 'bg-rose-50 border-rose-500 ring-1 ring-rose-500' 
-                        : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                     }`}
+                     className="flex items-center gap-3 px-2 py-1.5 rounded border transition-all w-full text-left"
+                     style={{
+                       backgroundColor: isBaseSelected ? 'var(--admin-accent-bg)' : 'var(--admin-bg-card)',
+                       borderColor: isBaseSelected ? 'var(--admin-accent)' : 'var(--admin-border)',
+                       boxShadow: isBaseSelected ? '0 0 0 1px var(--admin-accent)' : undefined
+                     }}
                    >
                      <div
-                       className="w-6 h-6 rounded border border-gray-200 shadow-sm flex-shrink-0"
-                       style={{ backgroundColor: baseColor || '#000000' }}
+                       className="w-6 h-6 rounded border flex-shrink-0"
+                       style={{ backgroundColor: baseColor || '#000000', borderColor: 'var(--admin-border)', boxShadow: 'var(--admin-shadow)' }}
                      />
-                     <span className="text-xs font-medium text-gray-700 truncate">Primary {primaryNum}</span>
+                     <span className="text-xs font-medium truncate" style={{ color: 'var(--admin-text-secondary)' }}>Primary {primaryNum}</span>
                    </button>
 
                    {/* Accents (No Labels, just Boxes) */}
@@ -235,10 +236,14 @@ export default function UnifiedColorPicker({
                          title={`Primary ${primaryNum} - Accent ${accentNum}`}
                          className={`w-8 h-8 rounded border transition-all ${
                            isAccSelected 
-                            ? 'border-rose-500 ring-2 ring-rose-200 z-10 scale-105' 
-                            : 'border-gray-200 hover:border-gray-400 hover:scale-105 shadow-sm'
+                            ? 'z-10 scale-105' 
+                            : 'hover:scale-105'
                          }`}
-                         style={{ backgroundColor: accColor || '#000000' }}
+                         style={{
+                           backgroundColor: accColor || '#000000',
+                           borderColor: isAccSelected ? 'var(--admin-accent)' : 'var(--admin-border)',
+                           boxShadow: isAccSelected ? '0 0 0 2px var(--admin-accent-light)' : 'var(--admin-shadow)'
+                         }}
                        />
                      );
                    })}
@@ -252,7 +257,7 @@ export default function UnifiedColorPicker({
         {activeTab === 'custom' && (
           <div className="space-y-3 pt-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 Hex Color
               </label>
               <input
@@ -260,24 +265,26 @@ export default function UnifiedColorPicker({
                 value={customHex}
                 onChange={(e) => handleCustomHexChange(e.target.value)}
                 placeholder="#000000"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent font-mono text-sm"
+                style={{ borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)', '--tw-ring-color': 'var(--admin-accent)' } as React.CSSProperties}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
                 Color Picker
               </label>
               <input
                 type="color"
                 value={customHex}
                 onChange={(e) => handleCustomHexChange(e.target.value)}
-                className="w-full h-12 rounded border border-gray-300 cursor-pointer"
+                className="w-full h-12 rounded border cursor-pointer"
+                style={{ borderColor: 'var(--admin-border-strong)' }}
               />
             </div>
             
             {/* Text Contrast Recommendations */}
             {showTextContrasts && resolvedColor && (
-              <div className="pt-3 border-t border-gray-200">
+              <div className="pt-3 border-t" style={{ borderColor: 'var(--admin-border)' }}>
                 <TextContrastPreview
                   bgColor={resolvedColor}
                   selectedColor={value.kind === 'custom' ? value.hex : undefined}

@@ -66,24 +66,25 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl w-full h-[90vh] flex flex-col shadow-2xl max-w-[95vw]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'var(--admin-overlay)' }}>
+      <div className="rounded-xl w-full h-[90vh] flex flex-col max-w-[95vw]" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--admin-border)' }}>
           <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold">Grid Vorschau</h2>
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Grid Vorschau</h2>
             
             {/* Viewport Switcher */}
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+            <div className="flex gap-1 p-1 rounded-lg" style={{ backgroundColor: 'var(--admin-bg-input)' }}>
               {viewportButtons.map(({ id, icon: Icon, label, width }) => (
                 <button
                   key={id}
                   onClick={() => setViewport(id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition ${
-                    viewport === id
-                      ? 'bg-white shadow-sm text-rose-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md transition"
+                  style={{
+                    backgroundColor: viewport === id ? 'var(--admin-bg-card)' : 'transparent',
+                    color: viewport === id ? 'var(--admin-accent-text)' : 'var(--admin-text-secondary)',
+                    boxShadow: viewport === id ? 'var(--admin-shadow)' : 'none',
+                  }}
                   title={`${label} (${width})`}
                 >
                   <Icon className="w-4 h-4" />
@@ -93,7 +94,7 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
             </div>
 
             {/* Width Display */}
-            <div className="text-sm text-gray-500">
+            <div className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
               Breite: <span className="font-mono font-medium">{getViewportWidth()}</span>
             </div>
           </div>
@@ -101,14 +102,15 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition"
+            className="p-2 rounded-full transition hover:opacity-80"
+            style={{ color: 'var(--admin-text-secondary)' }}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-auto bg-gray-50 p-8">
+        <div className="flex-1 overflow-auto p-8" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
           <div className="flex justify-center">
             <div
               style={{
@@ -142,13 +144,13 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
         </div>
 
         {/* Footer - Layout Info */}
-        <div className="border-t p-4 bg-gray-50">
+        <div className="border-t p-4" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-4">
-              <div className="text-gray-600">
+              <div style={{ color: 'var(--admin-text-secondary)' }}>
                 <span className="font-semibold">Layout:</span> {layoutType}
               </div>
-              <div className="text-gray-600">
+              <div style={{ color: 'var(--admin-text-secondary)' }}>
                 <span className="font-semibold">Spalten:</span>{' '}
                 {viewport === 'desktop'
                   ? `${columnCount} (Desktop)`
@@ -158,11 +160,11 @@ export const GridPreviewModal: React.FC<GridPreviewModalProps> = ({
                     : '2 (Tablet)'
                   : '1 (Mobil)'}
               </div>
-              <div className="text-gray-600">
+              <div style={{ color: 'var(--admin-text-secondary)' }}>
                 <span className="font-semibold">Gap:</span> {config.gap}px
               </div>
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>
               Verwenden Sie die Viewport-Buttons, um das responsive Verhalten zu testen
             </div>
           </div>

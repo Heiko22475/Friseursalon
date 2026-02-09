@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Palette as PaletteIcon, Save, Download, Shuffle, Wand2 } from 'lucide-react';
+import { Palette as PaletteIcon, Save, Download, Shuffle, Wand2 } from 'lucide-react';
+import { AdminHeader } from './admin/AdminHeader';
 import { ThemeTokens, Palette, PalettePreset } from '../types/theme';
 import { generatePalette, HARMONY_TYPES, HarmonyType } from '../utils/color-generator';
 import { getReadableTextColors } from '../utils/color-utils';
@@ -275,10 +276,10 @@ export default function ThemeManager() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Theme wird geladen...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto" style={{ borderColor: 'var(--admin-accent)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--admin-text-secondary)' }}>Theme wird geladen...</p>
         </div>
       </div>
     );
@@ -286,12 +287,13 @@ export default function ThemeManager() {
 
   if (!theme) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 font-semibold">Kein aktives Theme gefunden</p>
+          <p className="font-semibold" style={{ color: 'var(--admin-danger)' }}>Kein aktives Theme gefunden</p>
           <button
             onClick={() => navigate('/admin')}
-            className="mt-4 text-rose-500 hover:text-rose-600"
+            className="mt-4"
+            style={{ color: 'var(--admin-accent)' }}
           >
             Zurück zum Dashboard
           </button>
@@ -301,44 +303,26 @@ export default function ThemeManager() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Dialog />
-      {/* Header - Navigation */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/admin')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  <PaletteIcon className="w-6 h-6 text-rose-500" />
-                  Theme Editor
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Aktives Theme: <span className="font-medium">{theme.name}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminHeader
+        title="Theme Editor"
+        subtitle={`Aktives Theme: ${theme.name}`}
+        icon={PaletteIcon}
+        sticky
+      />
 
       {/* Actions Header - Visible on all tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-[88px] z-10">
+      <div className="sticky top-[73px] z-10" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* Harmony Selector - Available on all tabs */}
-              <span className="text-sm text-gray-600">Farbharmonie:</span>
+              <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Farbharmonie:</span>
               <select
                 value={selectedHarmony}
                 onChange={(e) => setSelectedHarmony(e.target.value as HarmonyType)}
-                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                className="px-3 py-2 text-sm rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               >
                 {HARMONY_TYPES.map(type => (
                   <option key={type.value} value={type.value}>
@@ -353,24 +337,27 @@ export default function ThemeManager() {
               >
                 <Shuffle className="w-4 h-4" />
               </button>
-              <div className="h-6 w-px bg-gray-300 mx-1"></div>
+              <div className="h-6 w-px mx-1" style={{ backgroundColor: 'var(--admin-border)' }}></div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowPresets(!showPresets)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition"
+                style={{ color: 'var(--admin-text)', backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
               >
                 Presets {showPresets ? 'ausblenden' : 'anzeigen'}
               </button>
               <button
                 onClick={handleSaveAsPreset}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition"
+                style={{ color: 'var(--admin-text)', backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
               >
                 Als Preset speichern
               </button>
               <button
                 onClick={handleExportJSON}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition"
+                style={{ color: 'var(--admin-text)', backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
               >
                 <Download className="w-4 h-4" />
                 JSON Export
@@ -378,14 +365,18 @@ export default function ThemeManager() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition disabled:opacity-50"
+                style={{ backgroundColor: 'var(--admin-text-secondary)' }}
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Speichert...' : 'Speichern'}
               </button>
               <button
                 onClick={handleApply}
-                className="flex items-center gap-2 px-6 py-2 text-sm bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition shadow-md"
+                className="flex items-center gap-2 px-6 py-2 text-sm text-white rounded-lg transition"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 Anwenden
               </button>
@@ -395,16 +386,17 @@ export default function ThemeManager() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1">
             <button
               onClick={() => setActiveTab('palette')}
               className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'palette'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'text-[var(--admin-accent)]'
+                  : 'border-transparent'
               }`}
+              style={activeTab === 'palette' ? { borderColor: 'var(--admin-accent)' } : { color: 'var(--admin-text-muted)' }}
             >
               Farbpalette
             </button>
@@ -412,9 +404,10 @@ export default function ThemeManager() {
               onClick={() => setActiveTab('semantic')}
               className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'semantic'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'text-[var(--admin-accent)]'
+                  : 'border-transparent'
               }`}
+              style={activeTab === 'semantic' ? { borderColor: 'var(--admin-accent)' } : { color: 'var(--admin-text-muted)' }}
             >
               Semantische Farben
             </button>
@@ -422,9 +415,10 @@ export default function ThemeManager() {
               onClick={() => setActiveTab('preview')}
               className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'preview'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'text-[var(--admin-accent)]'
+                  : 'border-transparent'
               }`}
+              style={activeTab === 'preview' ? { borderColor: 'var(--admin-accent)' } : { color: 'var(--admin-text-muted)' }}
             >
               Vorschau
             </button>
@@ -450,10 +444,10 @@ export default function ThemeManager() {
         {activeTab === 'semantic' && (
           <div className="flex gap-6 h-[calc(100vh-280px)]">
             {/* Left: Semantic Tokens Table */}
-            <div className="w-1/2 bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col">
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Semantische Farben</h3>
-                <p className="text-sm text-gray-600">Wählen Sie einen Token zum Bearbeiten</p>
+            <div className="w-1/2 rounded-lg overflow-hidden flex flex-col" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+              <div className="p-4" style={{ borderBottom: '1px solid var(--admin-border)' }}>
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Semantische Farben</h3>
+                <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Wählen Sie einen Token zum Bearbeiten</p>
               </div>
               <div className="overflow-y-auto flex-1">
                 <table className="w-full">
@@ -645,10 +639,10 @@ export default function ThemeManager() {
             </div>
 
             {/* Right: Color Picker */}
-            <div className="w-1/2 bg-white rounded-lg border border-gray-200 p-6 overflow-y-auto">
+            <div className="w-1/2 rounded-lg p-6 overflow-y-auto" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
               {selectedSemanticToken ? (
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h4 className="text-lg font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>
                     {selectedSemanticToken.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </h4>
                   <UnifiedColorPicker
@@ -709,7 +703,7 @@ export default function ThemeManager() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-full" style={{ color: 'var(--admin-text-muted)' }}>
                   Wählen Sie einen Token aus der Liste
                 </div>
               )}

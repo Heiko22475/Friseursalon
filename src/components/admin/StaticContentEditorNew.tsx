@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, FileText } from 'lucide-react';
+import { Save, FileText } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { useWebsite } from '../../contexts/WebsiteContext';
 
 export const StaticContentEditorNew: React.FC = () => {
-  const navigate = useNavigate();
   const { website, loading, updateStaticContent } = useWebsite();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -46,45 +45,29 @@ export const StaticContentEditorNew: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Rechtliche Seiten"
+        subtitle="Bearbeiten Sie hier die Inhalte für Impressum, Datenschutz und AGB."
+        icon={FileText}
+      />
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center gap-4">
-          <button
-            onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zum Dashboard
-          </button>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <FileText className="w-8 h-8 text-rose-500" />
-            <h1 className="text-3xl font-bold text-gray-900">
-              Rechtliche Seiten
-            </h1>
-          </div>
-
-          <p className="text-gray-600 mb-8">
-            Bearbeiten Sie hier die Inhalte für Impressum, Datenschutz und AGB.
-            Diese Seiten sind für eine rechtskonforme Website erforderlich.
-          </p>
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={{
+                backgroundColor: message.includes('Fehler') ? 'var(--admin-danger-bg)' : 'var(--admin-success-bg)',
+                color: message.includes('Fehler') ? 'var(--admin-danger)' : 'var(--admin-success)'
+              }}
             >
               {message}
             </div>
@@ -93,17 +76,18 @@ export const StaticContentEditorNew: React.FC = () => {
           <div className="space-y-8">
             {/* Impressum */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-2">
+              <label className="block text-lg font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
                 Impressum
               </label>
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm mb-3" style={{ color: 'var(--admin-text-secondary)' }}>
                 Pflichtangaben gemäß §5 TMG (Name, Adresse, Kontakt, etc.)
               </p>
               <textarea
                 value={formData.imprint}
                 onChange={(e) => setFormData({ ...formData, imprint: e.target.value })}
                 rows={12}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-4 py-3 rounded-lg font-mono text-sm"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 placeholder="Angaben gemäß § 5 TMG
 
 [Firmenname / Name]
@@ -120,17 +104,18 @@ Umsatzsteuer-ID: [falls vorhanden]"
 
             {/* Datenschutzerklärung */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-2">
+              <label className="block text-lg font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
                 Datenschutzerklärung
               </label>
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm mb-3" style={{ color: 'var(--admin-text-secondary)' }}>
                 Informationen zur Datenverarbeitung gemäß DSGVO
               </p>
               <textarea
                 value={formData.privacy}
                 onChange={(e) => setFormData({ ...formData, privacy: e.target.value })}
                 rows={16}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-4 py-3 rounded-lg font-mono text-sm"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 placeholder="Datenschutzerklärung
 
 1. Verantwortlicher
@@ -152,17 +137,18 @@ Umsatzsteuer-ID: [falls vorhanden]"
 
             {/* AGB / Nutzungsbedingungen */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-2">
+              <label className="block text-lg font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
                 AGB / Nutzungsbedingungen
               </label>
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm mb-3" style={{ color: 'var(--admin-text-secondary)' }}>
                 Allgemeine Geschäftsbedingungen (falls zutreffend)
               </p>
               <textarea
                 value={formData.terms}
                 onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
                 rows={12}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-4 py-3 rounded-lg font-mono text-sm"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 placeholder="Allgemeine Geschäftsbedingungen
 
 1. Geltungsbereich
@@ -180,17 +166,20 @@ Umsatzsteuer-ID: [falls vorhanden]"
               />
             </div>
 
-            <div className="flex items-center gap-4 pt-4 border-t">
+            <div className="flex items-center gap-4 pt-4" style={{ borderTop: '1px solid var(--admin-border)' }}>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Save className="w-5 h-5" />
                 {saving ? 'Speichern...' : 'Alle Änderungen speichern'}
               </button>
 
-              <div className="text-sm text-gray-500">
+              <div className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
                 💡 Tipp: Verwenden Sie einen Datenschutz-Generator für rechtssichere Texte
               </div>
             </div>
@@ -198,11 +187,11 @@ Umsatzsteuer-ID: [falls vorhanden]"
         </div>
 
         {/* Info Box */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">
+        <div className="mt-6 rounded-lg p-6" style={{ backgroundColor: 'var(--admin-accent-bg)', border: '1px solid var(--admin-border)' }}>
+          <h3 className="font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
             ⚖️ Rechtliche Hinweise
           </h3>
-          <ul className="text-sm text-blue-800 space-y-1">
+          <ul className="text-sm space-y-1" style={{ color: 'var(--admin-text-secondary)' }}>
             <li>• Impressum ist in Deutschland für geschäftliche Websites Pflicht (§5 TMG)</li>
             <li>• Datenschutzerklärung ist gemäß DSGVO erforderlich</li>
             <li>• Konsultieren Sie einen Rechtsanwalt für rechtssichere Texte</li>

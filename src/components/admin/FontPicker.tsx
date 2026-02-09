@@ -29,11 +29,13 @@ const FontPreviewItem: React.FC<{
   <button
     type="button"
     onClick={onClick}
-    className={`w-full text-left px-3 py-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${
-      isSelected
-        ? 'border-rose-500 bg-rose-50'
-        : 'border-gray-200 hover:border-gray-300'
-    }`}
+    className="w-full text-left px-3 py-3 rounded-lg border-2 transition-all"
+    style={isSelected
+      ? { borderColor: 'var(--admin-accent)', backgroundColor: 'var(--admin-accent-bg)' }
+      : { borderColor: 'var(--admin-border)' }
+    }
+    onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; e.currentTarget.style.borderColor = 'var(--admin-border-strong)'; } }}
+    onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = 'var(--admin-border)'; } }}
   >
     <div className="flex items-center justify-between mb-1">
       <span
@@ -42,11 +44,11 @@ const FontPreviewItem: React.FC<{
       >
         {font.name}
       </span>
-      <span className="text-xs text-gray-400 uppercase">{font.category}</span>
+      <span className="text-xs uppercase" style={{ color: 'var(--admin-text-muted)' }}>{font.category}</span>
     </div>
     <p
-      className="text-sm text-gray-600"
-      style={{ fontFamily: `'${font.name}', ${font.fallback}` }}
+      className="text-sm"
+      style={{ fontFamily: `'${font.name}', ${font.fallback}`, color: 'var(--admin-text-secondary)' }}
     >
       {font.preview}
     </p>
@@ -54,7 +56,8 @@ const FontPreviewItem: React.FC<{
       {font.weights.map((w) => (
         <span
           key={w}
-          className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded"
+          className="text-xs px-1.5 py-0.5 rounded"
+          style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-muted)' }}
         >
           {w}
         </span>
@@ -153,16 +156,19 @@ export const FontPicker: React.FC<FontPickerProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
 
       {/* Trigger Button */}
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-3 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-rose-400 transition-colors text-left"
+        className="w-full flex items-center gap-3 px-3 py-2 border rounded-lg transition-colors text-left"
+        style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)' }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--admin-border-strong)')}
       >
-        <Type className="w-5 h-5 text-gray-400 flex-shrink-0" />
+        <Type className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--admin-text-muted)' }} />
         <div className="flex-1 min-w-0">
           {selectedFont ? (
             <span
@@ -174,13 +180,14 @@ export const FontPicker: React.FC<FontPickerProps> = ({
               {selectedFont.name}
             </span>
           ) : (
-            <span className="text-gray-500">Schriftart wählen...</span>
+            <span style={{ color: 'var(--admin-text-muted)' }}>Schriftart wählen...</span>
           )}
         </div>
         <ChevronDown
-          className={`w-4 h-4 text-gray-400 transition-transform ${
+          className={`w-4 h-4 transition-transform ${
             isOpen ? 'rotate-180' : ''
           }`}
+          style={{ color: 'var(--admin-text-muted)' }}
         />
       </button>
 
@@ -193,13 +200,13 @@ export const FontPicker: React.FC<FontPickerProps> = ({
           />
 
           <div 
-            className="fixed w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] overflow-hidden"
-            style={{ top: popupPosition.top, left: popupPosition.left }}
+            className="fixed w-96 max-w-[calc(100vw-2rem)] rounded-lg border z-[9999] overflow-hidden"
+            style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)', borderColor: 'var(--admin-border)', top: popupPosition.top, left: popupPosition.left } as React.CSSProperties}
           >
             {/* Header */}
-            <div className="p-3 border-b bg-gray-50">
-              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2">
-                <Search className="w-4 h-4 text-gray-400" />
+            <div className="p-3 border-b" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2" style={{ backgroundColor: 'var(--admin-bg-input)', borderColor: 'var(--admin-border-strong)' }}>
+                <Search className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
                 <input
                   type="text"
                   value={searchQuery}
@@ -213,17 +220,17 @@ export const FontPicker: React.FC<FontPickerProps> = ({
 
             {/* Category Tabs */}
             {!category && (
-              <div className="flex gap-1 p-2 border-b bg-gray-50 overflow-x-auto">
+              <div className="flex gap-1 p-2 border-b overflow-x-auto" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.value}
                     type="button"
                     onClick={() => setActiveCategory(cat.value)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition ${
-                      activeCategory === cat.value
-                        ? 'bg-rose-500 text-white'
-                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                    }`}
+                    className="px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition"
+                    style={activeCategory === cat.value
+                      ? { backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' }
+                      : { backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text-secondary)' }
+                    }
                   >
                     {cat.label}
                   </button>
@@ -243,7 +250,7 @@ export const FontPicker: React.FC<FontPickerProps> = ({
                   />
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8" style={{ color: 'var(--admin-text-muted)' }}>
                   <Type className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   <p>Keine Schriftarten gefunden</p>
                 </div>
@@ -279,8 +286,10 @@ export const CompactFontPicker: React.FC<CompactFontPickerProps> = ({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${className}`}
+      className={`px-3 py-2 border rounded-lg text-sm focus:ring-2 ${className}`}
       style={{
+        borderColor: 'var(--admin-border-strong)',
+        backgroundColor: 'var(--admin-bg-input)',
         fontFamily: selectedFont
           ? `'${selectedFont.name}', ${selectedFont.fallback}`
           : undefined,

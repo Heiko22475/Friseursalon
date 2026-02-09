@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft,
   Save,
   RotateCcw,
   Monitor,
@@ -13,6 +11,7 @@ import {
   Type,
   Search,
 } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import {
   TypographyConfig,
@@ -73,35 +72,36 @@ const FontPicker: React.FC<FontPickerProps> = ({ value, onChange, label }) => {
 
   return (
     <div className="relative">
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>{label}</label>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white hover:border-gray-400 transition"
+        className="w-full flex items-center justify-between px-3 py-2 rounded-lg transition"
+        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
       >
         <span
-          className="text-gray-900"
-          style={{ fontFamily: selectedFont ? `'${selectedFont.name}', ${selectedFont.fallback}` : 'inherit' }}
+          style={{ fontFamily: selectedFont ? `'${selectedFont.name}', ${selectedFont.fallback}` : 'inherit', color: 'var(--admin-text-heading)' }}
         >
           {selectedFont?.name || 'Schrift wählen...'}
         </span>
-        <ChevronDown className="w-4 h-4 text-gray-400" />
+        <ChevronDown className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
       </button>
 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-50 mt-1 w-full max-h-80 overflow-auto bg-white border border-gray-200 rounded-lg shadow-lg">
+          <div className="absolute z-50 mt-1 w-full max-h-80 overflow-auto rounded-lg" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)', boxShadow: 'var(--admin-shadow-lg)' }}>
             {/* Search */}
-            <div className="sticky top-0 bg-white p-2 border-b">
+            <div className="sticky top-0 p-2" style={{ backgroundColor: 'var(--admin-bg-card)', borderBottom: '1px solid var(--admin-border)' }}>
               <div className="relative">
-                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--admin-text-faint)' }} />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Schrift suchen..."
-                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:border-rose-300"
+                  className="w-full pl-8 pr-3 py-1.5 text-sm rounded"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
             </div>
@@ -122,7 +122,8 @@ const FontPicker: React.FC<FontPickerProps> = ({ value, onChange, label }) => {
                     <button
                       type="button"
                       onClick={() => toggleCategory(category)}
-                      className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 text-sm font-medium text-gray-700"
+                      className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium"
+                      style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text)' }}
                     >
                       <span>{FONT_CATEGORY_LABELS[category]}</span>
                       {isExpanded ? (
@@ -143,21 +144,21 @@ const FontPicker: React.FC<FontPickerProps> = ({ value, onChange, label }) => {
                               setIsOpen(false);
                               setSearch('');
                             }}
-                            className={`w-full flex items-center justify-between px-4 py-2 hover:bg-rose-50 transition ${
-                              value === font.id ? 'bg-rose-50' : ''
-                            }`}
+                            className={`w-full flex items-center justify-between px-4 py-2 transition`}
+                            style={value === font.id ? { backgroundColor: 'var(--admin-accent-bg)' } : {}}
+                            onMouseEnter={e => { if (value !== font.id) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                            onMouseLeave={e => { if (value !== font.id) e.currentTarget.style.backgroundColor = 'transparent'; }}
                           >
                             <div className="flex flex-col items-start">
                               <span
-                                className="text-gray-900"
-                                style={{ fontFamily: `'${font.name}', ${font.fallback}` }}
+                                style={{ fontFamily: `'${font.name}', ${font.fallback}`, color: 'var(--admin-text-heading)' }}
                               >
                                 {font.name}
                               </span>
-                              <span className="text-xs text-gray-500">{font.preview}</span>
+                              <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{font.preview}</span>
                             </div>
                             {value === font.id && (
-                              <Check className="w-4 h-4 text-rose-500" />
+                              <Check className="w-4 h-4" style={{ color: 'var(--admin-accent)' }} />
                             )}
                           </button>
                         ))}
@@ -200,13 +201,14 @@ const ResponsiveInput: React.FC<ResponsiveInputProps> = ({
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <input
         type="text"
         value={value[viewport]}
         onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-rose-400"
+        className="w-full px-2 py-1.5 text-sm rounded"
+        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
       />
     </div>
   );
@@ -237,27 +239,28 @@ const TypographyStyleEditor: React.FC<TypographyStyleEditorProps> = ({
   ];
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--admin-border)' }}>
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
+        className="w-full flex items-center justify-between px-4 py-3 transition"
+        style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text)' }}
       >
-        <span className="font-medium text-gray-700">{styleName}</span>
+        <span className="font-medium">{styleName}</span>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
             {style.fontSize[viewport]} / {style.fontWeight}
           </span>
           {isExpanded ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" />
+            <ChevronUp className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
           )}
         </div>
       </button>
 
       {isExpanded && (
-        <div className="p-4 space-y-4 bg-white">
+        <div className="p-4 space-y-4" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
           {showFontFamily && (
             <FontPicker
               label="Schriftart"
@@ -285,11 +288,12 @@ const TypographyStyleEditor: React.FC<TypographyStyleEditorProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Schriftstärke</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Schriftstärke</label>
               <select
                 value={style.fontWeight}
                 onChange={(e) => onChange({ ...style, fontWeight: Number(e.target.value) })}
-                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-rose-400"
+                className="w-full px-2 py-1.5 text-sm rounded"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               >
                 {fontWeights.map(weight => (
                   <option key={weight} value={weight}>{weight}</option>
@@ -297,23 +301,25 @@ const TypographyStyleEditor: React.FC<TypographyStyleEditorProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Zeichenabstand</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Zeichenabstand</label>
               <input
                 type="text"
                 value={style.letterSpacing}
                 onChange={(e) => onChange({ ...style, letterSpacing: e.target.value })}
                 placeholder="-0.02em"
-                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-rose-400"
+                className="w-full px-2 py-1.5 text-sm rounded"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Text-Transformation</label>
+            <label className="block text-xs font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Text-Transformation</label>
             <select
               value={style.textTransform || 'none'}
               onChange={(e) => onChange({ ...style, textTransform: e.target.value as any })}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-rose-400"
+              className="w-full px-2 py-1.5 text-sm rounded"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               {textTransforms.map(transform => (
                 <option key={transform} value={transform}>
@@ -346,7 +352,7 @@ const PresetSelector: React.FC<PresetSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-gray-700">Schnellauswahl (Presets)</h3>
+      <h3 className="text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Schnellauswahl (Presets)</h3>
       <div className="grid grid-cols-1 gap-2">
         {TYPOGRAPHY_PRESETS.map(preset => {
           const isActive =
@@ -358,17 +364,17 @@ const PresetSelector: React.FC<PresetSelectorProps> = ({
               key={preset.id}
               type="button"
               onClick={() => onSelect(preset.config)}
-              className={`flex items-center justify-between p-3 rounded-lg border transition ${
-                isActive
-                  ? 'border-rose-500 bg-rose-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}
+              className="flex items-center justify-between p-3 rounded-lg transition"
+              style={{
+                border: `1px solid ${isActive ? 'var(--admin-accent)' : 'var(--admin-border)'}`,
+                backgroundColor: isActive ? 'var(--admin-accent-bg)' : 'transparent',
+              }}
             >
               <div className="text-left">
-                <div className="font-medium text-gray-900">{preset.name}</div>
-                <div className="text-xs text-gray-500">{preset.description}</div>
+                <div className="font-medium" style={{ color: 'var(--admin-text-heading)' }}>{preset.name}</div>
+                <div className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{preset.description}</div>
               </div>
-              {isActive && <Check className="w-5 h-5 text-rose-500" />}
+              {isActive && <Check className="w-5 h-5" style={{ color: 'var(--admin-accent)' }} />}
             </button>
           );
         })}
@@ -401,8 +407,8 @@ const LivePreview: React.FC<LivePreviewProps> = ({ config, viewport }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+    <div className="rounded-lg p-6 space-y-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+      <div className="flex items-center gap-2 text-sm mb-4" style={{ color: 'var(--admin-text-muted)' }}>
         {viewport === 'desktop' && <Monitor className="w-4 h-4" />}
         {viewport === 'tablet' && <Tablet className="w-4 h-4" />}
         {viewport === 'mobile' && <Smartphone className="w-4 h-4" />}
@@ -420,7 +426,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ config, viewport }) => {
         <h6 style={getStyle(config.h6)}>H6 Überschrift</h6>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr style={{ borderColor: 'var(--admin-border)' }} />
 
       <div className="space-y-3">
         <p style={getStyle(config.bodyLarge)}>
@@ -435,7 +441,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ config, viewport }) => {
         </p>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr style={{ borderColor: 'var(--admin-border)' }} />
 
       <div className="flex items-center gap-4">
         <span style={getStyle(config.caption)}>Caption / Bildunterschrift</span>
@@ -453,9 +459,9 @@ const LivePreview: React.FC<LivePreviewProps> = ({ config, viewport }) => {
         </button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr style={{ borderColor: 'var(--admin-border)' }} />
 
-      <div className="text-xs text-gray-400 space-y-1">
+      <div className="text-xs space-y-1" style={{ color: 'var(--admin-text-muted)' }}>
         <div>Überschriften: {headingFont?.name || 'System'}</div>
         <div>Fließtext: {bodyFont?.name || 'System'}</div>
       </div>
@@ -466,7 +472,6 @@ const LivePreview: React.FC<LivePreviewProps> = ({ config, viewport }) => {
 // ===== MAIN COMPONENT =====
 
 export const TypographyEditor: React.FC = () => {
-  const navigate = useNavigate();
   const { website, updateWebsite, loading: websiteLoading } = useWebsite();
 
   const [config, setConfig] = useState<TypographyConfig>(createDefaultTypographyConfig());
@@ -554,8 +559,8 @@ export const TypographyEditor: React.FC = () => {
 
   if (websiteLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }} />
       </div>
     );
   }
@@ -568,50 +573,39 @@ export const TypographyEditor: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/admin')}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Zurück zum Dashboard</span>
-              </button>
-              <div className="h-6 w-px bg-gray-300" />
-              <h1 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <Type className="w-5 h-5 text-rose-500" />
-                Typographie
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {hasChanges && (
-                <span className="text-sm text-amber-600">Ungespeicherte Änderungen</span>
-              )}
-              <button
-                onClick={handleReset}
-                disabled={!hasChanges}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Zurücksetzen
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving || !hasChanges}
-                className="flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                <Save className="w-4 h-4" />
-                {saving ? 'Speichern...' : 'Speichern'}
-              </button>
-            </div>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Typographie"
+        icon={Type}
+        sticky
+        actions={
+          <div className="flex items-center gap-3">
+            {hasChanges && (
+              <span className="text-sm" style={{ color: 'var(--admin-danger)' }}>Ungespeicherte Änderungen</span>
+            )}
+            <button
+              onClick={handleReset}
+              disabled={!hasChanges}
+              className="flex items-center gap-2 px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              style={{ color: 'var(--admin-text-secondary)' }}
+            >
+              <RotateCcw className="w-4 h-4" />
+              Zurücksetzen
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving || !hasChanges}
+              className="flex items-center gap-2 px-4 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Speichern...' : 'Speichern'}
+            </button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -619,8 +613,8 @@ export const TypographyEditor: React.FC = () => {
           {/* Editor Panel */}
           <div className="flex-1 max-w-lg">
             {/* Viewport Toggle */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Ansicht</label>
+            <div className="rounded-lg p-4 mb-4" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Ansicht</label>
               <div className="flex gap-2">
                 {[
                   { mode: 'desktop' as ViewportMode, icon: Monitor, label: 'Desktop' },
@@ -630,11 +624,12 @@ export const TypographyEditor: React.FC = () => {
                   <button
                     key={mode}
                     onClick={() => setViewport(mode)}
-                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition ${
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition"
+                    style={
                       viewport === mode
-                        ? 'bg-rose-500 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                        ? { backgroundColor: 'var(--admin-accent)', color: 'white' }
+                        : { backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-secondary)' }
+                    }
                   >
                     <Icon className="w-4 h-4" />
                     <span className="text-sm">{label}</span>
@@ -644,17 +639,22 @@ export const TypographyEditor: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="bg-white rounded-lg shadow-sm mb-4">
-              <div className="flex border-b">
+            <div className="rounded-lg mb-4" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+              <div className="flex" style={{ borderBottom: '1px solid var(--admin-border)' }}>
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition ${
                       activeTab === tab.id
-                        ? 'text-rose-500 border-b-2 border-rose-500'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? 'border-b-2'
+                        : ''
                     }`}
+                    style={
+                      activeTab === tab.id
+                        ? { color: 'var(--admin-accent)', borderColor: 'var(--admin-accent)' }
+                        : { color: 'var(--admin-text-muted)' }
+                    }
                   >
                     {tab.label}
                   </button>
@@ -671,10 +671,10 @@ export const TypographyEditor: React.FC = () => {
                       currentBodyFont={config.bodyFont}
                     />
 
-                    <hr className="border-gray-200" />
+                    <hr style={{ borderColor: 'var(--admin-border)' }} />
 
                     <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700">Manuelle Auswahl</h3>
+                      <h3 className="text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Manuelle Auswahl</h3>
                       <FontPicker
                         label="Überschriften-Schrift"
                         value={config.headingFont}
@@ -763,7 +763,7 @@ export const TypographyEditor: React.FC = () => {
           {/* Preview Panel */}
           <div className="flex-1">
             <div className="sticky top-24">
-              <h2 className="text-sm font-medium text-gray-700 mb-3">Live-Vorschau</h2>
+              <h2 className="text-sm font-medium mb-3" style={{ color: 'var(--admin-text)' }}>Live-Vorschau</h2>
               <LivePreview config={config} viewport={viewport} />
 
               {/* CSS Output (optional, for debugging) */}

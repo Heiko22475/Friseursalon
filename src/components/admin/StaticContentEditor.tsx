@@ -159,19 +159,19 @@ export const StaticContentEditor: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
+            className="flex items-center gap-2 transition" style={{ color: 'var(--admin-text-secondary)' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
@@ -191,8 +191,8 @@ export const StaticContentEditor: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)' }}>
+          <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--admin-text-heading)' }}>
             Statischer Inhalt{instanceId > 1 && ` (Instanz #${instanceId})`}
           </h1>
 
@@ -210,7 +210,7 @@ export const StaticContentEditor: React.FC = () => {
 
           {/* Title Input */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
               Titel
             </label>
             <input
@@ -218,90 +218,87 @@ export const StaticContentEditor: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="z.B. Impressum oder Datenschutzerklärung"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:border-transparent" style={{ border: '1px solid var(--admin-border-strong)' }}
             />
           </div>
 
           {/* Editor Toolbar */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>
               Inhalt
             </label>
-            <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-              <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 bg-gray-50">
+            <div className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-card)' }}>
+              <div className="flex flex-wrap gap-1 p-2" style={{ borderBottom: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
                 {/* Text Formatting */}
                 <button
                   onClick={() => editor?.chain().focus().toggleBold().run()}
-                  className={`px-3 py-1 rounded text-sm font-semibold ${
-                    editor?.isActive('bold') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm font-semibold"
+                  style={{ backgroundColor: editor?.isActive('bold') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('bold') ? 'white' : 'inherit' }}
                   title="Fett"
                 >
                   B
                 </button>
                 <button
                   onClick={() => editor?.chain().focus().toggleItalic().run()}
-                  className={`px-3 py-1 rounded text-sm italic ${
-                    editor?.isActive('italic') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm italic"
+                  style={{ backgroundColor: editor?.isActive('italic') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('italic') ? 'white' : 'inherit' }}
                   title="Kursiv"
                 >
                   I
                 </button>
                 <button
                   onClick={() => editor?.chain().focus().toggleUnderline().run()}
-                  className={`px-3 py-1 rounded text-sm underline ${
-                    editor?.isActive('underline') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm underline"
+                  style={{ backgroundColor: editor?.isActive('underline') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('underline') ? 'white' : 'inherit' }}
                   title="Unterstrichen"
                 >
                   U
                 </button>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
 
                 {/* --- COLOR TOOLS --- */}
                 {/* 1. Text Colors (Foreground) */}
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500 font-semibold uppercase px-1">Text</span>
+                  <span className="text-xs font-semibold uppercase px-1" style={{ color: 'var(--admin-text-muted)' }}>Text</span>
                   
                   {/* Brand Color Text */}
                   <button
                     onClick={() => editor?.chain().focus().setColor(getBrandColor()).run()}
-                    className="w-6 h-6 rounded border border-gray-300 shadow-sm"
-                    style={{ backgroundColor: getBrandColor() }}
+                    className="w-6 h-6 rounded"
+                    style={{ backgroundColor: getBrandColor(), border: '1px solid var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
                     title="Markenfarbe (Text)"
                   />
                   
                   {/* Accent Color Text */}
                   <button
                     onClick={() => editor?.chain().focus().setColor(getAccentColor()).run()}
-                    className="w-6 h-6 rounded border border-gray-300 shadow-sm"
-                    style={{ backgroundColor: getAccentColor() }}
+                    className="w-6 h-6 rounded"
+                    style={{ backgroundColor: getAccentColor(), border: '1px solid var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
                     title="Akzentfarbe (Text)"
                   />
 
                   {/* RESET Text */}
                    <button
                     onClick={() => editor?.chain().focus().unsetColor().run()}
-                    className="p-1 rounded hover:bg-gray-200 text-gray-600"
+                    className="p-1 rounded" style={{ color: 'var(--admin-text-secondary)' }}
                     title="Farbe entfernen (Schwarz)"
                   >
                     <Eraser className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
 
                 {/* 2. Smart Markers (Background + Auto Text) */}
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500 font-semibold uppercase px-1">Marker</span>
+                  <span className="text-xs font-semibold uppercase px-1" style={{ color: 'var(--admin-text-muted)' }}>Marker</span>
                   
                   {/* Brand Marker */}
                   <button
                     onClick={() => applySmartMarker(getBrandColor())}
-                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm"
-                    style={{ backgroundColor: getBrandColor() }}
+                    className="flex items-center justify-center w-6 h-6 rounded"
+                    style={{ backgroundColor: getBrandColor(), border: '1px solid var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
                     title="Marken-Highlight (Smart)"
                   >
                     <Highlighter className="w-3 h-3 text-white mix-blend-difference" />
@@ -310,8 +307,8 @@ export const StaticContentEditor: React.FC = () => {
                   {/* Accent Marker */}
                   <button
                     onClick={() => applySmartMarker(getAccentColor())}
-                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm"
-                    style={{ backgroundColor: getAccentColor() }}
+                    className="flex items-center justify-center w-6 h-6 rounded"
+                    style={{ backgroundColor: getAccentColor(), border: '1px solid var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
                     title="Akzent-Highlight (Smart)"
                   >
                     <Highlighter className="w-3 h-3 text-white mix-blend-difference" />
@@ -320,7 +317,7 @@ export const StaticContentEditor: React.FC = () => {
                    {/* Error/Important Marker (Red) */}
                    <button
                     onClick={() => applySmartMarker('#EF4444')}
-                    className="flex items-center justify-center w-6 h-6 rounded border border-gray-300 shadow-sm bg-red-500"
+                    className="flex items-center justify-center w-6 h-6 rounded bg-red-500" style={{ border: '1px solid var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
                     title="Wichtig / Fehler"
                   >
                     <Highlighter className="w-3 h-3 text-white" />
@@ -329,72 +326,66 @@ export const StaticContentEditor: React.FC = () => {
                   {/* Clear All Formatting */}
                   <button
                     onClick={clearFormatting}
-                    className="p-1 rounded hover:bg-gray-200 text-gray-600"
+                    className="p-1 rounded" style={{ color: 'var(--admin-text-secondary)' }}
                     title="Markierung entfernen"
                   >
                     <Eraser className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
                 <button
                   onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-                  className={`px-3 py-1 rounded text-sm font-semibold ${
-                    editor?.isActive('heading', { level: 2 }) ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm font-semibold"
+                  style={{ backgroundColor: editor?.isActive('heading', { level: 2 }) ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('heading', { level: 2 }) ? 'white' : 'inherit' }}
                   title="Überschrift 2"
                 >
                   H2
                 </button>
                 <button
                   onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
-                  className={`px-3 py-1 rounded text-sm ${
-                    editor?.isActive('heading', { level: 3 }) ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm"
+                  style={{ backgroundColor: editor?.isActive('heading', { level: 3 }) ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('heading', { level: 3 }) ? 'white' : 'inherit' }}
                   title="Überschrift 3"
                 >
                   H3
                 </button>
                 <button
                   onClick={() => editor?.chain().focus().toggleHeading({ level: 4 }).run()}
-                  className={`px-3 py-1 rounded text-sm ${
-                    editor?.isActive('heading', { level: 4 }) ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm"
+                  style={{ backgroundColor: editor?.isActive('heading', { level: 4 }) ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('heading', { level: 4 }) ? 'white' : 'inherit' }}
                   title="Überschrift 4"
                 >
                   H4
                 </button>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
 
                 {/* Lists */}
                 <button
                   onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                  className={`px-3 py-1 rounded text-sm ${
-                    editor?.isActive('bulletList') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm"
+                  style={{ backgroundColor: editor?.isActive('bulletList') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('bulletList') ? 'white' : 'inherit' }}
                   title="Aufzählung"
                 >
                   • Liste
                 </button>
                 <button
                   onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                  className={`px-3 py-1 rounded text-sm ${
-                    editor?.isActive('orderedList') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm"
+                  style={{ backgroundColor: editor?.isActive('orderedList') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('orderedList') ? 'white' : 'inherit' }}
                   title="Nummerierte Liste"
                 >
                   1. Liste
                 </button>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
 
                 {/* Links */}
                 <button
                   onClick={setLink}
-                  className={`px-3 py-1 rounded text-sm ${
-                    editor?.isActive('link') ? 'bg-rose-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                  className="px-3 py-1 rounded text-sm"
+                  style={{ backgroundColor: editor?.isActive('link') ? 'var(--admin-accent)' : 'var(--admin-bg-input)', color: editor?.isActive('link') ? 'white' : 'inherit' }}
                   title="Link einfügen"
                 >
                   🔗 Link
@@ -402,18 +393,18 @@ export const StaticContentEditor: React.FC = () => {
                 <button
                   onClick={removeLink}
                   disabled={!editor?.isActive('link')}
-                  className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                  className="px-3 py-1 rounded text-sm disabled:opacity-50" style={{ backgroundColor: 'var(--admin-bg-input)' }}
                   title="Link entfernen"
                 >
                   Link ✕
                 </button>
 
-                <div className="w-px bg-gray-300 mx-1"></div>
+                <div className="w-px mx-1" style={{ backgroundColor: 'var(--admin-border-strong)' }}></div>
 
                 {/* Clear Formatting */}
                 <button
                   onClick={() => editor?.chain().focus().clearNodes().unsetAllMarks().run()}
-                  className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300"
+                  className="px-3 py-1 rounded text-sm" style={{ backgroundColor: 'var(--admin-bg-input)' }}
                   title="Formatierung entfernen"
                 >
                   Löschen
@@ -431,7 +422,7 @@ export const StaticContentEditor: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 bg-rose-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-rose-600 transition"
+              className="flex items-center gap-2 text-white px-6 py-2 rounded-lg font-semibold transition" style={{ backgroundColor: 'var(--admin-accent)' }}
             >
               <Save className="w-4 h-4" />
               Speichern

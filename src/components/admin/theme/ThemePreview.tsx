@@ -29,7 +29,7 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Theme-Vorschau</h3>
+      <h3 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Theme-Vorschau</h3>
 
       {/* Page Layout */}
       <div
@@ -197,20 +197,20 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
       {/* Color Legend */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
         <div className="space-y-1">
-          <div className="font-medium text-gray-700">Page Background</div>
-          <div className="font-mono text-gray-500">{pageBg || 'N/A'}</div>
+          <div className="font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Page Background</div>
+          <div className="font-mono" style={{ color: 'var(--admin-text-muted)' }}>{pageBg || 'N/A'}</div>
         </div>
         <div className="space-y-1">
-          <div className="font-medium text-gray-700">Content Background</div>
-          <div className="font-mono text-gray-500">{contentBg || 'N/A'}</div>
+          <div className="font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Content Background</div>
+          <div className="font-mono" style={{ color: 'var(--admin-text-muted)' }}>{contentBg || 'N/A'}</div>
         </div>
         <div className="space-y-1">
-          <div className="font-medium text-gray-700">Card Background</div>
-          <div className="font-mono text-gray-500">{cardBg || 'N/A'}</div>
+          <div className="font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Card Background</div>
+          <div className="font-mono" style={{ color: 'var(--admin-text-muted)' }}>{cardBg || 'N/A'}</div>
         </div>
         <div className="space-y-1">
-          <div className="font-medium text-gray-700">Body Text</div>
-          <div className="font-mono text-gray-500">{bodyText || 'N/A'}</div>
+          <div className="font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Body Text</div>
+          <div className="font-mono" style={{ color: 'var(--admin-text-muted)' }}>{bodyText || 'N/A'}</div>
         </div>
       </div>
     </div>

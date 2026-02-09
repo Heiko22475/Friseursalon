@@ -36,7 +36,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => 
 
   return (
     <div>
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
       <div className="flex gap-2">
         <input
           type="color"
@@ -69,7 +69,10 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({ title, icon, expanded, onToggle, children }) => (
   <div className="border rounded-lg overflow-hidden">
     <div
-      className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100"
+      className="flex items-center justify-between p-4 cursor-pointer transition"
+      style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)'}
       onClick={onToggle}
     >
       <div className="flex items-center gap-2 font-medium">
@@ -98,7 +101,7 @@ interface SelectProps {
 
 const Select: React.FC<SelectProps> = ({ label, value, options, onChange }) => (
   <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
+    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -227,13 +230,14 @@ const TeamMemberEditor: React.FC<TeamMemberEditorProps> = ({
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white">
+    <div className="border rounded-lg overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
       {/* Header */}
       <div
-        className="flex items-center gap-3 p-3 bg-gray-50 cursor-pointer"
+        className="flex items-center gap-3 p-3 cursor-pointer"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
         onClick={() => setExpanded(!expanded)}
       >
-        <GripVertical className="w-4 h-4 text-gray-400" />
+        <GripVertical className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
         
         {member.image ? (
           <img 
@@ -242,28 +246,28 @@ const TeamMemberEditor: React.FC<TeamMemberEditorProps> = ({
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-            <User className="w-5 h-5 text-gray-400" />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-input)' }}>
+            <User className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
           </div>
         )}
 
         <div className="flex-1 min-w-0">
           <div className="font-medium truncate">{member.name || 'Neues Mitglied'}</div>
-          <div className="text-sm text-gray-500 truncate">{member.role || 'Rolle eingeben'}</div>
+          <div className="text-sm truncate" style={{ color: 'var(--admin-text-muted)' }}>{member.role || 'Rolle eingeben'}</div>
         </div>
 
         <div className="flex items-center gap-1">
           <button
             onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
             disabled={isFirst}
-            className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+            className="p-1 rounded disabled:opacity-30 admin-hover-bg"
           >
             <ChevronUp className="w-4 h-4" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
             disabled={isLast}
-            className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+            className="p-1 rounded disabled:opacity-30 admin-hover-bg"
           >
             <ChevronDown className="w-4 h-4" />
           </button>
@@ -291,14 +295,15 @@ const TeamMemberEditor: React.FC<TeamMemberEditorProps> = ({
                   className="w-24 h-24 rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <User className="w-8 h-8 text-gray-300" />
+                <div className="w-24 h-24 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-input)' }}>
+                  <User className="w-8 h-8" style={{ color: 'var(--admin-text-muted)' }} />
                 </div>
               )}
               <div className="flex flex-col gap-2">
                 <button
                   onClick={onSelectImage}
-                  className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  className="px-3 py-2 rounded text-sm admin-hover-bg"
+                  style={{ backgroundColor: 'var(--admin-bg-input)' }}
                 >
                   Bild auswählen
                 </button>
@@ -386,7 +391,8 @@ const TeamMemberEditor: React.FC<TeamMemberEditorProps> = ({
               ))}
               <button
                 onClick={addSocialLink}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg admin-hover-bg"
+                style={{ color: 'var(--admin-text-secondary)' }}
               >
                 <Plus className="w-4 h-4" />
                 Link hinzufügen
@@ -513,22 +519,25 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
+      <div className="border-b px-6 py-4 flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button onClick={() => navigate(-1)} className="p-2 rounded-lg admin-hover-bg">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
             <h1 className="text-xl font-bold">Team-Karten bearbeiten</h1>
-            <p className="text-sm text-gray-500">{config.members.length} Teammitglieder</p>
+            <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>{config.members.length} Teammitglieder</p>
           </div>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg disabled:opacity-50"
+          style={{ backgroundColor: 'var(--admin-accent)' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-accent-hover)'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--admin-accent)'}
         >
           <Save className="w-4 h-4" />
           {saving ? 'Speichern...' : 'Speichern'}
@@ -537,7 +546,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
 
       <div className="flex-1 overflow-hidden flex">
         {/* Sidebar */}
-        <div className="w-96 bg-white border-r overflow-y-auto">
+        <div className="w-96 border-r overflow-y-auto" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
           <div className="p-4 space-y-4">
             {/* TEAM MEMBERS */}
             <Section
@@ -566,7 +575,8 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
                 ))}
                 <button
                   onClick={addMember}
-                  className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-rose-300 hover:text-rose-500 flex items-center justify-center gap-2"
+                  className="w-full py-3 border-2 border-dashed rounded-lg flex items-center justify-center gap-2 transition"
+                  style={{ borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)' }}
                 >
                   <Plus className="w-5 h-5" />
                   Mitglied hinzufügen
@@ -606,7 +616,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               <div className="grid grid-cols-3 gap-2">
                 {['desktop', 'tablet', 'mobile'].map((vp) => (
                   <div key={vp}>
-                    <label className="block text-xs text-gray-500 mb-1 capitalize">{vp}</label>
+                    <label className="block text-xs mb-1 capitalize" style={{ color: 'var(--admin-text-muted)' }}>{vp}</label>
                     <input
                       type="number"
                       min={1}
@@ -664,7 +674,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Rahmenbreite</label>
+                  <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Rahmenbreite</label>
                   <input
                     type="number"
                     min={0}
@@ -729,7 +739,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               />
 
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Übergang (ms)</label>
+                <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Übergang (ms)</label>
                 <input
                   type="range"
                   min={100}
@@ -742,7 +752,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
                   }))}
                   className="w-full"
                 />
-                <span className="text-xs text-gray-500">{config.cardStyle.transitionDuration}ms</span>
+                <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{config.cardStyle.transitionDuration}ms</span>
               </div>
             </Section>
 
@@ -796,7 +806,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               onToggle={() => toggleSection('textStyle')}
             >
               {/* Titel */}
-              <div className="p-3 bg-gray-50 rounded-lg space-y-3">
+              <div className="p-3 rounded-lg space-y-3" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
                 <h4 className="font-medium text-sm">Name / Titel</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <Select
@@ -842,7 +852,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               </div>
 
               {/* Rolle */}
-              <div className="p-3 bg-gray-50 rounded-lg space-y-3">
+              <div className="p-3 rounded-lg space-y-3" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
                 <h4 className="font-medium text-sm">Rolle / Position</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <Select
@@ -875,7 +885,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               </div>
 
               {/* Beschreibung */}
-              <div className="p-3 bg-gray-50 rounded-lg space-y-3">
+              <div className="p-3 rounded-lg space-y-3" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
                 <h4 className="font-medium text-sm">Beschreibung</h4>
                 <Select
                   label="Größe"
@@ -895,7 +905,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
                   }))}
                 />
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Max. Zeilen (0 = unbegrenzt)</label>
+                  <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Max. Zeilen (0 = unbegrenzt)</label>
                   <input
                     type="number"
                     min={0}
@@ -987,7 +997,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
               {config.sectionStyle.showHeader && (
                 <>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Titel</label>
+                    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Titel</label>
                     <input
                       type="text"
                       value={config.sectionStyle.title || ''}
@@ -1001,7 +1011,7 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
                   </div>
 
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Untertitel</label>
+                    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Untertitel</label>
                     <input
                       type="text"
                       value={config.sectionStyle.subtitle || ''}
@@ -1099,10 +1109,10 @@ export const CardTeamEditor: React.FC<CardTeamEditorProps> = (props) => {
         </div>
 
         {/* Preview */}
-        <div className="flex-1 p-6 overflow-y-auto bg-gray-200">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden min-h-full">
+        <div className="flex-1 p-6 overflow-y-auto" style={{ backgroundColor: 'var(--admin-bg)' }}>
+          <div className="rounded-lg overflow-hidden min-h-full" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)' }}>
             {/* Import and render CardTeam here */}
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center" style={{ color: 'var(--admin-text-muted)' }}>
               Live-Vorschau wird hier angezeigt
             </div>
           </div>

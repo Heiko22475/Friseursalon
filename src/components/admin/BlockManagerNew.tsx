@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWebsite } from '../../contexts/WebsiteContext';
-import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Eye, Edit } from 'lucide-react';
+import { Plus, Trash2, ChevronUp, ChevronDown, Eye, Edit, Layers } from 'lucide-react';
 import { Modal } from './Modal';
+import { AdminHeader } from './AdminHeader';
 import { Hero } from '../blocks/Hero';
 import Services from '../Services';
 import Gallery from '../Gallery';
@@ -274,7 +275,7 @@ export const BlockManagerNew: React.FC = () => {
       case 'generic-card':
         return <GenericCard config={block.config as any} instanceId={instanceId} />;
       default:
-        return <div className="p-8 text-center text-gray-500">Keine Vorschau verfügbar</div>;
+        return <div className="p-8 text-center" style={{ color: 'var(--admin-text-muted)' }}>Keine Vorschau verfügbar</div>;
     }
   };
 
@@ -321,20 +322,21 @@ export const BlockManagerNew: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   if (!page) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Seite nicht gefunden</h2>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text)' }}>Seite nicht gefunden</h2>
           <button
             onClick={() => navigate('/admin/pages')}
-            className="text-rose-500 hover:underline"
+            className="hover:underline"
+            style={{ color: 'var(--admin-accent)' }}
           >
             Zurück zu Seiten
           </button>
@@ -344,31 +346,24 @@ export const BlockManagerNew: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 flex justify-between items-center">
-          <button
-            onClick={() => navigate('/admin/pages')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zu Seiten
-          </button>
-        </div>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Bausteine"
+        subtitle={`Seite: ${page.title} (/${page.slug})`}
+        icon={Layers}
+        backTo="/admin/pages"
+      />
 
-        <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Bausteine</h1>
-          <p className="text-gray-600 mb-6">
-            Seite: <span className="font-semibold">{page.title}</span> (/{page.slug})
-          </p>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="rounded-xl p-8 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={{
+                backgroundColor: message.includes('Fehler') ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                color: message.includes('Fehler') ? 'var(--admin-danger)' : '#16a34a',
+              }}
             >
               {message}
             </div>
@@ -376,7 +371,10 @@ export const BlockManagerNew: React.FC = () => {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition mb-6"
+            className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition mb-6"
+            style={{ backgroundColor: 'var(--admin-accent)' }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
           >
             <Plus className="w-5 h-5" />
             Baustein hinzufügen
@@ -384,33 +382,34 @@ export const BlockManagerNew: React.FC = () => {
 
           {/* Blocks List */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Aktive Bausteine</h2>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Aktive Bausteine</h2>
             {pageBlocks.length === 0 ? (
-              <p className="text-gray-500">Noch keine Bausteine hinzugefügt.</p>
+              <p style={{ color: 'var(--admin-text-muted)' }}>Noch keine Bausteine hinzugefügt.</p>
             ) : (
               <div className="grid gap-4">
                 {pageBlocks.map((block, index) => (
                   <div
                     key={block.id}
-                    className="flex items-start justify-between p-4 rounded-lg border-2 bg-gray-50 border-gray-200"
+                    className="flex items-start justify-between p-4 rounded-lg border-2"
+                    style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>
                           {getBlockName(block.type)}
                         </h3>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">Typ: {block.type} | Position: {block.position}</p>
+                      <p className="text-sm mt-1" style={{ color: 'var(--admin-text-secondary)' }}>Typ: {block.type} | Position: {block.position}</p>
                     </div>
                     <div className="flex gap-2 ml-4">
                       <button
                         onClick={() => moveBlock(index, 'up')}
                         disabled={index === 0}
-                        className={`p-2 rounded-lg transition ${
-                          index === 0
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-gray-600 hover:bg-gray-200'
-                        }`}
+                        className="p-2 rounded-lg transition"
+                        style={{
+                          color: index === 0 ? 'var(--admin-text-faint)' : 'var(--admin-text-secondary)',
+                          cursor: index === 0 ? 'not-allowed' : 'pointer',
+                        }}
                         title="Nach oben"
                       >
                         <ChevronUp className="w-5 h-5" />
@@ -418,11 +417,11 @@ export const BlockManagerNew: React.FC = () => {
                       <button
                         onClick={() => moveBlock(index, 'down')}
                         disabled={index === pageBlocks.length - 1}
-                        className={`p-2 rounded-lg transition ${
-                          index === pageBlocks.length - 1
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-gray-600 hover:bg-gray-200'
-                        }`}
+                        className="p-2 rounded-lg transition"
+                        style={{
+                          color: index === pageBlocks.length - 1 ? 'var(--admin-text-faint)' : 'var(--admin-text-secondary)',
+                          cursor: index === pageBlocks.length - 1 ? 'not-allowed' : 'pointer',
+                        }}
                         title="Nach unten"
                       >
                         <ChevronDown className="w-5 h-5" />
@@ -445,7 +444,8 @@ export const BlockManagerNew: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleDelete(block.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-2 rounded-lg transition"
+                        style={{ color: 'var(--admin-danger)' }}
                         title="Löschen"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -469,13 +469,14 @@ export const BlockManagerNew: React.FC = () => {
         >
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Baustein-Typ auswählen
               </label>
               <select
                 value={selectedBlockType}
                 onChange={(e) => setSelectedBlockType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:border-transparent"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               >
                 <option value="">-- Bitte wählen --</option>
                 {AVAILABLE_BLOCKS.map((block) => {
@@ -504,11 +505,14 @@ export const BlockManagerNew: React.FC = () => {
               <button
                 onClick={handleAddBlock}
                 disabled={!selectedBlockType}
-                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition ${
-                  !selectedBlockType
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-rose-500 text-white hover:bg-rose-600'
-                }`}
+                className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition"
+                style={{
+                  backgroundColor: !selectedBlockType ? 'var(--admin-bg-surface)' : 'var(--admin-accent)',
+                  color: !selectedBlockType ? 'var(--admin-text-muted)' : '#fff',
+                  cursor: !selectedBlockType ? 'not-allowed' : 'pointer',
+                }}
+                onMouseEnter={e => { if (selectedBlockType) e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
               >
                 <Plus className="w-5 h-5" />
                 Hinzufügen
@@ -518,7 +522,8 @@ export const BlockManagerNew: React.FC = () => {
                   setIsModalOpen(false);
                   setSelectedBlockType('');
                 }}
-                className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+                className="px-6 py-2 rounded-lg font-semibold transition"
+                style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text)' }}
               >
                 Abbrechen
               </button>
@@ -533,7 +538,7 @@ export const BlockManagerNew: React.FC = () => {
             onClose={() => setPreviewBlock(null)}
             title={`Vorschau: ${getBlockName(previewBlock.type)}`}
           >
-            <div className="bg-gray-50 rounded-lg overflow-auto" style={{ maxHeight: '70vh' }}>
+            <div className="rounded-lg overflow-auto" style={{ maxHeight: '70vh', backgroundColor: 'var(--admin-bg-surface)' }}>
               {renderBlockPreview(previewBlock)}
             </div>
           </Modal>

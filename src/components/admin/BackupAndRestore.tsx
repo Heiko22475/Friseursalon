@@ -8,6 +8,7 @@ import { Download, Upload, AlertCircle, CheckCircle, Info, Loader } from 'lucide
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { exportBackup, importBackup, validateBackup } from '../../lib/backup';
 import { useConfirmDialog } from './ConfirmDialog';
+import { AdminHeader } from './AdminHeader';
 import type { BackupProgress, BackupInfo } from '../../types/backup';
 
 export const BackupAndRestore: React.FC = () => {
@@ -131,10 +132,10 @@ export const BackupAndRestore: React.FC = () => {
     await confirm(
       'Backup wiederherstellen?',
       <div>
-        <p className="font-bold text-red-600 mb-2">⚠️ WARNUNG: Alle aktuellen Daten werden überschrieben!</p>
+        <p className="font-bold mb-2" style={{ color: 'var(--admin-danger)' }}>⚠️ WARNUNG: Alle aktuellen Daten werden überschrieben!</p>
         <p>Diese Aktion kann nicht rückgängig gemacht werden. Stellen Sie sicher, dass Sie ein aktuelles Backup haben.</p>
         {validationResult.backupInfo && (
-          <div className="mt-3 p-3 bg-gray-100 rounded">
+          <div className="mt-3 p-3 rounded" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
             <p className="text-sm"><strong>Backup-ID:</strong> {validationResult.backupInfo.backupId}</p>
             <p className="text-sm"><strong>Erstellt:</strong> {new Date(validationResult.backupInfo.createdAt).toLocaleString('de-DE')}</p>
             {validationResult.backupInfo.description && (
@@ -198,19 +199,19 @@ export const BackupAndRestore: React.FC = () => {
    * Render progress indicator
    */
   const renderProgress = (progress: BackupProgress) => (
-    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+    <div className="mt-4 p-4 rounded-lg border" style={{ backgroundColor: 'var(--admin-accent-bg)', borderColor: 'var(--admin-border)' }}>
       <div className="flex items-center gap-3 mb-2">
-        <Loader className="w-5 h-5 animate-spin text-blue-600" />
-        <span className="font-medium text-blue-900">{progress.message}</span>
+        <Loader className="w-5 h-5 animate-spin" style={{ color: 'var(--admin-accent)' }} />
+        <span className="font-medium" style={{ color: 'var(--admin-text-heading)' }}>{progress.message}</span>
       </div>
-      <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+      <div className="w-full rounded-full h-2 overflow-hidden" style={{ backgroundColor: 'var(--admin-border)' }}>
         <div
-          className="bg-blue-600 h-full transition-all duration-300"
-          style={{ width: `${progress.percentage}%` }}
+          className="h-full transition-all duration-300"
+          style={{ width: `${progress.percentage}%`, backgroundColor: 'var(--admin-accent)' }}
         />
       </div>
       {progress.currentItem && (
-        <p className="text-sm text-blue-700 mt-2">
+        <p className="text-sm mt-2" style={{ color: 'var(--admin-text-secondary)' }}>
           {progress.processedItems} / {progress.totalItems}: {progress.currentItem}
         </p>
       )}
@@ -222,17 +223,16 @@ export const BackupAndRestore: React.FC = () => {
       <Dialog />
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Backup & Wiederherstellung</h1>
-        <p className="text-gray-600">
-          Sichern Sie Ihre Website-Daten oder stellen Sie ein früheres Backup wieder her.
-        </p>
-      </div>
+      <AdminHeader
+        title="Backup & Wiederherstellung"
+        subtitle="Sichern Sie Ihre Website-Daten oder stellen Sie ein früheres Backup wieder her."
+        icon={Download}
+      />
 
       {/* Info Box */}
-      <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg flex gap-3">
-        <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-blue-900">
+      <div className="mb-8 p-4 rounded-lg border flex gap-3" style={{ backgroundColor: 'var(--admin-accent-bg)', borderColor: 'var(--admin-border)' }}>
+        <Info className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--admin-accent)' }} />
+        <div className="text-sm" style={{ color: 'var(--admin-text)' }}>
           <p className="font-semibold mb-1">Was ist im Backup enthalten?</p>
           <ul className="list-disc list-inside space-y-1">
             <li>Alle Seiten und Inhalte</li>
@@ -244,23 +244,23 @@ export const BackupAndRestore: React.FC = () => {
       </div>
 
       {/* Export Section */}
-      <section className="mb-8 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+      <section className="mb-8 p-6 rounded-xl border" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="p-3 bg-green-100 rounded-lg">
-            <Download className="w-6 h-6 text-green-600" />
+          <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--admin-success-bg)' }}>
+            <Download className="w-6 h-6" style={{ color: 'var(--admin-success)' }} />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Backup erstellen</h2>
-            <p className="text-gray-600">
+            <h2 className="text-xl font-bold mb-1" style={{ color: 'var(--admin-text-heading)' }}>Backup erstellen</h2>
+            <p style={{ color: 'var(--admin-text-secondary)' }}>
               Laden Sie ein vollständiges Backup Ihrer Website als ZIP-Datei herunter.
             </p>
           </div>
         </div>
 
         {lastExportInfo && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex gap-2">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-green-900">
+          <div className="mb-4 p-3 rounded-lg border flex gap-2" style={{ backgroundColor: 'var(--admin-success-bg)', borderColor: 'var(--admin-border)' }}>
+            <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--admin-success)' }} />
+            <div className="text-sm" style={{ color: 'var(--admin-text)' }}>
               <p className="font-semibold">Letztes Backup erstellt:</p>
               <p>{new Date(lastExportInfo.createdAt).toLocaleString('de-DE')}</p>
               <p className="text-xs mt-1">
@@ -277,7 +277,10 @@ export const BackupAndRestore: React.FC = () => {
         <button
           onClick={handleExport}
           disabled={isExporting}
-          className="w-full mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+          className="w-full mt-4 px-6 py-3 disabled:opacity-50 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+          style={{ backgroundColor: 'var(--admin-success)' }}
+          onMouseEnter={e => { if (!isExporting) (e.currentTarget.style.opacity = '0.85'); }}
+          onMouseLeave={e => { (e.currentTarget.style.opacity = '1'); }}
         >
           {isExporting ? (
             <>
@@ -294,23 +297,23 @@ export const BackupAndRestore: React.FC = () => {
       </section>
 
       {/* Import Section */}
-      <section className="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+      <section className="p-6 rounded-xl border" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="p-3 bg-amber-100 rounded-lg">
-            <Upload className="w-6 h-6 text-amber-600" />
+          <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--admin-danger-bg)' }}>
+            <Upload className="w-6 h-6" style={{ color: 'var(--admin-danger)' }} />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Backup wiederherstellen</h2>
-            <p className="text-gray-600">
+            <h2 className="text-xl font-bold mb-1" style={{ color: 'var(--admin-text-heading)' }}>Backup wiederherstellen</h2>
+            <p style={{ color: 'var(--admin-text-secondary)' }}>
               Laden Sie eine Backup-ZIP-Datei hoch, um Ihre Website wiederherzustellen.
             </p>
           </div>
         </div>
 
         {/* Warning */}
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex gap-2">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-red-900">
+        <div className="mb-4 p-3 rounded-lg border flex gap-2" style={{ backgroundColor: 'var(--admin-danger-bg)', borderColor: 'var(--admin-border)' }}>
+          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--admin-danger)' }} />
+          <div className="text-sm" style={{ color: 'var(--admin-danger)' }}>
             <p className="font-semibold">Achtung:</p>
             <p>Beim Wiederherstellen werden alle aktuellen Daten überschrieben. Erstellen Sie vorher ein Backup!</p>
           </div>
@@ -318,7 +321,7 @@ export const BackupAndRestore: React.FC = () => {
 
         {/* File Input */}
         <div className="mb-4">
-          <label className="block mb-2 font-medium text-gray-700">
+          <label className="block mb-2 font-medium" style={{ color: 'var(--admin-text)' }}>
             Backup-Datei auswählen (.zip)
           </label>
           <input
@@ -326,19 +329,20 @@ export const BackupAndRestore: React.FC = () => {
             accept=".zip"
             onChange={handleFileSelect}
             disabled={isImporting}
-            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2"
+            className="block w-full text-sm rounded-lg cursor-pointer focus:outline-none p-2 border"
+            style={{ color: 'var(--admin-text)', borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)' }}
           />
         </div>
 
         {/* Validation Result */}
         {validationResult && validationResult.isValid && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mb-4 p-3 rounded-lg border" style={{ backgroundColor: 'var(--admin-success-bg)', borderColor: 'var(--admin-border)' }}>
             <div className="flex gap-2 mb-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span className="font-semibold text-green-900">Gültige Backup-Datei</span>
+              <CheckCircle className="w-5 h-5" style={{ color: 'var(--admin-success)' }} />
+              <span className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Gültige Backup-Datei</span>
             </div>
             {validationResult.backupInfo && (
-              <div className="text-sm text-green-900 space-y-1">
+              <div className="text-sm space-y-1" style={{ color: 'var(--admin-text)' }}>
                 <p><strong>Backup-ID:</strong> {validationResult.backupInfo.backupId}</p>
                 <p><strong>Erstellt:</strong> {new Date(validationResult.backupInfo.createdAt).toLocaleString('de-DE')}</p>
                 <p><strong>Customer-ID:</strong> {validationResult.backupInfo.customerId}</p>
@@ -360,7 +364,10 @@ export const BackupAndRestore: React.FC = () => {
         <button
           onClick={handleImport}
           disabled={!selectedFile || !validationResult?.isValid || isImporting}
-          className="w-full mt-4 px-6 py-3 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+          className="w-full mt-4 px-6 py-3 disabled:opacity-50 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+          style={{ backgroundColor: 'var(--admin-accent)' }}
+          onMouseEnter={e => { if (!(!selectedFile || !validationResult?.isValid || isImporting)) (e.currentTarget.style.opacity = '0.85'); }}
+          onMouseLeave={e => { (e.currentTarget.style.opacity = '1'); }}
         >
           {isImporting ? (
             <>

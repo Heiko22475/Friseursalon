@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Trash2, Eye, ArrowLeft, Save, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Eye, Save, ExternalLink, Image as ImageIcon, Images } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { Modal } from './Modal';
 import { MediaLibrary } from './MediaLibrary';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
@@ -10,7 +10,6 @@ import { useWebsite } from '../../contexts/WebsiteContext';
 import type { GalleryImage } from '../../contexts/WebsiteContext';
 
 export const GalleryEditorNew: React.FC = () => {
-  const navigate = useNavigate();
   const { website, loading, updateGallery } = useWebsite();
   const { backgroundColor, setBackgroundColor } = useBlockBackgroundColor({ 
     blockType: 'gallery', 
@@ -118,23 +117,18 @@ export const GalleryEditorNew: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 flex justify-between items-center">
-          <button
-            onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zum Dashboard
-          </button>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Galerie verwalten"
+        icon={Images}
+        actions={
           <div className="flex items-center gap-2">
             <BackgroundColorPicker
               value={backgroundColor}
@@ -142,35 +136,39 @@ export const GalleryEditorNew: React.FC = () => {
             />
             <button
               onClick={() => setIsPreviewOpen(true)}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg transition font-semibold"
+              style={{ backgroundColor: 'var(--admin-success, #22c55e)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Eye className="w-4 h-4" />
               Vorschau
             </button>
           </div>
-        </div>
+        }
+      />
+      <div className="max-w-6xl mx-auto px-4 py-8">
 
-        <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Galerie</h1>
+        <div className="rounded-xl p-8 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={message.includes('Fehler')
+                ? { backgroundColor: 'var(--admin-danger-bg)', color: 'var(--admin-danger)' }
+                : { backgroundColor: 'var(--admin-success-bg)', color: 'var(--admin-success)' }
+              }
             >
               {message}
             </div>
           )}
 
           {/* Add New Image */}
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <h2 className="text-xl font-semibold mb-4">Neues Bild hinzufügen</h2>
+          <div className="p-6 rounded-lg mb-8" style={{ backgroundColor: 'var(--admin-bg-secondary)' }}>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Neues Bild hinzufügen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Bild URL
                 </label>
                 <div className="flex gap-2">
@@ -179,22 +177,26 @@ export const GalleryEditorNew: React.FC = () => {
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
                     placeholder="https://example.com/image.jpg"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="flex-1 px-4 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                   />
                   <button
                     onClick={() => setIsMediaLibraryOpen(true)}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                   >
                     <ImageIcon className="w-4 h-4" />
                     Mediathek
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>
                   Wählen Sie ein Bild aus der Mediathek oder geben Sie eine externe URL ein.
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Caption (optional)
                 </label>
                 <input
@@ -202,13 +204,17 @@ export const GalleryEditorNew: React.FC = () => {
                   value={newCaption}
                   onChange={(e) => setNewCaption(e.target.value)}
                   placeholder="Bildbeschreibung..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
               <button
                 onClick={handleAddImage}
                 disabled={saving}
-                className="flex items-center gap-2 bg-rose-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50"
+                className="flex items-center gap-2 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Hinzufügen...' : 'Bild hinzufügen'}
@@ -218,14 +224,14 @@ export const GalleryEditorNew: React.FC = () => {
 
           {/* Images Grid */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">Galerie Bilder ({images.length})</h2>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Galerie Bilder ({images.length})</h2>
             {images.length === 0 ? (
-              <p className="text-gray-500">Noch keine Bilder vorhanden.</p>
+              <p style={{ color: 'var(--admin-text-muted)' }}>Noch keine Bilder vorhanden.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {images.map((image) => (
-                  <div key={image.id} className="bg-gray-50 rounded-lg overflow-hidden">
-                    <div className="aspect-video bg-gray-200 relative">
+                  <div key={image.id} className="rounded-lg overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-secondary)' }}>
+                    <div className="aspect-video relative" style={{ backgroundColor: 'var(--admin-border)' }}>
                       <img
                         src={image.url}
                         alt={image.alt_text || 'Gallery image'}
@@ -238,9 +244,10 @@ export const GalleryEditorNew: React.FC = () => {
                         href={image.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="absolute top-2 right-2 bg-white p-2 rounded-lg shadow hover:bg-gray-100 transition"
+                        className="absolute top-2 right-2 p-2 rounded-lg transition"
+                        style={{ backgroundColor: 'var(--admin-bg-card)' }}
                       >
-                        <ExternalLink className="w-4 h-4 text-gray-600" />
+                        <ExternalLink className="w-4 h-4" style={{ color: 'var(--admin-text-secondary)' }} />
                       </a>
                     </div>
                     <div className="p-4">
@@ -255,14 +262,18 @@ export const GalleryEditorNew: React.FC = () => {
                             })
                           }
                           placeholder="Caption..."
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                          className="w-full px-3 py-2 text-sm rounded-lg focus:ring-2 focus:outline-none"
+                          style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                         />
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleUpdateCaption(image.id)}
                           disabled={saving}
-                          className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center gap-2 text-white px-3 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                          style={{ backgroundColor: 'var(--admin-accent)' }}
+                          onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                         >
                           <Save className="w-3 h-3" />
                           Speichern
@@ -270,12 +281,15 @@ export const GalleryEditorNew: React.FC = () => {
                         <button
                           onClick={() => handleDelete(image.id)}
                           disabled={saving}
-                          className="flex items-center justify-center gap-2 bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
+                          className="flex items-center justify-center gap-2 text-white px-3 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                          style={{ backgroundColor: 'var(--admin-danger)' }}
+                          onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs mt-2" style={{ color: 'var(--admin-text-muted)' }}>
                         Position: {image.display_order}
                       </p>
                     </div>

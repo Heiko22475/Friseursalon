@@ -56,13 +56,13 @@ export default function TextContrastPreview({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-gray-700">Empfohlene Textfarben</h4>
-        <span className="text-xs text-gray-500">Hintergrund: {bgColor}</span>
+        <h4 className="text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Empfohlene Textfarben</h4>
+        <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Hintergrund: {bgColor}</span>
       </div>
       
       <div 
-        className="rounded-lg border-2 border-gray-300 p-4 space-y-2" 
-        style={{ backgroundColor: bgColor }}
+        className="rounded-lg border-2 p-4 space-y-2" 
+        style={{ backgroundColor: bgColor, borderColor: 'var(--admin-border-strong)' }}
       >
         {contrastOptions.map(({ key, color, ratio, title, description }) => {
           const isSelected = selectedColor === color;
@@ -73,11 +73,12 @@ export default function TextContrastPreview({
               onClick={() => onSelectContrast?.(key, color)}
               className={`w-full text-left p-3 rounded-lg transition-all ${
                 isSelected 
-                  ? 'ring-2 ring-rose-500 ring-offset-2' 
+                  ? 'ring-2 ring-offset-2' 
                   : 'hover:bg-white/10 hover:backdrop-blur-sm'
               }`}
               style={{ 
-                backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.1)' : 'transparent' 
+                backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                ...(isSelected ? { '--tw-ring-color': 'var(--admin-accent)' } as React.CSSProperties : {})
               }}
             >
               <div className="flex items-start justify-between">
@@ -88,7 +89,7 @@ export default function TextContrastPreview({
                     </span>
                     {getWCAGBadge(ratio)}
                     {isSelected && (
-                      <Check className="w-4 h-4 text-rose-500" />
+                      <Check className="w-4 h-4" style={{ color: 'var(--admin-accent-text)' }} />
                     )}
                   </div>
                   <div className="text-xs opacity-90 mb-2">
@@ -104,7 +105,7 @@ export default function TextContrastPreview({
         })}
       </div>
       
-      <div className="text-xs text-gray-500 space-y-1">
+      <div className="text-xs space-y-1" style={{ color: 'var(--admin-text-muted)' }}>
         <p>• <strong>AAA:</strong> Kontrast ≥ 7:1 (WCAG Level AAA)</p>
         <p>• <strong>AA:</strong> Kontrast ≥ 4.5:1 (WCAG Level AA)</p>
         <p>• Klicken Sie auf eine Option, um sie zu übernehmen</p>

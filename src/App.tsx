@@ -47,6 +47,7 @@ import { CardTemplateEditorPage } from './pages/superadmin/CardTemplateEditorPag
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 import { TypographyEditor } from './components/admin/TypographyEditor';
+import { AdminLayout } from './components/admin/AdminLayout';
 
 // Visual Editor (Phase 1)
 const VisualEditorPage = React.lazy(() => import('./visual-editor/VisualEditorPage'));
@@ -75,7 +76,7 @@ function AppContent() {
                         path="/superadmin"
                         element={
                         <ProtectedRoute>
-                            <SuperAdminDashboard />
+                            <AdminLayout><SuperAdminDashboard /></AdminLayout>
                         </ProtectedRoute>
                         }
                     />
@@ -83,7 +84,7 @@ function AppContent() {
                         path="/superadmin/users"
                         element={
                         <ProtectedRoute>
-                            <UserManagement />
+                            <AdminLayout><UserManagement /></AdminLayout>
                         </ProtectedRoute>
                         }
                     />
@@ -117,7 +118,7 @@ function AppContent() {
             path="/admin"
             element={
               <ProtectedRoute>
-                <AdminDashboard />
+                <AdminLayout><AdminDashboard /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -125,7 +126,7 @@ function AppContent() {
             path="/admin/general"
             element={
               <ProtectedRoute>
-                <GeneralEditor />
+                <AdminLayout><GeneralEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -133,7 +134,7 @@ function AppContent() {
             path="/admin/settings"
             element={
               <ProtectedRoute>
-                <SettingsEditor />
+                <AdminLayout><SettingsEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -149,7 +150,7 @@ function AppContent() {
             path="/admin/services"
             element={
               <ProtectedRoute>
-                <ServicesEditor />
+                <AdminLayout><ServicesEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -165,7 +166,7 @@ function AppContent() {
             path="/admin/contact"
             element={
               <ProtectedRoute>
-                <ContactEditor />
+                <AdminLayout><ContactEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -198,7 +199,7 @@ function AppContent() {
             path="/admin/reviews"
             element={
               <ProtectedRoute>
-                <ReviewsEditor />
+                <AdminLayout><ReviewsEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -231,7 +232,7 @@ function AppContent() {
             path="/admin/export"
             element={
               <ProtectedRoute>
-                <DataExport />
+                <AdminLayout><DataExport /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -239,7 +240,7 @@ function AppContent() {
             path="/admin/backup"
             element={
               <ProtectedRoute>
-                <BackupAndRestore />
+                <AdminLayout><BackupAndRestore /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -247,7 +248,7 @@ function AppContent() {
             path="/admin/gallery"
             element={
               <ProtectedRoute>
-                <GalleryEditor />
+                <AdminLayout><GalleryEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -263,7 +264,7 @@ function AppContent() {
             path="/admin/pages"
             element={
               <ProtectedRoute>
-                <PageManager />
+                <AdminLayout><PageManager /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -279,7 +280,7 @@ function AppContent() {
             path="/admin/page-builder/:pageId"
             element={
               <ProtectedRoute>
-                <BlockManager />
+                <AdminLayout><BlockManager /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -287,7 +288,7 @@ function AppContent() {
             path="/admin/blocks/:pageId"
             element={
               <ProtectedRoute>
-                <BlockManager />
+                <AdminLayout><BlockManager /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -295,7 +296,7 @@ function AppContent() {
             path="/admin/static-content"
             element={
               <ProtectedRoute>
-                <StaticContentEditor />
+                <AdminLayout><StaticContentEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -311,7 +312,7 @@ function AppContent() {
             path="/admin/grid"
             element={
               <ProtectedRoute>
-                <GridEditor />
+                <AdminLayout><GridEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -319,7 +320,7 @@ function AppContent() {
             path="/admin/theme"
             element={
               <ProtectedRoute>
-                <ThemeManager />
+                <AdminLayout><ThemeManager /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -327,7 +328,7 @@ function AppContent() {
             path="/admin/typography"
             element={
               <ProtectedRoute>
-                <TypographyEditor />
+                <AdminLayout><TypographyEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -345,7 +346,7 @@ function AppContent() {
             path="/admin/media"
             element={
               <ProtectedRoute>
-                <MediaLibrary />
+                <AdminLayout><MediaLibrary /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -353,7 +354,7 @@ function AppContent() {
             path="/admin/logos"
             element={
               <ProtectedRoute>
-                <LogoList />
+                <AdminLayout><LogoList /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -361,7 +362,7 @@ function AppContent() {
             path="/admin/logos/:id"
             element={
               <ProtectedRoute>
-                <LogoEditor />
+                <AdminLayout><LogoEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -369,7 +370,7 @@ function AppContent() {
             path="/admin/hero/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <HeroEditor />
+                <AdminLayout><HeroEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -377,7 +378,7 @@ function AppContent() {
             path="/admin/card-team/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <CardTeamEditorPage />
+                <AdminLayout><CardTeamEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -385,7 +386,7 @@ function AppContent() {
             path="/admin/card-service/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <CardServiceEditorPage />
+                <AdminLayout><CardServiceEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -393,7 +394,7 @@ function AppContent() {
             path="/admin/card-testimonial/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <CardTestimonialEditorPage />
+                <AdminLayout><CardTestimonialEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -401,7 +402,7 @@ function AppContent() {
             path="/admin/generic-card/:pageId/:blockId"
             element={
               <ProtectedRoute>
-                <GenericCardEditorPage />
+                <AdminLayout><GenericCardEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -409,7 +410,7 @@ function AppContent() {
             path="/superadmin"
             element={
               <ProtectedRoute>
-                <SuperAdminDashboard />
+                <AdminLayout><SuperAdminDashboard /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -417,7 +418,7 @@ function AppContent() {
             path="/superadmin/users"
             element={
               <ProtectedRoute>
-                <UserManagement />
+                <AdminLayout><UserManagement /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -425,7 +426,7 @@ function AppContent() {
             path="/superadmin/stockphotos"
             element={
               <ProtectedRoute>
-                <MediaLibrary stockOnly={true} isSuperAdmin={true} />
+                <AdminLayout><MediaLibrary stockOnly={true} isSuperAdmin={true} /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -433,7 +434,7 @@ function AppContent() {
             path="/superadmin/card-templates"
             element={
               <ProtectedRoute>
-                <CardTemplatesPage />
+                <AdminLayout><CardTemplatesPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -441,7 +442,7 @@ function AppContent() {
             path="/superadmin/card-templates/:templateId"
             element={
               <ProtectedRoute>
-                <CardTemplateEditorPage />
+                <AdminLayout><CardTemplateEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -449,7 +450,7 @@ function AppContent() {
             path="/superadmin/data-export"
             element={
               <ProtectedRoute>
-                <SuperAdminDataExport />
+                <AdminLayout><SuperAdminDataExport /></AdminLayout>
               </ProtectedRoute>
             }
           />

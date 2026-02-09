@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Settings, Paintbrush, Code, Maximize2 } from 'lucide-react';
+import { Save, Settings, Paintbrush, Code, Maximize2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import {
   GenericCardConfig,
@@ -16,6 +16,7 @@ import { CardConfigEditor } from '../../components/admin/CardConfigEditor';
 import { CardPreviewModal } from '../../components/admin/CardPreviewModal';
 import { loadStockPhotos } from '../../lib/mediaSync';
 import { useConfirmDialog } from '../../components/admin/ConfirmDialog';
+import { AdminHeader } from '../../components/admin/AdminHeader';
 
 // ===== TYPES =====
 
@@ -177,67 +178,60 @@ export const CardTemplateEditorPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
-          <p className="mt-4 text-gray-500">Lade Vorlage...</p>
+          <div className="inline-block w-8 h-8 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--admin-accent)', borderTopColor: 'transparent' }} />
+          <p className="mt-4" style={{ color: 'var(--admin-text-muted)' }}>Lade Vorlage...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Dialog />
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="sticky top-0 z-10" style={{ borderBottom: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
         <div className="max-w-[1800px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/superadmin/card-templates')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {isNewTemplate ? 'Neue Karten-Vorlage' : 'Vorlage bearbeiten'}
-                </h1>
-                <p className="text-sm text-gray-500 mt-1">
-                  {template.name || 'Unbenannte Vorlage'}
-                </p>
+          <AdminHeader
+            title={isNewTemplate ? 'Neue Karten-Vorlage' : 'Vorlage bearbeiten'}
+            subtitle={template.name || 'Unbenannte Vorlage'}
+            icon={Settings}
+            backTo="/superadmin/card-templates"
+            actions={
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowPreviewModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+                  style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
+                >
+                  <Maximize2 className="w-4 h-4" />
+                  Responsive Vorschau
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-6 py-2 text-white rounded-lg transition disabled:opacity-50 font-medium"
+                  style={{ backgroundColor: 'var(--admin-accent)' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                >
+                  <Save className="w-4 h-4" />
+                  {saving ? 'Speichert...' : 'Speichern'}
+                </button>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowPreviewModal(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Maximize2 className="w-4 h-4" />
-                Responsive Vorschau
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center gap-2 px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition disabled:opacity-50 font-medium"
-              >
-                <Save className="w-4 h-4" />
-                {saving ? 'Speichert...' : 'Speichern'}
-              </button>
-            </div>
-          </div>
+            }
+          />
 
           {/* Tabs */}
-          <div className="flex gap-4 mt-4 border-b">
+          <div className="flex gap-4 mt-4" style={{ borderBottom: '1px solid var(--admin-border)' }}>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`px-4 py-2 font-medium transition border-b-2 ${
-                activeTab === 'settings'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className="px-4 py-2 font-medium transition border-b-2"
+              style={activeTab === 'settings'
+                ? { borderColor: 'var(--admin-accent)', color: 'var(--admin-accent)' }
+                : { borderColor: 'transparent', color: 'var(--admin-text-muted)' }
+              }
             >
               <div className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
@@ -246,11 +240,11 @@ export const CardTemplateEditorPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('visual')}
-              className={`px-4 py-2 font-medium transition border-b-2 ${
-                activeTab === 'visual'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className="px-4 py-2 font-medium transition border-b-2"
+              style={activeTab === 'visual'
+                ? { borderColor: 'var(--admin-accent)', color: 'var(--admin-accent)' }
+                : { borderColor: 'transparent', color: 'var(--admin-text-muted)' }
+              }
             >
               <div className="flex items-center gap-2">
                 <Paintbrush className="w-4 h-4" />
@@ -259,11 +253,11 @@ export const CardTemplateEditorPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('json')}
-              className={`px-4 py-2 font-medium transition border-b-2 ${
-                activeTab === 'json'
-                  ? 'border-rose-500 text-rose-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className="px-4 py-2 font-medium transition border-b-2"
+              style={activeTab === 'json'
+                ? { borderColor: 'var(--admin-accent)', color: 'var(--admin-accent)' }
+                : { borderColor: 'transparent', color: 'var(--admin-text-muted)' }
+              }
             >
               <div className="flex items-center gap-2">
                 <Code className="w-4 h-4" />
@@ -281,15 +275,15 @@ export const CardTemplateEditorPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Settings Panel */}
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+                <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>
                   Vorlagen-Einstellungen
                 </h2>
                 
                 <div className="space-y-4">
                   {/* Name */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                       Name *
                     </label>
                     <input
@@ -297,13 +291,14 @@ export const CardTemplateEditorPage: React.FC = () => {
                       value={template.name}
                       onChange={(e) => setTemplate({ ...template, name: e.target.value })}
                       placeholder="z.B. Service-Karte mit Icon"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                      className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     />
                   </div>
 
                   {/* Description */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                       Beschreibung
                     </label>
                     <textarea
@@ -311,19 +306,21 @@ export const CardTemplateEditorPage: React.FC = () => {
                       onChange={(e) => setTemplate({ ...template, description: e.target.value })}
                       placeholder="Kurze Beschreibung der Vorlage..."
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                      className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     />
                   </div>
 
                   {/* Category */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>
                       Kategorie
                     </label>
                     <select
                       value={template.category}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTemplate({ ...template, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                      className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     >
                       {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>
@@ -340,9 +337,10 @@ export const CardTemplateEditorPage: React.FC = () => {
                       id="is_active"
                       checked={template.is_active}
                       onChange={(e) => setTemplate({ ...template, is_active: e.target.checked })}
-                      className="w-4 h-4 text-rose-500 border-gray-300 rounded focus:ring-rose-500"
+                      className="w-4 h-4 rounded"
+                      style={{ accentColor: 'var(--admin-accent)' }}
                     />
-                    <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="is_active" className="text-sm font-medium" style={{ color: 'var(--admin-text)' }}>
                       Vorlage für Benutzer aktivieren
                     </label>
                   </div>
@@ -350,16 +348,17 @@ export const CardTemplateEditorPage: React.FC = () => {
               </div>
 
               {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <h3 className="text-sm font-semibold text-blue-900 mb-2">
+              <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--admin-accent-bg)', border: '1px solid var(--admin-accent)' }}>
+                <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--admin-accent)' }}>
                   💡 Nächster Schritt
                 </h3>
-                <p className="text-sm text-blue-700 mb-3">
+                <p className="text-sm mb-3" style={{ color: 'var(--admin-text)' }}>
                   Wechseln Sie zum Tab "Visueller Editor", um das Design und Layout der Karte anzupassen.
                 </p>
                 <button
                   onClick={() => setActiveTab('visual')}
-                  className="text-sm font-medium text-blue-700 hover:text-blue-800 underline"
+                  className="text-sm font-medium underline"
+                  style={{ color: 'var(--admin-accent)' }}
                 >
                   Zum Visuellen Editor →
                 </button>
@@ -368,11 +367,11 @@ export const CardTemplateEditorPage: React.FC = () => {
 
             {/* Preview Panel */}
             <div className="lg:sticky lg:top-24">
-              <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div className="bg-gray-50 border-b px-4 py-3">
-                  <h3 className="font-semibold text-gray-700">Live-Vorschau</h3>
+              <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+                <div className="px-4 py-3" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
+                  <h3 className="font-semibold" style={{ color: 'var(--admin-text)' }}>Live-Vorschau</h3>
                 </div>
-                <div className="p-6 bg-gray-100" style={{ minHeight: '500px' }}>
+                <div className="p-6" style={{ backgroundColor: 'var(--admin-bg-surface)', minHeight: '500px' }}>
                   <div className="transform scale-90 origin-top">
                     <GenericCard config={template.config} />
                   </div>
@@ -393,16 +392,16 @@ export const CardTemplateEditorPage: React.FC = () => {
 
             {/* Preview Panel - 45% */}
             <div className="w-[45%]">
-              <div className="sticky top-24 bg-white rounded-xl shadow-lg border overflow-hidden">
-                <div className="bg-gray-50 border-b px-4 py-3 flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-700">Live-Vorschau</h3>
-                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+              <div className="sticky top-24 rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+                <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
+                  <h3 className="font-semibold" style={{ color: 'var(--admin-text)' }}>Live-Vorschau</h3>
+                  <span className="text-xs px-2 py-1 rounded" style={{ color: 'var(--admin-text-muted)', backgroundColor: 'var(--admin-bg-surface)' }}>
                     Aktualisiert automatisch
                   </span>
                 </div>
                 <div
-                  className="overflow-y-auto bg-gray-100"
-                  style={{ maxHeight: 'calc(100vh - 260px)' }}
+                  className="overflow-y-auto"
+                  style={{ maxHeight: 'calc(100vh - 260px)', backgroundColor: 'var(--admin-bg-surface)' }}
                 >
                   <div className="transform scale-[0.85] origin-top">
                     <GenericCard config={template.config} />
@@ -415,11 +414,11 @@ export const CardTemplateEditorPage: React.FC = () => {
           // JSON Editor Tab
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* JSON Editor */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+              <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>
                 Karten-Konfiguration (JSON)
               </h2>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm mb-4" style={{ color: 'var(--admin-text-muted)' }}>
                 Für fortgeschrittene Benutzer: Bearbeiten Sie die Konfiguration direkt als JSON. Achten Sie auf gültige JSON-Syntax.
               </p>
               <textarea
@@ -432,8 +431,8 @@ export const CardTemplateEditorPage: React.FC = () => {
                     // Invalid JSON, don't update
                   }
                 }}
-                className="w-full h-[calc(100vh-320px)] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 font-mono text-sm"
-                style={{ resize: 'none' }}
+                className="w-full h-[calc(100vh-320px)] px-4 py-3 rounded-lg focus:ring-2 focus:outline-none font-mono text-sm"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', resize: 'none' }}
                 spellCheck={false}
               />
               <div className="mt-4 flex gap-2">
@@ -441,7 +440,8 @@ export const CardTemplateEditorPage: React.FC = () => {
                   onClick={() => {
                     setTemplate({ ...template, config: createTemplateCardConfig() });
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
+                  className="px-4 py-2 rounded-lg transition text-sm"
+                  style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 >
                   Standard-Konfiguration laden
                 </button>
@@ -451,7 +451,8 @@ export const CardTemplateEditorPage: React.FC = () => {
                     navigator.clipboard.writeText(formatted);
                     await showSuccess('Kopiert', 'Konfiguration in Zwischenablage kopiert!');
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
+                  className="px-4 py-2 rounded-lg transition text-sm"
+                  style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 >
                   Kopieren
                 </button>
@@ -460,14 +461,14 @@ export const CardTemplateEditorPage: React.FC = () => {
 
             {/* Preview Panel */}
             <div className="lg:sticky lg:top-24">
-              <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div className="bg-gray-50 border-b px-4 py-3">
-                  <h3 className="font-semibold text-gray-700">Live-Vorschau</h3>
-                  <p className="text-xs text-gray-500 mt-1">Aktualisiert beim Speichern von gültigem JSON</p>
+              <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+                <div className="px-4 py-3" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
+                  <h3 className="font-semibold" style={{ color: 'var(--admin-text)' }}>Live-Vorschau</h3>
+                  <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>Aktualisiert beim Speichern von gültigem JSON</p>
                 </div>
                 <div 
-                  className="p-6 bg-gray-100 overflow-y-auto" 
-                  style={{ maxHeight: 'calc(100vh - 280px)' }}
+                  className="p-6 overflow-y-auto" 
+                  style={{ maxHeight: 'calc(100vh - 280px)', backgroundColor: 'var(--admin-bg-surface)' }}
                 >
                   <div className="transform scale-90 origin-top">
                     <GenericCard config={template.config} />

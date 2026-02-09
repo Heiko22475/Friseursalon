@@ -5,12 +5,13 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Loader2 } from 'lucide-react';
+import { Save, Eye, Loader2, Users } from 'lucide-react';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { CardTeamEditor } from './CardTeamEditor';
 import { CardTeam } from '../blocks/CardTeam';
 import { CardTeamConfig, createDefaultCardTeamConfig } from '../../types/Cards';
 import { Modal } from './Modal';
+import { AdminHeader } from './AdminHeader';
 
 export const CardTeamEditorPage: React.FC = () => {
   const { pageId, blockId } = useParams<{ pageId: string; blockId: string }>();
@@ -78,20 +79,21 @@ export const CardTeamEditorPage: React.FC = () => {
 
   if (websiteLoading || !config) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   if (!page || !block) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Block nicht gefunden</h2>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-secondary)' }}>Block nicht gefunden</h2>
           <button
             onClick={() => navigate('/admin/pages')}
-            className="text-rose-500 hover:underline"
+            className="hover:underline"
+            style={{ color: 'var(--admin-accent-text)' }}
           >
             Zurück zu Seiten
           </button>
@@ -101,21 +103,19 @@ export const CardTeamEditorPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6 flex justify-between items-center">
-          <button
-            onClick={() => navigate(`/admin/blocks/${pageId}`)}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zu Bausteinen
-          </button>
-          <div className="flex gap-2">
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Team-Karten bearbeiten"
+        subtitle={`Seite: ${page.title}`}
+        icon={Users}
+        backTo={`/admin/blocks/${pageId}`}
+        backLabel="Zurück zu Bausteinen"
+        actions={
+          <>
             <button
               onClick={() => setShowPreview(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+              style={{ backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text-secondary)' }}
             >
               <Eye className="w-4 h-4" />
               Vorschau
@@ -123,7 +123,8 @@ export const CardTeamEditorPage: React.FC = () => {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-white transition disabled:opacity-50"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
             >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -132,15 +133,13 @@ export const CardTeamEditorPage: React.FC = () => {
               )}
               Speichern
             </button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Main Card */}
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Team-Karten bearbeiten</h1>
-          <p className="text-gray-600 mb-6">
-            Seite: <span className="font-semibold">{page.title}</span>
-          </p>
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)' }}>
 
           {/* Message */}
           {message && (
@@ -165,7 +164,7 @@ export const CardTeamEditorPage: React.FC = () => {
           onClose={() => setShowPreview(false)}
           title="Vorschau: Team-Karten"
         >
-          <div className="bg-gray-50 rounded-lg overflow-auto" style={{ maxHeight: '70vh' }}>
+          <div className="rounded-lg overflow-auto" style={{ maxHeight: '70vh', backgroundColor: 'var(--admin-bg-input)' }}>
             <CardTeam config={config} />
           </div>
         </Modal>

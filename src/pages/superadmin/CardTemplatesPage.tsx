@@ -7,12 +7,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, Edit, Trash2, Copy, Search,
-  LayoutGrid, ArrowLeft
+  LayoutGrid
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { GenericCardConfig } from '../../types/GenericCard';
 import { GenericCard } from '../../components/blocks/GenericCard';
 import { useConfirmDialog } from '../../components/admin/ConfirmDialog';
+import { AdminHeader } from '../../components/admin/AdminHeader';
 
 // ===== TYPES =====
 
@@ -159,52 +160,42 @@ export const CardTemplatesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Dialog />
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/superadmin')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Karten-Vorlagen</h1>
-                <p className="text-sm text-gray-500 mt-1">
-                  Vordefinierte Karten für alle Benutzer verwalten
-                </p>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => navigate('/superadmin/card-templates/new')}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
-            >
-              <Plus className="w-4 h-4" />
-              Neue Vorlage
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdminHeader
+        title="Karten-Vorlagen"
+        subtitle="Vordefinierte Karten für alle Benutzer verwalten"
+        icon={LayoutGrid}
+        backTo="/superadmin"
+        actions={
+          <button
+            onClick={() => navigate('/superadmin/card-templates/new')}
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition"
+            style={{ backgroundColor: 'var(--admin-accent)' }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+          >
+            <Plus className="w-4 h-4" />
+            Neue Vorlage
+          </button>
+        }
+      />
 
       {/* Search and Filter Bar */}
       <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="bg-white rounded-xl shadow-sm border p-4">
+        <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Vorlagen durchsuchen..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
             </div>
@@ -215,11 +206,11 @@ export const CardTemplatesPage: React.FC = () => {
                 <button
                   key={cat.value}
                   onClick={() => setSelectedCategory(cat.value)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                    selectedCategory === cat.value
-                      ? 'bg-rose-500 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                  className="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition"
+                  style={selectedCategory === cat.value
+                    ? { backgroundColor: 'var(--admin-accent)', color: '#fff' }
+                    : { backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-secondary)' }
+                  }
                 >
                   {cat.label}
                 </button>
@@ -233,16 +224,16 @@ export const CardTemplatesPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 pb-12">
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
-            <p className="mt-4 text-gray-500">Lade Vorlagen...</p>
+            <div className="inline-block w-8 h-8 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--admin-accent)', borderTopColor: 'transparent' }} />
+            <p className="mt-4" style={{ color: 'var(--admin-text-muted)' }}>Lade Vorlagen...</p>
           </div>
         ) : filteredTemplates.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border">
-            <LayoutGrid className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="text-center py-12 rounded-xl" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+            <LayoutGrid className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--admin-text-muted)' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>
               Keine Vorlagen gefunden
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="mb-6" style={{ color: 'var(--admin-text-muted)' }}>
               {searchQuery || selectedCategory !== 'all'
                 ? 'Versuchen Sie eine andere Suche oder Kategorie'
                 : 'Erstellen Sie Ihre erste Karten-Vorlage'}
@@ -250,7 +241,10 @@ export const CardTemplatesPage: React.FC = () => {
             {!searchQuery && selectedCategory === 'all' && (
               <button
                 onClick={() => navigate('/superadmin/card-templates/new')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
+                className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg transition"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Plus className="w-4 h-4" />
                 Erste Vorlage erstellen
@@ -262,13 +256,15 @@ export const CardTemplatesPage: React.FC = () => {
             {filteredTemplates.map((template) => (
               <div
                 key={template.id}
-                className="bg-white rounded-xl shadow-sm border hover:shadow-md transition flex"
+                className="rounded-xl transition flex"
+                style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
               >
                 {/* Vertical Action Bar (Left Side) */}
-                <div className="flex flex-col gap-2 p-3 bg-gray-50 border-r">
+                <div className="flex flex-col gap-2 p-3" style={{ backgroundColor: 'var(--admin-bg-surface)', borderRight: '1px solid var(--admin-border)' }}>
                   <button
                     onClick={() => navigate(`/superadmin/card-templates/${template.id}`)}
-                    className="p-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
+                    className="p-2 text-white rounded-lg transition"
+                    style={{ backgroundColor: 'var(--admin-accent)' }}
                     title="Bearbeiten"
                   >
                     <Edit className="w-5 h-5" />
@@ -276,7 +272,8 @@ export const CardTemplatesPage: React.FC = () => {
                   
                   <button
                     onClick={() => handleDuplicate(template)}
-                    className="p-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+                    className="p-2 rounded-lg transition"
+                    style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     title="Duplizieren"
                   >
                     <Copy className="w-5 h-5" />
@@ -284,7 +281,8 @@ export const CardTemplatesPage: React.FC = () => {
                   
                   <button
                     onClick={() => handleDelete(template)}
-                    className="p-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
+                    className="p-2 rounded-lg transition"
+                    style={{ border: '1px solid var(--admin-danger)', color: 'var(--admin-danger)' }}
                     title="Löschen"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -294,7 +292,7 @@ export const CardTemplatesPage: React.FC = () => {
                 {/* Main Content Area */}
                 <div className="flex-1">
                   {/* Preview */}
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-tr-xl overflow-hidden" style={{ height: '272px' }}>
+                  <div className="rounded-tr-xl overflow-hidden" style={{ height: '272px', backgroundColor: 'var(--admin-bg-surface)' }}>
                     {template.preview_image ? (
                       <img
                         src={template.preview_image}
@@ -302,23 +300,23 @@ export const CardTemplatesPage: React.FC = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-white overflow-hidden p-3">
+                      <div className="w-full h-full flex items-center justify-center overflow-hidden p-3" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
                         {/* Render single card preview */}
                         <div className="w-full" style={{ maxHeight: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                           <div style={{ width: '100%', maxWidth: '220px', transform: 'scale(0.9)' }}>
                             <GenericCard 
                               config={{
                                 ...template.config,
-                                items: template.config.items.slice(0, 1), // Only first card
-                                layout: 'list', // Force single column layout
+                                items: template.config.items.slice(0, 1),
+                                layout: 'list',
                                 grid: {
                                   ...template.config.grid,
-                                  columns: { desktop: 1, tablet: 1, mobile: 1 }, // Single column
+                                  columns: { desktop: 1, tablet: 1, mobile: 1 },
                                   gap: 'none',
                                 },
                                 sectionStyle: {
                                   ...template.config.sectionStyle,
-                                  showHeader: false, // Hide section header
+                                  showHeader: false,
                                   paddingY: 'none',
                                   paddingX: 'none',
                                 }
@@ -334,7 +332,7 @@ export const CardTemplatesPage: React.FC = () => {
                   {/* Info Section */}
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 flex-1">
+                      <h3 className="font-semibold flex-1" style={{ color: 'var(--admin-text-heading)' }}>
                         {template.name}
                       </h3>
                       
@@ -346,11 +344,11 @@ export const CardTemplatesPage: React.FC = () => {
                         
                         <button
                           onClick={() => handleToggleActive(template.id, template.is_active)}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            template.is_active
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-gray-100 text-gray-500'
-                          }`}
+                          className="px-2 py-1 rounded text-xs font-medium"
+                          style={template.is_active
+                            ? { backgroundColor: 'var(--admin-success-bg)', color: 'var(--admin-success)' }
+                            : { backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-muted)' }
+                          }
                         >
                           {template.is_active ? 'Aktiv' : 'Inaktiv'}
                         </button>
@@ -359,7 +357,7 @@ export const CardTemplatesPage: React.FC = () => {
 
                     {/* Description */}
                     {template.description && (
-                      <p className="text-sm text-gray-500 line-clamp-2">
+                      <p className="text-sm line-clamp-2" style={{ color: 'var(--admin-text-muted)' }}>
                         {template.description}
                       </p>
                     )}

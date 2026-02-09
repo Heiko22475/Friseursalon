@@ -62,7 +62,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const getColors = () => {
     if (isDangerous || variant === 'danger') {
       return {
-        titleColor: 'text-red-700',
+        titleColor: 'text-red-400',
         confirmBg: 'bg-red-600',
         confirmHover: 'hover:bg-red-700',
       };
@@ -71,27 +71,27 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     switch (effectiveType) {
       case 'success':
         return {
-          titleColor: 'text-green-700',
+          titleColor: 'text-green-400',
           confirmBg: 'bg-green-600',
           confirmHover: 'hover:bg-green-700',
         };
       case 'warning':
         return {
-          titleColor: 'text-amber-700',
+          titleColor: 'text-amber-400',
           confirmBg: 'bg-amber-600',
           confirmHover: 'hover:bg-amber-700',
         };
       case 'error':
         return {
-          titleColor: 'text-red-700',
+          titleColor: 'text-red-400',
           confirmBg: 'bg-red-600',
           confirmHover: 'hover:bg-red-700',
         };
       default:
         return {
-          titleColor: 'text-blue-700',
-          confirmBg: 'bg-rose-500',
-          confirmHover: 'hover:bg-rose-600',
+          titleColor: 'text-blue-400',
+          confirmBg: 'bg-blue-500',
+          confirmHover: 'hover:bg-blue-600',
         };
     }
   };
@@ -109,17 +109,20 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ backgroundColor: 'var(--admin-overlay)' }}>
+      <div className="rounded-xl max-w-md w-full mx-4 animate-fade-in" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)', border: '1px solid var(--admin-border-strong)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid var(--admin-border-strong)' }}>
           <h2 className={`text-lg font-bold ${colors.titleColor}`}>{title}</h2>
           {onCancel && (
             <button
               onClick={handleCancel}
-              className="p-1 hover:bg-gray-100 rounded-full transition"
+              className="p-1 rounded-full transition hover:opacity-80"
+              style={{ backgroundColor: 'transparent' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
             </button>
           )}
         </div>
@@ -130,7 +133,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             <div className="flex-shrink-0">{getIcon()}</div>
             <div className="flex-1">
               {typeof message === 'string' ? (
-                <p className="text-gray-700 whitespace-pre-wrap">{message}</p>
+                <p className="whitespace-pre-wrap" style={{ color: 'var(--admin-text)' }}>{message}</p>
               ) : (
                 message
               )}
@@ -145,7 +148,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                 onChange={e => onDontAskAgainChange(e.target.checked)}
                 className="mr-2 w-4 h-4"
               />
-              <span className="text-sm text-gray-600">Nicht mehr fragen</span>
+              <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Nicht mehr fragen</span>
             </label>
           )}
         </div>
@@ -155,7 +158,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {showCancel && isConfirmType && onCancel && (
             <button
               onClick={handleCancel}
-              className="px-6 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium transition"
+              className="px-6 py-2 rounded-lg font-medium transition"
+              style={{ backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)', border: '1px solid var(--admin-border-strong)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-border-strong)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)')}
             >
               {cancelText}
             </button>

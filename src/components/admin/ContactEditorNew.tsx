@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, MapPin, Phone, Mail } from 'lucide-react';
+import { Save, Eye, MapPin, Phone, Mail } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { Modal } from './Modal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
@@ -8,7 +8,6 @@ import { getAdaptiveTextColors } from '../../utils/color-utils';
 import { useWebsite } from '../../contexts/WebsiteContext';
 
 export const ContactEditorNew: React.FC = () => {
-  const navigate = useNavigate();
   const { website, loading, updateContact } = useWebsite();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -61,23 +60,18 @@ export const ContactEditorNew: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6 flex justify-between items-center">
-          <button
-            onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zum Dashboard
-          </button>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Kontaktdaten"
+        icon={Mail}
+        actions={
           <div className="flex items-center gap-2">
             <BackgroundColorPicker
               value={backgroundColor}
@@ -85,24 +79,27 @@ export const ContactEditorNew: React.FC = () => {
             />
             <button
               onClick={() => setIsPreviewOpen(true)}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg transition font-semibold"
+              style={{ backgroundColor: 'var(--admin-success)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Eye className="w-4 h-4" />
               Vorschau
             </button>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Kontaktdaten</h1>
+        }
+      />
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={{
+                backgroundColor: message.includes('Fehler') ? 'var(--admin-danger-bg)' : 'var(--admin-success-bg)',
+                color: message.includes('Fehler') ? 'var(--admin-danger)' : 'var(--admin-success)'
+              }}
             >
               {message}
             </div>
@@ -110,67 +107,73 @@ export const ContactEditorNew: React.FC = () => {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Straße</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Straße</label>
               <input
                 type="text"
                 value={formData.street}
                 onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Stadt</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Stadt</label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Telefon</label>
               <input
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">E-Mail</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>E-Mail</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Instagram Handle
               </label>
               <input
                 type="text"
                 value={formData.instagram}
                 onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 placeholder="@username"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Instagram URL
               </label>
               <input
                 type="url"
                 value={formData.instagram_url}
                 onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 placeholder="https://instagram.com/username"
               />
             </div>
@@ -178,7 +181,10 @@ export const ContactEditorNew: React.FC = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50"
+              className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Save className="w-5 h-5" />
               {saving ? 'Speichern...' : 'Speichern'}

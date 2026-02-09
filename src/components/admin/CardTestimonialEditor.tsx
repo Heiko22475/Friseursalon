@@ -40,20 +40,23 @@ const Section: React.FC<SectionProps> = ({ title, children, defaultOpen = false 
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition"
+        className="w-full flex items-center justify-between p-4 transition"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)'}
       >
-        <span className="font-medium text-gray-900">{title}</span>
+        <span className="font-medium" style={{ color: 'var(--admin-text-heading)' }}>{title}</span>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-gray-500" />
+          <ChevronUp className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-500" />
+          <ChevronDown className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
         )}
       </button>
       {isOpen && (
-        <div className="p-4 border-t border-gray-200 space-y-4">
+        <div className="p-4 border-t space-y-4" style={{ borderColor: 'var(--admin-border)' }}>
           {children}
         </div>
       )}
@@ -73,11 +76,12 @@ interface SelectProps<T extends string> {
 function Select<T extends string>({ label, value, onChange, options }: SelectProps<T>) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+        className="w-full px-3 py-2 border rounded-lg admin-focus"
+        style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -112,7 +116,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => 
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <div className="flex gap-2">
         <select
           value={isCustom ? 'custom' : value.ref}
@@ -123,7 +127,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => 
               onChange({ kind: 'tokenRef', ref: e.target.value });
             }
           }}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          className="flex-1 px-3 py-2 border rounded-lg admin-focus"
+          style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
         >
           <option value="custom">Benutzerdefiniert</option>
           <optgroup label="Theme-Farben">
@@ -137,7 +142,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => 
             type="color"
             value={value.hex}
             onChange={(e) => onChange({ kind: 'custom', hex: e.target.value })}
-            className="w-12 h-10 p-1 rounded-lg border border-gray-300 cursor-pointer"
+            className="w-12 h-10 p-1 rounded-lg border cursor-pointer"
+            style={{ borderColor: 'var(--admin-border-strong)' }}
           />
         )}
       </div>
@@ -161,7 +167,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <input
         type="number"
         value={value}
@@ -169,7 +175,8 @@ const NumberInput: React.FC<NumberInputProps> = ({
         min={min}
         max={max}
         step={step}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+        className="w-full px-3 py-2 border rounded-lg admin-focus"
+        style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
       />
     </div>
   );
@@ -190,9 +197,10 @@ const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange }) => {
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 rounded border-gray-300 text-rose-500 focus:ring-rose-500"
+        className="w-4 h-4 rounded"
+        style={{ borderColor: 'var(--admin-border-strong)', accentColor: 'var(--admin-accent)' }}
       />
-      <span className="text-sm text-gray-700">{label}</span>
+      <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>{label}</span>
     </label>
   );
 };
@@ -213,13 +221,14 @@ const TextInput: React.FC<TextInputProps> = ({
   const InputComponent = multiline ? 'textarea' : 'input';
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <InputComponent
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={multiline ? 4 : undefined}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+        className="w-full px-3 py-2 border rounded-lg admin-focus"
+        style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
       />
     </div>
   );
@@ -255,7 +264,7 @@ const StarRatingInput: React.FC<StarRatingInputProps> = ({ value, onChange }) =>
           />
         </button>
       ))}
-      <span className="ml-2 text-sm text-gray-500">{value}/5</span>
+      <span className="ml-2 text-sm" style={{ color: 'var(--admin-text-muted)' }}>{value}/5</span>
     </div>
   );
 };
@@ -291,17 +300,17 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
   ];
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)' }}>
       {/* Header */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50">
-        <GripVertical className="w-4 h-4 text-gray-400 cursor-move" />
+      <div className="flex items-center gap-2 p-3" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+        <GripVertical className="w-4 h-4 cursor-move" style={{ color: 'var(--admin-text-muted)' }} />
         
         {/* Image Preview */}
-        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: 'var(--admin-bg-input)' }}>
           {item.image ? (
             <img src={item.image} alt="" className="w-full h-full object-cover" />
           ) : (
-            <Quote className="w-5 h-5 text-gray-400" />
+            <Quote className="w-5 h-5" style={{ color: 'var(--admin-text-muted)' }} />
           )}
         </div>
 
@@ -324,24 +333,24 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
         {/* Actions */}
         <div className="flex items-center gap-1">
           {onMoveUp && (
-            <button onClick={onMoveUp} className="p-1 text-gray-400 hover:text-gray-600">
+            <button onClick={onMoveUp} className="p-1" style={{ color: 'var(--admin-text-muted)' }}>
               <ChevronUp className="w-4 h-4" />
             </button>
           )}
           {onMoveDown && (
-            <button onClick={onMoveDown} className="p-1 text-gray-400 hover:text-gray-600">
+            <button onClick={onMoveDown} className="p-1" style={{ color: 'var(--admin-text-muted)' }}>
               <ChevronDown className="w-4 h-4" />
             </button>
           )}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1 text-gray-400 hover:text-gray-600"
+            className="p-1" style={{ color: 'var(--admin-text-muted)' }}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
           <button
             onClick={onDelete}
-            className="p-1 text-gray-400 hover:text-red-500"
+            className="p-1 hover:text-red-500" style={{ color: 'var(--admin-text-muted)' }}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -350,7 +359,7 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
 
       {/* Details */}
       {isExpanded && (
-        <div className="p-4 space-y-4 border-t border-gray-200">
+        <div className="p-4 space-y-4 border-t" style={{ borderColor: 'var(--admin-border)' }}>
           <TextInput
             label="Zitat / Bewertungstext"
             value={item.quote}
@@ -382,7 +391,7 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Bewertung</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Bewertung</label>
             <StarRatingInput
               value={item.rating || 5}
               onChange={(rating) => update({ rating })}
@@ -390,18 +399,20 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Profilbild</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>Profilbild</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={item.image || ''}
                 onChange={(e) => update({ image: e.target.value })}
                 placeholder="Bild-URL"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border rounded-lg admin-focus"
+                style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
               />
               <button
                 onClick={() => {/* TODO: Open media library */}}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                className="px-4 py-2 rounded-lg transition"
+                style={{ backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text-secondary)' }}
               >
                 <ImageIcon className="w-5 h-5" />
               </button>
@@ -416,12 +427,13 @@ const TestimonialItemEditor: React.FC<TestimonialItemEditorProps> = ({
               options={sourceOptions}
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Datum</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>Datum</label>
               <input
                 type="date"
                 value={item.date || ''}
                 onChange={(e) => update({ date: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg admin-focus"
+                style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
               />
             </div>
           </div>
@@ -592,7 +604,8 @@ export const CardTestimonialEditor: React.FC<CardTestimonialEditorProps> = ({ co
         </div>
         <button
           onClick={addTestimonial}
-          className="mt-4 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-rose-500 hover:text-rose-500 transition flex items-center justify-center gap-2"
+          className="mt-4 w-full py-2 border-2 border-dashed rounded-lg transition flex items-center justify-center gap-2"
+          style={{ borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)' }}
         >
           <Plus className="w-5 h-5" />
           Bewertung hinzufügen

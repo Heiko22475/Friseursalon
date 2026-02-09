@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWebsite } from '../../contexts/WebsiteContext';
-import { ArrowLeft, Save, Plus, Trash2, ChevronUp, ChevronDown, Eye, Home, Layers } from 'lucide-react';
+import { Save, Plus, Trash2, ChevronUp, ChevronDown, Eye, Home, Layers } from 'lucide-react';
 import { Modal } from './Modal';
+import { AdminHeader } from './AdminHeader';
 import type { Page } from '../../contexts/WebsiteContext';
 
 export const PageManagerNew: React.FC = () => {
@@ -173,59 +174,56 @@ export const PageManagerNew: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <AdminHeader
+          title="Seiten verwalten"
+          icon={Layers}
+          actions={
             <button
-              onClick={() => navigate('/admin')}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+              onClick={() => {
+                setEditingId(null);
+                setEditForm({
+                  slug: '',
+                  title: '',
+                  is_home: false,
+                  is_published: true,
+                  show_in_menu: true,
+                  display_order: regularPages.length,
+                  meta_description: '',
+                  blocks: [],
+                });
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
-              <ArrowLeft size={20} />
-              Zurück
+              <Plus size={20} />
+              Neue Seite
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">Seiten verwalten</h1>
-          </div>
-          <button
-            onClick={() => {
-              setEditingId(null);
-              setEditForm({
-                slug: '',
-                title: '',
-                is_home: false,
-                is_published: true,
-                show_in_menu: true,
-                display_order: regularPages.length,
-                meta_description: '',
-                blocks: [],
-              });
-              setIsModalOpen(true);
-            }}
-            className="flex items-center gap-2 bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700"
-          >
-            <Plus size={20} />
-            Neue Seite
-          </button>
-        </div>
+          }
+        />
 
         {message && (
-          <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
+          <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--admin-success-bg)', color: 'var(--admin-success)' }}>
             {message}
           </div>
         )}
 
         {/* Regular Pages */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Ihre Seiten</h2>
+        <div className="rounded-lg p-6 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Ihre Seiten</h2>
           {regularPages.length === 0 ? (
-            <p className="text-gray-500">Keine Seiten vorhanden</p>
+            <p style={{ color: 'var(--admin-text-muted)' }}>Keine Seiten vorhanden</p>
           ) : (
             <div
               style={{
@@ -236,49 +234,49 @@ export const PageManagerNew: React.FC = () => {
               }}
             >
               {/* Header Row */}
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}></div>
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}>Seite</div>
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Im Menü</div>
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Status</div>
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280', textAlign: 'center' }}>Blöcke</div>
-              <div style={{ padding: '8px 4px', borderBottom: '2px solid #e5e7eb', fontWeight: 600, fontSize: '14px', color: '#6b7280' }}>Aktionen</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)' }}></div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)' }}>Seite</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)', textAlign: 'center' }}>Im Menü</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)', textAlign: 'center' }}>Status</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)', textAlign: 'center' }}>Blöcke</div>
+              <div style={{ padding: '8px 4px', borderBottom: '2px solid var(--admin-border)', fontWeight: 600, fontSize: '14px', color: 'var(--admin-text-muted)' }}>Aktionen</div>
               
               {/* Data Rows */}
               {regularPages.map((page, index) => (
                 <React.Fragment key={page.id}>
                   {/* Home Icon */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
-                    {page.is_home && <Home size={20} className="text-rose-600" aria-label="Homepage" />}
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent', display: 'flex', justifyContent: 'center' }}>
+                    {page.is_home && <Home size={20} style={{ color: 'var(--admin-accent)' }} aria-label="Homepage" />}
                   </div>
 
                   {/* Page Info */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-                    <div style={{ fontWeight: 600, fontSize: '16px' }}>{page.title}</div>
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>/{page.slug}</div>
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent' }}>
+                    <div style={{ fontWeight: 600, fontSize: '16px', color: 'var(--admin-text-heading)' }}>{page.title}</div>
+                    <div style={{ fontSize: '13px', color: 'var(--admin-text-muted)' }}>/{page.slug}</div>
                   </div>
 
                   {/* Menu Checkbox */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent', display: 'flex', justifyContent: 'center' }}>
                     <input
                       type="checkbox"
                       checked={page.show_in_menu || page.is_home}
                       onChange={() => toggleShowInMenu(page)}
                       disabled={page.is_home}
-                      style={{ width: '20px', height: '20px', cursor: page.is_home ? 'not-allowed' : 'pointer', accentColor: '#e11d48' }}
+                      style={{ width: '20px', height: '20px', cursor: page.is_home ? 'not-allowed' : 'pointer', accentColor: 'var(--admin-accent)' }}
                       title={page.is_home ? 'Homepage ist immer im Menü' : 'Im Menü anzeigen'}
                     />
                   </div>
 
                   {/* Published Status */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent', display: 'flex', justifyContent: 'center' }}>
                     <button
                       onClick={() => togglePublished(page)}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
                         padding: '4px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 500,
                         border: 'none', cursor: 'pointer',
-                        backgroundColor: page.is_published ? '#dcfce7' : '#e5e7eb',
-                        color: page.is_published ? '#166534' : '#4b5563'
+                        backgroundColor: page.is_published ? 'var(--admin-success-bg)' : 'var(--admin-bg-surface)',
+                        color: page.is_published ? 'var(--admin-success)' : 'var(--admin-text-secondary)'
                       }}
                     >
                       <Eye size={14} />
@@ -287,32 +285,32 @@ export const PageManagerNew: React.FC = () => {
                   </div>
 
                   {/* Block Count */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', color: '#374151' }}>
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', color: 'var(--admin-text)' }}>
                     <Layers size={16} />
                     <span style={{ fontWeight: 500 }}>{page.blocks?.length || 0}</span>
                   </div>
 
                   {/* Actions */}
-                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button onClick={() => movePageUp(index)} disabled={index === 0} style={{ padding: '4px', color: index === 0 ? '#d1d5db' : '#4b5563', background: 'none', border: 'none', cursor: index === 0 ? 'default' : 'pointer' }} title="Nach oben">
+                  <div style={{ padding: '12px 4px', backgroundColor: index % 2 === 0 ? 'var(--admin-bg-surface)' : 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button onClick={() => movePageUp(index)} disabled={index === 0} style={{ padding: '4px', color: index === 0 ? 'var(--admin-text-faint)' : 'var(--admin-text-secondary)', background: 'none', border: 'none', cursor: index === 0 ? 'default' : 'pointer' }} title="Nach oben">
                       <ChevronUp size={20} />
                     </button>
-                    <button onClick={() => movePageDown(index)} disabled={index === regularPages.length - 1} style={{ padding: '4px', color: index === regularPages.length - 1 ? '#d1d5db' : '#4b5563', background: 'none', border: 'none', cursor: index === regularPages.length - 1 ? 'default' : 'pointer' }} title="Nach unten">
+                    <button onClick={() => movePageDown(index)} disabled={index === regularPages.length - 1} style={{ padding: '4px', color: index === regularPages.length - 1 ? 'var(--admin-text-faint)' : 'var(--admin-text-secondary)', background: 'none', border: 'none', cursor: index === regularPages.length - 1 ? 'default' : 'pointer' }} title="Nach unten">
                       <ChevronDown size={20} />
                     </button>
                     {!page.is_home && (
-                      <button onClick={() => setAsHome(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#ffe4e6', color: '#be123c', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                      <button onClick={() => setAsHome(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                         Als Home
                       </button>
                     )}
-                    <button onClick={() => navigate(`/admin/blocks/${page.id}`)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => navigate(`/admin/blocks/${page.id}`)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                       Blöcke
                     </button>
-                    <button onClick={() => handleEdit(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: '#e5e7eb', color: '#374151', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => handleEdit(page)} style={{ padding: '4px 12px', fontSize: '13px', backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text)', borderRadius: '4px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                       Bearbeiten
                     </button>
                     {!page.is_home && (
-                      <button onClick={() => handleDelete(page.id)} style={{ padding: '4px', color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }} title="Löschen">
+                      <button onClick={() => handleDelete(page.id)} style={{ padding: '4px', color: 'var(--admin-danger)', background: 'none', border: 'none', cursor: 'pointer' }} title="Löschen">
                         <Trash2 size={20} />
                       </button>
                     )}
@@ -325,21 +323,23 @@ export const PageManagerNew: React.FC = () => {
 
         {/* Legal Pages */}
         {legalPages.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Rechtliche Seiten</h2>
+          <div className="rounded-lg p-6" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Rechtliche Seiten</h2>
             <div className="space-y-2">
               {legalPages.map((page) => (
                 <div
                   key={page.id}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                  className="flex items-center gap-4 p-4 rounded-lg"
+                  style={{ backgroundColor: 'var(--admin-bg-surface)' }}
                 >
                   <div className="flex-1">
-                    <div className="font-semibold">{page.title}</div>
-                    <div className="text-sm text-gray-500">/{page.slug}</div>
+                    <div className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>{page.title}</div>
+                    <div className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>/{page.slug}</div>
                   </div>
                   <button
                     onClick={() => navigate(`/admin/blocks/${page.id}`)}
-                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                    className="px-3 py-1 text-sm rounded"
+                    style={{ backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)' }}
                   >
                     Blöcke
                   </button>
@@ -353,7 +353,7 @@ export const PageManagerNew: React.FC = () => {
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Seite bearbeiten' : 'Neue Seite'}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Titel</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>Titel</label>
               <input
                 type="text"
                 value={editForm.title || ''}
@@ -363,25 +363,28 @@ export const PageManagerNew: React.FC = () => {
                     setEditForm({ ...editForm, title: e.target.value, slug: normalizeSlug(e.target.value) });
                   }
                 }}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full rounded-lg px-3 py-2"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">URL-Slug</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>URL-Slug</label>
               <input
                 type="text"
                 value={editForm.slug || ''}
                 onChange={(e) => setEditForm({ ...editForm, slug: normalizeSlug(e.target.value) })}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full rounded-lg px-3 py-2"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Meta Description</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text)' }}>Meta Description</label>
               <textarea
                 value={editForm.meta_description || ''}
                 onChange={(e) => setEditForm({ ...editForm, meta_description: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full rounded-lg px-3 py-2"
                 rows={3}
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               />
             </div>
             <div className="flex items-center gap-6">
@@ -391,8 +394,9 @@ export const PageManagerNew: React.FC = () => {
                   checked={editForm.is_published !== false}
                   onChange={(e) => setEditForm({ ...editForm, is_published: e.target.checked })}
                   className="rounded"
+                  style={{ accentColor: 'var(--admin-accent)' }}
                 />
-                <label className="text-sm">Veröffentlicht</label>
+                <label className="text-sm" style={{ color: 'var(--admin-text)' }}>Veröffentlicht</label>
               </div>
               {!editForm.is_home ? (
                 <div className="flex items-center gap-2">
@@ -401,24 +405,31 @@ export const PageManagerNew: React.FC = () => {
                     checked={editForm.show_in_menu !== false}
                     onChange={(e) => setEditForm({ ...editForm, show_in_menu: e.target.checked })}
                     className="rounded"
+                    style={{ accentColor: 'var(--admin-accent)' }}
                   />
-                  <label className="text-sm">Im Menü anzeigen</label>
+                  <label className="text-sm" style={{ color: 'var(--admin-text)' }}>Im Menü anzeigen</label>
                 </div>
               ) : (
-                <p className="text-xs text-gray-500 italic">Die Hauptseite wird immer im Menü angezeigt</p>
+                <p className="text-xs italic" style={{ color: 'var(--admin-text-muted)' }}>Die Hauptseite wird immer im Menü angezeigt</p>
               )}
             </div>
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700"
+                className="flex items-center gap-2 text-white px-4 py-2 rounded-lg"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Save size={20} />
                 Speichern
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg"
+                style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)', backgroundColor: 'var(--admin-bg-card)' }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-card)')}
               >
                 Abbrechen
               </button>

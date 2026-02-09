@@ -376,19 +376,19 @@ export const ServicesEditor: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <button
             onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
+            className="flex items-center gap-2 transition" style={{ color: 'var(--admin-text-secondary)' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Zurück zum Dashboard
@@ -408,8 +408,8 @@ export const ServicesEditor: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        <div className="rounded-xl p-8 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)' }}>
+          <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--admin-text-heading)' }}>
             Dienstleistungen{instanceId > 1 && ` (Instanz #${instanceId})`}
           </h1>
 
@@ -427,7 +427,7 @@ export const ServicesEditor: React.FC = () => {
 
           {/* Section Header Editor */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Section Überschrift</h2>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Section Überschrift</h2>
             
             {sectionMessage && (
               <div
@@ -457,11 +457,10 @@ export const ServicesEditor: React.FC = () => {
               <button
                 onClick={saveSectionContent}
                 disabled={sectionContent.title === originalSectionContent.title && sectionContent.subtitle === originalSectionContent.subtitle}
-                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition ${
-                  sectionContent.title === originalSectionContent.title && sectionContent.subtitle === originalSectionContent.subtitle
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                }`}
+                className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition"
+                style={sectionContent.title === originalSectionContent.title && sectionContent.subtitle === originalSectionContent.subtitle
+                  ? { backgroundColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)', cursor: 'not-allowed' }
+                  : { backgroundColor: '#3b82f6', color: 'white' }}
               >
                 <Save className="w-4 h-4" />
                 Section Header speichern
@@ -473,7 +472,7 @@ export const ServicesEditor: React.FC = () => {
           <div className="flex gap-3 mb-6">
             <button
               onClick={openNewServiceModal}
-              className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition"
+              className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition" style={{ backgroundColor: 'var(--admin-accent)' }}
             >
               <Plus className="w-5 h-5" />
               Neue Dienstleistung
@@ -501,49 +500,46 @@ export const ServicesEditor: React.FC = () => {
                 placeholder="z.B. Haarschnitt"
               />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>Beschreibung</label>
                 <textarea
                   value={editForm.description}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:border-transparent" style={{ border: '1px solid var(--admin-border-strong)' }}
                 />
               </div>
 
               {/* Text Alignment */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Text-Ausrichtung</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>Text-Ausrichtung</label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setEditForm({ ...editForm, text_align: 'left' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      editForm.text_align === 'left'
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={editForm.text_align === 'left'
+                      ? { borderColor: 'var(--admin-accent)', backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent-text)' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Linksbündig
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditForm({ ...editForm, text_align: 'center' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      editForm.text_align === 'center'
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={editForm.text_align === 'center'
+                      ? { borderColor: 'var(--admin-accent)', backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent-text)' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Zentriert
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditForm({ ...editForm, text_align: 'right' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      editForm.text_align === 'right'
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={editForm.text_align === 'right'
+                      ? { borderColor: 'var(--admin-accent)', backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent-text)' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Rechtsbündig
                   </button>
@@ -570,18 +566,17 @@ export const ServicesEditor: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={!editForm.title.trim() && !editForm.description.trim()}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition ${
-                    !editForm.title.trim() && !editForm.description.trim()
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-rose-500 text-white hover:bg-rose-600'
-                  }`}
+                  className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition"
+                  style={!editForm.title.trim() && !editForm.description.trim()
+                    ? { backgroundColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)', cursor: 'not-allowed' }
+                    : { backgroundColor: 'var(--admin-accent)', color: 'white' }}
                 >
                   <Save className="w-4 h-4" />
                   Speichern
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+                  className="px-6 py-2 rounded-lg font-semibold transition" style={{ backgroundColor: 'var(--admin-border-strong)', color: 'var(--admin-text-secondary)' }}
                 >
                   Abbrechen
                 </button>
@@ -596,44 +591,41 @@ export const ServicesEditor: React.FC = () => {
             title="Alle Dienstleistungen stylen"
           >
             <div className="space-y-4">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm mb-4" style={{ color: 'var(--admin-text-secondary)' }}>
                 Diese Einstellungen werden auf alle Dienstleistungen angewendet. Die individuellen Icons bleiben dabei erhalten.
               </p>
 
               {/* Text Alignment */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Text-Ausrichtung</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text-secondary)' }}>Text-Ausrichtung</label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setGlobalStyle({ ...globalStyle, text_align: 'left' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      globalStyle.text_align === 'left'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={globalStyle.text_align === 'left'
+                      ? { borderColor: '#3b82f6', backgroundColor: '#eff6ff', color: '#1d4ed8' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Linksbündig
                   </button>
                   <button
                     type="button"
                     onClick={() => setGlobalStyle({ ...globalStyle, text_align: 'center' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      globalStyle.text_align === 'center'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={globalStyle.text_align === 'center'
+                      ? { borderColor: '#3b82f6', backgroundColor: '#eff6ff', color: '#1d4ed8' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Zentriert
                   </button>
                   <button
                     type="button"
                     onClick={() => setGlobalStyle({ ...globalStyle, text_align: 'right' })}
-                    className={`px-4 py-2 border-2 rounded-lg transition ${
-                      globalStyle.text_align === 'right'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className="px-4 py-2 border-2 rounded-lg transition"
+                    style={globalStyle.text_align === 'right'
+                      ? { borderColor: '#3b82f6', backgroundColor: '#eff6ff', color: '#1d4ed8' }
+                      : { borderColor: 'var(--admin-border-strong)' }}
                   >
                     Rechtsbündig
                   </button>
@@ -657,7 +649,7 @@ export const ServicesEditor: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setIsGlobalStyleModalOpen(false)}
-                  className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+                  className="px-6 py-2 rounded-lg font-semibold transition" style={{ backgroundColor: 'var(--admin-border-strong)', color: 'var(--admin-text-secondary)' }}
                 >
                   Abbrechen
                 </button>
@@ -669,25 +661,25 @@ export const ServicesEditor: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Vorhandene Dienstleistungen</h2>
             {services.length === 0 ? (
-              <p className="text-gray-500">Noch keine Dienstleistungen vorhanden.</p>
+              <p style={{ color: 'var(--admin-text-muted)' }}>Noch keine Dienstleistungen vorhanden.</p>
             ) : (
               <div className="grid gap-4">
                 {services.map((service, index) => (
                   <div
                     key={service.id}
-                    className="flex items-start justify-between bg-gray-50 p-4 rounded-lg"
+                    className="flex items-start justify-between p-4 rounded-lg" style={{ backgroundColor: 'var(--admin-bg-surface)' }}
                   >
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{service.title}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{service.description}</p>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-2">
+                      <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>{service.title}</h3>
+                      <p className="text-sm mt-1" style={{ color: 'var(--admin-text-secondary)' }}>{service.description}</p>
+                      <div className="flex items-center gap-3 text-xs mt-2" style={{ color: 'var(--admin-text-muted)' }}>
                         <span>Icon: {service.icon}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           Farbe: 
                           <span 
-                            className="inline-block w-4 h-4 rounded border border-gray-300"
-                            style={{ backgroundColor: service.icon_color }}
+                            className="inline-block w-4 h-4 rounded"
+                            style={{ backgroundColor: service.icon_color, border: '1px solid var(--admin-border-strong)' }}
                           />
                           {service.icon_color}
                         </span>
@@ -697,11 +689,10 @@ export const ServicesEditor: React.FC = () => {
                       <button
                         onClick={() => moveUp(index)}
                         disabled={index === 0}
-                        className={`p-2 rounded-lg transition ${
-                          index === 0
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-gray-600 hover:bg-gray-200'
-                        }`}
+                        className="p-2 rounded-lg transition"
+                        style={index === 0
+                          ? { color: 'var(--admin-border-strong)', cursor: 'not-allowed' }
+                          : { color: 'var(--admin-text-secondary)' }}
                         title="Nach oben"
                       >
                         <ChevronUp className="w-4 h-4" />
@@ -709,11 +700,10 @@ export const ServicesEditor: React.FC = () => {
                       <button
                         onClick={() => moveDown(index)}
                         disabled={index === services.length - 1}
-                        className={`p-2 rounded-lg transition ${
-                          index === services.length - 1
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-gray-600 hover:bg-gray-200'
-                        }`}
+                        className="p-2 rounded-lg transition"
+                        style={index === services.length - 1
+                          ? { color: 'var(--admin-border-strong)', cursor: 'not-allowed' }
+                          : { color: 'var(--admin-text-secondary)' }}
                         title="Nach unten"
                       >
                         <ChevronDown className="w-4 h-4" />

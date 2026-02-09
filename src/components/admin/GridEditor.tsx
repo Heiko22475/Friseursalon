@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Save, Plus, Eye } from 'lucide-react';
+import { Save, Plus, Eye, LayoutGrid } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { GridLayoutSelector, GridLayout, getColumnCount } from './GridLayoutSelector';
 import { BlockList, BlockItem } from './BlockList';
 import { Modal } from './Modal';
@@ -46,7 +47,6 @@ interface BuildingBlock {
 }
 
 export const GridEditor: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const instanceId = parseInt(searchParams.get('instance') || '1');
 
@@ -313,80 +313,84 @@ export const GridEditor: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <button
-            onClick={() => navigate('/admin')}
-            className="p-2 hover:bg-gray-200 rounded-lg transition"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900">Grid Layout Editor</h1>
-            <p className="text-gray-600 mt-1">Instanz #{instanceId}</p>
-          </div>
-          <BackgroundColorPicker
-            value={backgroundColor}
-            onChange={setBackgroundColor}
-          />
-          <button
-            onClick={() => setShowPreview(true)}
-            className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
-          >
-            <Eye className="w-5 h-5" />
-            Vorschau
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition"
-          >
-            <Save className="w-5 h-5" />
-            Speichern
-          </button>
-        </div>
+        <AdminHeader
+          title="Grid Layout Editor"
+          subtitle={`Instanz #${instanceId}`}
+          icon={LayoutGrid}
+          backTo="/admin"
+          actions={
+            <div className="flex items-center gap-3">
+              <BackgroundColorPicker
+                value={backgroundColor}
+                onChange={setBackgroundColor}
+              />
+              <button
+                onClick={() => setShowPreview(true)}
+                className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition"
+                style={{ backgroundColor: 'var(--admin-accent)', color: '#fff' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                <Eye className="w-5 h-5" />
+                Vorschau
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition"
+                style={{ backgroundColor: 'var(--admin-success, #22c55e)', color: '#fff' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                <Save className="w-5 h-5" />
+                Speichern
+              </button>
+            </div>
+          }
+        />
 
         {message && (
           <div
-            className={`p-4 rounded-lg mb-6 ${
-              message.includes('Fehler')
-                ? 'bg-red-50 text-red-700'
-                : 'bg-green-50 text-green-700'
-            }`}
+            className="p-4 rounded-lg mb-6"
+            style={{
+              backgroundColor: message.includes('Fehler') ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+              color: message.includes('Fehler') ? 'var(--admin-danger)' : 'var(--admin-success, #22c55e)',
+            }}
           >
             {message}
           </div>
         )}
 
         {/* Layout Configuration */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Layout-Konfiguration</h2>
+        <div className="rounded-lg p-6 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Layout-Konfiguration</h2>
           
           <div className="space-y-6">
             {/* Layout Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Spalten-Layout
               </label>
               <GridLayoutSelector
                 value={config.layout_type}
                 onChange={(layout) => setConfig({ ...config, layout_type: layout })}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--admin-text-muted)' }}>
                 Es werden nur die ersten {columnCount} aktivierten Bausteine angezeigt
               </p>
             </div>
 
             {/* Gap */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Abstand zwischen Spalten (Gap): {config.gap}px
               </label>
               <input
@@ -403,7 +407,7 @@ export const GridEditor: React.FC = () => {
             {/* Padding Top/Bottom */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Innenabstand Oben: {config.padding_top}px
                 </label>
                 <input
@@ -417,7 +421,7 @@ export const GridEditor: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Innenabstand Unten: {config.padding_bottom}px
                 </label>
                 <input
@@ -435,7 +439,7 @@ export const GridEditor: React.FC = () => {
             {/* Margin Left/Right */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Außenabstand Links: {config.margin_left}px
                 </label>
                 <input
@@ -449,7 +453,7 @@ export const GridEditor: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                   Außenabstand Rechts: {config.margin_right}px
                 </label>
                 <input
@@ -467,23 +471,26 @@ export const GridEditor: React.FC = () => {
         </div>
 
         {/* Blocks Management */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="rounded-lg p-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Bausteine im Grid</h2>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Bausteine im Grid</h2>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-rose-600 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition"
+              style={{ backgroundColor: 'var(--admin-accent)', color: '#fff' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Plus className="w-5 h-5" />
               Baustein hinzufügen
             </button>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <p className="text-sm text-blue-800">
+          <div className="rounded-lg p-4 mb-4" style={{ backgroundColor: 'var(--admin-bg-surface)', border: '1px solid var(--admin-border)' }}>
+            <p className="text-sm" style={{ color: 'var(--admin-text)' }}>
               <strong>Sichtbar im Grid:</strong> {visibleBlocks.length} / {columnCount} Spalten
             </p>
-            <p className="text-xs text-blue-700 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--admin-text-secondary)' }}>
               Fügen Sie beliebig viele Bausteine hinzu. Die ersten {columnCount} aktivierten Bausteine werden im Grid angezeigt.
             </p>
           </div>
@@ -510,13 +517,14 @@ export const GridEditor: React.FC = () => {
         >
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
                 Baustein-Typ auswählen
               </label>
               <select
                 value={selectedBlockType}
                 onChange={(e) => setSelectedBlockType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               >
                 <option value="">-- Bitte wählen --</option>
                 {availableBlocks.map((block) => (
@@ -527,8 +535,8 @@ export const GridEditor: React.FC = () => {
               </select>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
+            <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--admin-bg-surface)', border: '1px solid var(--admin-border)' }}>
+              <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                 Der Baustein wird mit einer neuen Instanz-ID erstellt und kann später auch außerhalb des Grids verwendet werden.
               </p>
             </div>
@@ -538,10 +546,14 @@ export const GridEditor: React.FC = () => {
                 onClick={handleAddBlock}
                 disabled={!selectedBlockType}
                 className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition ${
-                  !selectedBlockType
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-rose-500 text-white hover:bg-rose-600'
+                  !selectedBlockType ? 'cursor-not-allowed opacity-50' : ''
                 }`}
+                style={{
+                  backgroundColor: !selectedBlockType ? 'var(--admin-bg-surface)' : 'var(--admin-accent)',
+                  color: !selectedBlockType ? 'var(--admin-text-muted)' : '#fff',
+                }}
+                onMouseEnter={e => { if (selectedBlockType) e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={e => { if (selectedBlockType) e.currentTarget.style.opacity = '1'; }}
               >
                 <Plus className="w-4 h-4" />
                 Hinzufügen
@@ -551,7 +563,8 @@ export const GridEditor: React.FC = () => {
                   setIsModalOpen(false);
                   setSelectedBlockType('');
                 }}
-                className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+                className="px-6 py-2 rounded-lg font-semibold transition"
+                style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text)', border: '1px solid var(--admin-border)' }}
               >
                 Abbrechen
               </button>
@@ -604,7 +617,7 @@ const renderBlockPreview = (blockType: string, instanceId: number) => {
       return <StaticContent instanceId={instanceId} />;
     default:
       return (
-        <div className="p-8 bg-gray-100 rounded-lg text-center text-gray-500">
+        <div className="p-8 rounded-lg text-center" style={{ backgroundColor: 'var(--admin-bg-surface)', color: 'var(--admin-text-muted)' }}>
           Baustein-Typ: {blockType}
         </div>
       );

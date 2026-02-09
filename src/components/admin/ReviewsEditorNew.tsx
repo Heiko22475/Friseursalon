@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Trash2, Edit2, Eye, Star } from 'lucide-react';
+import { Save, Trash2, Edit2, Eye, Star } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import { Modal } from './Modal';
 import { BackgroundColorPicker } from './BackgroundColorPicker';
 import { useBlockBackgroundColor } from '../../hooks/useBlockBackgroundColor';
@@ -9,7 +9,6 @@ import { useWebsite } from '../../contexts/WebsiteContext';
 import type { Review } from '../../contexts/WebsiteContext';
 
 export const ReviewsEditorNew: React.FC = () => {
-  const navigate = useNavigate();
   const { website, loading, updateReviews } = useWebsite();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -107,23 +106,18 @@ export const ReviewsEditorNew: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 flex justify-between items-center">
-          <button
-            onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zum Dashboard
-          </button>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Bewertungen"
+        icon={Star}
+        actions={
           <div className="flex items-center gap-2">
             <BackgroundColorPicker
               value={backgroundColor}
@@ -131,52 +125,57 @@ export const ReviewsEditorNew: React.FC = () => {
             />
             <button
               onClick={() => setIsPreviewOpen(true)}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded-lg transition font-semibold"
+              style={{ backgroundColor: 'var(--admin-success)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               <Eye className="w-4 h-4" />
               Vorschau
             </button>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Bewertungen</h1>
+        }
+      />
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="rounded-xl p-8 mb-6" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={{
+                backgroundColor: message.includes('Fehler') ? 'var(--admin-danger-bg)' : 'var(--admin-success-bg)',
+                color: message.includes('Fehler') ? 'var(--admin-danger)' : 'var(--admin-success)'
+              }}
             >
               {message}
             </div>
           )}
 
           {/* Edit Form */}
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <h2 className="text-xl font-semibold mb-4">
+          <div className="p-6 rounded-lg mb-8" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>
               {editingId ? 'Bewertung bearbeiten' : 'Neue Bewertung'}
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Name</label>
                 <input
                   type="text"
                   value={editForm.author_name}
                   onChange={(e) => setEditForm({ ...editForm, author_name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bewertung</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Bewertung</label>
                 <select
                   value={editForm.rating}
                   onChange={(e) =>
                     setEditForm({ ...editForm, rating: parseInt(e.target.value) })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 >
                   <option value={5}>⭐⭐⭐⭐⭐ (5 Sterne)</option>
                   <option value={4}>⭐⭐⭐⭐ (4 Sterne)</option>
@@ -186,22 +185,24 @@ export const ReviewsEditorNew: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Text</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Text</label>
                 <textarea
                   value={editForm.review_text}
                   onChange={(e) => setEditForm({ ...editForm, review_text: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Datum/Jahr</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--admin-text)' }}>Datum/Jahr</label>
                   <input
                     type="text"
                     value={editForm.review_date}
                     onChange={(e) => setEditForm({ ...editForm, review_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 rounded-lg"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     placeholder="2025"
                   />
                 </div>
@@ -211,9 +212,10 @@ export const ReviewsEditorNew: React.FC = () => {
                       type="checkbox"
                       checked={editForm.is_featured}
                       onChange={(e) => setEditForm({ ...editForm, is_featured: e.target.checked })}
-                      className="w-4 h-4 text-rose-500 rounded focus:ring-rose-500"
+                      className="w-4 h-4 rounded"
+                      style={{ accentColor: 'var(--admin-accent)' }}
                     />
-                    <span className="text-sm font-medium text-gray-700">Als Featured markieren</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Als Featured markieren</span>
                   </label>
                 </div>
               </div>
@@ -221,7 +223,10 @@ export const ReviewsEditorNew: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex items-center gap-2 bg-rose-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50"
+                  className="flex items-center gap-2 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--admin-accent)' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
                   <Save className="w-4 h-4" />
                   {saving ? 'Speichern...' : 'Speichern'}
@@ -229,7 +234,10 @@ export const ReviewsEditorNew: React.FC = () => {
                 {editingId && (
                   <button
                     onClick={handleCancel}
-                    className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+                    className="px-6 py-2 rounded-lg font-semibold transition"
+                    style={{ backgroundColor: 'var(--admin-bg-hover)', color: 'var(--admin-text)' }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                   >
                     Abbrechen
                   </button>
@@ -240,41 +248,48 @@ export const ReviewsEditorNew: React.FC = () => {
 
           {/* Reviews List */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Vorhandene Bewertungen</h2>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Vorhandene Bewertungen</h2>
             {reviews.length === 0 ? (
-              <p className="text-gray-500">Noch keine Bewertungen vorhanden.</p>
+              <p style={{ color: 'var(--admin-text-muted)' }}>Noch keine Bewertungen vorhanden.</p>
             ) : (
               <div className="grid gap-4">
                 {reviews.map((review) => (
                   <div
                     key={review.id}
-                    className="flex items-start justify-between bg-gray-50 p-4 rounded-lg"
+                    className="flex items-start justify-between p-4 rounded-lg"
+                    style={{ backgroundColor: 'var(--admin-bg-surface)' }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-gray-900">{review.author_name}</h3>
+                        <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>{review.author_name}</h3>
                         <span className="text-yellow-500">
                           {'⭐'.repeat(review.rating)}
                         </span>
                         {review.is_featured && (
-                          <span className="text-xs bg-rose-100 text-rose-700 px-2 py-1 rounded">
+                          <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)' }}>
                             Featured
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">{review.review_text}</p>
-                      <p className="text-xs text-gray-500 mt-2">{review.review_date}</p>
+                      <p className="text-sm mt-1" style={{ color: 'var(--admin-text-secondary)' }}>{review.review_text}</p>
+                      <p className="text-xs mt-2" style={{ color: 'var(--admin-text-muted)' }}>{review.review_date}</p>
                     </div>
                     <div className="flex gap-2 ml-4">
                       <button
                         onClick={() => handleEdit(review)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 rounded-lg transition"
+                        style={{ color: 'var(--admin-accent)' }}
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-accent-bg)')}
+                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(review.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-2 rounded-lg transition"
+                        style={{ color: 'var(--admin-danger)' }}
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-danger-bg)')}
+                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

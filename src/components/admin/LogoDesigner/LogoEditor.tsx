@@ -6,6 +6,7 @@ import {
 import { useWebsite, LogoDesign, LogoText } from '../../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from '../MediaLibrary';
 import { useConfirmDialog } from '../ConfirmDialog';
+import { AdminHeader } from '../AdminHeader';
 
 // Available fonts for the logo designer
 const AVAILABLE_FONTS = [
@@ -372,53 +373,59 @@ export const LogoEditor: React.FC = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Dialog />
       {/* Header */}
-      <div className="bg-white border-b px-6 py-3 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            value={logoName}
-            onChange={(e) => setLogoName(e.target.value)}
-            className="text-lg font-semibold text-gray-800 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-rose-200 rounded px-2 py-1"
-            placeholder="Logo-Name"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/admin/logos')}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-          >
-            Abbrechen
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 bg-rose-500 text-white px-5 py-2 rounded-lg hover:bg-rose-600 transition disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            {saving ? 'Speichern...' : 'Speichern'}
-          </button>
-        </div>
-      </div>
+      <AdminHeader
+        title={logoName}
+        backTo="/admin/logos"
+        backLabel="Logo-Designer"
+        actions={
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/admin/logos')}
+              className="px-4 py-2 rounded-lg transition"
+              style={{ color: 'var(--admin-text-secondary)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              Abbrechen
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 text-white px-5 py-2 rounded-lg transition disabled:opacity-50"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Speichern...' : 'Speichern'}
+            </button>
+          </div>
+        }
+      />
 
       <div className="flex-1 flex">
         {/* Toolbar Left */}
-        <div className="w-16 bg-white border-r flex flex-col items-center py-4 gap-2">
+        <div className="w-16 flex flex-col items-center py-4 gap-2" style={{ backgroundColor: 'var(--admin-bg-card)', borderRight: '1px solid var(--admin-border)' }}>
           <button
             onClick={() => setShowMediaLibrary(true)}
-            className="p-3 hover:bg-gray-100 rounded-lg transition group"
+            className="p-3 rounded-lg transition group"
             title="Bild hinzufügen"
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
-            <Image className="w-5 h-5 text-gray-600 group-hover:text-rose-500" />
+            <Image className="w-5 h-5" style={{ color: 'var(--admin-text-secondary)' }} />
           </button>
           <button
             onClick={handleAddText}
-            className="p-3 hover:bg-gray-100 rounded-lg transition group"
+            className="p-3 rounded-lg transition group"
             title="Text hinzufügen"
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
-            <Type className="w-5 h-5 text-gray-600 group-hover:text-rose-500" />
+            <Type className="w-5 h-5" style={{ color: 'var(--admin-text-secondary)' }} />
           </button>
         </div>
 
@@ -566,41 +573,43 @@ export const LogoEditor: React.FC = () => {
         </div>
 
         {/* Properties Panel Right */}
-        <div className="w-72 bg-white border-l overflow-y-auto">
+        <div className="w-72 overflow-y-auto" style={{ backgroundColor: 'var(--admin-bg-card)', borderLeft: '1px solid var(--admin-border)' }}>
           <div className="p-4 space-y-6">
             {/* Canvas Settings */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--admin-text)' }}>
                 <Palette className="w-4 h-4" />
                 Canvas
               </h3>
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-gray-500">Breite</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Breite</label>
                     <input
                       type="number"
                       value={canvasWidth}
                       onChange={(e) => setCanvasWidth(Number(e.target.value))}
-                      className="w-full px-2 py-1.5 border rounded text-sm"
+                      className="w-full px-2 py-1.5 rounded text-sm"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       min={100}
                       max={1000}
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500">Höhe</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Höhe</label>
                     <input
                       type="number"
                       value={canvasHeight}
                       onChange={(e) => setCanvasHeight(Number(e.target.value))}
-                      className="w-full px-2 py-1.5 border rounded text-sm"
+                      className="w-full px-2 py-1.5 rounded text-sm"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       min={50}
                       max={500}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">Hintergrund</label>
+                  <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Hintergrund</label>
                   <div className="flex gap-2 items-center">
                     <input
                       type="color"
@@ -613,17 +622,19 @@ export const LogoEditor: React.FC = () => {
                       type="text"
                       value={backgroundColor}
                       onChange={(e) => setBackgroundColor(e.target.value)}
-                      className="flex-1 px-2 py-1.5 border rounded text-sm font-mono"
+                      className="flex-1 px-2 py-1.5 rounded text-sm font-mono"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       placeholder="#ffffff oder transparent"
                     />
                   </div>
                   <button
                     onClick={() => setBackgroundColor(backgroundColor === 'transparent' ? '#ffffff' : 'transparent')}
-                    className={`mt-2 w-full px-3 py-1.5 text-xs rounded border transition ${
-                      backgroundColor === 'transparent' 
-                        ? 'bg-rose-50 border-rose-300 text-rose-700' 
-                        : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
-                    }`}
+                    className={`mt-2 w-full px-3 py-1.5 text-xs rounded transition`}
+                    style={{
+                      backgroundColor: backgroundColor === 'transparent' ? 'var(--admin-accent-bg)' : 'var(--admin-bg-surface)',
+                      border: `1px solid ${backgroundColor === 'transparent' ? 'var(--admin-accent)' : 'var(--admin-border)'}`,
+                      color: backgroundColor === 'transparent' ? 'var(--admin-accent)' : 'var(--admin-text-secondary)'
+                    }}
                   >
                     {backgroundColor === 'transparent' ? '✓ Transparent' : 'Transparent machen'}
                   </button>
@@ -633,57 +644,64 @@ export const LogoEditor: React.FC = () => {
 
             {/* Image Settings */}
             {selectedElement?.type === 'image' && logoImage && (
-              <div className="border-t pt-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <div style={{ borderTop: '1px solid var(--admin-border)', paddingTop: '1rem' }}>
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--admin-text)' }}>
                   <Image className="w-4 h-4" />
                   Bild
                 </h3>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-xs text-gray-500">X</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>X</label>
                       <input
                         type="number"
                         value={logoImage.x}
                         onChange={(e) => setLogoImage({ ...logoImage, x: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500">Y</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Y</label>
                       <input
                         type="number"
                         value={logoImage.y}
                         onChange={(e) => setLogoImage({ ...logoImage, y: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-xs text-gray-500">Breite</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Breite</label>
                       <input
                         type="number"
                         value={logoImage.width}
                         onChange={(e) => setLogoImage({ ...logoImage, width: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                         min={10}
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500">Höhe</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Höhe</label>
                       <input
                         type="number"
                         value={logoImage.height}
                         onChange={(e) => setLogoImage({ ...logoImage, height: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                         min={10}
                       />
                     </div>
                   </div>
                   <button
                     onClick={deleteImage}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm"
+                    style={{ color: 'var(--admin-danger)' }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-danger-bg)')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
                     <Trash2 className="w-4 h-4" />
                     Bild entfernen
@@ -694,27 +712,29 @@ export const LogoEditor: React.FC = () => {
 
             {/* Text Settings */}
             {selectedText && (
-              <div className="border-t pt-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <div style={{ borderTop: '1px solid var(--admin-border)', paddingTop: '1rem' }}>
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--admin-text)' }}>
                   <Type className="w-4 h-4" />
                   Text
                 </h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs text-gray-500">Inhalt</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Inhalt</label>
                     <input
                       type="text"
                       value={selectedText.content}
                       onChange={(e) => updateText(selectedText.id, { content: e.target.value })}
-                      className="w-full px-2 py-1.5 border rounded text-sm"
+                      className="w-full px-2 py-1.5 rounded text-sm"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500">Schriftart</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Schriftart</label>
                     <select
                       value={selectedText.fontFamily}
                       onChange={(e) => updateText(selectedText.id, { fontFamily: e.target.value })}
-                      className="w-full px-2 py-1.5 border rounded text-sm"
+                      className="w-full px-2 py-1.5 rounded text-sm"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     >
                       {AVAILABLE_FONTS.map((font) => (
                         <option key={font.value} value={font.value} style={{ fontFamily: font.value }}>
@@ -725,22 +745,24 @@ export const LogoEditor: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-xs text-gray-500">Größe</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Größe</label>
                       <input
                         type="number"
                         value={selectedText.fontSize}
                         onChange={(e) => updateText(selectedText.id, { fontSize: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                         min={8}
                         max={200}
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500">Stärke</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Stärke</label>
                       <select
                         value={selectedText.fontWeight}
                         onChange={(e) => updateText(selectedText.id, { fontWeight: e.target.value as LogoText['fontWeight'] })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       >
                         {FONT_WEIGHTS.map((weight) => (
                           <option key={weight.value} value={weight.value}>
@@ -751,7 +773,7 @@ export const LogoEditor: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500">Farbe</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Farbe</label>
                     <div className="flex gap-2">
                       <input
                         type="color"
@@ -763,17 +785,19 @@ export const LogoEditor: React.FC = () => {
                         type="text"
                         value={selectedText.color}
                         onChange={(e) => updateText(selectedText.id, { color: e.target.value })}
-                        className="flex-1 px-2 py-1.5 border rounded text-sm font-mono"
+                        className="flex-1 px-2 py-1.5 rounded text-sm font-mono"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500">Zeichenabstand</label>
+                    <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Zeichenabstand</label>
                     <input
                       type="number"
                       value={selectedText.letterSpacing}
                       onChange={(e) => updateText(selectedText.id, { letterSpacing: Number(e.target.value) })}
-                      className="w-full px-2 py-1.5 border rounded text-sm"
+                      className="w-full px-2 py-1.5 rounded text-sm"
+                      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       min={-10}
                       max={50}
                       step={0.5}
@@ -781,27 +805,32 @@ export const LogoEditor: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-xs text-gray-500">X</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>X</label>
                       <input
                         type="number"
                         value={selectedText.x}
                         onChange={(e) => updateText(selectedText.id, { x: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500">Y</label>
+                      <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Y</label>
                       <input
                         type="number"
                         value={selectedText.y}
                         onChange={(e) => updateText(selectedText.id, { y: Number(e.target.value) })}
-                        className="w-full px-2 py-1.5 border rounded text-sm"
+                        className="w-full px-2 py-1.5 rounded text-sm"
+                        style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                       />
                     </div>
                   </div>
                   <button
                     onClick={() => deleteText(selectedText.id)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm"
+                    style={{ color: 'var(--admin-danger)' }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-danger-bg)')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
                     <Trash2 className="w-4 h-4" />
                     Text entfernen
@@ -812,7 +841,7 @@ export const LogoEditor: React.FC = () => {
 
             {/* No selection hint */}
             {!selectedElement && (
-              <div className="text-center text-gray-400 text-sm py-8">
+              <div className="text-center text-sm py-8" style={{ color: 'var(--admin-text-faint)' }}>
                 <Move className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>Klicken Sie auf ein Element,<br/>um es zu bearbeiten</p>
               </div>
@@ -824,12 +853,12 @@ export const LogoEditor: React.FC = () => {
       {/* Media Library Modal */}
       {showMediaLibrary && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Bild auswählen</h2>
+          <div className="rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+            <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--admin-border)' }}>
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Bild auswählen</h2>
               <button 
                 onClick={() => setShowMediaLibrary(false)}
-                className="text-gray-500 hover:text-gray-700"
+                style={{ color: 'var(--admin-text-muted)' }}
               >
                 ✕
               </button>

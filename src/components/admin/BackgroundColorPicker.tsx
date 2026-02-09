@@ -77,14 +77,17 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-rose-400 transition-colors shadow-sm"
+        className="flex items-center gap-2 px-3 py-2 border-2 rounded-lg transition-colors"
+        style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow)' }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--admin-border-strong)')}
         title="Hintergrundfarbe ändern"
       >
         <div
-          className="w-6 h-6 rounded border-2 border-gray-400"
-          style={{ backgroundColor: value || '#FFFFFF' }}
+          className="w-6 h-6 rounded border-2"
+          style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: value || '#FFFFFF' }}
         />
-        <Palette className="w-4 h-4 text-gray-600" />
+        <Palette className="w-4 h-4" style={{ color: 'var(--admin-text-secondary)' }} />
       </button>
 
       {/* Color Picker Modal */}
@@ -97,13 +100,14 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
           />
 
           {/* Picker Panel */}
-          <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 z-50">
+          <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border p-4 z-50" style={{ backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)', borderColor: 'var(--admin-border)' }}>
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">Hintergrundfarbe</h3>
+              <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Hintergrundfarbe</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="transition"
+                style={{ color: 'var(--admin-text-muted)' }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -111,7 +115,7 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
 
             {/* Quick Colors */}
             <div className="mb-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                 Schnellauswahl
               </p>
               <div className="grid grid-cols-5 gap-2">
@@ -120,12 +124,12 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
                     key={item.color}
                     type="button"
                     onClick={() => handleColorSelect(item.color)}
-                    className={`aspect-square rounded-lg border-2 transition-all hover:scale-110 ${
-                      value === item.color
-                        ? 'border-rose-500 ring-2 ring-rose-200'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    style={{ backgroundColor: item.color }}
+                    className="aspect-square rounded-lg border-2 transition-all hover:scale-110"
+                    style={{
+                      backgroundColor: item.color,
+                      borderColor: value === item.color ? 'var(--admin-accent)' : 'var(--admin-border-strong)',
+                      boxShadow: value === item.color ? '0 0 0 2px var(--admin-accent-light)' : undefined
+                    }}
                     title={item.name}
                   />
                 ))}
@@ -135,7 +139,7 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
             {/* Theme Palette Colors */}
             {paletteColors.length > 0 && (
               <div className="mb-4">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                   Theme-Farben
                 </p>
                 <div className="grid grid-cols-5 gap-2">
@@ -144,12 +148,12 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
                       key={idx}
                       type="button"
                       onClick={() => handleColorSelect(item.color)}
-                      className={`aspect-square rounded-lg border-2 transition-all hover:scale-110 ${
-                        value === item.color
-                          ? 'border-rose-500 ring-2 ring-rose-200'
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                      style={{ backgroundColor: item.color }}
+                      className="aspect-square rounded-lg border-2 transition-all hover:scale-110"
+                      style={{
+                        backgroundColor: item.color,
+                        borderColor: value === item.color ? 'var(--admin-accent)' : 'var(--admin-border-strong)',
+                        boxShadow: value === item.color ? '0 0 0 2px var(--admin-accent-light)' : undefined
+                      }}
                       title={item.name}
                     />
                   ))}
@@ -159,7 +163,7 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
 
             {/* Custom Color Picker */}
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                 Eigene Farbe
               </p>
               <div className="flex gap-2">
@@ -167,19 +171,24 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
                   type="color"
                   value={customColor}
                   onChange={(e) => setCustomColor(e.target.value)}
-                  className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                  className="w-16 h-10 rounded border cursor-pointer"
+                  style={{ borderColor: 'var(--admin-border-strong)' }}
                 />
                 <input
                   type="text"
                   value={customColor}
                   onChange={(e) => setCustomColor(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm font-mono"
+                  style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)' }}
                   placeholder="#FFFFFF"
                 />
                 <button
                   type="button"
                   onClick={() => handleColorSelect(customColor)}
-                  className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors text-sm font-medium"
+                  className="px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                  style={{ backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-accent-hover)')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--admin-accent)')}
                 >
                   OK
                 </button>
@@ -190,7 +199,10 @@ export const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
             <button
               type="button"
               onClick={() => handleColorSelect('')}
-              className="w-full mt-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full mt-3 py-2 text-sm border rounded-lg transition-colors"
+              style={{ color: 'var(--admin-text-secondary)', borderColor: 'var(--admin-border-strong)' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; e.currentTarget.style.color = 'var(--admin-text)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--admin-text-secondary)'; }}
             >
               Transparent (Standard)
             </button>

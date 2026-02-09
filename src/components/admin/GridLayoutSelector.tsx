@@ -48,16 +48,18 @@ export const GridLayoutSelector: React.FC<GridLayoutSelectorProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg hover:border-rose-400 focus:border-rose-500 focus:outline-none transition flex items-center justify-between"
+        className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition flex items-center justify-between"
+        style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)' }}
       >
         <div className="flex items-center gap-3 flex-1">
           <GridPreview columns={selectedOption.columns} size="small" />
-          <span className="font-medium text-gray-900">{selectedOption.label}</span>
+          <span className="font-medium" style={{ color: 'var(--admin-text-heading)' }}>{selectedOption.label}</span>
         </div>
         <ChevronDown
-          className={`w-5 h-5 text-gray-500 transition-transform ${
+          className={`w-5 h-5 transition-transform ${
             isOpen ? 'rotate-180' : ''
           }`}
+          style={{ color: 'var(--admin-text-muted)' }}
         />
       </button>
 
@@ -68,20 +70,21 @@ export const GridLayoutSelector: React.FC<GridLayoutSelectorProps> = ({
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           ></div>
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-lg z-20 max-h-80 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 border-2 rounded-lg z-20 max-h-80 overflow-y-auto" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow-lg)' }}>
             {LAYOUT_OPTIONS.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition ${
-                  option.value === value ? 'bg-rose-50' : ''
-                }`}
+                className="w-full px-4 py-3 flex items-center gap-3 transition"
+                style={option.value === value ? { backgroundColor: 'var(--admin-accent-bg)' } : undefined}
+                onMouseEnter={e => { if (option.value !== value) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                onMouseLeave={e => { if (option.value !== value) e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <GridPreview columns={option.columns} size="large" />
-                <span className="font-medium text-gray-900">{option.label}</span>
+                <span className="font-medium" style={{ color: 'var(--admin-text-heading)' }}>{option.label}</span>
                 {option.value === value && (
-                  <span className="ml-auto text-rose-500 font-bold">✓</span>
+                  <span className="ml-auto font-bold" style={{ color: 'var(--admin-accent)' }}>✓</span>
                 )}
               </button>
             ))}

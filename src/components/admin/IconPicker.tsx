@@ -80,11 +80,14 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-3 px-4 py-2 border border-slate-300 rounded-lg hover:border-slate-400 transition bg-white"
+        className="w-full flex items-center gap-3 px-4 py-2 border rounded-lg transition"
+        style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)' }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--admin-border-strong)')}
       >
         {CurrentIcon && <CurrentIcon size={24} />}
         <span className="flex-1 text-left">{value}</span>
-        <span className="text-slate-400">▼</span>
+        <span style={{ color: 'var(--admin-text-muted)' }}>▼</span>
       </button>
 
       {/* Dropdown */}
@@ -97,29 +100,31 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
           />
 
           {/* Icon Grid */}
-          <div className="absolute z-50 mt-2 w-full min-w-[550px] bg-white border border-slate-300 rounded-lg shadow-xl max-h-96 overflow-hidden">
+          <div className="absolute z-50 mt-2 w-full min-w-[550px] border rounded-lg max-h-96 overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border-strong)', boxShadow: 'var(--admin-shadow-lg)' }}>
             {/* Search Bar */}
-            <div className="p-3 border-b border-slate-200 sticky top-0 bg-white">
+            <div className="p-3 border-b sticky top-0" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-card)' }}>
               <div className="relative">
-                <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+                <Search className="absolute left-3 top-2.5" style={{ color: 'var(--admin-text-muted)' }} size={18} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search icons..."
-                  className="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-800"
+                  className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)' }}
                   autoFocus
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-2.5"
+                    style={{ color: 'var(--admin-text-muted)' }}
                   >
                     <X size={18} />
                   </button>
                 )}
               </div>
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs mt-2" style={{ color: 'var(--admin-text-muted)' }}>
                 {filteredIcons.length} icons available
               </p>
             </div>
@@ -128,10 +133,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
             <div className="p-3 overflow-y-auto max-h-80">
               {!searchTerm && (
                 <div className="mb-4">
-                  <p className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">
+                  <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'var(--admin-text-secondary)' }}>
                     Popular Icons
                   </p>
-                  <div className="grid grid-cols-6 gap-2 pb-3 border-b border-slate-200">
+                  <div className="grid grid-cols-6 gap-2 pb-3 border-b" style={{ borderColor: 'var(--admin-border)' }}>
                     {POPULAR_ICONS.map((iconName) => {
                       const IconComponent = LucideIcons[iconName as keyof typeof LucideIcons] as React.FC<{ size?: number }>;
                       if (!IconComponent) return null;
@@ -145,9 +150,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
                             setIsOpen(false);
                             setSearchTerm('');
                           }}
-                          className={`flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-slate-100 transition ${
-                            value === iconName ? 'bg-slate-800 text-white hover:bg-slate-700' : ''
-                          }`}
+                          className="flex flex-col items-center gap-1 p-2 rounded-lg transition"
+                          style={value === iconName ? { backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' } : {}}
+                          onMouseEnter={e => { if (value !== iconName) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                          onMouseLeave={e => { if (value !== iconName) e.currentTarget.style.backgroundColor = ''; }}
                           title={iconName}
                         >
                           <IconComponent size={20} />
@@ -177,9 +183,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
                           setIsOpen(false);
                           setSearchTerm('');
                         }}
-                        className={`flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-slate-100 transition ${
-                          value === iconName ? 'bg-slate-800 text-white hover:bg-slate-700' : ''
-                        }`}
+                        className="flex flex-col items-center gap-1 p-2 rounded-lg transition"
+                        style={value === iconName ? { backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' } : {}}
+                        onMouseEnter={e => { if (value !== iconName) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                        onMouseLeave={e => { if (value !== iconName) e.currentTarget.style.backgroundColor = ''; }}
                         title={iconName}
                       >
                         <IconComponent size={20} />
@@ -192,7 +199,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
               </div>
 
               {filteredIcons.length === 0 && (
-                <p className="text-center text-slate-500 py-8">No icons found</p>
+                <p className="text-center py-8" style={{ color: 'var(--admin-text-muted)' }}>No icons found</p>
               )}
             </div>
           </div>

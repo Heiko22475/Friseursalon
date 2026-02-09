@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Download, Upload, Database, FileArchive } from 'lucide-react';
+import { Download, Upload, Database, FileArchive } from 'lucide-react';
+import { AdminHeader } from './AdminHeader';
 import JSZip from 'jszip';
 
 export const DataExport: React.FC = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -326,31 +325,21 @@ After running all SQL files, import your data JSON.
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
+      <AdminHeader
+        title="Daten Export/Import"
+        icon={Database}
+      />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate('/admin')}
-            className="flex items-center gap-2 text-gray-600 hover:text-rose-500 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück zum Dashboard
-          </button>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Database className="w-8 h-8 text-rose-500" />
-            <h1 className="text-3xl font-bold text-gray-900">Daten Export/Import</h1>
-          </div>
+        <div className="rounded-xl p-8" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
 
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
-                message.includes('Fehler')
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className="mb-6 p-4 rounded-lg"
+              style={{
+                backgroundColor: message.includes('Fehler') ? 'var(--admin-danger-bg)' : 'var(--admin-success-bg)',
+                color: message.includes('Fehler') ? 'var(--admin-danger)' : 'var(--admin-success)'
+              }}
             >
               {message}
             </div>
@@ -358,16 +347,16 @@ After running all SQL files, import your data JSON.
 
           <div className="space-y-8">
             {/* Export Section */}
-            <div className="border-b pb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Daten exportieren</h2>
-              <p className="text-gray-600 mb-6">
+            <div style={{ borderBottom: '1px solid var(--admin-border)' }} className="pb-8">
+              <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Daten exportieren</h2>
+              <p className="mb-6" style={{ color: 'var(--admin-text-secondary)' }}>
                 Exportieren Sie alle Daten aus der Datenbank als JSON-Datei. Dies ist nützlich für
                 Backups oder den Umzug zu einer anderen Datenbank.
               </p>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-blue-900 mb-2">Exportierte Tabellen:</h3>
-                <ul className="text-sm text-blue-800 space-y-1">
+              <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'var(--admin-accent-bg)', border: '1px solid var(--admin-border)' }}>
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>Exportierte Tabellen:</h3>
+                <ul className="text-sm space-y-1" style={{ color: 'var(--admin-text-secondary)' }}>
                   {tables.map((table) => (
                     <li key={table}>• {table}</li>
                   ))}
@@ -377,7 +366,10 @@ After running all SQL files, import your data JSON.
               <button
                 onClick={exportData}
                 disabled={loading}
-                className="flex items-center gap-2 bg-rose-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-600 transition disabled:opacity-50"
+                className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Download className="w-5 h-5" />
                 {loading ? 'Exportiere...' : 'Jetzt exportieren'}
@@ -385,15 +377,15 @@ After running all SQL files, import your data JSON.
             </div>
 
             {/* Schema Export Section */}
-            <div className="border-b pb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Schema exportieren</h2>
-              <p className="text-gray-600 mb-6">
+            <div style={{ borderBottom: '1px solid var(--admin-border)' }} className="pb-8">
+              <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Schema exportieren</h2>
+              <p className="mb-6" style={{ color: 'var(--admin-text-secondary)' }}>
                 Exportieren Sie die komplette Datenbankstruktur (Tabellen, Indizes, Policies, Foreign Keys) als ZIP mit CSV-Dateien.
               </p>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-purple-900 mb-2">Exportierte Dateien:</h3>
-                <ul className="text-sm text-purple-800 space-y-1">
+              <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'var(--admin-accent-bg)', border: '1px solid var(--admin-border)' }}>
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>Exportierte Dateien:</h3>
+                <ul className="text-sm space-y-1" style={{ color: 'var(--admin-text-secondary)' }}>
                   <li>• tables.csv - Alle Tabellen mit Spalten und Datentypen</li>
                   <li>• indexes.csv - Alle Indizes</li>
                   <li>• policies.csv - Alle RLS Policies</li>
@@ -404,7 +396,10 @@ After running all SQL files, import your data JSON.
               <button
                 onClick={exportSchema}
                 disabled={loading}
-                className="flex items-center gap-2 bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition disabled:opacity-50"
+                className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                style={{ backgroundColor: 'var(--admin-accent)' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <FileArchive className="w-5 h-5" />
                 {loading ? 'Exportiere Schema...' : 'Schema als ZIP exportieren'}
@@ -413,15 +408,15 @@ After running all SQL files, import your data JSON.
 
             {/* Import Section */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Daten importieren</h2>
-              <p className="text-gray-600 mb-6">
+              <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--admin-text-heading)' }}>Daten importieren</h2>
+              <p className="mb-6" style={{ color: 'var(--admin-text-secondary)' }}>
                 Importieren Sie Daten aus einer zuvor exportierten JSON-Datei. Bestehende Daten
                 bleiben erhalten, neue Einträge werden hinzugefügt.
               </p>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-yellow-900 mb-2">⚠️ Wichtig:</h3>
-                <ul className="text-sm text-yellow-800 space-y-1">
+              <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'var(--admin-danger-bg)', border: '1px solid var(--admin-border)' }}>
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--admin-danger)' }}>⚠️ Wichtig:</h3>
+                <ul className="text-sm space-y-1" style={{ color: 'var(--admin-text-secondary)' }}>
                   <li>• Bestehende Daten werden NICHT gelöscht</li>
                   <li>• Neue Einträge werden hinzugefügt</li>
                   <li>• Duplikate können entstehen</li>
@@ -440,9 +435,12 @@ After running all SQL files, import your data JSON.
                 />
                 <label
                   htmlFor="import-file"
-                  className={`flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition cursor-pointer inline-flex ${
+                  className={`flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold transition cursor-pointer inline-flex ${
                     loading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
+                  style={{ backgroundColor: 'var(--admin-accent)' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
                   <Upload className="w-5 h-5" />
                   {loading ? 'Importiere...' : 'JSON-Datei auswählen'}

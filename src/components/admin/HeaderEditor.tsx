@@ -62,12 +62,15 @@ const Section: React.FC<SectionProps> = ({ title, icon, defaultOpen = false, chi
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-gray-50 flex items-center justify-between hover:bg-gray-100 transition"
+        className="w-full px-4 py-3 flex items-center justify-between transition"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)'}
       >
-        <div className="flex items-center gap-2 font-medium text-gray-700">
+        <div className="flex items-center gap-2 font-medium" style={{ color: 'var(--admin-text-secondary)' }}>
           {icon}
           {title}
         </div>
@@ -88,17 +91,18 @@ interface SelectProps {
 
 const Select: React.FC<SelectProps> = ({ label, value, onChange, options, helpText }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+      className="w-full px-3 py-2 border rounded-lg admin-focus"
+      style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
       ))}
     </select>
-    {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
+    {helpText && <p className="mt-1 text-xs" style={{ color: 'var(--admin-text-muted)' }}>{helpText}</p>}
   </div>
 );
 
@@ -112,15 +116,16 @@ interface TextInputProps {
 
 const TextInput: React.FC<TextInputProps> = ({ label, value, onChange, placeholder, helpText }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
     <input
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+      className="w-full px-3 py-2 border rounded-lg admin-focus"
+      style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
     />
-    {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
+    {helpText && <p className="mt-1 text-xs" style={{ color: 'var(--admin-text-muted)' }}>{helpText}</p>}
   </div>
 );
 
@@ -136,7 +141,7 @@ interface NumberInputProps {
 
 const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, min, max, step = 1, helpText }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
     <input
       type="number"
       value={value}
@@ -144,9 +149,10 @@ const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, min, 
       min={min}
       max={max}
       step={step}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+      className="w-full px-3 py-2 border rounded-lg admin-focus"
+      style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
     />
-    {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
+    {helpText && <p className="mt-1 text-xs" style={{ color: 'var(--admin-text-muted)' }}>{helpText}</p>}
   </div>
 );
 
@@ -160,14 +166,13 @@ interface ToggleProps {
 const Toggle: React.FC<ToggleProps> = ({ label, checked, onChange, helpText }) => (
   <div className="flex items-center justify-between">
     <div>
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-      {helpText && <p className="text-xs text-gray-500">{helpText}</p>}
+      <span className="text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>{label}</span>
+      {helpText && <p className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{helpText}</p>}
     </div>
     <button
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-        checked ? 'bg-rose-500' : 'bg-gray-300'
-      }`}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition`}
+      style={{ backgroundColor: checked ? 'var(--admin-accent)' : 'var(--admin-border-strong)' }}
     >
       <span
         className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
@@ -189,19 +194,21 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => 
   
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1" style={{ color: 'var(--admin-text-secondary)' }}>{label}</label>
       <div className="flex gap-2">
         <input
           type="color"
           value={hexValue}
           onChange={(e) => onChange({ kind: 'custom', hex: e.target.value })}
-          className="w-10 h-10 rounded border border-gray-300 cursor-pointer"
+          className="w-10 h-10 rounded border cursor-pointer"
+          style={{ borderColor: 'var(--admin-border-strong)' }}
         />
         <input
           type="text"
           value={hexValue}
           onChange={(e) => onChange({ kind: 'custom', hex: e.target.value })}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          className="flex-1 px-3 py-2 border rounded-lg admin-focus"
+          style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
         />
       </div>
     </div>
@@ -241,17 +248,17 @@ const NavItemEditor: React.FC<NavItemEditorProps> = ({
   ];
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-card)' }}>
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-gray-50">
-        <GripVertical size={16} className="text-gray-400 cursor-move" />
+      <div className="flex items-center gap-2 px-3 py-2" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+        <GripVertical size={16} className="cursor-move" style={{ color: 'var(--admin-text-muted)' }} />
         
         <button
           onClick={() => onUpdate({ visible: !item.visible })}
-          className="p-1 hover:bg-gray-200 rounded"
+          className="p-1 rounded admin-hover-bg"
           title={item.visible ? 'Ausblenden' : 'Einblenden'}
         >
-          {item.visible ? <Eye size={16} /> : <EyeOff size={16} className="text-gray-400" />}
+          {item.visible ? <Eye size={16} /> : <EyeOff size={16} style={{ color: 'var(--admin-text-muted)' }} />}
         </button>
 
         <span className="flex-1 font-medium text-sm">{item.label || 'Neuer Punkt'}</span>
@@ -260,20 +267,20 @@ const NavItemEditor: React.FC<NavItemEditorProps> = ({
           <button
             onClick={onMoveUp}
             disabled={isFirst}
-            className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+            className="p-1 rounded disabled:opacity-30 admin-hover-bg"
           >
             <ChevronUp size={16} />
           </button>
           <button
             onClick={onMoveDown}
             disabled={isLast}
-            className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+            className="p-1 rounded disabled:opacity-30 admin-hover-bg"
           >
             <ChevronDown size={16} />
           </button>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1 hover:bg-gray-200 rounded"
+            className="p-1 rounded admin-hover-bg"
           >
             <Settings size={16} />
           </button>
@@ -288,7 +295,7 @@ const NavItemEditor: React.FC<NavItemEditorProps> = ({
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="p-3 space-y-3 border-t border-gray-200">
+        <div className="p-3 space-y-3 border-t" style={{ borderColor: 'var(--admin-border)' }}>
           <TextInput
             label="Bezeichnung"
             value={item.label}
@@ -380,7 +387,8 @@ const NavigationEditor: React.FC<NavigationEditorProps> = ({ items, onChange }) 
 
       <button
         onClick={addItem}
-        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-rose-500 hover:text-rose-500 transition flex items-center justify-center gap-2"
+        className="w-full py-2 border-2 border-dashed rounded-lg transition flex items-center justify-center gap-2"
+        style={{ borderColor: 'var(--admin-border-strong)', color: 'var(--admin-text-muted)' }}
       >
         <Plus size={16} /> Menüpunkt hinzufügen
       </button>
@@ -474,14 +482,14 @@ export const HeaderEditor: React.FC<HeaderEditorProps> = ({ config, onChange }) 
             <button
               key={opt.value}
               onClick={() => changeVariant(opt.value)}
-              className={`p-3 border-2 rounded-lg text-left transition ${
-                config.variant === opt.value
-                  ? 'border-rose-500 bg-rose-50'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              className={`p-3 border-2 rounded-lg text-left transition`}
+              style={config.variant === opt.value 
+                ? { borderColor: 'var(--admin-accent)', backgroundColor: 'var(--admin-accent-bg)' }
+                : { borderColor: 'var(--admin-border)' }
+              }
             >
               <div className="font-medium text-sm">{opt.label}</div>
-              <div className="text-xs text-gray-500">{opt.description}</div>
+              <div className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{opt.description}</div>
             </button>
           ))}
         </div>

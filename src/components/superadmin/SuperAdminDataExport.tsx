@@ -4,13 +4,12 @@
  */
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, Download, Upload, Database, FileArchive, AlertCircle } from 'lucide-react';
+import { Download, Upload, Database, FileArchive, AlertCircle } from 'lucide-react';
 import JSZip from 'jszip';
+import { AdminHeader } from '../admin/AdminHeader';
 
 export const SuperAdminDataExport: React.FC = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
@@ -330,33 +329,20 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/superadmin')}
-              className="p-2 hover:bg-gray-100 rounded-full transition"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">SuperAdmin Data Export/Import</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Export und Import von System-Daten (Vorlagen, Stockphotos, etc.)
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen">
+      <AdminHeader
+        title="SuperAdmin Data Export/Import"
+        subtitle="Export und Import von System-Daten (Vorlagen, Stockphotos, etc.)"
+        icon={Database}
+        backTo="/superadmin"
+      />
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Warning */}
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-amber-900">
+        <div className="mb-6 p-4 rounded-lg flex gap-3" style={{ backgroundColor: 'var(--admin-danger-bg)', border: '1px solid var(--admin-danger)' }}>
+          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--admin-danger)' }} />
+          <div className="text-sm" style={{ color: 'var(--admin-text)' }}>
             <p className="font-semibold mb-1">⚠️ Achtung: System-Daten</p>
             <p>
               Diese Seite verwaltet SYSTEM-WEITE Daten, die für alle Kunden verfügbar sind.
@@ -368,13 +354,26 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
         {/* Message Display */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${
-              messageType === 'success'
-                ? 'bg-green-50 border border-green-200 text-green-900'
+            className="mb-6 p-4 rounded-lg"
+            style={{
+              backgroundColor: messageType === 'success'
+                ? 'var(--admin-success-bg)'
                 : messageType === 'error'
-                ? 'bg-red-50 border border-red-200 text-red-900'
-                : 'bg-blue-50 border border-blue-200 text-blue-900'
-            }`}
+                ? 'var(--admin-danger-bg)'
+                : 'var(--admin-accent-bg)',
+              border: `1px solid ${
+                messageType === 'success'
+                  ? 'var(--admin-success)'
+                  : messageType === 'error'
+                  ? 'var(--admin-danger)'
+                  : 'var(--admin-accent)'
+              }`,
+              color: messageType === 'success'
+                ? 'var(--admin-success)'
+                : messageType === 'error'
+                ? 'var(--admin-danger)'
+                : 'var(--admin-accent)',
+            }}
           >
             {message}
           </div>
@@ -382,19 +381,19 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
 
         <div className="grid gap-6">
           {/* Export Section */}
-          <section className="bg-white rounded-xl shadow-sm border p-6">
+          <section className="rounded-xl p-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
             <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Download className="w-6 h-6 text-green-600" />
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--admin-success-bg)' }}>
+                <Download className="w-6 h-6" style={{ color: 'var(--admin-success)' }} />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Daten exportieren</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--admin-text-heading)' }}>Daten exportieren</h2>
+                <p className="mb-4" style={{ color: 'var(--admin-text-secondary)' }}>
                   Exportiert alle SuperAdmin-Daten als ZIP-Archiv.
                 </p>
-                <div className="bg-gray-50 rounded-lg p-4 mb-4 text-sm">
-                  <p className="font-semibold text-gray-900 mb-2">Enthält:</p>
-                  <ul className="space-y-1 text-gray-700">
+                <div className="rounded-lg p-4 mb-4 text-sm" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
+                  <p className="font-semibold mb-2" style={{ color: 'var(--admin-text-heading)' }}>Enthält:</p>
+                  <ul className="space-y-1" style={{ color: 'var(--admin-text)' }}>
                     <li>✓ Karten-Vorlagen (card_templates)</li>
                     <li>✓ Stockphotos-Metadaten (stock_photos)</li>
                     <li>✓ Alle Medien-Dateien (media/)</li>
@@ -404,7 +403,10 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
                 <button
                   onClick={exportSuperAdminData}
                   disabled={loading}
-                  className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 text-white font-medium rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--admin-success)' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
                   {loading ? (
                     <>
@@ -423,30 +425,30 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
           </section>
 
           {/* Import Section */}
-          <section className="bg-white rounded-xl shadow-sm border p-6">
+          <section className="rounded-xl p-6" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
             <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Upload className="w-6 h-6 text-blue-600" />
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--admin-accent-bg)' }}>
+                <Upload className="w-6 h-6" style={{ color: 'var(--admin-accent)' }} />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Daten importieren</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--admin-text-heading)' }}>Daten importieren</h2>
+                <p className="mb-4" style={{ color: 'var(--admin-text-secondary)' }}>
                   Lädt SuperAdmin-Daten aus einem ZIP-Export hoch.
                 </p>
                 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-red-900 font-semibold mb-2">
+                <div className="rounded-lg p-4 mb-4" style={{ backgroundColor: 'var(--admin-danger-bg)', border: '1px solid var(--admin-danger)' }}>
+                  <p className="text-sm font-semibold mb-2" style={{ color: 'var(--admin-danger)' }}>
                     ⚠️ WARNUNG: DESTRUKTIVE OPERATION!
                   </p>
-                  <p className="text-sm text-red-900">
+                  <p className="text-sm" style={{ color: 'var(--admin-danger)' }}>
                     Der Import löscht ALLE bestehenden System-Daten unwiderruflich:
                   </p>
-                  <ul className="text-sm text-red-900 mt-2 space-y-1 list-disc list-inside">
+                  <ul className="text-sm mt-2 space-y-1 list-disc list-inside" style={{ color: 'var(--admin-danger)' }}>
                     <li>Alle Karten-Vorlagen werden gelöscht</li>
                     <li>Alle Stock Photos werden aus dem Storage gelöscht</li>
                     <li>Alle Metadaten werden überschrieben</li>
                   </ul>
-                  <p className="text-sm text-red-900 mt-2 font-semibold">
+                  <p className="text-sm mt-2 font-semibold" style={{ color: 'var(--admin-danger)' }}>
                     Erstellen Sie vorher unbedingt einen Export als Backup!
                   </p>
                 </div>
@@ -456,17 +458,18 @@ ${superAdminTables.map(t => `- ${t} (${exportData.data[t]?.length || 0} records)
                   accept=".zip"
                   onChange={handleImport}
                   disabled={loading}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2 disabled:opacity-50"
+                  className="block w-full text-sm rounded-lg cursor-pointer focus:outline-none p-2 disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                 />
               </div>
             </div>
           </section>
 
           {/* Info Section */}
-          <section className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <section className="rounded-xl p-6" style={{ backgroundColor: 'var(--admin-accent-bg)', border: '1px solid var(--admin-accent)' }}>
             <div className="flex gap-3">
-              <Database className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-900">
+              <Database className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--admin-accent)' }} />
+              <div className="text-sm" style={{ color: 'var(--admin-text)' }}>
                 <p className="font-semibold mb-2">Hinweise zum Daten-Export/Import:</p>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>Export erstellt ein ZIP mit JSON-Daten, Medien-Dateien und CSV-Schema</li>

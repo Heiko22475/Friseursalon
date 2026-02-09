@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive, PenTool } from 'lucide-react';
+import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive, PenTool, ExternalLink, Sun, Moon } from 'lucide-react';
 import { useConfirmDialog } from './admin/ConfirmDialog';
+import { useAdminTheme } from '../contexts/AdminThemeContext';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -11,21 +12,17 @@ export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { Dialog, confirm } = useConfirmDialog();
   const [showBackupReminder, setShowBackupReminder] = useState(false);
+  const { theme, toggleTheme } = useAdminTheme();
 
   // Check if backup reminder should be shown
   useEffect(() => {
     const shouldShow = localStorage.getItem('showBackupReminder');
     if (shouldShow === 'true') {
-      // Clear the flag
       localStorage.removeItem('showBackupReminder');
-      
-      // Check when last backup was made
       const lastBackup = localStorage.getItem('lastBackupDate');
       const daysSinceBackup = lastBackup 
         ? Math.floor((Date.now() - new Date(lastBackup).getTime()) / (1000 * 60 * 60 * 24))
         : null;
-
-      // Show reminder if no backup or older than 7 days
       if (!lastBackup || daysSinceBackup === null || daysSinceBackup > 7) {
         setShowBackupReminder(true);
       }
@@ -44,7 +41,7 @@ export const AdminDashboard: React.FC = () => {
         '💾 Backup empfohlen',
         <div>
           <p className="mb-3">{message}</p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-400">
             Ein Backup enthält alle Ihre Seiten, Inhalte, Designs und Medien-Dateien.
           </p>
         </div>,
@@ -67,109 +64,214 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const sections = [
-    { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
-    { id: 'visual-editor', name: 'Visual Editor', icon: PenTool, path: '/admin/visual-editor', enabled: true, featured: true },
-    { id: 'media', name: 'Mediathek', icon: FolderOpen, path: '/admin/media', enabled: true, featured: false },
-    { id: 'backup', name: 'Backup & Wiederherstellung', icon: HardDrive, path: '/admin/backup', enabled: true, featured: false },
-    { id: 'logos', name: 'Logo-Designer', icon: Sparkles, path: '/admin/logos', enabled: true, featured: false },
-    { id: 'settings', name: 'Website-Einstellungen', icon: Settings, path: '/admin/settings', enabled: true, featured: false },
-    { id: 'theme', name: 'Theme Editor', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
-    { id: 'typography', name: 'Typographie', icon: Type, path: '/admin/typography', enabled: true, featured: false },
+    { id: 'pages', name: 'Seiten-Verwaltung', desc: 'Seiten anlegen & verwalten', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
+    { id: 'visual-editor', name: 'Visual Editor', desc: 'Visuell gestalten', icon: PenTool, path: '/admin/visual-editor', enabled: true, featured: true },
+    { id: 'media', name: 'Mediathek', desc: 'Bilder & Dateien', icon: FolderOpen, path: '/admin/media', enabled: true, featured: false },
+    { id: 'backup', name: 'Backup & Restore', desc: 'Sicherung & Wiederherstellung', icon: HardDrive, path: '/admin/backup', enabled: true, featured: false },
+    { id: 'logos', name: 'Logo-Designer', desc: 'Logo erstellen & anpassen', icon: Sparkles, path: '/admin/logos', enabled: true, featured: false },
+    { id: 'settings', name: 'Einstellungen', desc: 'Website-Einstellungen', icon: Settings, path: '/admin/settings', enabled: true, featured: false },
+    { id: 'theme', name: 'Theme Editor', desc: 'Farben & Design', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
+    { id: 'typography', name: 'Typographie', desc: 'Schriften & Größen', icon: Type, path: '/admin/typography', enabled: true, featured: false },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
       <Dialog />
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
-                BeautifulCMS
-              </h1>
-              {websiteRecord && (
-                <span className="text-gray-400 text-lg">
-                  — {websiteRecord.site_name}
-                  {(websiteRecord as any).domain_name && (
-                    <span className="text-gray-300 ml-2">({(websiteRecord as any).domain_name})</span>
-                  )}
-                </span>
-              )}
-            </div>
-            <p className="text-sm text-gray-600 mt-1">
-              Angemeldet als: {user?.email}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-600 hover:text-rose-500 transition"
+      <header
+        style={{
+          backgroundColor: 'var(--admin-bg-surface)',
+          borderBottom: '1px solid var(--admin-border)',
+          padding: '12px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: 700,
+                background: `linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light))`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
             >
-              Website ansehen
-            </a>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition"
-            >
-              <LogOut className="w-4 h-4" />
-              Abmelden
-            </button>
+              BeautifulCMS
+            </h1>
+            {websiteRecord && (
+              <span style={{ color: 'var(--admin-text-muted)', fontSize: '14px' }}>
+                — {websiteRecord.site_name}
+                {(websiteRecord as any).domain_name && (
+                  <span style={{ color: 'var(--admin-text-faint)', marginLeft: '8px' }}>
+                    ({(websiteRecord as any).domain_name})
+                  </span>
+                )}
+              </span>
+            )}
           </div>
+          <p style={{ fontSize: '12px', color: 'var(--admin-text-muted)', marginTop: '2px' }}>
+            {user?.email}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              borderRadius: '6px',
+              border: '1px solid var(--admin-border-strong)',
+              backgroundColor: 'var(--admin-bg-input)',
+              color: 'var(--admin-text-secondary)',
+              fontSize: '13px',
+              textDecoration: 'none',
+              transition: 'all 0.15s',
+            }}
+          >
+            <ExternalLink size={14} />
+            Website ansehen
+          </a>
+          <button
+            onClick={toggleTheme}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              border: '1px solid var(--admin-border-strong)',
+              backgroundColor: 'var(--admin-bg-input)',
+              color: 'var(--admin-text-muted)',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+            }}
+            title={theme === 'dark' ? 'Zum hellen Design wechseln' : 'Zum dunklen Design wechseln'}
+          >
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+          <button
+            onClick={handleSignOut}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              borderRadius: '6px',
+              border: '1px solid var(--admin-border-strong)',
+              backgroundColor: 'var(--admin-bg-input)',
+              color: 'var(--admin-text-secondary)',
+              fontSize: '13px',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+            }}
+          >
+            <LogOut size={14} />
+            Abmelden
+          </button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Willkommen im Content Management System
+      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--admin-text-heading)', marginBottom: '6px' }}>
+            Dashboard
           </h2>
-          <p className="text-gray-600">
+          <p style={{ fontSize: '14px', color: 'var(--admin-text-muted)' }}>
             Wählen Sie einen Bereich aus, um Inhalte zu bearbeiten.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+            gap: '16px',
+          }}
+        >
           {sections.map((section) => {
             const Icon = section.icon;
-            const isEnabled = section.enabled;
             const isFeatured = section.featured;
             return (
               <button
                 key={section.id}
-                onClick={() => isEnabled && navigate(section.path)}
-                disabled={!isEnabled}
-                className={`bg-white p-6 rounded-xl shadow-sm transition group ${
-                  isEnabled
-                    ? 'hover:shadow-md cursor-pointer'
-                    : 'opacity-50 cursor-not-allowed'
-                } ${isFeatured ? 'ring-2 ring-rose-500' : ''}`}
+                onClick={() => section.enabled && navigate(section.path)}
+                disabled={!section.enabled}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  padding: '20px',
+                  backgroundColor: 'var(--admin-bg-card)',
+                  border: `1px solid ${isFeatured ? 'var(--admin-accent-bg)' : 'var(--admin-border)'}`,
+                  borderRadius: '10px',
+                  cursor: section.enabled ? 'pointer' : 'not-allowed',
+                  opacity: section.enabled ? 1 : 0.5,
+                  transition: 'all 0.15s',
+                  textAlign: 'left',
+                  color: 'var(--admin-text)',
+                  ...(isFeatured ? { boxShadow: `0 0 0 1px var(--admin-accent-bg)` } : {}),
+                }}
+                onMouseEnter={(e) => {
+                  if (section.enabled) {
+                    e.currentTarget.style.borderColor = isFeatured ? 'var(--admin-accent)' : 'var(--admin-border-strong)';
+                    e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = 'var(--admin-shadow-lg)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = isFeatured ? 'var(--admin-accent-bg)' : 'var(--admin-border)';
+                  e.currentTarget.style.backgroundColor = 'var(--admin-bg-card)';
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = isFeatured ? `0 0 0 1px var(--admin-accent-bg)` : 'none';
+                }}
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className={`p-4 rounded-full transition mb-4 ${
-                    isEnabled
-                      ? isFeatured ? 'bg-rose-500 group-hover:bg-rose-600' : 'bg-rose-50 group-hover:bg-rose-100'
-                      : 'bg-gray-100'
-                  }`}>
-                    <Icon className={`w-8 h-8 ${
-                      isEnabled ? (isFeatured ? 'text-white' : 'text-rose-500') : 'text-gray-400'
-                    }`} />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    {section.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {isEnabled ? 'Bearbeiten' : 'Bald verfügbar'}
-                  </p>
-                  {isFeatured && (
-                    <span className="mt-2 text-xs font-semibold text-rose-500">
-                      Multi-Page CMS
-                    </span>
-                  )}
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isFeatured ? 'var(--admin-accent)' : 'var(--admin-bg-input)',
+                    marginBottom: '14px',
+                  }}
+                >
+                  <Icon size={20} style={{ color: isFeatured ? '#fff' : 'var(--admin-text-secondary)' }} />
                 </div>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--admin-text-heading)', margin: '0 0 4px 0' }}>
+                  {section.name}
+                </h3>
+                <p style={{ fontSize: '12px', color: 'var(--admin-text-muted)', margin: 0 }}>
+                  {section.desc}
+                </p>
+                {isFeatured && (
+                  <span
+                    style={{
+                      marginTop: '10px',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      color: 'var(--admin-accent-text)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    ★ Empfohlen
+                  </span>
+                )}
               </button>
             );
           })}

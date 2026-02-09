@@ -77,9 +77,9 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
 
   if (files.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-        <p className="text-gray-500 mb-4">Noch keine Dateien in diesem Ordner</p>
-        <p className="text-sm text-gray-400">
+      <div className="border rounded-lg p-12 text-center" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
+        <p className="mb-4" style={{ color: 'var(--admin-text-secondary)' }}>Noch keine Dateien in diesem Ordner</p>
+        <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
           Klicken Sie auf "Upload", um Dateien hinzuzufügen
         </p>
       </div>
@@ -89,23 +89,23 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   return (
     <>
       {viewMode === 'list' ? (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="rounded-lg border overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
+          <table className="min-w-full" style={{ borderColor: 'var(--admin-border)' }}>
+            <thead style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
               <tr>
                 <th scope="col" className="px-6 py-3 text-left">
                   <span className="sr-only">Auswahl</span>
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>
                   Vorschau
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>
                   Name
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>
                   Größe
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--admin-text-muted)' }}>
                   Datum
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -113,7 +113,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y" style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}>
               {files.map((file) => {
                 const Icon = getFileIcon(file);
                 const isImage = file.file_type === 'image';
@@ -122,7 +122,10 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                 return (
                   <tr 
                     key={file.id} 
-                    className={`hover:bg-gray-50 transition ${isSelected ? 'bg-blue-50' : ''}`}
+                    className="transition cursor-pointer"
+                    style={{ backgroundColor: isSelected ? 'var(--admin-bg-selected)' : undefined }}
+                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = ''; }}
                     onClick={() => onToggleSelect(file.id)}
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -130,7 +133,8 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => onToggleSelect(file.id)}
-                        className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 rounded"
+                        style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)' }}
                         onClick={(e) => e.stopPropagation()}
                       />
                     </td>
@@ -153,22 +157,22 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                             alt=""
                           />
                         ) : (
-                          <div className="h-10 w-10 rounded bg-gray-100 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-gray-400" />
+                          <div className="h-10 w-10 rounded flex items-center justify-center" style={{ backgroundColor: 'var(--admin-bg-input)' }}>
+                            <Icon className="h-6 w-6" style={{ color: 'var(--admin-text-muted)' }} />
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium" style={{ color: 'var(--admin-text-heading)' }}>
                         {file.title || file.original_filename}
                       </div>
-                      <div className="text-sm text-gray-500">{file.filename}</div>
+                      <div className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>{file.filename}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                       {formatFileSize(file.file_size)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
                       {formatDate(file.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -178,7 +182,10 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                             e.stopPropagation();
                             handleDownload(file);
                           }}
-                          className="text-gray-400 hover:text-gray-900"
+                          className="transition"
+                          style={{ color: 'var(--admin-text-muted)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--admin-text)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
                           title="Herunterladen"
                         >
                           <Download className="w-5 h-5" />
@@ -189,7 +196,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                               e.stopPropagation();
                               onDelete(file.id, file.storage_path);
                             }}
-                            className="text-red-400 hover:text-red-900"
+                            className="text-red-400 hover:text-red-300 transition"
                             title="Löschen"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -214,7 +221,10 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
             return (
               <div
                 key={file.id}
-                className={`bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition relative ${isSelected ? 'ring-2 ring-rose-500' : ''}`}
+                className={`rounded-lg border overflow-hidden group transition relative ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--admin-border-strong)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--admin-border)'; }}
                 onClick={() => {
                    if (onSelect) {
                        onSelect(file); 
@@ -234,13 +244,15 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => onToggleSelect(file.id)}
-                    className="h-5 w-5 text-rose-600 focus:ring-rose-500 border-gray-300 rounded shadow-sm bg-white"
+                    className="h-5 w-5 text-blue-500 focus:ring-blue-500 rounded shadow-sm"
+                    style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-input)' }}
                   />
                 </div>
 
                 {/* Thumbnail */}
                 <div
-                  className="aspect-square bg-gray-100 relative cursor-pointer"
+                  className="aspect-square relative cursor-pointer"
+                  style={{ backgroundColor: 'var(--admin-bg)' }}
                 >
                   {isImage ? (
                     <img
@@ -250,19 +262,19 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Icon className="w-16 h-16 text-gray-400" />
+                      <Icon className="w-16 h-16" style={{ color: 'var(--admin-text-faint)' }} />
                     </div>
                   )}
 
                   {/* Overlay Actions */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                     {onSelect ? (
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onSelect(file);
                             }}
-                            className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition font-medium shadow-sm"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow-sm"
                         >
                             Auswählen
                         </button>
@@ -273,10 +285,13 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                                 e.stopPropagation();
                                 handleDownload(file);
                             }}
-                            className="p-2 bg-white rounded-lg hover:bg-gray-100 transition"
+                            className="p-2 rounded-lg transition border"
+                            style={{ backgroundColor: 'var(--admin-bg-input)', borderColor: 'var(--admin-border-strong)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--admin-border-strong)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)'; }}
                             title="Herunterladen"
                             >
-                            <Download className="w-5 h-5 text-gray-700" />
+                            <Download className="w-5 h-5" style={{ color: 'var(--admin-text)' }} />
                             </button>
                             {!readOnly && (
                               <button
@@ -284,10 +299,11 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                                   e.stopPropagation();
                                   onDelete(file.id, file.storage_path);
                               }}
-                              className="p-2 bg-white rounded-lg hover:bg-red-50 transition"
+                              className="p-2 rounded-lg hover:bg-red-900/30 transition border"
+                              style={{ backgroundColor: 'var(--admin-bg-input)', borderColor: 'var(--admin-border-strong)' }}
                               title="Löschen"
                               >
-                              <Trash2 className="w-5 h-5 text-red-500" />
+                              <Trash2 className="w-5 h-5 text-red-400" />
                               </button>
                             )}
                         </>
@@ -297,15 +313,15 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
 
                 {/* Info */}
                 <div className="p-3 cursor-default" onClick={(e) => e.stopPropagation()}>
-                  <p className="font-medium text-gray-900 text-sm truncate mb-1">
+                  <p className="font-medium text-sm truncate mb-1" style={{ color: 'var(--admin-text-heading)' }}>
                     {file.title || file.original_filename}
                   </p>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs" style={{ color: 'var(--admin-text-muted)' }}>
                     <span>{formatFileSize(file.file_size)}</span>
                     <span>{formatDate(file.created_at)}</span>
                   </div>
                   {file.width && file.height && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs mt-1" style={{ color: 'var(--admin-text-faint)' }}>
                       {file.width} × {file.height}
                     </p>
                   )}

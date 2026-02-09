@@ -290,18 +290,19 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition ${
             isDragActive
-              ? 'border-rose-500 bg-rose-50'
-              : 'border-gray-300 hover:border-rose-400'
+              ? 'border-blue-500 bg-blue-500/10'
+              : 'hover:border-blue-400'
           }`}
+          style={!isDragActive ? { borderColor: 'var(--admin-border-strong)' } : undefined}
         >
           <input {...getInputProps()} />
-          <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-          <p className="text-lg font-medium text-gray-700 mb-2">
+          <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--admin-text-muted)' }} />
+          <p className="text-lg font-medium mb-2" style={{ color: 'var(--admin-text)' }}>
             {isDragActive
               ? 'Dateien hier ablegen...'
               : 'Dateien hierher ziehen oder klicken'}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
             Max {Math.round(category.max_file_size / (1024 * 1024))}MB pro Datei
             • Max 30 Dateien
           </p>
@@ -311,19 +312,20 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
       {/* File List */}
       {files.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-gray-900">
+          <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>
             Dateien ({files.length})
           </h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {files.map((uploadFile) => (
               <div
                 key={uploadFile.id}
-                className="bg-gray-50 rounded-lg p-4 space-y-3"
+                className="rounded-lg p-4 space-y-3"
+                style={{ backgroundColor: 'var(--admin-bg-input)' }}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium text-gray-900 truncate">
+                      <p className="font-medium truncate" style={{ color: 'var(--admin-text-heading)' }}>
                         {uploadFile.file.name}
                       </p>
                       {uploadFile.status === 'success' && (
@@ -336,17 +338,18 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                         <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
                       )}
                       {uploadFile.status === 'uploading' && (
-                        <Loader2 className="w-5 h-5 text-rose-500 animate-spin flex-shrink-0" />
+                        <Loader2 className="w-5 h-5 text-blue-400 animate-spin flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm" style={{ color: 'var(--admin-text-muted)' }}>
                       {formatFileSize(uploadFile.file.size)}
                     </p>
                   </div>
                   {(uploadFile.status === 'pending' || uploadFile.status === 'duplicate') && (
                     <button
                       onClick={() => removeFile(uploadFile.id)}
-                      className="text-gray-400 hover:text-red-500 transition"
+                      className="hover:text-red-400 transition"
+                      style={{ color: 'var(--admin-text-muted)' }}
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -363,7 +366,8 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                         updateFile(uploadFile.id, { title: e.target.value })
                       }
                       placeholder="Titel (optional)"
-                      className="px-3 py-2 border rounded-lg text-sm"
+                      className="px-3 py-2 border rounded-lg text-sm focus:border-blue-500 outline-none"
+                      style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-card)', color: 'var(--admin-text)' }}
                     />
                     <input
                       type="text"
@@ -372,16 +376,17 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
                         updateFile(uploadFile.id, { altText: e.target.value })
                       }
                       placeholder="Alt-Text (optional)"
-                      className="px-3 py-2 border rounded-lg text-sm"
+                      className="px-3 py-2 border rounded-lg text-sm focus:border-blue-500 outline-none"
+                      style={{ borderColor: 'var(--admin-border-strong)', backgroundColor: 'var(--admin-bg-card)', color: 'var(--admin-text)' }}
                     />
                   </div>
                 )}
 
                 {/* Progress Bar */}
                 {uploadFile.status === 'uploading' && (
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
                     <div
-                      className="bg-rose-500 h-2 rounded-full transition-all duration-300"
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${uploadFile.progress}%` }}
                     ></div>
                   </div>
@@ -389,12 +394,12 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
 
                 {/* Error/Duplicate Message */}
                 {uploadFile.status === 'error' && (
-                  <p className="text-sm text-red-600">{uploadFile.error}</p>
+                  <p className="text-sm text-red-400">{uploadFile.error}</p>
                 )}
                 {uploadFile.status === 'duplicate' && (
                   <div className="text-sm">
-                    <p className="text-orange-600 font-medium">⚠️ Duplikat gefunden</p>
-                    <p className="text-gray-600">Diese Datei existiert bereits in diesem Ordner</p>
+                    <p className="text-orange-400 font-medium">⚠️ Duplikat gefunden</p>
+                    <p style={{ color: 'var(--admin-text-secondary)' }}>Diese Datei existiert bereits in diesem Ordner</p>
                   </div>
                 )}
               </div>
@@ -408,7 +413,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
         <button
           onClick={handleUpload}
           disabled={files.filter(f => f.status === 'pending').length === 0}
-          className="w-full bg-rose-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Upload className="w-5 h-5" />
           {files.filter(f => f.status === 'pending').length} {files.filter(f => f.status === 'pending').length === 1 ? 'Datei' : 'Dateien'} hochladen
@@ -418,8 +423,8 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
       {/* Uploading Info */}
       {isUploading && (
         <div className="text-center py-4">
-          <Loader2 className="w-8 h-8 mx-auto mb-3 text-rose-500 animate-spin" />
-          <p className="text-gray-600">Upload läuft...</p>
+          <Loader2 className="w-8 h-8 mx-auto mb-3 text-blue-400 animate-spin" />
+          <p style={{ color: 'var(--admin-text-secondary)' }}>Upload läuft...</p>
         </div>
       )}
     </div>

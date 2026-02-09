@@ -4,9 +4,9 @@
 // =====================================================
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
-  ArrowLeft, Save, Plus, Trash2, GripVertical,
+  Save, Plus, Trash2, GripVertical,
   ChevronDown, ChevronUp, Image as ImageIcon, Type, Palette,
   Layout, DollarSign, Star, List, Share2, MousePointer, Settings, Maximize2,
   Info, RefreshCw
@@ -21,6 +21,7 @@ import { FontPicker } from './FontPicker';
 import { FontPickerWithSize } from './FontPickerWithSize';
 import { CardPreviewModal } from './CardPreviewModal';
 import { useConfirmDialog } from './ConfirmDialog';
+import { AdminHeader } from './AdminHeader';
 import {
   GenericCardConfig,
   GenericCardItem,
@@ -77,12 +78,15 @@ const Section: React.FC<SectionProps> = ({
   };
 
   return (
-    <div className={`border border-gray-200 rounded-lg overflow-hidden ${nested ? 'bg-gray-50' : 'bg-white'}`}>
+    <div className={`rounded-lg overflow-hidden`} style={{ border: '1px solid var(--admin-border)', backgroundColor: nested ? 'var(--admin-bg-surface)' : 'var(--admin-bg-card)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-3 ${nested ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'} transition`}
+        className="w-full flex items-center justify-between p-3 transition"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+        onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(0.95)')}
+        onMouseLeave={e => (e.currentTarget.style.filter = '')}
       >
-        <div className={`flex items-center gap-2 ${nested ? 'text-sm' : ''} font-medium text-gray-700`}>
+        <div className={`flex items-center gap-2 ${nested ? 'text-sm' : ''} font-medium`} style={{ color: 'var(--admin-text)' }}>
           {icon}
           {title}
         </div>
@@ -92,11 +96,10 @@ const Section: React.FC<SectionProps> = ({
               className="flex items-center gap-2"
               onClick={handleToggleClick}
             >
-              {toggleLabel && <span className="text-xs text-gray-500">{toggleLabel}</span>}
+              {toggleLabel && <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{toggleLabel}</span>}
               <div
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
-                  toggleValue ? 'bg-rose-500' : 'bg-gray-300'
-                }`}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition`}
+                style={{ backgroundColor: toggleValue ? 'var(--admin-accent)' : 'var(--admin-border)' }}
               >
                 <span
                   className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition ${
@@ -109,7 +112,7 @@ const Section: React.FC<SectionProps> = ({
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </button>
-      {isOpen && <div className={`p-4 space-y-4 border-t ${nested ? 'bg-white' : ''}`}>{children}</div>}
+      {isOpen && <div className={`p-4 space-y-4`} style={{ borderTop: '1px solid var(--admin-border)', backgroundColor: nested ? 'var(--admin-bg-card)' : undefined }}>{children}</div>}
     </div>
   );
 };
@@ -127,18 +130,21 @@ const CollapsibleGroup: React.FC<CollapsibleGroupProps> = ({ title, icon, defaul
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-card)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition"
+        className="w-full flex items-center justify-between p-4 transition"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
+        onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(0.95)')}
+        onMouseLeave={e => (e.currentTarget.style.filter = '')}
       >
-        <div className="flex items-center gap-2 font-semibold text-gray-800">
+        <div className="flex items-center gap-2 font-semibold" style={{ color: 'var(--admin-text-heading)' }}>
           {icon}
           {title}
         </div>
         {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
       </button>
-      {isOpen && <div className="p-4 space-y-3 border-t bg-gray-50/50">{children}</div>}
+      {isOpen && <div className="p-4 space-y-3" style={{ borderTop: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>{children}</div>}
     </div>
   );
 };
@@ -159,11 +165,12 @@ interface SelectProps {
 
 const Select: React.FC<SelectProps> = ({ label, value, options, onChange }) => (
   <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
+    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+      className="w-full px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-rose-500"
+      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
@@ -189,7 +196,7 @@ interface NumberInputProps {
 
 const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, placeholder, min, step }) => (
   <div>
-    <label className="block text-xs text-gray-500 mb-1">{label}</label>
+    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
     <input
       type="number"
       value={value ?? ''}
@@ -197,7 +204,8 @@ const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, place
       placeholder={placeholder}
       min={min}
       step={step}
-      className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+      className="w-full px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-rose-500"
+      style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
     />
   </div>
 );
@@ -212,13 +220,12 @@ interface ToggleProps {
 
 const Toggle: React.FC<ToggleProps> = ({ label, value, onChange }) => (
   <label className="flex items-center justify-between cursor-pointer">
-    <span className="text-sm text-gray-700">{label}</span>
+    <span className="text-sm" style={{ color: 'var(--admin-text)' }}>{label}</span>
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-        value ? 'bg-rose-500' : 'bg-gray-200'
-      }`}
+      className="relative inline-flex h-6 w-11 items-center rounded-full transition"
+      style={{ backgroundColor: value ? 'var(--admin-accent)' : 'var(--admin-border)' }}
     >
       <span
         className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
@@ -286,32 +293,35 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white">
+    <div className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-card)' }}>
       {/* Header */}
       <div
-        className="flex items-center gap-3 p-3 bg-gray-50 cursor-pointer hover:bg-gray-100"
+        className="flex items-center gap-3 p-3 cursor-pointer"
+        style={{ backgroundColor: 'var(--admin-bg-surface)' }}
         onClick={() => setIsExpanded(!isExpanded)}
+        onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(0.95)')}
+        onMouseLeave={e => (e.currentTarget.style.filter = '')}
       >
-        <GripVertical className="w-4 h-4 text-gray-400 cursor-grab" />
+        <GripVertical className="w-4 h-4 cursor-grab" style={{ color: 'var(--admin-text-faint)' }} />
         
         {/* Preview */}
-        <div className="w-10 h-10 rounded bg-gray-200 flex items-center justify-center overflow-hidden">
+        <div className="w-10 h-10 rounded flex items-center justify-center overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
           {item.image ? (
             <img src={item.image} alt="" className="w-full h-full object-cover" />
           ) : item.icon ? (
-            <span className="text-xs text-gray-500">{item.icon.slice(0, 3)}</span>
+            <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{item.icon.slice(0, 3)}</span>
           ) : (
-            <ImageIcon className="w-4 h-4 text-gray-400" />
+            <ImageIcon className="w-4 h-4" style={{ color: 'var(--admin-text-faint)' }} />
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-sm truncate">{item.title || 'Neue Karte'}</p>
-          <p className="text-xs text-gray-500 truncate">{item.subtitle || 'Kein Untertitel'}</p>
+          <p className="font-medium text-sm truncate" style={{ color: 'var(--admin-text)' }}>{item.title || 'Neue Karte'}</p>
+          <p className="text-xs truncate" style={{ color: 'var(--admin-text-muted)' }}>{item.subtitle || 'Kein Untertitel'}</p>
         </div>
 
         {item.highlighted && (
-          <span className="px-2 py-0.5 bg-rose-100 text-rose-600 text-xs rounded">Hervorgehoben</span>
+          <span className="px-2 py-0.5 text-xs rounded" style={{ backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)' }}>Hervorgehoben</span>
         )}
 
         <button
@@ -319,7 +329,10 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
             e.stopPropagation();
             onDelete();
           }}
-          className="p-1 text-gray-400 hover:text-red-500"
+          className="p-1"
+          style={{ color: 'var(--admin-text-faint)' }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--admin-danger)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--admin-text-faint)')}
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -329,7 +342,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
       {/* Content */}
       {isExpanded && (
-        <div className="p-4 space-y-4 border-t">
+        <div className="p-4 space-y-4" style={{ borderTop: '1px solid var(--admin-border)' }}>
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
             <RichTextInput
@@ -354,7 +367,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
           {/* Description with WYSIWYG */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Beschreibung</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Beschreibung</label>
             <RichTextInput
               value={item.description || ''}
               onChange={(description) => update({ description })}
@@ -366,7 +379,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
           <div className="grid grid-cols-2 gap-4">
             {/* Image */}
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Bild</label>
+              <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Bild</label>
               {item.image ? (
                 <div className="relative group">
                   <img
@@ -378,14 +391,16 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                     <button
                       type="button"
                       onClick={() => setShowMediaLibrary(true)}
-                      className="px-2 py-1 bg-white text-gray-800 rounded text-xs"
+                      className="px-2 py-1 rounded text-xs"
+                      style={{ backgroundColor: 'var(--admin-bg-card)', color: 'var(--admin-text)' }}
                     >
                       Ändern
                     </button>
                     <button
                       type="button"
                       onClick={() => update({ image: undefined })}
-                      className="p-1 bg-red-500 text-white rounded"
+                      className="p-1 text-white rounded"
+                      style={{ backgroundColor: 'var(--admin-danger)' }}
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -395,17 +410,20 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                 <button
                   type="button"
                   onClick={() => setShowMediaLibrary(true)}
-                  className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-rose-500 transition"
+                  className="w-full h-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-1 transition"
+                  style={{ borderColor: 'var(--admin-border)' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--admin-accent)')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--admin-border)')}
                 >
-                  <ImageIcon className="w-6 h-6 text-gray-400" />
-                  <span className="text-xs text-gray-500">Bild auswählen</span>
+                  <ImageIcon className="w-6 h-6" style={{ color: 'var(--admin-text-faint)' }} />
+                  <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Bild auswählen</span>
                 </button>
               )}
             </div>
 
             {/* Icon */}
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Icon (alternativ)</label>
+              <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Icon (alternativ)</label>
               <IconPicker
                 value={item.icon || 'Star'}
                 onChange={(icon) => update({ icon })}
@@ -441,7 +459,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
           {/* Rating */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Bewertung (1-5)</label>
+              <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Bewertung (1-5)</label>
               <input
                 type="range"
                 min="0"
@@ -451,7 +469,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                 onChange={(e) => update({ rating: Number(e.target.value) || undefined })}
                 className="w-full"
               />
-              <span className="text-xs text-gray-500">{item.rating || 'Keine'} Sterne</span>
+              <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{item.rating || 'Keine'} Sterne</span>
             </div>
             <NumberInput
               label="Anzahl Bewertungen"
@@ -464,7 +482,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
           {/* Features */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Features/Vorteile</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Features/Vorteile</label>
             <div className="space-y-2">
               {(item.features || []).map((feature, idx) => (
                 <div key={idx} className="flex gap-2">
@@ -473,11 +491,13 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                     value={feature}
                     onChange={(e) => updateFeature(idx, e.target.value)}
                     placeholder="z.B. Kostenlose Beratung"
-                    className="flex-1 px-3 py-1 border rounded text-sm"
+                    className="flex-1 px-3 py-1 rounded text-sm"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                   />
                   <button
                     onClick={() => removeFeature(idx)}
-                    className="p-1 text-red-500 hover:bg-red-50 rounded"
+                    className="p-1 rounded"
+                    style={{ color: 'var(--admin-danger)' }}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -485,7 +505,8 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
               ))}
               <button
                 onClick={addFeature}
-                className="text-sm text-rose-500 hover:text-rose-600"
+                className="text-sm"
+                style={{ color: 'var(--admin-accent)' }}
               >
                 + Feature hinzufügen
               </button>
@@ -510,14 +531,15 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 
           {/* Social Links */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Social Links</label>
+            <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Social Links</label>
             <div className="space-y-2">
               {(item.socialLinks || []).map((link, idx) => (
                 <div key={idx} className="flex gap-2">
                   <select
                     value={link.type}
                     onChange={(e) => updateSocialLink(idx, { type: e.target.value as any })}
-                    className="px-2 py-1 border rounded text-sm"
+                    className="px-2 py-1 rounded text-sm"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                   >
                     <option value="instagram">Instagram</option>
                     <option value="facebook">Facebook</option>
@@ -532,11 +554,13 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
                     value={link.url}
                     onChange={(e) => updateSocialLink(idx, { url: e.target.value })}
                     placeholder="URL/Adresse"
-                    className="flex-1 px-2 py-1 border rounded text-sm"
+                    className="flex-1 px-2 py-1 rounded text-sm"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                   />
                   <button
                     onClick={() => removeSocialLink(idx)}
-                    className="p-1 text-red-500 hover:bg-red-50 rounded"
+                    className="p-1 rounded"
+                    style={{ color: 'var(--admin-danger)' }}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -544,7 +568,8 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
               ))}
               <button
                 onClick={addSocialLink}
-                className="text-sm text-rose-500 hover:text-rose-600"
+                className="text-sm"
+                style={{ color: 'var(--admin-accent)' }}
               >
                 + Social Link hinzufügen
               </button>
@@ -563,7 +588,7 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
       {/* Media Library Modal */}
       {showMediaLibrary && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[80vh] overflow-hidden">
+          <div className="rounded-xl w-full max-w-5xl h-[80vh] overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
             <MediaLibrary
               mode="select"
               singleSelect={true}
@@ -580,7 +605,6 @@ const CardItemEditor: React.FC<CardItemEditorProps> = ({ item, onChange, onDelet
 // ===== MAIN EDITOR =====
 
 export const GenericCardEditorPage: React.FC = () => {
-  const navigate = useNavigate();
   const { pageId, blockId } = useParams<{ pageId: string; blockId: string }>();
   const { website, updatePages, loading } = useWebsite();
   const { Dialog, confirm, success: showSuccess, error: showError } = useConfirmDialog();
@@ -891,34 +915,31 @@ export const GenericCardEditorPage: React.FC = () => {
 
   if (loading || !config) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--admin-accent)' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <Dialog />
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-40">
-        <div className="max-w-[1800px] mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/admin/pages')}
-              className="p-2 hover:bg-gray-100 rounded-lg"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">Generic Card Editor</h1>
-              <p className="text-sm text-gray-500">Flexible Karten für jeden Zweck</p>
-            </div>
-          </div>
+      <AdminHeader
+        title="Generic Card Editor"
+        subtitle="Flexible Karten für jeden Zweck"
+        icon={Layout}
+        backTo="/admin/pages"
+        backLabel="Zurück"
+        sticky
+        actions={
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowPreviewModal(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+              style={{ border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               <Maximize2 className="w-4 h-4" />
               Responsive Vorschau
@@ -926,11 +947,13 @@ export const GenericCardEditorPage: React.FC = () => {
             <button
               onClick={handleSave}
               disabled={saving || !hasChanges}
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition ${
-                hasChanges && !saving
-                  ? 'bg-rose-500 text-white hover:bg-rose-600'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
+              className="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition"
+              style={{
+                backgroundColor: hasChanges && !saving ? 'var(--admin-accent)' : 'var(--admin-border)',
+                color: hasChanges && !saving ? '#fff' : 'var(--admin-text-faint)',
+                cursor: hasChanges && !saving ? 'pointer' : 'not-allowed',
+                opacity: hasChanges && !saving ? 1 : 0.7
+              }}
             >
               {saving ? (
                 <>
@@ -945,11 +968,11 @@ export const GenericCardEditorPage: React.FC = () => {
               )}
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Main Content */}
-      <div className="pt-20 pb-8">
+      <div className="pt-8 pb-8">
         <div className="max-w-[1800px] mx-auto px-6">
           {/* Template Info Banner */}
           {templateInfo && (
@@ -976,7 +999,7 @@ export const GenericCardEditorPage: React.FC = () => {
                     {templateInfo.name}
                   </span>
                   {templateInfo.category && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>
                       ({templateInfo.category})
                     </span>
                   )}
@@ -1053,7 +1076,7 @@ export const GenericCardEditorPage: React.FC = () => {
                 />
 
                 {/* Section Typography */}
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4" style={{ borderTop: '1px solid var(--admin-border)' }}>
                   <Toggle
                     label="Eigene Typografie verwenden"
                     value={config.typography?.enabled ?? false}
@@ -1513,7 +1536,7 @@ export const GenericCardEditorPage: React.FC = () => {
                   onToggleChange={(enabled) => updateFeaturesStyle({ enabled })}
                 >
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Feature-Icon</label>
+                    <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>Feature-Icon</label>
                     <IconPicker
                       value={config.featuresStyle.icon}
                       onChange={(icon) => updateFeaturesStyle({ icon })}
@@ -1605,7 +1628,10 @@ export const GenericCardEditorPage: React.FC = () => {
                   ))}
                   <button
                     onClick={addItem}
-                    className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-rose-500 hover:text-rose-500 transition flex items-center justify-center gap-2"
+                    className="w-full py-3 border-2 border-dashed rounded-lg transition flex items-center justify-center gap-2"
+                    style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text-muted)' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--admin-accent)'; e.currentTarget.style.color = 'var(--admin-accent)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--admin-border)'; e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
                   >
                     <Plus className="w-4 h-4" />
                     Neue Karte hinzufügen
@@ -1616,16 +1642,16 @@ export const GenericCardEditorPage: React.FC = () => {
 
             {/* Preview Panel - 45% */}
             <div className="w-[45%]">
-              <div className="sticky top-24 bg-white rounded-xl shadow-lg border overflow-hidden">
-                <div className="bg-gray-50 border-b px-4 py-3 flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-700">Live-Vorschau</h3>
-                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+              <div className="sticky top-24 rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}>
+                <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-surface)', borderBottom: '1px solid var(--admin-border)' }}>
+                  <h3 className="font-semibold" style={{ color: 'var(--admin-text)' }}>Live-Vorschau</h3>
+                  <span className="text-xs px-2 py-1 rounded" style={{ color: 'var(--admin-text-muted)', backgroundColor: 'var(--admin-bg-surface)' }}>
                     Aktualisiert automatisch
                   </span>
                 </div>
                 <div
-                  className="overflow-y-auto bg-gray-100"
-                  style={{ maxHeight: 'calc(100vh - 200px)' }}
+                  className="overflow-y-auto"
+                  style={{ maxHeight: 'calc(100vh - 200px)', backgroundColor: 'var(--admin-bg-surface)' }}
                 >
                   <div className="transform scale-[0.85] origin-top">
                     <GenericCard config={config} />

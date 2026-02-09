@@ -156,49 +156,52 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs mb-1" style={{ color: 'var(--admin-text-muted)' }}>{label}</label>
       
       {/* Trigger Button */}
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-rose-400 transition-colors"
+        className="w-full flex items-center gap-2 px-3 py-2 border rounded-lg transition-colors"
+        style={{ backgroundColor: 'var(--admin-bg-card)', borderColor: 'var(--admin-border)' }}
       >
         {displayColor ? (
           <div
-            className="w-6 h-6 rounded border border-gray-300"
-            style={{ backgroundColor: displayColor }}
+            className="w-6 h-6 rounded border"
+            style={{ backgroundColor: displayColor, borderColor: 'var(--admin-border)' }}
           />
         ) : (
-          <div className="w-6 h-6 rounded border border-gray-300 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-            <Ban className="w-3 h-3 text-gray-400" />
+          <div className="w-6 h-6 rounded border flex items-center justify-center" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)' }}>
+            <Ban className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
           </div>
         )}
-        <span className="flex-1 text-left text-sm text-gray-700 truncate">
+        <span className="flex-1 text-left text-sm truncate" style={{ color: 'var(--admin-text-secondary)' }}>
           {displayColor || 'Keine Farbe'}
         </span>
-        <Palette className="w-4 h-4 text-gray-400" />
+        <Palette className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
       </button>
 
       {/* Picker Modal - Rendered as Portal */}
       {isOpen && createPortal(
         <>
           <div
-            className="fixed inset-0 bg-black/10 z-[9998]"
+            className="fixed inset-0 z-[9998]"
+            style={{ backgroundColor: 'var(--admin-overlay)' }}
             onClick={() => setIsOpen(false)}
           />
 
           <div 
-            className="fixed w-80 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-[9999] max-h-[calc(100vh-32px)] overflow-y-auto"
-            style={{ top: popupPosition.top, left: popupPosition.left }}
+            className="fixed w-80 rounded-lg border p-4 z-[9999] max-h-[calc(100vh-32px)] overflow-y-auto"
+            style={{ top: popupPosition.top, left: popupPosition.left, backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow-lg)', borderColor: 'var(--admin-border)' }}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">{label}</h3>
+              <h3 className="font-semibold" style={{ color: 'var(--admin-text-heading)' }}>{label}</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="transition-colors"
+                style={{ color: 'var(--admin-text-muted)' }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -209,23 +212,23 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
               <button
                 type="button"
                 onClick={handleNoColor}
-                className={`w-full mb-4 flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all ${
-                  value === null
-                    ? 'border-rose-500 bg-rose-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
+                className="w-full mb-4 flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all"
+                style={{
+                  borderColor: value === null ? 'var(--admin-accent)' : 'var(--admin-border)',
+                  backgroundColor: value === null ? 'var(--admin-accent-bg)' : 'transparent',
+                }}
               >
-                <div className="w-8 h-8 rounded border border-gray-300 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <Ban className="w-4 h-4 text-gray-400" />
+                <div className="w-8 h-8 rounded border flex items-center justify-center" style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)' }}>
+                  <Ban className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Keine Farbe (Transparent)</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--admin-text-secondary)' }}>Keine Farbe (Transparent)</span>
               </button>
             )}
 
             {/* Theme Colors */}
             {themeColors.length > 0 && (
               <div className="mb-4">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                   Theme-Farben
                 </p>
                 <div className="grid grid-cols-4 gap-2">
@@ -238,14 +241,18 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
                         onClick={() => handleThemeColorSelect(item.ref, item.color)}
                         className={`aspect-square rounded-lg border-2 transition-all hover:scale-105 relative group ${
                           isSelected
-                            ? 'border-rose-500 ring-2 ring-rose-200'
-                            : 'border-gray-200 hover:border-gray-400'
+                            ? 'ring-2'
+                            : ''
                         }`}
-                        style={{ backgroundColor: item.color }}
+                        style={{
+                          backgroundColor: item.color,
+                          borderColor: isSelected ? 'var(--admin-accent)' : 'var(--admin-border)',
+                          ...(isSelected ? { '--tw-ring-color': 'var(--admin-accent-light)' } as React.CSSProperties : {}),
+                        }}
                         title={item.name}
                       >
                         {/* Tooltip */}
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-gray-900 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10" style={{ backgroundColor: 'var(--admin-text-heading)', color: 'var(--admin-bg-card)' }}>
                           {item.name}
                         </span>
                       </button>
@@ -257,7 +264,7 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
 
             {/* Neutral Colors */}
             <div className="mb-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                 Neutrale Farben
               </p>
               <div className="grid grid-cols-5 gap-2">
@@ -270,10 +277,14 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
                       onClick={() => handleCustomColorSelect(item.hex)}
                       className={`aspect-square rounded-lg border-2 transition-all hover:scale-105 ${
                         isSelected
-                          ? 'border-rose-500 ring-2 ring-rose-200'
-                          : 'border-gray-200 hover:border-gray-400'
+                          ? 'ring-2'
+                          : ''
                       }`}
-                      style={{ backgroundColor: item.hex }}
+                      style={{
+                        backgroundColor: item.hex,
+                        borderColor: isSelected ? 'var(--admin-accent)' : 'var(--admin-border)',
+                        ...(isSelected ? { '--tw-ring-color': 'var(--admin-accent-light)' } as React.CSSProperties : {}),
+                      }}
                       title={item.name}
                     />
                   );
@@ -283,7 +294,7 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
 
             {/* Custom Color Picker */}
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--admin-text-muted)' }}>
                 Eigene Farbe
               </p>
               <div className="flex gap-2">
@@ -291,19 +302,22 @@ export const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
                   type="color"
                   value={customColor}
                   onChange={(e) => setCustomColor(e.target.value)}
-                  className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                  className="w-12 h-10 rounded border cursor-pointer"
+                  style={{ borderColor: 'var(--admin-border)' }}
                 />
                 <input
                   type="text"
                   value={customColor}
                   onChange={(e) => setCustomColor(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm font-mono"
+                  style={{ borderColor: 'var(--admin-border)', backgroundColor: 'var(--admin-bg-input)', color: 'var(--admin-text)' }}
                   placeholder="#000000"
                 />
                 <button
                   type="button"
                   onClick={() => handleCustomColorSelect(customColor)}
-                  className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition text-sm font-medium"
+                  className="px-4 py-2 rounded-lg transition text-sm font-medium"
+                  style={{ backgroundColor: 'var(--admin-accent)', color: 'var(--admin-accent-text)' }}
                 >
                   OK
                 </button>

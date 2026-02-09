@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  ArrowLeft, Save, Image, Type, Plus, Trash2, Eye, EyeOff,
+  Save, Image, Type, Plus, Trash2, Eye, EyeOff,
   Monitor, Tablet, Smartphone, ChevronDown, ChevronUp, Move
 } from 'lucide-react';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { MediaLibrary, MediaFile } from './MediaLibrary';
+import { AdminHeader } from './AdminHeader';
 import {
   HeroConfig, HeroButton, HeroText, HeroLogo,
   Viewport, Position,
@@ -193,44 +194,46 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-3 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate(`/admin/page-builder/${pageId}`)} 
-            className="p-2 hover:bg-gray-100 rounded-full"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <h1 className="text-lg font-semibold text-gray-800">Hero V2 Editor</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowPreview(!showPreview)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-              showPreview ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            <Eye className="w-4 h-4" />
-            Vorschau
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 bg-rose-500 text-white px-5 py-2 rounded-lg hover:bg-rose-600 transition disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            {saving ? 'Speichern...' : 'Speichern'}
-          </button>
-        </div>
-      </div>
+      <AdminHeader
+        title="Hero V2 Editor"
+        icon={Image}
+        backTo={`/admin/page-builder/${pageId}`}
+        backLabel="Zurück zum Page Builder"
+        actions={
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+              style={{
+                backgroundColor: showPreview ? 'var(--admin-accent-bg)' : 'var(--admin-bg-surface)',
+                color: showPreview ? 'var(--admin-accent)' : 'var(--admin-text-secondary)'
+              }}
+            >
+              <Eye className="w-4 h-4" />
+              Vorschau
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 text-white px-5 py-2 rounded-lg transition disabled:opacity-50"
+              style={{ backgroundColor: 'var(--admin-accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Speichern...' : 'Speichern'}
+            </button>
+          </div>
+        }
+      />
 
       <div className="flex-1 flex">
         {/* Editor Panel */}
-        <div className={`${showPreview ? 'w-1/2' : 'w-full'} bg-white border-r overflow-y-auto`}>
+        <div className={`${showPreview ? 'w-1/2' : 'w-full'} overflow-y-auto`} style={{ backgroundColor: 'var(--admin-bg-card)', borderRight: showPreview ? '1px solid var(--admin-border)' : undefined }}>
           {/* Viewport Tabs */}
-          <div className="sticky top-0 bg-white border-b z-10">
+          <div className="sticky top-0 z-10" style={{ backgroundColor: 'var(--admin-bg-card)', borderBottom: '1px solid var(--admin-border)' }}>
             <div className="flex px-4 py-2 gap-2">
               {[
                 { id: 'desktop' as Viewport, icon: Monitor, label: 'Desktop' },
@@ -240,11 +243,11 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                 <button
                   key={id}
                   onClick={() => setActiveViewport(id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-                    activeViewport === id
-                      ? 'bg-rose-100 text-rose-700'
-                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+                  style={{
+                    backgroundColor: activeViewport === id ? 'var(--admin-accent-bg)' : 'var(--admin-bg-surface)',
+                    color: activeViewport === id ? 'var(--admin-accent)' : 'var(--admin-text-secondary)'
+                  }}
                 >
                   <Icon className="w-4 h-4" />
                   {label}
@@ -264,9 +267,10 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
               <div className="space-y-4">
                 {/* Image Preview & Select */}
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">Hintergrundbild</label>
+                  <label className="text-sm mb-2 block" style={{ color: 'var(--admin-text-secondary)' }}>Hintergrundbild</label>
                   <div 
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-rose-400 transition"
+                    className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition"
+                    style={{ borderColor: 'var(--admin-border)' }}
                     onClick={() => setShowMediaLibrary(true)}
                   >
                     {config.backgroundImage ? (
@@ -276,7 +280,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                         className="max-h-32 mx-auto rounded"
                       />
                     ) : (
-                      <div className="text-gray-400">
+                      <div style={{ color: 'var(--admin-text-faint)' }}>
                         <Image className="w-8 h-8 mx-auto mb-2" />
                         <p>Klicken um Bild auszuwählen</p>
                       </div>
@@ -287,7 +291,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                 {/* Image Position */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-gray-600">Bildposition X</label>
+                    <label className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Bildposition X</label>
                     <input
                       type="range"
                       min="0"
@@ -299,10 +303,10 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                       }))}
                       className="w-full"
                     />
-                    <span className="text-xs text-gray-500">{config.backgroundPosition.x}%</span>
+                    <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{config.backgroundPosition.x}%</span>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Bildposition Y</label>
+                    <label className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Bildposition Y</label>
                     <input
                       type="range"
                       min="0"
@@ -314,13 +318,13 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                       }))}
                       className="w-full"
                     />
-                    <span className="text-xs text-gray-500">{config.backgroundPosition.y}%</span>
+                    <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{config.backgroundPosition.y}%</span>
                   </div>
                 </div>
 
                 {/* Height */}
                 <div>
-                  <label className="text-sm text-gray-600">Höhe ({activeViewport})</label>
+                  <label className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Höhe ({activeViewport})</label>
                   <input
                     type="text"
                     value={getResponsiveValue(config.height, activeViewport)}
@@ -328,7 +332,8 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                       ...prev,
                       height: { ...prev.height, [activeViewport]: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 rounded-lg"
+                    style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
                     placeholder="z.B. 600px, 80vh"
                   />
                 </div>
@@ -345,13 +350,13 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                       }))}
                       className="rounded"
                     />
-                    <span className="text-sm text-gray-600">Overlay aktivieren</span>
+                    <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Overlay aktivieren</span>
                   </label>
                   
                   {config.overlay.enabled && (
                     <div className="grid grid-cols-2 gap-4 pl-6">
                       <div>
-                        <label className="text-sm text-gray-600">Farbe</label>
+                        <label className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Farbe</label>
                         <input
                           type="color"
                           value={config.overlay.color}
@@ -363,7 +368,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                         />
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Deckkraft</label>
+                        <label className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>Deckkraft</label>
                         <input
                           type="range"
                           min="0"
@@ -375,7 +380,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
                           }))}
                           className="w-full"
                         />
-                        <span className="text-xs text-gray-500">{config.overlay.opacity}%</span>
+                        <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>{config.overlay.opacity}%</span>
                       </div>
                     </div>
                   )}
@@ -392,15 +397,16 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
               action={
                 <button
                   onClick={addLogo}
-                  className="text-rose-500 hover:text-rose-600 p-1"
+                  className="p-1"
                   title="Logo hinzufügen"
+                  style={{ color: 'var(--admin-accent)' }}
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               }
             >
               {config.logos.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center py-4">
+                <p className="text-sm text-center py-4" style={{ color: 'var(--admin-text-faint)' }}>
                   Noch keine Logos hinzugefügt
                 </p>
               ) : (
@@ -429,15 +435,16 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
               action={
                 <button
                   onClick={addText}
-                  className="text-rose-500 hover:text-rose-600 p-1"
+                  className="p-1"
                   title="Text hinzufügen"
+                  style={{ color: 'var(--admin-accent)' }}
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               }
             >
               {config.texts.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center py-4">
+                <p className="text-sm text-center py-4" style={{ color: 'var(--admin-text-faint)' }}>
                   Noch keine Texte hinzugefügt
                 </p>
               ) : (
@@ -465,15 +472,16 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
               action={
                 <button
                   onClick={addButton}
-                  className="text-rose-500 hover:text-rose-600 p-1"
+                  className="p-1"
                   title="Button hinzufügen"
+                  style={{ color: 'var(--admin-accent)' }}
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               }
             >
               {config.buttons.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center py-4">
+                <p className="text-sm text-center py-4" style={{ color: 'var(--admin-text-faint)' }}>
                   Noch keine Buttons hinzugefügt
                 </p>
               ) : (
@@ -496,7 +504,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
 
         {/* Preview Panel */}
         {showPreview && (
-          <div className="w-1/2 bg-gray-200 p-4 overflow-auto">
+          <div className="w-1/2 p-4 overflow-auto" style={{ backgroundColor: 'var(--admin-bg-surface)' }}>
             <HeroPreview config={config} viewport={activeViewport} logos={website?.logos || []} />
           </div>
         )}
@@ -505,12 +513,12 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
       {/* Media Library Modal */}
       {showMediaLibrary && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Hintergrundbild auswählen</h2>
+          <div className="rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col" style={{ backgroundColor: 'var(--admin-bg-card)' }}>
+            <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--admin-border)' }}>
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Hintergrundbild auswählen</h2>
               <button 
                 onClick={() => setShowMediaLibrary(false)}
-                className="text-gray-500 hover:text-gray-700"
+                style={{ color: 'var(--admin-text-muted)' }}
               >
                 ✕
               </button>
@@ -540,12 +548,14 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ title, icon, expanded, onToggle, action, children }) => (
-  <div className="border rounded-lg">
+  <div className="rounded-lg" style={{ border: '1px solid var(--admin-border)' }}>
     <div 
-      className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+      className="flex items-center justify-between p-4 cursor-pointer"
       onClick={onToggle}
+      onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--admin-bg-surface)')}
+      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
     >
-      <div className="flex items-center gap-2 font-medium text-gray-700">
+      <div className="flex items-center gap-2 font-medium" style={{ color: 'var(--admin-text)' }}>
         {icon}
         {title}
       </div>
@@ -554,7 +564,7 @@ const Section: React.FC<SectionProps> = ({ title, icon, expanded, onToggle, acti
         {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </div>
     </div>
-    {expanded && <div className="p-4 pt-0 border-t">{children}</div>}
+    {expanded && <div className="p-4 pt-0" style={{ borderTop: '1px solid var(--admin-border)' }}>{children}</div>}
   </div>
 );
 
@@ -568,11 +578,12 @@ const PositionSelector: React.FC<PositionSelectorProps> = ({ position, onChange 
   <div className="space-y-3">
     <div className="grid grid-cols-2 gap-3">
       <div>
-        <label className="text-xs text-gray-500">Horizontal</label>
+        <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Horizontal</label>
         <select
           value={position.horizontal}
           onChange={(e) => onChange({ ...position, horizontal: e.target.value as HorizontalPosition })}
-          className="w-full px-2 py-1.5 border rounded text-sm"
+          className="w-full px-2 py-1.5 rounded text-sm"
+          style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
         >
           {Object.entries(horizontalLabels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
@@ -580,11 +591,12 @@ const PositionSelector: React.FC<PositionSelectorProps> = ({ position, onChange 
         </select>
       </div>
       <div>
-        <label className="text-xs text-gray-500">Vertikal</label>
+        <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Vertikal</label>
         <select
           value={position.vertical}
           onChange={(e) => onChange({ ...position, vertical: e.target.value as VerticalPosition })}
-          className="w-full px-2 py-1.5 border rounded text-sm"
+          className="w-full px-2 py-1.5 rounded text-sm"
+          style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
         >
           {Object.entries(verticalLabels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
@@ -594,7 +606,7 @@ const PositionSelector: React.FC<PositionSelectorProps> = ({ position, onChange 
     </div>
     <div className="grid grid-cols-2 gap-3">
       <div>
-        <label className="text-xs text-gray-500">Offset X ({position.offsetX}%)</label>
+        <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Offset X ({position.offsetX}%)</label>
         <input
           type="range"
           min="-20"
@@ -605,7 +617,7 @@ const PositionSelector: React.FC<PositionSelectorProps> = ({ position, onChange 
         />
       </div>
       <div>
-        <label className="text-xs text-gray-500">Offset Y ({position.offsetY}%)</label>
+        <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Offset Y ({position.offsetY}%)</label>
         <input
           type="range"
           min="-20"
@@ -636,20 +648,21 @@ const LogoEditor: React.FC<LogoEditorProps> = ({ logo, index, viewport, availabl
   const currentBelowImage = getResponsiveValue(logo.belowImage, viewport);
 
   return (
-    <div className="border rounded-lg p-4 bg-gray-50">
+    <div className="rounded-lg p-4" style={{ border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="flex items-center justify-between mb-3">
-        <span className="font-medium text-sm">Logo {index + 1}</span>
+        <span className="font-medium text-sm" style={{ color: 'var(--admin-text)' }}>Logo {index + 1}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onUpdate({ 
               visible: { ...logo.visible, [viewport]: !currentVisible } 
             })}
-            className={`p-1 rounded ${currentVisible ? 'text-green-600' : 'text-gray-400'}`}
+            className="p-1 rounded"
+            style={{ color: currentVisible ? 'var(--admin-success)' : 'var(--admin-text-faint)' }}
             title={currentVisible ? 'Sichtbar' : 'Ausgeblendet'}
           >
             {currentVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
           </button>
-          <button onClick={onDelete} className="p-1 text-red-500 hover:text-red-700">
+          <button onClick={onDelete} className="p-1" style={{ color: 'var(--admin-danger)' }}>
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -657,11 +670,12 @@ const LogoEditor: React.FC<LogoEditorProps> = ({ logo, index, viewport, availabl
 
       <div className="space-y-3">
         <div>
-          <label className="text-xs text-gray-500">Logo auswählen</label>
+          <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Logo auswählen</label>
           <select
             value={logo.logoId}
             onChange={(e) => onUpdate({ logoId: e.target.value })}
-            className="w-full px-2 py-1.5 border rounded text-sm"
+            className="w-full px-2 py-1.5 rounded text-sm"
+            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
           >
             <option value="">-- Logo wählen --</option>
             {availableLogos.map(l => (
@@ -671,7 +685,7 @@ const LogoEditor: React.FC<LogoEditorProps> = ({ logo, index, viewport, availabl
         </div>
 
         <div>
-          <label className="text-xs text-gray-500">Skalierung ({currentScale}%)</label>
+          <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Skalierung ({currentScale}%)</label>
           <input
             type="range"
             min="10"
@@ -698,7 +712,7 @@ const LogoEditor: React.FC<LogoEditorProps> = ({ logo, index, viewport, availabl
             })}
             className="rounded"
           />
-          <span className="text-xs text-gray-600">Unter dem Bild anzeigen</span>
+          <span className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>Unter dem Bild anzeigen</span>
         </label>
       </div>
     </div>
@@ -733,19 +747,20 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
   const currentBelowImage = getResponsiveValue(text.belowImage, viewport);
 
   return (
-    <div className="border rounded-lg p-4 bg-gray-50">
+    <div className="rounded-lg p-4" style={{ border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="flex items-center justify-between mb-3">
-        <span className="font-medium text-sm">Text {index + 1}</span>
+        <span className="font-medium text-sm" style={{ color: 'var(--admin-text)' }}>Text {index + 1}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onUpdate({ 
               visible: { ...text.visible, [viewport]: !currentVisible } 
             })}
-            className={`p-1 rounded ${currentVisible ? 'text-green-600' : 'text-gray-400'}`}
+            className="p-1 rounded"
+            style={{ color: currentVisible ? 'var(--admin-success)' : 'var(--admin-text-faint)' }}
           >
             {currentVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
           </button>
-          <button onClick={onDelete} className="p-1 text-red-500 hover:text-red-700">
+          <button onClick={onDelete} className="p-1" style={{ color: 'var(--admin-danger)' }}>
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -753,22 +768,24 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
 
       <div className="space-y-3">
         <div>
-          <label className="text-xs text-gray-500">Text (Zeilenumbruch mit Enter)</label>
+          <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Text (Zeilenumbruch mit Enter)</label>
           <textarea
             value={text.content}
             onChange={(e) => onUpdate({ content: e.target.value })}
-            className="w-full px-2 py-1.5 border rounded text-sm"
+            className="w-full px-2 py-1.5 rounded text-sm"
+            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             rows={2}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500">Schriftart</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Schriftart</label>
             <select
               value={text.fontFamily}
               onChange={(e) => onUpdate({ fontFamily: e.target.value })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               {AVAILABLE_FONTS.map(f => (
                 <option key={f.value} value={f.value}>{f.name}</option>
@@ -776,7 +793,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500">Größe ({currentFontSize}px)</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Größe ({currentFontSize}px)</label>
             <input
               type="number"
               min="12"
@@ -785,18 +802,20 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
               onChange={(e) => onUpdate({ 
                 fontSize: { ...text.fontSize, [viewport]: Number(e.target.value) } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500">Schriftstärke</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Schriftstärke</label>
             <select
               value={text.fontWeight}
               onChange={(e) => onUpdate({ fontWeight: e.target.value as HeroText['fontWeight'] })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               <option value="300">Light</option>
               <option value="400">Normal</option>
@@ -807,7 +826,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500">Farbe</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Farbe</label>
             <input
               type="color"
               value={text.color}
@@ -831,7 +850,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ text, index, viewport, onUpdate
             })}
             className="rounded"
           />
-          <span className="text-xs text-gray-600">Unter dem Bild anzeigen</span>
+          <span className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>Unter dem Bild anzeigen</span>
         </label>
       </div>
     </div>
@@ -853,19 +872,20 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
   const currentBelowImage = getResponsiveValue(button.belowImage, viewport);
 
   return (
-    <div className="border rounded-lg p-4 bg-gray-50">
+    <div className="rounded-lg p-4" style={{ border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-surface)' }}>
       <div className="flex items-center justify-between mb-3">
-        <span className="font-medium text-sm">Button {index + 1}</span>
+        <span className="font-medium text-sm" style={{ color: 'var(--admin-text)' }}>Button {index + 1}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onUpdate({ 
               visible: { ...button.visible, [viewport]: !currentVisible } 
             })}
-            className={`p-1 rounded ${currentVisible ? 'text-green-600' : 'text-gray-400'}`}
+            className="p-1 rounded"
+            style={{ color: currentVisible ? 'var(--admin-success)' : 'var(--admin-text-faint)' }}
           >
             {currentVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
           </button>
-          <button onClick={onDelete} className="p-1 text-red-500 hover:text-red-700">
+          <button onClick={onDelete} className="p-1" style={{ color: 'var(--admin-danger)' }}>
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -873,24 +893,26 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
 
       <div className="space-y-3">
         <div>
-          <label className="text-xs text-gray-500">Button-Text</label>
+          <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Button-Text</label>
           <input
             type="text"
             value={button.text}
             onChange={(e) => onUpdate({ text: e.target.value })}
-            className="w-full px-2 py-1.5 border rounded text-sm"
+            className="w-full px-2 py-1.5 rounded text-sm"
+            style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500">Aktion</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Aktion</label>
             <select
               value={button.action.type}
               onChange={(e) => onUpdate({ 
                 action: { ...button.action, type: e.target.value as HeroButton['action']['type'] } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               <option value="link">Link</option>
               <option value="scroll">Zu Sektion scrollen</option>
@@ -899,7 +921,7 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>
               {button.action.type === 'link' && 'URL'}
               {button.action.type === 'scroll' && 'Section-ID'}
               {button.action.type === 'phone' && 'Telefonnummer'}
@@ -911,7 +933,8 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
               onChange={(e) => onUpdate({ 
                 action: { ...button.action, value: e.target.value } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
               placeholder={
                 button.action.type === 'link' ? 'https://...' :
                 button.action.type === 'scroll' ? 'section-id' :
@@ -924,13 +947,14 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
 
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="text-xs text-gray-500">Stil</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Stil</label>
             <select
               value={button.style.variant}
               onChange={(e) => onUpdate({ 
                 style: { ...button.style, variant: e.target.value as ButtonVariant } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               <option value="primary">Primary</option>
               <option value="secondary">Secondary</option>
@@ -939,13 +963,14 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500">Größe</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Größe</label>
             <select
               value={button.style.size}
               onChange={(e) => onUpdate({ 
                 style: { ...button.style, size: e.target.value as ButtonSize } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               <option value="small">Klein</option>
               <option value="medium">Mittel</option>
@@ -953,13 +978,14 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500">Ecken</label>
+            <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Ecken</label>
             <select
               value={button.style.borderRadius}
               onChange={(e) => onUpdate({ 
                 style: { ...button.style, borderRadius: e.target.value as ButtonBorderRadius } 
               })}
-              className="w-full px-2 py-1.5 border rounded text-sm"
+              className="w-full px-2 py-1.5 rounded text-sm"
+              style={{ backgroundColor: 'var(--admin-bg-input)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)' }}
             >
               <option value="none">Eckig</option>
               <option value="small">Leicht gerundet</option>
@@ -973,7 +999,7 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
         {button.style.variant === 'custom' && (
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-gray-500">Hintergrund</label>
+              <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Hintergrund</label>
               <input
                 type="color"
                 value={button.style.backgroundColor || '#3b82f6'}
@@ -984,7 +1010,7 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500">Textfarbe</label>
+              <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Textfarbe</label>
               <input
                 type="color"
                 value={button.style.textColor || '#ffffff'}
@@ -995,7 +1021,7 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500">Rahmen</label>
+              <label className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>Rahmen</label>
               <input
                 type="color"
                 value={button.style.borderColor || '#3b82f6'}
@@ -1022,7 +1048,7 @@ const ButtonEditor: React.FC<ButtonEditorProps> = ({ button, index, viewport, on
             })}
             className="rounded"
           />
-          <span className="text-xs text-gray-600">Unter dem Bild anzeigen</span>
+          <span className="text-xs" style={{ color: 'var(--admin-text-secondary)' }}>Unter dem Bild anzeigen</span>
         </label>
       </div>
     </div>

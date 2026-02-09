@@ -3,18 +3,32 @@
 // Breadcrumbs, Viewport Switch, Speichern, Zurück
 // =====================================================
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save } from 'lucide-react';
+import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save, ChevronDown, FileText, Home } from 'lucide-react';
 import { useEditor, useEditorKeyboard } from '../state/EditorContext';
 import type { VEViewport } from '../types/styles';
 
 export const TopBar: React.FC = () => {
   const { state, dispatch, breadcrumbs } = useEditor();
   const navigate = useNavigate();
+  const [pageDropdownOpen, setPageDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Keyboard shortcuts aktivieren
   useEditorKeyboard();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!pageDropdownOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setPageDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [pageDropdownOpen]);
 
   const viewports: { key: VEViewport; icon: React.ReactNode; label: string }[] = [
     { key: 'desktop', icon: <Monitor size={16} />, label: 'Desktop' },
@@ -90,6 +104,119 @@ export const TopBar: React.FC = () => {
             <span style={{ color: '#6b7280' }}>{state.page.name}</span>
           )}
         </div>
+      </div>
+
+      {/* Center-Left: Page Dropdown */}
+      <div ref={dropdownRef} style={{ position: 'relative', marginRight: '12px' }}>
+        <button
+          onClick={() => setPageDropdownOpen(!pageDropdownOpen)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '4px 10px',
+            borderRadius: '6px',
+            border: '1px solid #3d3d4d',
+            backgroundColor: pageDropdownOpen ? '#2d2d3d' : 'transparent',
+            color: '#e0e0e0',
+            fontSize: '13px',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            whiteSpace: 'nowrap',
+          }}
+          title="Seite wechseln"
+        >
+          <FileText size={14} style={{ color: '#9ca3af' }} />
+          <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {state.page.name}
+          </span>
+          <ChevronDown size={12} style={{ color: '#6b7280' }} />
+        </button>
+
+        {pageDropdownOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              marginTop: '4px',
+              backgroundColor: '#1e1e2e',
+              border: '1px solid #3d3d4d',
+              borderRadius: '8px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              minWidth: '200px',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              zIndex: 1000,
+              padding: '4px',
+            }}
+          >
+            {state.pages.map((p) => {
+              const isActive = p.id === state.page.id;
+              const isHome = p.route === '/';
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    dispatch({ type: 'SWITCH_PAGE', pageId: p.id });
+                    setPageDropdownOpen(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: '5px',
+                    border: 'none',
+                    backgroundColor: isActive ? '#3b82f620' : 'transparent',
+                    color: isActive ? '#60a5fa' : '#c0c0c0',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.1s',
+                  }}
+                >
+                  {isHome ? (
+                    <Home size={14} style={{ color: isActive ? '#60a5fa' : '#6b7280', flexShrink: 0 }} />
+                  ) : (
+                    <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#6b7280', flexShrink: 0 }} />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontWeight: isActive ? 600 : 400,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {p.name}
+                    </div>
+                    <div style={{
+                      fontSize: '10px',
+                      color: '#6b7280',
+                      fontFamily: 'monospace',
+                    }}>
+                      {p.route}
+                    </div>
+                  </div>
+                  {p.isPublished === false && (
+                    <span style={{
+                      fontSize: '9px',
+                      fontWeight: 600,
+                      padding: '1px 4px',
+                      borderRadius: '3px',
+                      backgroundColor: '#92400e30',
+                      color: '#fbbf24',
+                      flexShrink: 0,
+                    }}>
+                      Entwurf
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Center: Viewport Switch */}

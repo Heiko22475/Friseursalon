@@ -25,6 +25,8 @@ import {
 // ===== STATE =====
 
 export interface EditorState {
+  /** Alle Seiten */
+  pages: VEPage[];
   /** Die aktuell bearbeitete Seite */
   page: VEPage;
   /** ID des selektierten Elements */
@@ -78,13 +80,22 @@ export type EditorAction =
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_NAVIGATOR' }
-  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' };
+  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' }
+  // Page management
+  | { type: 'SWITCH_PAGE'; pageId: string }
+  | { type: 'ADD_PAGE'; name: string; route: string }
+  | { type: 'DELETE_PAGE'; pageId: string }
+  | { type: 'DUPLICATE_PAGE'; pageId: string }
+  | { type: 'UPDATE_PAGE_META'; pageId: string; updates: Partial<Pick<VEPage, 'name' | 'route' | 'isPublished'>> }
+  | { type: 'MOVE_PAGE'; pageId: string; direction: 'up' | 'down' };
 
 // ===== INITIAL STATE =====
 
-export function createInitialState(page: VEPage): EditorState {
+export function createInitialState(pages: VEPage[]): EditorState {
+  const firstPage = pages[0];
   return {
-    page,
+    pages,
+    page: firstPage,
     selectedId: null,
     hoveredId: null,
     viewport: 'desktop',
@@ -134,6 +145,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return {
         ...pushUndo(state),
         page: action.page,
+        pages: state.pages.map(p => p.id === action.page.id ? action.page : p),
         isDirty: true,
       };
 
@@ -361,6 +373,181 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     case 'SET_NAVIGATOR_TAB':
       return { ...state, navigatorTab: action.tab, navigatorOpen: true };
 
+    // ========== PAGE MANAGEMENT ==========
+
+    case 'SWITCH_PAGE': {
+      const targetPage = state.pages.find(p => p.id === action.pageId);
+      if (!targetPage || targetPage.id === state.page.id) return state;
+      // Save current page state back into pages array
+      const updatedPages = state.pages.map(p =>
+        p.id === state.page.id ? state.page : p
+      );
+      return {
+        ...state,
+        pages: updatedPages,
+        page: targetPage,
+        selectedId: null,
+        hoveredId: null,
+        editingId: null,
+        undoStack: [],
+        redoStack: [],
+      };
+    }
+
+    case 'ADD_PAGE': {
+      const newPage: VEPage = {
+        id: generateId(),
+        name: action.name,
+        route: action.route,
+        isVisualEditor: true,
+        isPublished: true,
+        body: {
+          id: generateId(),
+          type: 'Body',
+          label: 'Body',
+          styles: { desktop: { backgroundColor: { kind: 'custom', hex: '#ffffff' } } },
+          children: [
+            {
+              id: generateId(),
+              type: 'Section',
+              label: 'Hauptbereich',
+              styles: {
+                desktop: {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  paddingTop: { value: 80, unit: 'px' },
+                  paddingBottom: { value: 80, unit: 'px' },
+                  paddingLeft: { value: 24, unit: 'px' },
+                  paddingRight: { value: 24, unit: 'px' },
+                },
+              },
+              children: [
+                {
+                  id: generateId(),
+                  type: 'Container',
+                  label: 'Inhalt',
+                  styles: {
+                    desktop: {
+                      maxWidth: { value: 1100, unit: 'px' },
+                      width: { value: 100, unit: '%' },
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: { value: 24, unit: 'px' },
+                    },
+                  },
+                  children: [
+                    {
+                      id: generateId(),
+                      type: 'Text',
+                      label: 'Seitentitel',
+                      content: action.name,
+                      textStyle: 'h1' as any,
+                      styles: {
+                        desktop: {
+                          color: { kind: 'custom', hex: '#0f172a' },
+                        },
+                      },
+                    },
+                  ],
+                },
+              ],
+            } as any,
+          ],
+        },
+      };
+      // Save current page, add new, switch to it
+      const pagesWithCurrent = state.pages.map(p =>
+        p.id === state.page.id ? state.page : p
+      );
+      return {
+        ...state,
+        pages: [...pagesWithCurrent, newPage],
+        page: newPage,
+        selectedId: null,
+        hoveredId: null,
+        editingId: null,
+        undoStack: [],
+        redoStack: [],
+        isDirty: true,
+      };
+    }
+
+    case 'DELETE_PAGE': {
+      if (state.pages.length <= 1) return state;
+      const remaining = state.pages.filter(p => p.id !== action.pageId);
+      // If deleting current page, switch to first remaining
+      if (action.pageId === state.page.id) {
+        return {
+          ...state,
+          pages: remaining,
+          page: remaining[0],
+          selectedId: null,
+          hoveredId: null,
+          editingId: null,
+          undoStack: [],
+          redoStack: [],
+          isDirty: true,
+        };
+      }
+      return { ...state, pages: remaining, isDirty: true };
+    }
+
+    case 'DUPLICATE_PAGE': {
+      const source = state.pages.find(p => p.id === action.pageId);
+      if (!source) return state;
+      const clonedBody = deepCloneWithNewIds(source.body) as any;
+      const dup: VEPage = {
+        ...source,
+        id: generateId(),
+        name: source.name + ' (Kopie)',
+        route: source.route + '-kopie',
+        body: clonedBody,
+      };
+      const pagesWithCurrent = state.pages.map(p =>
+        p.id === state.page.id ? state.page : p
+      );
+      const idx = pagesWithCurrent.findIndex(p => p.id === action.pageId);
+      const newPages = [...pagesWithCurrent];
+      newPages.splice(idx + 1, 0, dup);
+      return {
+        ...state,
+        pages: newPages,
+        page: dup,
+        selectedId: null,
+        hoveredId: null,
+        editingId: null,
+        undoStack: [],
+        redoStack: [],
+        isDirty: true,
+      };
+    }
+
+    case 'UPDATE_PAGE_META': {
+      const updatedPages = state.pages.map(p =>
+        p.id === action.pageId ? { ...p, ...action.updates } : p
+      );
+      const currentPage = action.pageId === state.page.id
+        ? { ...state.page, ...action.updates }
+        : state.page;
+      return {
+        ...state,
+        pages: updatedPages,
+        page: currentPage,
+        isDirty: true,
+      };
+    }
+
+    case 'MOVE_PAGE': {
+      const idx = state.pages.findIndex(p => p.id === action.pageId);
+      if (idx < 0) return state;
+      const newIdx = action.direction === 'up' ? idx - 1 : idx + 1;
+      if (newIdx < 0 || newIdx >= state.pages.length) return state;
+      const newPages = [...state.pages];
+      [newPages[idx], newPages[newIdx]] = [newPages[newIdx], newPages[idx]];
+      return { ...state, pages: newPages, isDirty: true };
+    }
+
     default:
       return state;
   }
@@ -382,12 +569,14 @@ const EditorContext = createContext<EditorContextValue | null>(null);
 // ===== PROVIDER =====
 
 interface EditorProviderProps {
-  initialPage: VEPage;
+  initialPage?: VEPage;
+  initialPages?: VEPage[];
   children: React.ReactNode;
 }
 
-export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, children }) => {
-  const [state, dispatch] = useReducer(editorReducer, createInitialState(initialPage));
+export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, initialPages, children }) => {
+  const pages = initialPages || (initialPage ? [initialPage] : []);
+  const [state, dispatch] = useReducer(editorReducer, createInitialState(pages));
 
   const selectedElement = state.selectedId
     ? findElementById(state.page.body, state.selectedId)

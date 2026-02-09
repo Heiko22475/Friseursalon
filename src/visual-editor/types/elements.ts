@@ -143,6 +143,8 @@ export interface VEPage {
   body: VEBody;
   /** true = neues VE-Format, false/undefined = Legacy */
   isVisualEditor?: boolean;
+  /** Veröffentlicht? Default: true */
+  isPublished?: boolean;
 }
 
 // ===== COMPONENT DEFINITION =====

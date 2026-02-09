@@ -8,6 +8,7 @@ import { Plus, Layers, FileText } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
+import { PagesPanel } from './PagesPanel';
 import type { VEElement } from '../types/elements';
 
 type NavigatorTab = 'elements' | 'tree' | 'pages';
@@ -32,11 +33,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
       case 'tree':
         return <ElementsTree onContextMenu={onTreeContextMenu} />;
       case 'pages':
-        return (
-          <div style={{ padding: '16px', color: '#9ca3af', fontSize: '13px' }}>
-            Seiten-Verwaltung wird in Phase 3 implementiert.
-          </div>
-        );
+        return <PagesPanel />;
       default:
         return null;
     }

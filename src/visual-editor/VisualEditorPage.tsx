@@ -16,7 +16,7 @@ import { ContextMenu } from './components/ContextMenu';
 import type { ContextMenuData, ContextMenuAction } from './components/ContextMenu';
 import type { VEElement } from './types/elements';
 import { findElementById, findParent, getChildren } from './utils/elementHelpers';
-import { demoPage } from './data/demoPage';
+import { demoPages } from './data/demoPage';
 import './styles/editor.css';
 
 // ===== INNER EDITOR (braucht Context) =====
@@ -191,7 +191,7 @@ const EditorInner: React.FC = () => {
 const VisualEditorPage: React.FC = () => {
   return (
     <VEThemeProvider>
-      <EditorProvider initialPage={demoPage}>
+      <EditorProvider initialPages={demoPages}>
         <EditorInner />
       </EditorProvider>
     </VEThemeProvider>

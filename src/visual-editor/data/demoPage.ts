@@ -1,6 +1,6 @@
 // =====================================================
-// VISUAL EDITOR – DEMO PAGE
-// Beispielseite zum Testen der Phase 1 Grundstruktur
+// VISUAL EDITOR – DEMO PAGES
+// Beispielseiten zum Testen der Seitenverwaltung
 // =====================================================
 
 import type { VEPage } from '../types/elements';
@@ -311,3 +311,292 @@ export const demoPage: VEPage = {
     ],
   },
 };
+
+// ===== ADDITIONAL DEMO PAGES =====
+
+export const demoPageLeistungen: VEPage = {
+  id: 'demo-page-2',
+  name: 'Leistungen',
+  route: '/leistungen',
+  isVisualEditor: true,
+  isPublished: true,
+  body: {
+    id: 'body-2',
+    type: 'Body',
+    label: 'Body',
+    styles: {
+      desktop: {
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+      },
+    },
+    children: [
+      {
+        id: 'section-leistungen-hero',
+        type: 'Section',
+        label: 'Leistungen Header',
+        styles: {
+          desktop: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: { value: 80, unit: 'px' },
+            paddingBottom: { value: 80, unit: 'px' },
+            paddingLeft: { value: 24, unit: 'px' },
+            paddingRight: { value: 24, unit: 'px' },
+            backgroundColor: { kind: 'custom', hex: '#f8fafc' },
+          },
+        },
+        children: [
+          {
+            id: 'container-leistungen',
+            type: 'Container',
+            label: 'Content',
+            styles: {
+              desktop: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: { value: 16, unit: 'px' },
+                maxWidth: { value: 800, unit: 'px' },
+              },
+            },
+            children: [
+              {
+                id: 'text-leistungen-overline',
+                type: 'Text',
+                label: 'Überzeile',
+                content: 'Was wir bieten',
+                textStyle: 'label' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#3b82f6' },
+                    textAlign: 'center',
+                  },
+                },
+              },
+              {
+                id: 'text-leistungen-title',
+                type: 'Text',
+                label: 'Titel',
+                content: 'Unsere Leistungen',
+                textStyle: 'h1' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#0f172a' },
+                    textAlign: 'center',
+                  },
+                },
+              },
+              {
+                id: 'text-leistungen-desc',
+                type: 'Text',
+                label: 'Beschreibung',
+                content: 'Von klassischen Haarschnitten bis zu modernen Färbetechniken – wir bieten Ihnen ein breites Spektrum an professionellen Leistungen.',
+                textStyle: 'body' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#64748b' },
+                    textAlign: 'center',
+                    maxWidth: { value: 600, unit: 'px' },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const demoPageKontakt: VEPage = {
+  id: 'demo-page-3',
+  name: 'Kontakt',
+  route: '/kontakt',
+  isVisualEditor: true,
+  isPublished: true,
+  body: {
+    id: 'body-3',
+    type: 'Body',
+    label: 'Body',
+    styles: {
+      desktop: {
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+      },
+    },
+    children: [
+      {
+        id: 'section-kontakt',
+        type: 'Section',
+        label: 'Kontakt',
+        styles: {
+          desktop: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingTop: { value: 80, unit: 'px' },
+            paddingBottom: { value: 80, unit: 'px' },
+            paddingLeft: { value: 24, unit: 'px' },
+            paddingRight: { value: 24, unit: 'px' },
+          },
+        },
+        children: [
+          {
+            id: 'container-kontakt',
+            type: 'Container',
+            label: 'Content',
+            styles: {
+              desktop: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: { value: 24, unit: 'px' },
+                maxWidth: { value: 600, unit: 'px' },
+                width: { value: 100, unit: '%' },
+              },
+            },
+            children: [
+              {
+                id: 'text-kontakt-title',
+                type: 'Text',
+                label: 'Titel',
+                content: 'Kontaktieren Sie uns',
+                textStyle: 'h1' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#0f172a' },
+                    textAlign: 'center',
+                  },
+                },
+              },
+              {
+                id: 'text-kontakt-info',
+                type: 'Text',
+                label: 'Kontaktinfo',
+                content: 'Wir freuen uns auf Ihren Besuch! Rufen Sie uns an oder kommen Sie einfach vorbei.',
+                textStyle: 'body' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#64748b' },
+                    textAlign: 'center',
+                  },
+                },
+              },
+              {
+                id: 'button-kontakt-phone',
+                type: 'Button',
+                label: 'Anrufen Button',
+                content: {
+                  text: '☎ Jetzt anrufen',
+                  link: 'tel:+491234567890',
+                  openInNewTab: false,
+                },
+                styles: {
+                  desktop: {
+                    paddingTop: { value: 14, unit: 'px' },
+                    paddingBottom: { value: 14, unit: 'px' },
+                    paddingLeft: { value: 32, unit: 'px' },
+                    paddingRight: { value: 32, unit: 'px' },
+                    backgroundColor: { kind: 'custom', hex: '#16a34a' },
+                    color: { kind: 'custom', hex: '#ffffff' },
+                    borderRadius: { value: 8, unit: 'px' },
+                    fontSize: { value: 16, unit: 'px' },
+                    fontWeight: 600,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const demoPageImpressum: VEPage = {
+  id: 'demo-page-4',
+  name: 'Impressum',
+  route: '/impressum',
+  isVisualEditor: true,
+  isPublished: false,
+  body: {
+    id: 'body-4',
+    type: 'Body',
+    label: 'Body',
+    styles: {
+      desktop: {
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+      },
+    },
+    children: [
+      {
+        id: 'section-impressum',
+        type: 'Section',
+        label: 'Impressum',
+        styles: {
+          desktop: {
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: { value: 60, unit: 'px' },
+            paddingBottom: { value: 60, unit: 'px' },
+            paddingLeft: { value: 24, unit: 'px' },
+            paddingRight: { value: 24, unit: 'px' },
+            alignItems: 'center',
+          },
+        },
+        children: [
+          {
+            id: 'container-impressum',
+            type: 'Container',
+            label: 'Content',
+            styles: {
+              desktop: {
+                maxWidth: { value: 700, unit: 'px' },
+                width: { value: 100, unit: '%' },
+                display: 'flex',
+                flexDirection: 'column',
+                gap: { value: 16, unit: 'px' },
+              },
+            },
+            children: [
+              {
+                id: 'text-impressum-title',
+                type: 'Text',
+                label: 'Titel',
+                content: 'Impressum',
+                textStyle: 'h1' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#0f172a' },
+                  },
+                },
+              },
+              {
+                id: 'text-impressum-body',
+                type: 'Text',
+                label: 'Inhalt',
+                content: 'Angaben gemäß § 5 TMG\n\nSalon Beautiful\nMusterstraße 1\n12345 Musterstadt\n\nTelefon: 01234 567890\nE-Mail: info@salon-beautiful.de',
+                textStyle: 'body' as const,
+                styles: {
+                  desktop: {
+                    color: { kind: 'custom', hex: '#475569' },
+                    lineHeight: 1.8,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+/** Alle Demo-Seiten als Array */
+export const demoPages: VEPage[] = [
+  demoPage,
+  demoPageLeistungen,
+  demoPageKontakt,
+  demoPageImpressum,
+];

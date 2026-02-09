@@ -23,7 +23,7 @@ const viewportWidths: Record<VEViewport, string> = {
   mobile: '375px',
 };
 
-export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, selectedId, onSelect, onHover }) => {
+export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   return (
     <div
       className="ve-canvas"
@@ -42,7 +42,9 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, 
         element={page.body}
         viewport={viewport}
         selectedId={selectedId}
+        hoveredId={hoveredId ?? null}
         onSelect={onSelect}
+        onHover={onHover}
       />
     </div>
   );

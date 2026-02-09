@@ -125,6 +125,16 @@ export const PropertiesPanel: React.FC = () => {
     });
   };
 
+  /** Debounced variant for slider / rapid changes (fewer undo entries) */
+  const updateStyleBatch = (key: keyof StyleProperties, value: any) => {
+    dispatch({
+      type: 'UPDATE_STYLES_BATCH',
+      id: selectedElement.id,
+      viewport: state.viewport,
+      styles: { [key]: value === '' ? undefined : value },
+    });
+  };
+
   // Determine which sections are relevant for the element type
   const isTextLike = selectedElement.type === 'Text' || selectedElement.type === 'Button';
   const isContainer = ['Body', 'Section', 'Container'].includes(selectedElement.type);
@@ -250,12 +260,12 @@ export const PropertiesPanel: React.FC = () => {
 
         {/* Spacing (Box Model) */}
         <AccordionSection title="Spacing" hasValues={hasSpacingValues}>
-          <SpacingBox styles={merged} onChange={updateStyle} />
+          <SpacingBox styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
 
         {/* Size */}
         <AccordionSection title="Größe" hasValues={hasSizeValues}>
-          <SizeSection styles={merged} onChange={updateStyle} />
+          <SizeSection styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
 
         {/* Typography (only for text-like elements or containers that can have text) */}

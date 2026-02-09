@@ -8,6 +8,8 @@ import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import type { VEElement, VEText, VEImage, VEButton, TextStylePreset } from '../types/elements';
 import { useEditor } from '../state/EditorContext';
+import { VERichTextEditor } from '../components/VERichTextEditor';
+import { VEMediaPicker } from '../components/VEMediaPicker';
 
 interface ContentSectionProps {
   element: VEElement;
@@ -76,22 +78,16 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
       <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
         Inhalt
       </label>
-      <textarea
+      <VERichTextEditor
         value={element.content}
-        onChange={(e) =>
+        onChange={(html) =>
           dispatch({
             type: 'UPDATE_CONTENT',
             id: element.id,
-            updates: { content: e.target.value },
+            updates: { content: html },
           })
         }
-        rows={4}
-        style={{
-          ...inputStyle,
-          resize: 'vertical',
-          fontFamily: 'inherit',
-          lineHeight: '1.5',
-        }}
+        placeholder="Text eingeben…"
       />
       <div style={{ fontSize: '10px', color: '#4a4a5a', marginTop: '4px' }}>
         💡 Doppelklick auf Canvas für Inline-Editing
@@ -109,54 +105,39 @@ const ImageContent: React.FC<{ element: VEImage }> = ({ element }) => {
 
   return (
     <div>
-      <Row label="URL">
-        <input
-          type="text"
-          value={src}
-          onChange={(e) =>
-            dispatch({
-              type: 'UPDATE_CONTENT',
-              id: element.id,
-              updates: { content: { ...element.content, src: e.target.value } },
-            })
-          }
-          placeholder="https://..."
-          style={inputStyle}
-        />
-      </Row>
+      {/* Media Picker */}
+      <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+        Bild
+      </label>
+      <VEMediaPicker
+        value={src || undefined}
+        onChange={(url) =>
+          dispatch({
+            type: 'UPDATE_CONTENT',
+            id: element.id,
+            updates: { content: { ...element.content, src: url || '' } },
+          })
+        }
+        label="Bild"
+      />
 
-      {/* Preview */}
-      {src && (
-        <div
-          style={{
-            marginBottom: '8px',
-            height: '80px',
-            borderRadius: '4px',
-            backgroundColor: '#2d2d3d',
-            backgroundImage: `url(${src})`,
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            border: '1px solid #3d3d4d',
-          }}
-        />
-      )}
-
-      <Row label="Alt-Text">
-        <input
-          type="text"
-          value={alt}
-          onChange={(e) =>
-            dispatch({
-              type: 'UPDATE_CONTENT',
-              id: element.id,
-              updates: { content: { ...element.content, alt: e.target.value } },
-            })
-          }
-          placeholder="Bildbeschreibung"
-          style={inputStyle}
-        />
-      </Row>
+      <div style={{ marginTop: '8px' }}>
+        <Row label="Alt-Text">
+          <input
+            type="text"
+            value={alt}
+            onChange={(e) =>
+              dispatch({
+                type: 'UPDATE_CONTENT',
+                id: element.id,
+                updates: { content: { ...element.content, alt: e.target.value } },
+              })
+            }
+            placeholder="Bildbeschreibung"
+            style={inputStyle}
+          />
+        </Row>
+      </div>
     </div>
   );
 };

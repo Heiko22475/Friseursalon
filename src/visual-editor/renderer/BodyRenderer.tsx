@@ -13,10 +13,12 @@ interface BodyRendererProps {
   element: VEBody;
   viewport: VEViewport;
   selectedId: string | null;
+  hoveredId: string | null;
   onSelect: (id: string) => void;
+  onHover?: (id: string | null) => void;
 }
 
-export const BodyRenderer: React.FC<BodyRendererProps> = ({ element, viewport, selectedId, onSelect }) => {
+export const BodyRenderer: React.FC<BodyRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   const resolvedStyles = resolveStyles(element.styles, viewport);
   const isSelected = selectedId === element.id;
 
@@ -45,7 +47,9 @@ export const BodyRenderer: React.FC<BodyRendererProps> = ({ element, viewport, s
           element={child}
           viewport={viewport}
           selectedId={selectedId}
+          hoveredId={hoveredId}
           onSelect={onSelect}
+          onHover={onHover}
         />
       ))}
       {element.children.length === 0 && (

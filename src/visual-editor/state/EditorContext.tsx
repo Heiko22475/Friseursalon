@@ -16,6 +16,10 @@ import {
   updateElementStyles,
   updateElementContent,
   replaceElement,
+  findParent,
+  getChildren,
+  deepCloneWithNewIds,
+  generateId,
 } from '../utils/elementHelpers';
 
 // ===== STATE =====
@@ -39,6 +43,12 @@ export interface EditorState {
   navigatorOpen: boolean;
   /** Aktiver Navigator Tab */
   navigatorTab: 'elements' | 'tree' | 'pages';
+  /** Clipboard für Copy/Paste */
+  clipboard: VEElement | null;
+  /** ID des Elements das gerade inline editiert wird */
+  editingId: string | null;
+  /** Timestamp des letzten Undo-Pushes (für Debounce) */
+  _lastUndoPush: number;
 }
 
 // ===== ACTIONS =====
@@ -53,8 +63,17 @@ export type EditorAction =
   | { type: 'DUPLICATE_ELEMENT'; id: string }
   | { type: 'MOVE_ELEMENT'; elementId: string; newParentId: string; newIndex?: number }
   | { type: 'UPDATE_STYLES'; id: string; viewport: VEViewport; styles: Partial<StyleProperties> }
+  | { type: 'UPDATE_STYLES_BATCH'; id: string; viewport: VEViewport; styles: Partial<StyleProperties> }
   | { type: 'UPDATE_CONTENT'; id: string; updates: Partial<VEElement> }
   | { type: 'REPLACE_ELEMENT'; id: string; newElement: VEElement }
+  | { type: 'COPY_ELEMENT'; id: string }
+  | { type: 'PASTE_ELEMENT'; targetId: string }
+  | { type: 'WRAP_IN_CONTAINER'; id: string }
+  | { type: 'UNWRAP_CONTAINER'; id: string }
+  | { type: 'RESET_STYLES'; id: string }
+  | { type: 'TOGGLE_VISIBILITY'; id: string }
+  | { type: 'START_INLINE_EDIT'; id: string }
+  | { type: 'STOP_INLINE_EDIT' }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
@@ -74,6 +93,9 @@ export function createInitialState(page: VEPage): EditorState {
     isDirty: false,
     navigatorOpen: true,
     navigatorTab: 'tree',
+    clipboard: null,
+    editingId: null,
+    _lastUndoPush: 0,
   };
 }
 
@@ -83,7 +105,18 @@ const MAX_UNDO = 50;
 
 function pushUndo(state: EditorState): EditorState {
   const undoStack = [...state.undoStack, state.page].slice(-MAX_UNDO);
-  return { ...state, undoStack, redoStack: [] };
+  return { ...state, undoStack, redoStack: [], _lastUndoPush: Date.now() };
+}
+
+/** Debounced push: only pushes undo if >300ms since last push */
+const UNDO_DEBOUNCE_MS = 300;
+function pushUndoDebounced(state: EditorState): EditorState {
+  const now = Date.now();
+  if (now - state._lastUndoPush < UNDO_DEBOUNCE_MS) {
+    // Skip push, just update redo clear
+    return { ...state, redoStack: [] };
+  }
+  return pushUndo(state);
 }
 
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -151,6 +184,16 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       };
     }
 
+    case 'UPDATE_STYLES_BATCH': {
+      // Debounced: rapid slider changes batch into fewer undo entries
+      const newBody = updateElementStyles(state.page.body, action.id, action.viewport, action.styles) as any;
+      return {
+        ...pushUndoDebounced(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
     case 'UPDATE_CONTENT': {
       const newBody = updateElementContent(state.page.body, action.id, action.updates) as any;
       return {
@@ -168,6 +211,122 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         isDirty: true,
       };
     }
+
+    case 'COPY_ELEMENT': {
+      const el = findElementById(state.page.body, action.id);
+      if (!el || el.type === 'Body') return state;
+      return { ...state, clipboard: deepCloneWithNewIds(el) };
+    }
+
+    case 'PASTE_ELEMENT': {
+      if (!state.clipboard) return state;
+      const target = findElementById(state.page.body, action.targetId);
+      if (!target) return state;
+      // Clone again to get fresh IDs for each paste
+      const clone = deepCloneWithNewIds(state.clipboard);
+      const isTargetContainer = target.type === 'Body' || target.type === 'Section' || target.type === 'Container';
+      let newBody: any;
+      if (isTargetContainer) {
+        // Paste as child
+        newBody = insertChild(state.page.body, action.targetId, clone) as any;
+      } else {
+        // Paste after the element (sibling)
+        const parent = findParent(state.page.body, action.targetId);
+        if (!parent) return state;
+        const siblings = getChildren(parent);
+        const idx = siblings.findIndex(c => c.id === action.targetId);
+        newBody = insertChild(state.page.body, parent.id, clone, idx + 1) as any;
+      }
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        selectedId: clone.id,
+        isDirty: true,
+      };
+    }
+
+    case 'WRAP_IN_CONTAINER': {
+      const el = findElementById(state.page.body, action.id);
+      if (!el || el.type === 'Body') return state;
+      const parent = findParent(state.page.body, action.id);
+      if (!parent) return state;
+      const siblings = getChildren(parent);
+      const idx = siblings.findIndex(c => c.id === action.id);
+      // Create wrapper container
+      const wrapper: VEElement = {
+        id: generateId(),
+        type: 'Container',
+        label: 'Container',
+        styles: { desktop: { display: 'flex', flexDirection: 'column' } },
+        children: [el],
+      } as VEElement;
+      // Remove original, insert wrapper at same position
+      let tree = removeElement(state.page.body, action.id) as any;
+      tree = insertChild(tree, parent.id, wrapper, idx) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: tree },
+        selectedId: wrapper.id,
+        isDirty: true,
+      };
+    }
+
+    case 'UNWRAP_CONTAINER': {
+      const container = findElementById(state.page.body, action.id);
+      if (!container || container.type === 'Body') return state;
+      const parent = findParent(state.page.body, action.id);
+      if (!parent) return state;
+      const children = getChildren(container);
+      const siblings = getChildren(parent);
+      const idx = siblings.findIndex(c => c.id === action.id);
+      // Remove container, insert children at container's position
+      let tree = removeElement(state.page.body, action.id) as any;
+      children.forEach((child, i) => {
+        tree = insertChild(tree, parent.id, child, idx + i) as any;
+      });
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: tree },
+        selectedId: children.length > 0 ? children[0].id : parent.id,
+        isDirty: true,
+      };
+    }
+
+    case 'RESET_STYLES': {
+      const el = findElementById(state.page.body, action.id);
+      if (!el) return state;
+      const reset = { ...el, styles: { desktop: {} } } as VEElement;
+      const newBody = replaceElement(state.page.body, action.id, reset) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
+    case 'TOGGLE_VISIBILITY': {
+      const el = findElementById(state.page.body, action.id);
+      if (!el || el.type === 'Body') return state;
+      const current = el.styles?.desktop?.display;
+      const newDisplay = current === 'none' ? undefined : 'none';
+      const newBody = updateElementStyles(
+        state.page.body,
+        action.id,
+        'desktop',
+        { display: newDisplay } as Partial<StyleProperties>
+      ) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
+    case 'START_INLINE_EDIT':
+      return { ...state, editingId: action.id, selectedId: action.id };
+
+    case 'STOP_INLINE_EDIT':
+      return { ...state, editingId: null };
 
     case 'UNDO': {
       if (state.undoStack.length === 0) return state;
@@ -268,16 +427,32 @@ export function useEditorKeyboard() {
         return;
       }
 
+      const ctrlOrCmd = e.ctrlKey || e.metaKey;
+
       // Ctrl+Z / Cmd+Z → Undo
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      if (ctrlOrCmd && e.key === 'z' && !e.shiftKey) {
         e.preventDefault();
         dispatch({ type: 'UNDO' });
       }
 
       // Ctrl+Shift+Z / Ctrl+Y / Cmd+Shift+Z → Redo
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+      if (ctrlOrCmd && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
         e.preventDefault();
         dispatch({ type: 'REDO' });
+      }
+
+      // Ctrl+C / Cmd+C → Kopieren
+      if (ctrlOrCmd && e.key === 'c' && state.selectedId) {
+        if (state.selectedId !== state.page.body.id) {
+          e.preventDefault();
+          dispatch({ type: 'COPY_ELEMENT', id: state.selectedId });
+        }
+      }
+
+      // Ctrl+V / Cmd+V → Einfügen
+      if (ctrlOrCmd && e.key === 'v' && state.selectedId && state.clipboard) {
+        e.preventDefault();
+        dispatch({ type: 'PASTE_ELEMENT', targetId: state.selectedId });
       }
 
       // Delete / Backspace → Element löschen
@@ -290,19 +465,63 @@ export function useEditorKeyboard() {
       }
 
       // Ctrl+D / Cmd+D → Duplizieren
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd' && state.selectedId) {
+      if (ctrlOrCmd && e.key === 'd' && state.selectedId) {
         if (state.selectedId !== state.page.body.id) {
           e.preventDefault();
           dispatch({ type: 'DUPLICATE_ELEMENT', id: state.selectedId });
         }
       }
 
-      // Escape → Selektion aufheben
+      // Escape → Selektion aufheben oder Eltern wählen
       if (e.key === 'Escape') {
-        dispatch({ type: 'SELECT_ELEMENT', id: null });
+        if (state.selectedId && state.selectedId !== state.page.body.id) {
+          // Navigate to parent instead of deselecting
+          const parent = findParent(state.page.body, state.selectedId);
+          dispatch({ type: 'SELECT_ELEMENT', id: parent ? parent.id : null });
+        } else {
+          dispatch({ type: 'SELECT_ELEMENT', id: null });
+        }
+      }
+
+      // Arrow keys → Navigate tree
+      if (e.key === 'ArrowUp' && state.selectedId) {
+        e.preventDefault();
+        const parent = findParent(state.page.body, state.selectedId);
+        if (parent) {
+          const siblings = getChildren(parent);
+          const idx = siblings.findIndex(c => c.id === state.selectedId);
+          if (idx > 0) {
+            dispatch({ type: 'SELECT_ELEMENT', id: siblings[idx - 1].id });
+          } else {
+            // Navigate to parent
+            dispatch({ type: 'SELECT_ELEMENT', id: parent.id });
+          }
+        }
+      }
+
+      if (e.key === 'ArrowDown' && state.selectedId) {
+        e.preventDefault();
+        const el = findElementById(state.page.body, state.selectedId);
+        if (el) {
+          const children = getChildren(el);
+          if (children.length > 0) {
+            // Go into first child
+            dispatch({ type: 'SELECT_ELEMENT', id: children[0].id });
+          } else {
+            // Go to next sibling
+            const parent = findParent(state.page.body, state.selectedId);
+            if (parent) {
+              const siblings = getChildren(parent);
+              const idx = siblings.findIndex(c => c.id === state.selectedId);
+              if (idx < siblings.length - 1) {
+                dispatch({ type: 'SELECT_ELEMENT', id: siblings[idx + 1].id });
+              }
+            }
+          }
+        }
       }
     },
-    [dispatch, state.selectedId, state.page.body.id]
+    [dispatch, state.selectedId, state.page.body.id, state.page.body, state.clipboard]
   );
 
   React.useEffect(() => {

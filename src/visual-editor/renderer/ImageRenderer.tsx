@@ -12,10 +12,12 @@ interface ImageRendererProps {
   element: VEImage;
   viewport: VEViewport;
   isSelected: boolean;
+  isHovered?: boolean;
   onSelect: (id: string) => void;
+  onHover?: (id: string | null) => void;
 }
 
-export const ImageRenderer: React.FC<ImageRendererProps> = ({ element, viewport, isSelected, onSelect }) => {
+export const ImageRenderer: React.FC<ImageRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
   const resolvedStyles = resolveStyles(element.styles, viewport);
   const { src, alt } = element.content;
 
@@ -24,7 +26,8 @@ export const ImageRenderer: React.FC<ImageRendererProps> = ({ element, viewport,
       data-ve-id={element.id}
       data-ve-type={element.type}
       onClick={(e) => { e.stopPropagation(); onSelect(element.id); }}
-      className={isSelected ? 've-selected' : ''}
+      onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
+      className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}
       style={{ position: 'relative', ...resolvedStyles }}
     >
       {src ? (

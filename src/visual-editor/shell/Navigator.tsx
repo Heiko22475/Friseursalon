@@ -8,6 +8,7 @@ import { Plus, Layers, FileText } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
+import type { VEElement } from '../types/elements';
 
 type NavigatorTab = 'elements' | 'tree' | 'pages';
 
@@ -17,7 +18,11 @@ const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = 
   { key: 'pages', icon: <FileText size={20} />, label: 'Seiten' },
 ];
 
-export const Navigator: React.FC = () => {
+interface NavigatorProps {
+  onTreeContextMenu?: (e: React.MouseEvent, element: VEElement) => void;
+}
+
+export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   const { state, dispatch } = useEditor();
 
   const renderPanel = () => {
@@ -25,7 +30,7 @@ export const Navigator: React.FC = () => {
       case 'elements':
         return <AddElementPanel />;
       case 'tree':
-        return <ElementsTree />;
+        return <ElementsTree onContextMenu={onTreeContextMenu} />;
       case 'pages':
         return (
           <div style={{ padding: '16px', color: '#9ca3af', fontSize: '13px' }}>

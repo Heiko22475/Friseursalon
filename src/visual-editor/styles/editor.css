@@ -78,6 +78,31 @@
   /* nested hover – hide parent's hover */
 }
 
+/* Programmatic hover from tree panel */
+.ve-hovered:not(.ve-selected) {
+  outline: 2px solid #60a5fa !important;
+  outline-offset: -1px;
+  z-index: 1;
+}
+
+.ve-hovered:not(.ve-selected)::before {
+  content: attr(data-ve-type);
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  background-color: #60a5fa;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 0px 5px;
+  border-radius: 0 0 4px 0;
+  pointer-events: none;
+  z-index: 100;
+  line-height: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  opacity: 0.85;
+}
+
 /* Body-Element sollte keinen Hover haben wenn es nicht selected ist */
 [data-ve-type="Body"]:not(.ve-selected):hover {
   outline: none;
@@ -132,4 +157,49 @@
 
 .ve-input::placeholder {
   color: #6b7280;
+}
+
+/* ===== DRAG & DROP STYLES ===== */
+
+/* Beim Draggen über Canvas-Elemente */
+[data-ve-id].ve-drop-target {
+  outline: 2px dashed #3b82f6 !important;
+  outline-offset: -2px;
+}
+
+/* Element wird gedraggt → halbtransparent */
+[data-ve-id].ve-dragging {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Hidden elements (display:none in editor → visual indicator) */
+[data-ve-id][style*="display: none"] {
+  display: block !important;
+  opacity: 0.3;
+  outline: 2px dashed #ef4444 !important;
+  outline-offset: -2px;
+  min-height: 20px;
+}
+
+/* Context menu fade-in */
+@keyframes ve-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Clipboard indicator in TopBar */
+.ve-clipboard-badge {
+  padding: 2px 6px;
+  background-color: #3b82f620;
+  border: 1px solid #3b82f640;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #60a5fa;
 }

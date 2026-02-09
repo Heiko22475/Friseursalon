@@ -13,7 +13,9 @@ interface ContainerRendererProps {
   element: VEContainer;
   viewport: VEViewport;
   selectedId: string | null;
+  hoveredId: string | null;
   onSelect: (id: string) => void;
+  onHover?: (id: string | null) => void;
 }
 
 const defaultContainerStyles: React.CSSProperties = {
@@ -22,9 +24,10 @@ const defaultContainerStyles: React.CSSProperties = {
   position: 'relative',
 };
 
-export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, viewport, selectedId, onSelect }) => {
+export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   const resolvedStyles = resolveStyles(element.styles, viewport);
   const isSelected = selectedId === element.id;
+  const isHovered = hoveredId === element.id && !isSelected;
 
   const combinedStyles: React.CSSProperties = {
     ...defaultContainerStyles,
@@ -41,7 +44,8 @@ export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, v
           onSelect(element.id);
         }
       }}
-      className={isSelected ? 've-selected' : ''}
+      onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
+      className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}
       style={combinedStyles}
     >
       {element.children.map(child => (
@@ -50,7 +54,9 @@ export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, v
           element={child}
           viewport={viewport}
           selectedId={selectedId}
+          hoveredId={hoveredId}
           onSelect={onSelect}
+          onHover={onHover}
         />
       ))}
       {element.children.length === 0 && (

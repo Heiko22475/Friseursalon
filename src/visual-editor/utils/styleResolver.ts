@@ -6,6 +6,7 @@
 import type { StyleProperties, ElementStyles, VEViewport, SizeValueOrAuto } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 import { sizeValueToCSS } from './sizeValue';
+import { ALL_FONTS } from '../../data/fonts';
 
 // ===== COLOR RESOLVER (austauschbar) =====
 
@@ -102,7 +103,15 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   if (props.paddingLeft !== undefined) css.paddingLeft = sizeValueToCSS(props.paddingLeft);
 
   // Typography
-  if (props.fontFamily) css.fontFamily = props.fontFamily;
+  if (props.fontFamily) {
+    // Look up the font in our library to get the correct fallback
+    const fontEntry = ALL_FONTS.find(f => f.name === props.fontFamily);
+    if (fontEntry) {
+      css.fontFamily = `"${fontEntry.name}", ${fontEntry.fallback}`;
+    } else {
+      css.fontFamily = props.fontFamily;
+    }
+  }
   if (props.fontSize) css.fontSize = sizeValueToCSS(props.fontSize);
   if (props.fontWeight !== undefined) css.fontWeight = props.fontWeight;
   if (props.lineHeight !== undefined) css.lineHeight = resolveSizeOrNumber(props.lineHeight);

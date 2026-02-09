@@ -13,7 +13,9 @@ interface SectionRendererProps {
   element: VESection;
   viewport: VEViewport;
   selectedId: string | null;
+  hoveredId: string | null;
   onSelect: (id: string) => void;
+  onHover?: (id: string | null) => void;
 }
 
 const defaultSectionStyles: React.CSSProperties = {
@@ -24,9 +26,10 @@ const defaultSectionStyles: React.CSSProperties = {
   position: 'relative',
 };
 
-export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewport, selectedId, onSelect }) => {
+export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   const resolvedStyles = resolveStyles(element.styles, viewport);
   const isSelected = selectedId === element.id;
+  const isHovered = hoveredId === element.id && !isSelected;
 
   const combinedStyles: React.CSSProperties = {
     ...defaultSectionStyles,
@@ -43,7 +46,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewp
           onSelect(element.id);
         }
       }}
-      className={isSelected ? 've-selected' : ''}
+      onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
+      className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}
       style={combinedStyles}
     >
       {element.children.map(child => (
@@ -52,7 +56,9 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewp
           element={child}
           viewport={viewport}
           selectedId={selectedId}
+          hoveredId={hoveredId}
           onSelect={onSelect}
+          onHover={onHover}
         />
       ))}
       {element.children.length === 0 && (

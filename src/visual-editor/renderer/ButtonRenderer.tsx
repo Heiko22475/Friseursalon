@@ -12,7 +12,9 @@ interface ButtonRendererProps {
   element: VEButton;
   viewport: VEViewport;
   isSelected: boolean;
+  isHovered?: boolean;
   onSelect: (id: string) => void;
+  onHover?: (id: string | null) => void;
 }
 
 const defaultButtonStyles: React.CSSProperties = {
@@ -31,7 +33,7 @@ const defaultButtonStyles: React.CSSProperties = {
   transition: 'opacity 0.2s',
 };
 
-export const ButtonRenderer: React.FC<ButtonRendererProps> = ({ element, viewport, isSelected, onSelect }) => {
+export const ButtonRenderer: React.FC<ButtonRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
   const resolvedStyles = resolveStyles(element.styles, viewport);
 
   const combinedStyles: React.CSSProperties = {
@@ -48,7 +50,8 @@ export const ButtonRenderer: React.FC<ButtonRendererProps> = ({ element, viewpor
         e.stopPropagation();
         onSelect(element.id);
       }}
-      className={isSelected ? 've-selected' : ''}
+      onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
+      className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}
       style={combinedStyles}
       type="button"
     >

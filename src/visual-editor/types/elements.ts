@@ -15,6 +15,8 @@ export type VEElementType =
   | 'Image'
   | 'Button'
   | 'Cards'
+  | 'Header'
+  | 'Footer'
   | 'ComponentInstance';
 
 // ===== TEXT STYLE PRESETS =====
@@ -122,6 +124,20 @@ export interface VEComponentInstance extends VEBaseElement {
   componentId: string;
 }
 
+// ===== HEADER =====
+
+export interface VEHeader extends VEBaseElement {
+  type: 'Header';
+  config: import('../../types/Header').HeaderConfig;
+}
+
+// ===== FOOTER =====
+
+export interface VEFooter extends VEBaseElement {
+  type: 'Footer';
+  config: import('../../types/Footer').FooterConfig;
+}
+
 // ===== UNION TYPE =====
 
 export type VEElement =
@@ -132,6 +148,8 @@ export type VEElement =
   | VEImage
   | VEButton
   | VECards
+  | VEHeader
+  | VEFooter
   | VEComponentInstance;
 
 // ===== PAGE =====

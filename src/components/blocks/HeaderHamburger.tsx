@@ -470,7 +470,7 @@ export const HeaderHamburger: React.FC<HeaderHamburgerProps> = ({
       <header
         className={`
           w-full z-50
-          ${config.sticky.enabled ? 'fixed top-0 left-0 right-0' : 'relative'}
+          ${config.sticky.enabled && !isPreview ? 'fixed top-0 left-0 right-0' : 'relative'}
         `}
         style={headerStyles}
         role="banner"

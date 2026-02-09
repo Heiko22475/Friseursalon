@@ -35,6 +35,8 @@ import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEdi
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
 import { HeroEditor } from './components/admin/HeroEditor';
+// FooterEditorPage is now integrated into the Visual Editor
+// import { FooterEditorPage } from './components/admin/FooterEditor';
 import { CardTeamEditorPage } from './components/admin/CardTeamEditorPage';
 import { CardServiceEditorPage } from './components/admin/CardServiceEditorPage';
 import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEditorPage';

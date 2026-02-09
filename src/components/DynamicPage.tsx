@@ -12,6 +12,8 @@ import StaticContent from './StaticContent';
 import { Grid } from './Grid';
 import { GenericCard } from './blocks/GenericCard';
 import Footer from './Footer';
+import { FooterBlock } from './blocks/FooterBlock';
+import { HeaderBlock } from './blocks/HeaderBlock';
 import { EditModeToggle } from './admin/EditModeToggle';
 
 interface PageBlock {
@@ -123,11 +125,23 @@ export const DynamicPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      {/* Header: use new HeaderBlock if config exists, else old Header */}
+      {website?.header ? (
+        <HeaderBlock config={website.header} />
+      ) : (
+        <Header />
+      )}
+
       {page.blocks
         .sort((a, b) => a.position - b.position)
         .map((block) => renderBlock(block))}
-      <Footer />
+
+      {/* Footer: use new FooterBlock if config exists, else old Footer */}
+      {website?.footer ? (
+        <FooterBlock config={website.footer} />
+      ) : (
+        <Footer />
+      )}
       
       {/* Edit Mode Toggle (nur für Admins) */}
       <EditModeToggle />

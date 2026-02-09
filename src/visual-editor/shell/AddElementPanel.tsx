@@ -14,6 +14,8 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  PanelTop,
+  PanelBottom,
 } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import {
@@ -22,6 +24,8 @@ import {
   createText,
   createImage,
   createButton,
+  createHeader,
+  createFooter,
   findElementById,
   isContainer,
   findParent,
@@ -39,6 +43,8 @@ const addableElements: AddableElement[] = [
   // Struktur
   { label: 'Section', icon: <Rows3 size={18} />, category: 'Struktur', create: createSection },
   { label: 'Container', icon: <Square size={18} />, category: 'Struktur', create: createContainer },
+  { label: 'Header', icon: <PanelTop size={18} />, category: 'Struktur', create: createHeader },
+  { label: 'Footer', icon: <PanelBottom size={18} />, category: 'Struktur', create: createFooter },
   // Typografie
   { label: 'Heading 1', icon: <Heading1 size={18} />, category: 'Inhalt', create: () => createText('Überschrift', 'h1') },
   { label: 'Heading 2', icon: <Heading2 size={18} />, category: 'Inhalt', create: () => createText('Überschrift', 'h2') },
@@ -64,8 +70,8 @@ export const AddElementPanel: React.FC = () => {
     if (state.selectedId) {
       const selected = findElementById(state.page.body, state.selectedId);
       if (selected) {
-        // Section → nur in Body
-        if (newEl.type === 'Section') {
+        // Section, Header, Footer → nur in Body
+        if (newEl.type === 'Section' || newEl.type === 'Header' || newEl.type === 'Footer') {
           parentId = state.page.body.id;
         }
         // Wenn ausgewähltes Element ein Container ist → da rein

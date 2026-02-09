@@ -3,7 +3,9 @@
 // Beispielseiten zum Testen der Seitenverwaltung
 // =====================================================
 
-import type { VEPage } from '../types/elements';
+import type { VEPage, VEHeader, VEFooter } from '../types/elements';
+import { createDefaultHeaderClassicConfig } from '../../types/Header';
+import { createDefaultFooterMinimalConfig } from '../../types/Footer';
 
 export const demoPage: VEPage = {
   id: 'demo-page-1',
@@ -593,10 +595,43 @@ export const demoPageImpressum: VEPage = {
   },
 };
 
+// ===== HEADER & FOOTER ELEMENTS FOR DEMO PAGES =====
+
+const demoHeader: VEHeader = {
+  id: 'demo-header',
+  type: 'Header',
+  label: 'Header',
+  styles: { desktop: {} },
+  config: createDefaultHeaderClassicConfig(),
+};
+
+const demoFooter: VEFooter = {
+  id: 'demo-footer',
+  type: 'Footer',
+  label: 'Footer',
+  styles: { desktop: {} },
+  config: createDefaultFooterMinimalConfig(),
+};
+
+/** Inject header/footer into a demo page */
+function withHeaderFooter(page: VEPage): VEPage {
+  return {
+    ...page,
+    body: {
+      ...page.body,
+      children: [
+        { ...demoHeader, id: `header-${page.id}` },
+        ...page.body.children,
+        { ...demoFooter, id: `footer-${page.id}` },
+      ],
+    },
+  };
+}
+
 /** Alle Demo-Seiten als Array */
 export const demoPages: VEPage[] = [
-  demoPage,
-  demoPageLeistungen,
-  demoPageKontakt,
-  demoPageImpressum,
+  withHeaderFooter(demoPage),
+  withHeaderFooter(demoPageLeistungen),
+  withHeaderFooter(demoPageKontakt),
+  withHeaderFooter(demoPageImpressum),
 ];

@@ -25,6 +25,8 @@ import {
   LayoutGrid,
   Puzzle,
   GripVertical,
+  PanelTop,
+  PanelBottom,
 } from 'lucide-react';
 import type { VEElement, VEElementType } from '../types/elements';
 import { getChildren, isContainer, canContain, findParent } from '../utils/elementHelpers';
@@ -40,6 +42,8 @@ const typeIcons: Record<VEElementType, React.ReactNode> = {
   Image: <Image size={14} />,
   Button: <MousePointerClick size={14} />,
   Cards: <LayoutGrid size={14} />,
+  Header: <PanelTop size={14} />,
+  Footer: <PanelBottom size={14} />,
   ComponentInstance: <Puzzle size={14} />,
 };
 

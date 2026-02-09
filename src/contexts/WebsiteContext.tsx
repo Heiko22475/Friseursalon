@@ -185,6 +185,8 @@ export interface Website {
   general: GeneralInfo;
   logos?: LogoDesign[];
   typography?: import('../types/typography').TypographyConfig;
+  header?: import('../types/Header').HeaderConfig;
+  footer?: import('../types/Footer').FooterConfig;
 }
 
 export interface GeneralInfo {

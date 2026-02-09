@@ -3,8 +3,10 @@
 // Traversierung, Suche, Mutation von Element-Bäumen
 // =====================================================
 
-import type { VEElement, VEBody, VEPage, VEElementType } from '../types/elements';
+import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
+import { createDefaultHeaderClassicConfig } from '../../types/Header';
+import { createDefaultFooterMinimalConfig } from '../../types/Footer';
 
 // ===== UUID =====
 
@@ -88,7 +90,7 @@ export function canContain(parentType: VEElementType, childType: VEElementType):
   if (childType === 'Body') return false; // Body kann nie Kind sein
 
   const allowed: Record<string, VEElementType[]> = {
-    Body: ['Section'],
+    Body: ['Section', 'Header', 'Footer'],
     Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
     Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
   };
@@ -421,4 +423,30 @@ export function createPage(name: string, route: string): VEPage {
       children: [],
     } as VEBody,
   };
+}
+
+/**
+ * Erstellt ein Header-Element mit Default-Konfiguration
+ */
+export function createHeader(label?: string): VEElement {
+  return {
+    id: generateId(),
+    type: 'Header',
+    label: label || 'Header',
+    styles: { desktop: {} },
+    config: createDefaultHeaderClassicConfig(),
+  } as VEHeader;
+}
+
+/**
+ * Erstellt ein Footer-Element mit Default-Konfiguration
+ */
+export function createFooter(label?: string): VEElement {
+  return {
+    id: generateId(),
+    type: 'Footer',
+    label: label || 'Footer',
+    styles: { desktop: {} },
+    config: createDefaultFooterMinimalConfig(),
+  } as VEFooter;
 }

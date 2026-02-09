@@ -19,6 +19,9 @@ import { BorderSection } from '../properties/BorderSection';
 import { EffectsSection } from '../properties/EffectsSection';
 import { ContentSection } from '../properties/ContentSection';
 import { SpacingBox } from '../components/SpacingBox';
+import { FooterProperties } from '../properties/FooterProperties';
+import { HeaderProperties } from '../properties/HeaderProperties';
+import type { VEFooter, VEHeader } from '../types/elements';
 
 // ===== ACCORDION SECTION =====
 
@@ -84,6 +87,8 @@ const TYPE_COLORS: Record<string, string> = {
   Image: '#10b981',
   Button: '#f59e0b',
   Cards: '#ec4899',
+  Header: '#14b8a6',
+  Footer: '#f97316',
 };
 
 // ===== PROPERTIES PANEL =====
@@ -139,6 +144,7 @@ export const PropertiesPanel: React.FC = () => {
   const isTextLike = selectedElement.type === 'Text' || selectedElement.type === 'Button';
   const isContainer = ['Body', 'Section', 'Container'].includes(selectedElement.type);
   const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
+  const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
 
   // Check which sections have values
@@ -244,6 +250,19 @@ export const PropertiesPanel: React.FC = () => {
       {/* Scrollable Properties */}
       <div style={{ flex: 1, overflow: 'auto' }}>
 
+        {/* Header/Footer: dedicated config panels */}
+        {selectedElement.type === 'Footer' && (
+          <AccordionSection title="Footer Konfiguration" defaultOpen>
+            <FooterProperties element={selectedElement as VEFooter} />
+          </AccordionSection>
+        )}
+
+        {selectedElement.type === 'Header' && (
+          <AccordionSection title="Header Konfiguration" defaultOpen>
+            <HeaderProperties element={selectedElement as VEHeader} />
+          </AccordionSection>
+        )}
+
         {/* Content (element-specific) */}
         {hasContent && (
           <AccordionSection title="Inhalt" defaultOpen>
@@ -252,43 +271,53 @@ export const PropertiesPanel: React.FC = () => {
         )}
 
         {/* Layout */}
-        {isContainer && (
+        {isContainer && !isHeaderFooter && (
           <AccordionSection title="Layout" defaultOpen={isContainer} hasValues={hasLayoutValues}>
             <LayoutSection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Spacing (Box Model) */}
+        {!isHeaderFooter && (
         <AccordionSection title="Spacing" hasValues={hasSpacingValues}>
           <SpacingBox styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
+        )}
 
         {/* Size */}
+        {!isHeaderFooter && (
         <AccordionSection title="Größe" hasValues={hasSizeValues}>
           <SizeSection styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
+        )}
 
         {/* Typography (only for text-like elements or containers that can have text) */}
-        {(isTextLike || isContainer) && (
+        {(isTextLike || isContainer) && !isHeaderFooter && (
           <AccordionSection title="Typografie" defaultOpen={isTextLike} hasValues={hasTypoValues}>
             <TypographySection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Background */}
+        {!isHeaderFooter && (
         <AccordionSection title="Hintergrund" hasValues={hasBgValues}>
           <BackgroundSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
+        )}
 
         {/* Border */}
+        {!isHeaderFooter && (
         <AccordionSection title="Rahmen" hasValues={hasBorderValues}>
           <BorderSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
+        )}
 
         {/* Effects (Shadow, Position, Cursor) */}
+        {!isHeaderFooter && (
         <AccordionSection title="Effekte" hasValues={hasEffectValues}>
           <EffectsSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
+        )}
       </div>
     </div>
   );

@@ -12,6 +12,9 @@ import { ContainerRenderer } from './ContainerRenderer';
 import { TextRenderer } from './TextRenderer';
 import { ImageRenderer } from './ImageRenderer';
 import { ButtonRenderer } from './ButtonRenderer';
+import { HeaderRenderer } from './HeaderRenderer';
+import { FooterRenderer } from './FooterRenderer';
+import type { VEHeader, VEFooter } from '../types/elements';
 
 interface ElementRendererProps {
   element: VEElement;
@@ -119,6 +122,30 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
         >
           📇 Cards Block (wird in Phase 2 implementiert)
         </div>
+      );
+
+    case 'Header':
+      return (
+        <HeaderRenderer
+          element={element as VEHeader}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
+      );
+
+    case 'Footer':
+      return (
+        <FooterRenderer
+          element={element as VEFooter}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
       );
 
     case 'ComponentInstance':

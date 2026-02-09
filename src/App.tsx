@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { WebsiteProvider } from './contexts/WebsiteContext';
@@ -46,6 +47,9 @@ import { CardTemplateEditorPage } from './pages/superadmin/CardTemplateEditorPag
 import { DynamicPage } from './components/DynamicPage';
 import ThemeManager from './components/ThemeManager';
 import { TypographyEditor } from './components/admin/TypographyEditor';
+
+// Visual Editor (Phase 1)
+const VisualEditorPage = React.lazy(() => import('./visual-editor/VisualEditorPage'));
 
 function AppContent() {
   const { customerId, loading } = useCustomerId();
@@ -324,6 +328,16 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <TypographyEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/visual-editor"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" /></div>}>
+                  <VisualEditorPage />
+                </Suspense>
               </ProtectedRoute>
             }
           />

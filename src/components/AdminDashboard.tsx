@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive } from 'lucide-react';
+import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive, PenTool } from 'lucide-react';
 import { useConfirmDialog } from './admin/ConfirmDialog';
 
 export const AdminDashboard: React.FC = () => {
@@ -68,6 +68,7 @@ export const AdminDashboard: React.FC = () => {
 
   const sections = [
     { id: 'pages', name: 'Seiten-Verwaltung', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
+    { id: 'visual-editor', name: 'Visual Editor', icon: PenTool, path: '/admin/visual-editor', enabled: true, featured: true },
     { id: 'media', name: 'Mediathek', icon: FolderOpen, path: '/admin/media', enabled: true, featured: false },
     { id: 'backup', name: 'Backup & Wiederherstellung', icon: HardDrive, path: '/admin/backup', enabled: true, featured: false },
     { id: 'logos', name: 'Logo-Designer', icon: Sparkles, path: '/admin/logos', enabled: true, featured: false },

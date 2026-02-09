@@ -1,0 +1,135 @@
+/* =====================================================
+ * VISUAL EDITOR – CANVAS STYLES
+ * Selection, Hover und Hilfsklassen
+ * ===================================================== */
+
+/* Selection Outline */
+.ve-selected {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: -1px;
+  position: relative;
+}
+
+/* Selection Badge (Element-Name unten links) */
+.ve-selected::after {
+  content: attr(data-ve-type);
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 0 4px 0 0;
+  pointer-events: none;
+  z-index: 100;
+  line-height: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Canvas Scrollbar */
+.ve-canvas-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ve-canvas-scroll::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+.ve-canvas-scroll::-webkit-scrollbar-thumb {
+  background: #3d3d4d;
+  border-radius: 4px;
+}
+
+.ve-canvas-scroll::-webkit-scrollbar-thumb:hover {
+  background: #4d4d5d;
+}
+
+/* Hover-Effekt für nicht-selektierte Elemente */
+[data-ve-id]:not(.ve-selected):hover {
+  outline: 1px solid #60a5fa;
+  outline-offset: -1px;
+  z-index: 1;
+}
+
+/* Hover badge (obere linke Ecke) */
+[data-ve-id]:not(.ve-selected):hover::before {
+  content: attr(data-ve-type);
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  background-color: #60a5fa;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 0px 5px;
+  border-radius: 0 0 4px 0;
+  pointer-events: none;
+  z-index: 100;
+  line-height: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  opacity: 0.85;
+}
+
+/* Only show hover on direct hover target, not parents */
+[data-ve-id]:not(.ve-selected):hover > [data-ve-id]:not(.ve-selected):hover {
+  /* nested hover – hide parent's hover */
+}
+
+/* Body-Element sollte keinen Hover haben wenn es nicht selected ist */
+[data-ve-type="Body"]:not(.ve-selected):hover {
+  outline: none;
+}
+[data-ve-type="Body"]:not(.ve-selected):hover::before {
+  display: none;
+}
+
+/* Properties Panel Dark Scrollbar */
+.ve-props-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ve-props-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ve-props-scroll::-webkit-scrollbar-thumb {
+  background: #3d3d4d;
+  border-radius: 3px;
+}
+
+/* Navigator Tree Dark Scrollbar */
+.ve-nav-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ve-nav-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ve-nav-scroll::-webkit-scrollbar-thumb {
+  background: #3d3d4d;
+  border-radius: 3px;
+}
+
+/* Inputs innerhalb des Visual Editors */
+.ve-input {
+  padding: 4px 6px;
+  background-color: #2d2d3d;
+  border: 1px solid #3d3d4d;
+  border-radius: 4px;
+  color: #d1d5db;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ve-input:focus {
+  border-color: #3b82f6;
+}
+
+.ve-input::placeholder {
+  color: #6b7280;
+}

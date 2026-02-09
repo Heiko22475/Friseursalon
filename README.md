@@ -23,14 +23,17 @@ Supabase-Postgres-passwort für WebseiteLernen:
 Dashboard: https://supabase.com/dashboard/project/tdxvsruunslksdznivrb
 
 
+gmail: 
+salon.sarahsorano.gmail.com
+#Raphaelgo7
 
 Aber wie, mit Github eingeloggt? 
 
+Webflow test: 
+https://heiko-site.design.webflow.com/?locale=en&pageId=6988f2a186df2b3487478c83&workflow=canvas
+
 
 77 Style Salon, Bad Hersfeld, Badestube 6a
-
-
-
 
 
 Passwort Für diese Webseite: 

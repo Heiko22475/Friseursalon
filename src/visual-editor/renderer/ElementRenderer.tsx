@@ -14,7 +14,8 @@ import { ImageRenderer } from './ImageRenderer';
 import { ButtonRenderer } from './ButtonRenderer';
 import { HeaderRenderer } from './HeaderRenderer';
 import { FooterRenderer } from './FooterRenderer';
-import type { VEHeader, VEFooter } from '../types/elements';
+import { CardsRenderer } from './CardsRenderer';
+import type { VEHeader, VEFooter, VECards } from '../types/elements';
 
 interface ElementRendererProps {
   element: VEElement;
@@ -103,25 +104,15 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
       );
 
     case 'Cards':
-      // Phase 2 – Platzhalter
       return (
-        <div
-          data-ve-id={element.id}
-          data-ve-type="Cards"
-          onClick={(e) => { e.stopPropagation(); onSelect(element.id); }}
-          className={isSelected ? 've-selected' : ''}
-          style={{
-            padding: '24px',
-            backgroundColor: '#f9fafb',
-            border: '2px dashed #d1d5db',
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: '#6b7280',
-            fontSize: '14px',
-          }}
-        >
-          📇 Cards Block (wird in Phase 2 implementiert)
-        </div>
+        <CardsRenderer
+          element={element as VECards}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
       );
 
     case 'Header':

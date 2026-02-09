@@ -3,7 +3,7 @@
 // Beispielseiten zum Testen der Seitenverwaltung
 // =====================================================
 
-import type { VEPage, VEHeader, VEFooter } from '../types/elements';
+import type { VEPage, VEHeader, VEFooter, VECards } from '../types/elements';
 import { createDefaultHeaderClassicConfig } from '../../types/Header';
 import { createDefaultFooterMinimalConfig } from '../../types/Footer';
 
@@ -406,6 +406,72 @@ export const demoPageLeistungen: VEPage = {
               },
             ],
           },
+        ],
+      },
+      // ===== SERVICE CARDS =====
+      {
+        id: 'section-service-cards',
+        type: 'Section',
+        label: 'Service-Karten',
+        styles: {
+          desktop: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingTop: { value: 60, unit: 'px' },
+            paddingBottom: { value: 80, unit: 'px' },
+            paddingLeft: { value: 24, unit: 'px' },
+            paddingRight: { value: 24, unit: 'px' },
+            backgroundColor: { kind: 'custom', hex: '#ffffff' },
+          },
+        },
+        children: [
+          {
+            id: 'cards-services',
+            type: 'Cards',
+            label: 'Leistungen Cards',
+            templateId: 'service-card-v1',
+            layout: {
+              desktop: { columns: 3, gap: { value: 24, unit: 'px' } },
+              tablet: { columns: 2, gap: { value: 16, unit: 'px' } },
+              mobile: { columns: 1, gap: { value: 16, unit: 'px' } },
+            },
+            styles: {
+              desktop: {
+                maxWidth: { value: 1100, unit: 'px' },
+                width: { value: 100, unit: '%' },
+              },
+            },
+            cards: [
+              {
+                id: 'card-s1',
+                elements: [
+                  { id: 'card-s1-img', type: 'CardImage', label: 'Bild', content: { src: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=250&fit=crop', alt: 'Haarschnitt' } },
+                  { id: 'card-s1-title', type: 'CardText', label: 'Titel', textStyle: 'h3', content: 'Haarschnitt' },
+                  { id: 'card-s1-desc', type: 'CardText', label: 'Beschreibung', textStyle: 'body', content: 'Professioneller Schnitt für Damen und Herren' },
+                  { id: 'card-s1-price', type: 'CardText', label: 'Preis', textStyle: 'price', content: 'ab 35 €' },
+                ],
+              },
+              {
+                id: 'card-s2',
+                elements: [
+                  { id: 'card-s2-img', type: 'CardImage', label: 'Bild', content: { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=250&fit=crop', alt: 'Färben' } },
+                  { id: 'card-s2-title', type: 'CardText', label: 'Titel', textStyle: 'h3', content: 'Färben & Strähnen' },
+                  { id: 'card-s2-desc', type: 'CardText', label: 'Beschreibung', textStyle: 'body', content: 'Balayage, Highlights und klassische Colorationen' },
+                  { id: 'card-s2-price', type: 'CardText', label: 'Preis', textStyle: 'price', content: 'ab 65 €' },
+                ],
+              },
+              {
+                id: 'card-s3',
+                elements: [
+                  { id: 'card-s3-img', type: 'CardImage', label: 'Bild', content: { src: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=400&h=250&fit=crop', alt: 'Styling' } },
+                  { id: 'card-s3-title', type: 'CardText', label: 'Titel', textStyle: 'h3', content: 'Styling & Pflege' },
+                  { id: 'card-s3-desc', type: 'CardText', label: 'Beschreibung', textStyle: 'body', content: 'Haarpflege-Treatments und professionelles Styling' },
+                  { id: 'card-s3-price', type: 'CardText', label: 'Preis', textStyle: 'price', content: 'ab 25 €' },
+                ],
+              },
+            ],
+          } as VECards,
         ],
       },
     ],

@@ -83,13 +83,42 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 }) => {
   const { state, dispatch } = useEditor();
   const [collapsed, setCollapsed] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
   const rowRef = useRef<HTMLDivElement>(null);
+  const renameInputRef = useRef<HTMLInputElement>(null);
   const children = getChildren(element);
   const hasChildren = children.length > 0;
   const isSelected = state.selectedId === element.id;
   const isBody = element.type === 'Body';
   const isDragging = draggedId === element.id;
   const isContainerType = isContainer(element.type);
+
+  // Start renaming on double-click
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isBody) return; // Body can't be renamed
+    setRenameValue(element.label || element.type);
+    setIsRenaming(true);
+    // Focus input after render
+    setTimeout(() => renameInputRef.current?.select(), 0);
+  };
+
+  const commitRename = () => {
+    const trimmed = renameValue.trim();
+    if (trimmed && trimmed !== (element.label || element.type)) {
+      dispatch({
+        type: 'UPDATE_CONTENT',
+        id: element.id,
+        updates: { label: trimmed },
+      });
+    }
+    setIsRenaming(false);
+  };
+
+  const cancelRename = () => {
+    setIsRenaming(false);
+  };
 
   // Determine drop indicator
   const isDropTarget = dropTarget?.elementId === element.id;
@@ -202,6 +231,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           e.stopPropagation();
           dispatch({ type: 'SELECT_ELEMENT', id: element.id });
         }}
+        onDoubleClick={handleDoubleClick}
         onContextMenu={(e) => onContextMenu(e, element)}
         style={{
           position: 'relative',
@@ -280,19 +310,46 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           {typeIcons[element.type]}
         </span>
 
-        {/* Label */}
-        <span
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontWeight: isSelected ? 600 : 400,
-            color: isSelected ? '#60a5fa' : '#d1d5db',
-            flex: 1,
-          }}
-        >
-          {element.label || element.type}
-        </span>
+        {/* Label (or rename input) */}
+        {isRenaming ? (
+          <input
+            ref={renameInputRef}
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') { e.preventDefault(); commitRename(); }
+              if (e.key === 'Escape') { e.preventDefault(); cancelRename(); }
+              e.stopPropagation(); // prevent VE keyboard shortcuts
+            }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              padding: '0 4px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3b82f6',
+              borderRadius: '3px',
+              color: '#d1d5db',
+              fontSize: '12px',
+              outline: 'none',
+              height: '20px',
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontWeight: isSelected ? 600 : 400,
+              color: isSelected ? '#60a5fa' : '#d1d5db',
+              flex: 1,
+            }}
+          >
+            {element.label || element.type}
+          </span>
+        )}
       </div>
 
       {/* Children */}

@@ -21,7 +21,8 @@ import { ContentSection } from '../properties/ContentSection';
 import { SpacingBox } from '../components/SpacingBox';
 import { FooterProperties } from '../properties/FooterProperties';
 import { HeaderProperties } from '../properties/HeaderProperties';
-import type { VEFooter, VEHeader } from '../types/elements';
+import { CardsProperties } from '../properties/CardsProperties';
+import type { VEFooter, VEHeader, VECards } from '../types/elements';
 
 // ===== ACCORDION SECTION =====
 
@@ -145,6 +146,7 @@ export const PropertiesPanel: React.FC = () => {
   const isContainer = ['Body', 'Section', 'Container'].includes(selectedElement.type);
   const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
+  const isCards = selectedElement.type === 'Cards';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
 
   // Check which sections have values
@@ -263,6 +265,12 @@ export const PropertiesPanel: React.FC = () => {
           </AccordionSection>
         )}
 
+        {isCards && (
+          <AccordionSection title="Karten Konfiguration" defaultOpen>
+            <CardsProperties element={selectedElement as VECards} />
+          </AccordionSection>
+        )}
+
         {/* Content (element-specific) */}
         {hasContent && (
           <AccordionSection title="Inhalt" defaultOpen>
@@ -271,7 +279,7 @@ export const PropertiesPanel: React.FC = () => {
         )}
 
         {/* Layout */}
-        {isContainer && !isHeaderFooter && (
+        {isContainer && !isHeaderFooter && !isCards && (
           <AccordionSection title="Layout" defaultOpen={isContainer} hasValues={hasLayoutValues}>
             <LayoutSection styles={merged} onChange={updateStyle} />
           </AccordionSection>

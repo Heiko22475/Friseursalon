@@ -3,10 +3,12 @@
 // Traversierung, Suche, Mutation von Element-Bäumen
 // =====================================================
 
-import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter } from '../types/elements';
+import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards, VECard, CardElement } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
 import { createDefaultHeaderClassicConfig } from '../../types/Header';
 import { createDefaultFooterMinimalConfig } from '../../types/Footer';
+import type { CardTemplate } from '../types/cards';
+import { BUILT_IN_CARD_TEMPLATES } from '../types/cards';
 
 // ===== UUID =====
 
@@ -449,4 +451,63 @@ export function createFooter(label?: string): VEElement {
     styles: { desktop: {} },
     config: createDefaultFooterMinimalConfig(),
   } as VEFooter;
+}
+
+// ===== CARDS HELPERS =====
+
+/**
+ * Erstellt ein einzelnes CardElement anhand eines Template-Elements
+ */
+function createCardElement(
+  tplEl: CardTemplate['elements'][number]
+): CardElement {
+  return {
+    id: generateId(),
+    type: tplEl.type,
+    label: tplEl.label,
+    content: tplEl.defaultContent ?? '',
+    textStyle: tplEl.textStyle as CardElement['textStyle'],
+    styles: tplEl.styles,
+  };
+}
+
+/**
+ * Erstellt eine einzelne VECard anhand eines Templates
+ */
+export function createCardFromTemplate(template: CardTemplate): VECard {
+  return {
+    id: generateId(),
+    elements: template.elements.map(createCardElement),
+  };
+}
+
+/**
+ * Erstellt ein Cards-Element mit Template und Beispielkarten
+ */
+export function createCards(templateId?: string, initialCardCount = 3): VEElement {
+  const template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId)
+    ?? BUILT_IN_CARD_TEMPLATES[0];
+
+  const cards: VECard[] = [];
+  for (let i = 0; i < initialCardCount; i++) {
+    cards.push(createCardFromTemplate(template));
+  }
+
+  return {
+    id: generateId(),
+    type: 'Cards',
+    label: template.name || 'Cards',
+    templateId: template.id,
+    layout: {
+      desktop: { columns: 3, gap: { value: 24, unit: 'px' } },
+      tablet: { columns: 2, gap: { value: 16, unit: 'px' } },
+      mobile: { columns: 1, gap: { value: 16, unit: 'px' } },
+    },
+    cards,
+    styles: {
+      desktop: {
+        width: { value: 100, unit: '%' },
+      },
+    },
+  } as VECards;
 }

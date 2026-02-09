@@ -3,7 +3,7 @@
 // Panel zum Hinzufügen neuer Elemente
 // =====================================================
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Rows3,
   Square,
@@ -16,6 +16,11 @@ import {
   Heading3,
   PanelTop,
   PanelBottom,
+  X,
+  Users,
+  ShoppingBag,
+  Star,
+  Grid3X3,
 } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import {
@@ -26,11 +31,13 @@ import {
   createButton,
   createHeader,
   createFooter,
+  createCards,
   findElementById,
   isContainer,
   findParent,
 } from '../utils/elementHelpers';
 import type { VEElement } from '../types/elements';
+import { BUILT_IN_CARD_TEMPLATES } from '../types/cards';
 
 interface AddableElement {
   label: string;
@@ -55,15 +62,158 @@ const addableElements: AddableElement[] = [
   // Interaktion
   { label: 'Button', icon: <MousePointerClick size={18} />, category: 'Interaktion', create: createButton },
   // Komposition
-  { label: 'Cards', icon: <LayoutGrid size={18} />, category: 'Komposition', create: () => ({ id: '', type: 'Cards', templateId: 'service', layout: { desktop: { columns: 3 } }, cards: [] } as any) },
+  { label: 'Cards', icon: <LayoutGrid size={18} />, category: 'Komposition', create: () => createCards() },
 ];
+
+// ===== CATEGORY ICONS FOR CARD TEMPLATES =====
+
+const categoryIcons: Record<string, React.ReactNode> = {
+  service: <Grid3X3 size={14} />,
+  team: <Users size={14} />,
+  product: <ShoppingBag size={14} />,
+  testimonial: <Star size={14} />,
+  general: <LayoutGrid size={14} />,
+};
+
+const categoryLabels: Record<string, string> = {
+  service: 'Service',
+  team: 'Team',
+  product: 'Produkt',
+  testimonial: 'Bewertung',
+  general: 'Allgemein',
+};
+
+// ===== CARD TEMPLATE PICKER =====
+
+const CardTemplatePicker: React.FC<{
+  onSelect: (templateId: string) => void;
+  onClose: () => void;
+}> = ({ onSelect, onClose }) => {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        style={{
+          backgroundColor: '#1e1e2e',
+          border: '1px solid #3d3d4d',
+          borderRadius: '12px',
+          padding: '24px',
+          width: '480px',
+          maxHeight: '80vh',
+          overflow: 'auto',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#d1d5db' }}>
+              Karten-Vorlage wählen
+            </h3>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#6b7280' }}>
+              Wähle eine Vorlage für dein Karten-Layout
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              padding: '6px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#6b7280',
+              cursor: 'pointer',
+              borderRadius: '4px',
+              display: 'flex',
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Template Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {BUILT_IN_CARD_TEMPLATES.map((tpl) => (
+            <button
+              key={tpl.id}
+              onClick={() => onSelect(tpl.id)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                padding: '16px',
+                backgroundColor: '#2d2d3d',
+                border: '1px solid #3d3d4d',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#3d3d4d';
+                e.currentTarget.style.borderColor = '#6366f1';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#2d2d3d';
+                e.currentTarget.style.borderColor = '#3d3d4d';
+              }}
+            >
+              {/* Category badge */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ color: '#6366f1' }}>{categoryIcons[tpl.category] || categoryIcons.general}</span>
+                <span style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  {categoryLabels[tpl.category] || tpl.category}
+                </span>
+              </div>
+              {/* Template name */}
+              <span style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db' }}>
+                {tpl.name}
+              </span>
+              {/* Description */}
+              {tpl.description && (
+                <span style={{ fontSize: '11px', color: '#6b7280', lineHeight: 1.4 }}>
+                  {tpl.description}
+                </span>
+              )}
+              {/* Element preview */}
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '4px' }}>
+                {tpl.elements.map((el, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      padding: '1px 6px',
+                      backgroundColor: '#1e1e2e',
+                      borderRadius: '3px',
+                      fontSize: '10px',
+                      color: '#9ca3af',
+                    }}
+                  >
+                    {el.label}
+                  </span>
+                ))}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const AddElementPanel: React.FC = () => {
   const { state, dispatch } = useEditor();
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
 
-  const handleAdd = (creator: () => VEElement) => {
-    const newEl = creator();
-
+  const insertElement = (newEl: VEElement) => {
     // Bestimme den Einfüge-Ort
     let parentId = state.page.body.id;
 
@@ -87,6 +237,23 @@ export const AddElementPanel: React.FC = () => {
     }
 
     dispatch({ type: 'INSERT_ELEMENT', parentId, element: newEl });
+  };
+
+  const handleAdd = (creator: () => VEElement, label: string) => {
+    // Cards → show template picker instead of instant insert
+    if (label === 'Cards') {
+      setShowTemplatePicker(true);
+      return;
+    }
+
+    const newEl = creator();
+    insertElement(newEl);
+  };
+
+  const handleTemplateSelect = (templateId: string) => {
+    setShowTemplatePicker(false);
+    const newEl = createCards(templateId);
+    insertElement(newEl);
   };
 
   // Gruppiere nach Kategorie
@@ -121,7 +288,7 @@ export const AddElementPanel: React.FC = () => {
               .map(el => (
                 <button
                   key={el.label}
-                  onClick={() => handleAdd(el.create)}
+                  onClick={() => handleAdd(el.create, el.label)}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -152,6 +319,14 @@ export const AddElementPanel: React.FC = () => {
           </div>
         </div>
       ))}
+
+      {/* Template Picker Modal */}
+      {showTemplatePicker && (
+        <CardTemplatePicker
+          onSelect={handleTemplateSelect}
+          onClose={() => setShowTemplatePicker(false)}
+        />
+      )}
     </div>
   );
 };

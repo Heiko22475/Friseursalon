@@ -23,6 +23,7 @@ export type {
   VEButton,
   VECards,
   VEComponentInstance,
+  VEWebsiteBlock,
   VEPage,
   VEComponent,
   TextStylePreset,

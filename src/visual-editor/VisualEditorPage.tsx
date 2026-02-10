@@ -15,215 +15,20 @@ import { CanvasRenderer } from './renderer/CanvasRenderer';
 import { useEditor } from './state/EditorContext';
 import { ContextMenu } from './components/ContextMenu';
 import type { ContextMenuData, ContextMenuAction } from './components/ContextMenu';
-import type { VEElement, VEPage, VEBody } from './types/elements';
+import type { VEElement, VEPage } from './types/elements';
 import { findElementById, findParent, getChildren } from './utils/elementHelpers';
 import { VEErrorBoundary } from './components/VEErrorBoundary';
 import { VESaveProvider } from './state/VESaveContext';
+import { VEWebsiteContextBridge } from './renderer/VEWebsiteContextBridge';
 import { demoPages } from './data/demoPage';
 import { supabase } from '../lib/supabase';
+import { convertWebsiteToVEPages } from './converters/websiteToVE';
 import './styles/editor.css';
 
 // ===== DATA SOURCE TYPE =====
 export type VEDataSource = 'demo' | 'live';
 
-// ===== CONVERTER: Website JSON → VEPages =====
-// Konvertiert die Website-JSON-Blöcke in das VE-Seitenformat
-function convertWebsiteToVEPages(content: any): VEPage[] {
-  if (!content || !content.pages || !Array.isArray(content.pages)) {
-    return [];
-  }
-
-  return content.pages.map((page: any) => {
-    // Build VE children from blocks
-    const children: VEElement[] = (page.blocks || []).map((block: any, idx: number) => {
-      // Create a Section for each block
-      const blockChildren: VEElement[] = [];
-
-      if (block.type === 'hero' && block.config) {
-        // Hero block → Image + Text elements
-        blockChildren.push({
-          id: `${block.id}-img`,
-          type: 'Image' as const,
-          label: 'Hero Bild',
-          content: {
-            src: block.config.backgroundImage || '',
-            alt: block.content?.title || 'Hero',
-          },
-          styles: {
-            desktop: {
-              width: { value: 100, unit: '%' as const },
-              height: { value: 400, unit: 'px' as const },
-              objectFit: 'cover',
-            },
-          },
-        });
-        if (block.config.texts) {
-          block.config.texts.forEach((text: any) => {
-            blockChildren.push({
-              id: text.id || `${block.id}-text-${Math.random().toString(36).slice(2, 6)}`,
-              type: 'Text' as const,
-              label: text.content?.slice(0, 30) || 'Text',
-              content: text.content || '',
-              textStyle: 'h1' as const,
-              styles: {
-                desktop: {
-                  color: text.color ? { kind: 'custom' as const, hex: text.color } : undefined,
-                  textAlign: 'center' as const,
-                  marginTop: { value: 8, unit: 'px' as const },
-                },
-              },
-            });
-          });
-        }
-      } else if (block.type === 'generic-card' && block.config) {
-        // Generic card block → show section title + card items as text
-        if (block.config.sectionStyle?.title) {
-          blockChildren.push({
-            id: `${block.id}-title`,
-            type: 'Text' as const,
-            label: block.config.sectionStyle.title,
-            content: block.config.sectionStyle.title,
-            textStyle: 'h2' as const,
-            styles: {
-              desktop: {
-                textAlign: (block.config.sectionStyle?.headerAlign || 'center') as 'center' | 'left' | 'right',
-                marginBottom: { value: 8, unit: 'px' as const },
-              },
-            },
-          });
-        }
-        if (block.config.sectionStyle?.subtitle) {
-          blockChildren.push({
-            id: `${block.id}-subtitle`,
-            type: 'Text' as const,
-            label: 'Untertitel',
-            content: block.config.sectionStyle.subtitle,
-            textStyle: 'body' as const,
-            styles: {
-              desktop: {
-                color: block.config.sectionStyle.subtitleColor || undefined,
-                textAlign: 'center' as const,
-                marginBottom: { value: 16, unit: 'px' as const },
-              },
-            },
-          });
-        }
-        // Card items as container with text
-        (block.config.items || []).forEach((item: any) => {
-          const cardChildren: VEElement[] = [];
-          if (item.image) {
-            cardChildren.push({
-              id: `${item.id}-img`,
-              type: 'Image' as const,
-              label: item.title || 'Bild',
-              content: {
-                src: item.image,
-                alt: item.title || '',
-              },
-              styles: {
-                desktop: {
-                  width: { value: 100, unit: '%' as const },
-                  height: { value: 200, unit: 'px' as const },
-                  objectFit: 'cover',
-                  borderRadius: { value: 8, unit: 'px' as const },
-                },
-              },
-            });
-          }
-          if (item.title) {
-            cardChildren.push({
-              id: `${item.id}-title`,
-              type: 'Text' as const,
-              label: item.title,
-              content: item.title,
-              textStyle: 'h3' as const,
-              styles: { desktop: {} },
-            });
-          }
-          if (item.description) {
-            cardChildren.push({
-              id: `${item.id}-desc`,
-              type: 'Text' as const,
-              label: 'Beschreibung',
-              content: item.description.replace(/<[^>]*>/g, ''),
-              textStyle: 'body' as const,
-              styles: { desktop: { color: { kind: 'custom' as const, hex: '#6b7280' } } },
-            });
-          }
-
-          blockChildren.push({
-            id: item.id || `card-${Math.random().toString(36).slice(2, 6)}`,
-            type: 'Container' as const,
-            label: item.title || 'Karte',
-            styles: {
-              desktop: {
-                paddingTop: { value: 16, unit: 'px' as const },
-                paddingRight: { value: 16, unit: 'px' as const },
-                paddingBottom: { value: 16, unit: 'px' as const },
-                paddingLeft: { value: 16, unit: 'px' as const },
-                backgroundColor: block.config.cardStyle?.backgroundColor || undefined,
-                borderRadius: { value: 8, unit: 'px' as const },
-              },
-            },
-            children: cardChildren,
-          });
-        });
-      } else if (block.type === 'static_content') {
-        blockChildren.push({
-          id: `${block.id}-text`,
-          type: 'Text' as const,
-          label: block.config?.type || 'Statischer Inhalt',
-          content: `[${block.config?.type || 'content'}]`,
-          textStyle: 'body' as const,
-          styles: { desktop: { paddingTop: { value: 24, unit: 'px' as const }, paddingBottom: { value: 24, unit: 'px' as const } } },
-        });
-      }
-
-      // Determine section background
-      const sectionBg = block.config?.sectionStyle?.backgroundColor
-        || (block.type === 'hero' ? { kind: 'custom' as const, hex: '#0f172a' } : undefined);
-
-      return {
-        id: block.id,
-        type: 'Section' as const,
-        label: block.config?.sectionStyle?.title || block.content?.title || `Block ${idx + 1}`,
-        styles: {
-          desktop: {
-            display: 'flex' as const,
-            flexDirection: 'column' as const,
-            paddingTop: { value: 48, unit: 'px' as const },
-            paddingBottom: { value: 48, unit: 'px' as const },
-            paddingLeft: { value: 24, unit: 'px' as const },
-            paddingRight: { value: 24, unit: 'px' as const },
-            backgroundColor: sectionBg,
-          },
-        },
-        children: blockChildren,
-      } as VEElement;
-    });
-
-    const body: VEBody = {
-      id: `body-${page.id}`,
-      type: 'Body',
-      label: 'Body',
-      styles: {
-        desktop: {
-          backgroundColor: { kind: 'custom' as const, hex: '#ffffff' },
-        },
-      },
-      children,
-    };
-
-    return {
-      id: page.id,
-      name: page.title || 'Seite',
-      route: page.slug === 'home' ? '/' : `/${page.slug}`,
-      body,
-      isVisualEditor: true,
-      isPublished: page.is_published ?? true,
-    } as VEPage;
-  });
-}
+// Converter is now in ./converters/websiteToVE.ts
 
 // ===== INNER EDITOR (braucht Context) =====
 
@@ -572,15 +377,17 @@ const VisualEditorPage: React.FC = () => {
 
         {/* Editor or Loading/Error State */}
         {showEditor ? (
-          <VESaveProvider
-            dataSource={dataSource}
-            customerId={selectedCustomer}
-            originalContent={originalContent}
-          >
-            <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages}>
-              <EditorInner />
-            </EditorProvider>
-          </VESaveProvider>
+          <VEWebsiteContextBridge customerId={dataSource === 'live' ? selectedCustomer : ''}>
+            <VESaveProvider
+              dataSource={dataSource}
+              customerId={selectedCustomer}
+              originalContent={originalContent}
+            >
+              <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages}>
+                <EditorInner />
+              </EditorProvider>
+            </VESaveProvider>
+          </VEWebsiteContextBridge>
         ) : (
           <div
             style={{

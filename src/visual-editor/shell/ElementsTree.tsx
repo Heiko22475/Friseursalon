@@ -45,6 +45,7 @@ const typeIcons: Record<VEElementType, React.ReactNode> = {
   Header: <PanelTop size={14} />,
   Footer: <PanelBottom size={14} />,
   ComponentInstance: <Puzzle size={14} />,
+  WebsiteBlock: <Rows3 size={14} />,
 };
 
 // ===== DROP POSITION =====

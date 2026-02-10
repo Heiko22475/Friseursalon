@@ -92,7 +92,7 @@ export function canContain(parentType: VEElementType, childType: VEElementType):
   if (childType === 'Body') return false; // Body kann nie Kind sein
 
   const allowed: Record<string, VEElementType[]> = {
-    Body: ['Section', 'Header', 'Footer'],
+    Body: ['Section', 'Header', 'Footer', 'WebsiteBlock'],
     Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
     Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
   };

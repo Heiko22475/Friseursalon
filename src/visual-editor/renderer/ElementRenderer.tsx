@@ -15,7 +15,8 @@ import { ButtonRenderer } from './ButtonRenderer';
 import { HeaderRenderer } from './HeaderRenderer';
 import { FooterRenderer } from './FooterRenderer';
 import { CardsRenderer } from './CardsRenderer';
-import type { VEHeader, VEFooter, VECards } from '../types/elements';
+import { WebsiteBlockRenderer } from './WebsiteBlockRenderer';
+import type { VEHeader, VEFooter, VECards, VEWebsiteBlock } from '../types/elements';
 
 interface ElementRendererProps {
   element: VEElement;
@@ -131,6 +132,18 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
       return (
         <FooterRenderer
           element={element as VEFooter}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
+      );
+
+    case 'WebsiteBlock':
+      return (
+        <WebsiteBlockRenderer
+          element={element as VEWebsiteBlock}
           viewport={viewport}
           isSelected={isSelected}
           isHovered={!!isHovered}

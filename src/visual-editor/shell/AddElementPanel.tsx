@@ -221,7 +221,7 @@ export const AddElementPanel: React.FC = () => {
       const selected = findElementById(state.page.body, state.selectedId);
       if (selected) {
         // Section, Header, Footer → nur in Body
-        if (newEl.type === 'Section' || newEl.type === 'Header' || newEl.type === 'Footer') {
+        if (newEl.type === 'Section' || newEl.type === 'Header' || newEl.type === 'Footer' || newEl.type === 'WebsiteBlock') {
           parentId = state.page.body.id;
         }
         // Wenn ausgewähltes Element ein Container ist → da rein

@@ -17,7 +17,8 @@ export type VEElementType =
   | 'Cards'
   | 'Header'
   | 'Footer'
-  | 'ComponentInstance';
+  | 'ComponentInstance'
+  | 'WebsiteBlock';
 
 // ===== TEXT STYLE PRESETS =====
 
@@ -138,6 +139,22 @@ export interface VEFooter extends VEBaseElement {
   config: import('../../types/Footer').FooterConfig;
 }
 
+// ===== WEBSITE BLOCK (renders original block components in VE) =====
+
+export interface VEWebsiteBlock extends VEBaseElement {
+  type: 'WebsiteBlock';
+  /** The original block type from website JSON (hero, generic-card, etc.) */
+  blockType: string;
+  /** The original block config – passed directly to the block component */
+  blockConfig: any;
+  /** The original block content */
+  blockContent?: any;
+  /** Block position/instanceId */
+  blockPosition?: number;
+  /** Original block ID for save merge */
+  originalBlockId: string;
+}
+
 // ===== UNION TYPE =====
 
 export type VEElement =
@@ -150,7 +167,8 @@ export type VEElement =
   | VECards
   | VEHeader
   | VEFooter
-  | VEComponentInstance;
+  | VEComponentInstance
+  | VEWebsiteBlock;
 
 // ===== PAGE =====
 

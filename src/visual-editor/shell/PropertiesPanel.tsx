@@ -22,7 +22,8 @@ import { SpacingBox } from '../components/SpacingBox';
 import { FooterProperties } from '../properties/FooterProperties';
 import { HeaderProperties } from '../properties/HeaderProperties';
 import { CardsProperties } from '../properties/CardsProperties';
-import type { VEFooter, VEHeader, VECards } from '../types/elements';
+import { WebsiteBlockProperties } from './WebsiteBlockProperties';
+import type { VEFooter, VEHeader, VECards, VEWebsiteBlock } from '../types/elements';
 
 // ===== ACCORDION SECTION =====
 
@@ -90,6 +91,7 @@ const TYPE_COLORS: Record<string, string> = {
   Cards: '#ec4899',
   Header: '#14b8a6',
   Footer: '#f97316',
+  WebsiteBlock: '#0ea5e9',
 };
 
 // ===== PROPERTIES PANEL =====
@@ -147,6 +149,7 @@ export const PropertiesPanel: React.FC = () => {
   const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
   const isCards = selectedElement.type === 'Cards';
+  const isWebsiteBlock = selectedElement.type === 'WebsiteBlock';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
 
   // Check which sections have values
@@ -252,6 +255,11 @@ export const PropertiesPanel: React.FC = () => {
       {/* Scrollable Properties */}
       <div style={{ flex: 1, overflow: 'auto' }}>
 
+        {/* WebsiteBlock: full config editor */}
+        {isWebsiteBlock && (
+          <WebsiteBlockProperties element={selectedElement as VEWebsiteBlock} />
+        )}
+
         {/* Header/Footer: dedicated config panels */}
         {selectedElement.type === 'Footer' && (
           <AccordionSection title="Footer Konfiguration" defaultOpen>
@@ -272,56 +280,56 @@ export const PropertiesPanel: React.FC = () => {
         )}
 
         {/* Content (element-specific) */}
-        {hasContent && (
+        {hasContent && !isWebsiteBlock && (
           <AccordionSection title="Inhalt" defaultOpen>
             <ContentSection element={selectedElement} />
           </AccordionSection>
         )}
 
         {/* Layout */}
-        {isContainer && !isHeaderFooter && !isCards && (
+        {isContainer && !isHeaderFooter && !isCards && !isWebsiteBlock && (
           <AccordionSection title="Layout" defaultOpen={isContainer} hasValues={hasLayoutValues}>
             <LayoutSection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Spacing (Box Model) */}
-        {!isHeaderFooter && (
+        {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Spacing" hasValues={hasSpacingValues}>
           <SpacingBox styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
         )}
 
         {/* Size */}
-        {!isHeaderFooter && (
+        {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Größe" hasValues={hasSizeValues}>
           <SizeSection styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
         )}
 
         {/* Typography (only for text-like elements or containers that can have text) */}
-        {(isTextLike || isContainer) && !isHeaderFooter && (
+        {(isTextLike || isContainer) && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection title="Typografie" defaultOpen={isTextLike} hasValues={hasTypoValues}>
             <TypographySection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Background */}
-        {!isHeaderFooter && (
+        {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Hintergrund" hasValues={hasBgValues}>
           <BackgroundSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Border */}
-        {!isHeaderFooter && (
+        {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Rahmen" hasValues={hasBorderValues}>
           <BorderSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Effects (Shadow, Position, Cursor) */}
-        {!isHeaderFooter && (
+        {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Effekte" hasValues={hasEffectValues}>
           <EffectsSection styles={merged} onChange={updateStyle} />
         </AccordionSection>

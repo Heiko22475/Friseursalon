@@ -3,10 +3,11 @@
 // Breadcrumbs, Viewport Switch, Speichern, Zurück
 // =====================================================
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save, ChevronDown, FileText, Home, FileJson } from 'lucide-react';
+import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save, ChevronDown, FileText, Home, FileJson, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { useEditor, useEditorKeyboard } from '../state/EditorContext';
+import { useVESave } from '../state/VESaveContext';
 import { JsonImportDialog } from './JsonImportDialog';
 import type { VEViewport } from '../types/styles';
 
@@ -16,9 +17,42 @@ export const TopBar: React.FC = () => {
   const [pageDropdownOpen, setPageDropdownOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { save, isSaving, saveError, dataSource, customerId } = useVESave();
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Handle save
+  const handleSave = useCallback(async () => {
+    if (!state.isDirty && !isSaving) return;
+
+    setSaveStatus('idle');
+    const success = await save(state.pages, state.page);
+    if (success) {
+      dispatch({ type: 'MARK_SAVED' });
+      setSaveStatus('success');
+      // Reset success indicator after 3 seconds
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    } else {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 5000);
+    }
+  }, [state.isDirty, state.pages, state.page, save, dispatch, isSaving]);
 
   // Keyboard shortcuts aktivieren
   useEditorKeyboard();
+
+  // Ctrl+S save handler (needs VESaveContext which EditorContext doesn't have)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (state.isDirty && !isSaving) {
+          handleSave();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state.isDirty, isSaving, handleSave]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -318,10 +352,8 @@ export const TopBar: React.FC = () => {
         </button>
 
         <button
-          onClick={() => {
-            // TODO: Speichern implementieren
-            dispatch({ type: 'MARK_SAVED' });
-          }}
+          onClick={handleSave}
+          disabled={isSaving || (!state.isDirty && saveStatus !== 'error')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -329,18 +361,59 @@ export const TopBar: React.FC = () => {
             padding: '6px 12px',
             borderRadius: '6px',
             border: 'none',
-            backgroundColor: state.isDirty ? '#3b82f6' : '#2d2d3d',
-            color: state.isDirty ? '#ffffff' : '#6b7280',
-            cursor: state.isDirty ? 'pointer' : 'default',
+            backgroundColor: isSaving
+              ? '#2563eb'
+              : saveStatus === 'success'
+              ? '#16a34a'
+              : saveStatus === 'error'
+              ? '#dc2626'
+              : state.isDirty
+              ? '#3b82f6'
+              : '#2d2d3d',
+            color: isSaving || state.isDirty || saveStatus !== 'idle' ? '#ffffff' : '#6b7280',
+            cursor: isSaving ? 'wait' : state.isDirty ? 'pointer' : 'default',
             fontSize: '13px',
             fontWeight: 500,
             transition: 'all 0.2s',
+            opacity: isSaving ? 0.8 : 1,
           }}
-          title="Speichern (Ctrl+S)"
+          title={
+            dataSource === 'demo'
+              ? 'Demo-Modus – kein Speichern in DB (Ctrl+S)'
+              : customerId
+              ? `Speichern für Kunde ${customerId} (Ctrl+S)`
+              : 'Kein Kunde ausgewählt (Ctrl+S)'
+          }
         >
-          <Save size={14} />
-          Speichern
+          {isSaving ? (
+            <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+          ) : saveStatus === 'success' ? (
+            <Check size={14} />
+          ) : saveStatus === 'error' ? (
+            <AlertCircle size={14} />
+          ) : (
+            <Save size={14} />
+          )}
+          {isSaving
+            ? 'Speichert...'
+            : saveStatus === 'success'
+            ? 'Gespeichert ✓'
+            : saveStatus === 'error'
+            ? (saveError || 'Fehler')
+            : 'Speichern'}
         </button>
+
+        {/* Data source indicator */}
+        {dataSource === 'demo' && (
+          <span style={{ fontSize: '10px', color: '#a78bfa', marginLeft: '4px' }} title="Demo-Modus – Änderungen werden nicht in der Datenbank gespeichert">
+            🧪 Demo
+          </span>
+        )}
+        {dataSource === 'live' && customerId && (
+          <span style={{ fontSize: '10px', color: '#4ade80', marginLeft: '4px' }} title={`Verbunden mit Kunde ${customerId}`}>
+            🌐 {customerId}
+          </span>
+        )}
       </div>
 
       {/* JSON Import Dialog */}

@@ -130,7 +130,33 @@ function pushUndoDebounced(state: EditorState): EditorState {
   return pushUndo(state);
 }
 
+/**
+ * Sync the current page back into the pages array.
+ * Must be called on every reducer result that modifies state.page
+ * so that state.pages always reflects the latest edits.
+ */
+function syncPageToPages(result: EditorState): EditorState {
+  return {
+    ...result,
+    pages: result.pages.map(p =>
+      p.id === result.page.id ? result.page : p
+    ),
+  };
+}
+
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
+  const result = editorReducerInner(state, action);
+
+  // Auto-sync: whenever state.page changes, keep state.pages in sync.
+  // This ensures that save() always reads the latest edits from state.pages.
+  if (result.page !== state.page && result !== state) {
+    return syncPageToPages(result);
+  }
+
+  return result;
+}
+
+function editorReducerInner(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case 'SELECT_ELEMENT':
       return { ...state, selectedId: action.id };
@@ -630,13 +656,10 @@ export function useEditorKeyboard() {
         dispatch({ type: 'REDO' });
       }
 
-      // Ctrl+S / Cmd+S → Speichern
+      // Ctrl+S / Cmd+S → Speichern (handled by TopBar with VESaveContext)
       if (ctrlOrCmd && e.key === 's') {
         e.preventDefault();
-        if (state.isDirty) {
-          dispatch({ type: 'MARK_SAVED' });
-          // TODO: Supabase save integration
-        }
+        // Save is handled by TopBar which has access to VESaveContext
       }
 
       // Ctrl+C / Cmd+C → Kopieren

@@ -191,6 +191,9 @@ const InlineTextEditor: React.FC<{
 export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
   const { dispatch } = useEditor();
   const [isEditing, setIsEditing] = useState(false);
+  // Track whether we just became selected via this click (to distinguish
+  // "first click to select" from "click on already-selected to edit").
+  const justSelectedRef = useRef(false);
 
   const resolvedStyles = resolveStyles(element.styles, viewport);
   const preset = element.textStyle || 'body';
@@ -200,11 +203,32 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
   const combinedStyles: React.CSSProperties = {
     ...defaults,
     ...resolvedStyles,
+    // Ensure small text elements have a reasonable click target
+    minHeight: '1em',
+    cursor: isSelected ? 'text' : 'default',
   };
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSelected) {
+      // Already selected → enter edit mode on second click
+      // (but not if we *just* became selected from this same click)
+      if (!justSelectedRef.current) {
+        setIsEditing(true);
+      }
+    } else {
+      // First click → select
+      justSelectedRef.current = true;
+      onSelect(element.id);
+      // Reset the flag after this event cycle
+      requestAnimationFrame(() => { justSelectedRef.current = false; });
+    }
+  }, [element.id, isSelected, onSelect]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    // Always enter edit mode on double-click regardless of selection state
     onSelect(element.id);
     setIsEditing(true);
   }, [element.id, onSelect]);
@@ -219,6 +243,13 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
       });
     }
   }, [dispatch, element.id, element.content]);
+
+  // When we become deselected externally, exit editing
+  useEffect(() => {
+    if (!isSelected && isEditing) {
+      setIsEditing(false);
+    }
+  }, [isSelected, isEditing]);
 
   // Inline editing mode
   if (isEditing) {
@@ -238,7 +269,7 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
     'data-ve-id': element.id,
     'data-ve-type': element.type,
     style: combinedStyles,
-    onClick: (e: React.MouseEvent) => { e.stopPropagation(); onSelect(element.id); },
+    onClick: handleClick,
     onDoubleClick: handleDoubleClick,
     onMouseEnter: (e: React.MouseEvent) => { e.stopPropagation(); onHover?.(element.id); },
     className: `${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`,

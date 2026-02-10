@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Palette, Database, LayoutGrid } from 'lucide-react';
+import { Users, Palette, Database, LayoutGrid, PenTool } from 'lucide-react';
 import { AdminHeader } from '../admin/AdminHeader';
 
 export const SuperAdminDashboard: React.FC = () => {
@@ -12,6 +12,33 @@ export const SuperAdminDashboard: React.FC = () => {
 
       <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+          {/* Visual Editor — Featured */}
+          <button
+            onClick={() => navigate('/admin/visual-editor')}
+            className="block p-6 rounded-lg transition text-left group"
+            style={{
+              backgroundColor: 'var(--admin-bg-card)',
+              border: '2px solid var(--admin-accent)',
+              boxShadow: '0 0 0 1px var(--admin-accent-bg)',
+            }}
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 rounded-lg transition" style={{ backgroundColor: 'var(--admin-accent)', color: '#fff' }}>
+                <PenTool className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Visual Editor</h3>
+                <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--admin-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  ★ Empfohlen
+                </span>
+              </div>
+            </div>
+            <p style={{ color: 'var(--admin-text-muted)' }}>
+              Website visuell bearbeiten. Wähle zwischen Demo-Testseite und Live-Kundendaten (Supabase).
+            </p>
+          </button>
+
           <button
             onClick={() => navigate('/superadmin/users')}
             className="block p-6 rounded-lg transition text-left group"

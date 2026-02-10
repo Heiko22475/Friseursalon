@@ -64,7 +64,6 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const sections = [
-    { id: 'pages', name: 'Seiten-Verwaltung', desc: 'Seiten anlegen & verwalten', icon: Layout, path: '/admin/pages', enabled: true, featured: true },
     { id: 'visual-editor', name: 'Visual Editor', desc: 'Visuell gestalten', icon: PenTool, path: '/admin/visual-editor', enabled: true, featured: true },
     { id: 'media', name: 'Mediathek', desc: 'Bilder & Dateien', icon: FolderOpen, path: '/admin/media', enabled: true, featured: false },
     { id: 'backup', name: 'Backup & Restore', desc: 'Sicherung & Wiederherstellung', icon: HardDrive, path: '/admin/backup', enabled: true, featured: false },
@@ -72,6 +71,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'settings', name: 'Einstellungen', desc: 'Website-Einstellungen', icon: Settings, path: '/admin/settings', enabled: true, featured: false },
     { id: 'theme', name: 'Theme Editor', desc: 'Farben & Design', icon: Palette, path: '/admin/theme', enabled: true, featured: false },
     { id: 'typography', name: 'Typographie', desc: 'Schriften & Größen', icon: Type, path: '/admin/typography', enabled: true, featured: false },
+    { id: 'pages', name: 'Seiten-Verwaltung (Legacy)', desc: 'Veraltet – bitte Visual Editor nutzen', icon: Layout, path: '/admin/pages', enabled: true, featured: false, deprecated: true },
   ];
 
   return (
@@ -203,6 +203,7 @@ export const AdminDashboard: React.FC = () => {
           {sections.map((section) => {
             const Icon = section.icon;
             const isFeatured = section.featured;
+            const isDeprecated = (section as any).deprecated;
             return (
               <button
                 key={section.id}
@@ -214,10 +215,10 @@ export const AdminDashboard: React.FC = () => {
                   alignItems: 'flex-start',
                   padding: '20px',
                   backgroundColor: 'var(--admin-bg-card)',
-                  border: `1px solid ${isFeatured ? 'var(--admin-accent-bg)' : 'var(--admin-border)'}`,
+                  border: `1px solid ${isFeatured ? 'var(--admin-accent-bg)' : isDeprecated ? 'var(--admin-border)' : 'var(--admin-border)'}`,
                   borderRadius: '10px',
                   cursor: section.enabled ? 'pointer' : 'not-allowed',
-                  opacity: section.enabled ? 1 : 0.5,
+                  opacity: isDeprecated ? 0.55 : section.enabled ? 1 : 0.5,
                   transition: 'all 0.15s',
                   textAlign: 'left',
                   color: 'var(--admin-text)',
@@ -236,6 +237,7 @@ export const AdminDashboard: React.FC = () => {
                   e.currentTarget.style.backgroundColor = 'var(--admin-bg-card)';
                   e.currentTarget.style.transform = 'none';
                   e.currentTarget.style.boxShadow = isFeatured ? `0 0 0 1px var(--admin-accent-bg)` : 'none';
+                  e.currentTarget.style.opacity = isDeprecated ? '0.55' : '1';
                 }}
               >
                 <div
@@ -246,7 +248,7 @@ export const AdminDashboard: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: isFeatured ? 'var(--admin-accent)' : 'var(--admin-bg-input)',
+                    backgroundColor: isFeatured ? 'var(--admin-accent)' : isDeprecated ? 'var(--admin-bg-input)' : 'var(--admin-bg-input)',
                     marginBottom: '14px',
                   }}
                 >
@@ -270,6 +272,23 @@ export const AdminDashboard: React.FC = () => {
                     }}
                   >
                     ★ Empfohlen
+                  </span>
+                )}
+                {isDeprecated && (
+                  <span
+                    style={{
+                      marginTop: '10px',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      color: '#f59e0b',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    ⚠ Deprecated
                   </span>
                 )}
               </button>

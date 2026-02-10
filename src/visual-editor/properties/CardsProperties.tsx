@@ -5,7 +5,7 @@
 // =====================================================
 
 import React, { useState } from 'react';
-import { Plus, Trash2, Copy, ChevronDown, ChevronRight, GripVertical } from 'lucide-react';
+import { Plus, Trash2, Copy, ChevronDown, ChevronRight, ChevronUp, GripVertical } from 'lucide-react';
 import type { VECards, VECard, CardElement } from '../types/elements';
 import { useEditor } from '../state/EditorContext';
 import { createCardFromTemplate } from '../utils/elementHelpers';
@@ -161,10 +161,13 @@ const CardElementEditor: React.FC<{
 const SingleCardEditor: React.FC<{
   card: VECard;
   index: number;
+  totalCards: number;
   onChange: (updated: VECard) => void;
   onDelete: () => void;
   onDuplicate: () => void;
-}> = ({ card, index, onChange, onDelete, onDuplicate }) => {
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+}> = ({ card, index, totalCards, onChange, onDelete, onDuplicate, onMoveUp, onMoveDown }) => {
   const [open, setOpen] = useState(false);
 
   const handleElementChange = (elIdx: number, updates: Partial<CardElement>) => {
@@ -205,6 +208,22 @@ const SingleCardEditor: React.FC<{
         <span style={{ flex: 1, fontSize: '12px', color: '#d1d5db', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {cardLabel}
         </span>
+        <button
+          onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
+          title="Nach oben"
+          disabled={index === 0}
+          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: index === 0 ? '#3d3d4d' : '#6b7280', cursor: index === 0 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+        >
+          <ChevronUp size={12} />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
+          title="Nach unten"
+          disabled={index === totalCards - 1}
+          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: index === totalCards - 1 ? '#3d3d4d' : '#6b7280', cursor: index === totalCards - 1 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+        >
+          <ChevronDown size={12} />
+        </button>
         <button
           onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
           title="Duplizieren"
@@ -277,6 +296,15 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
     updateCards(newCards);
   };
 
+  // Move card up/down
+  const handleMoveCard = (idx: number, direction: 'up' | 'down') => {
+    const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (newIdx < 0 || newIdx >= element.cards.length) return;
+    const newCards = [...element.cards];
+    [newCards[idx], newCards[newIdx]] = [newCards[newIdx], newCards[idx]];
+    updateCards(newCards);
+  };
+
   // Update single card
   const handleCardChange = (idx: number, updated: VECard) => {
     const newCards = [...element.cards];
@@ -299,12 +327,36 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
     });
   };
 
-  // Change template
+  // Change template (with warning)
   const handleTemplateChange = (templateId: string) => {
+    if (templateId === element.templateId) return;
+
+    const newTemplate = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId);
+    if (!newTemplate) return;
+
+    // Warn user about data loss
+    const hasContent = element.cards.some(card =>
+      card.elements.some(el => {
+        if (typeof el.content === 'string' && el.content) return true;
+        if (typeof el.content === 'object' && el.content?.src) return true;
+        return false;
+      })
+    );
+
+    if (hasContent) {
+      const confirmed = window.confirm(
+        `Beim Wechsel der Vorlage zu „${newTemplate.name}" werden die bestehenden Karten-Inhalte durch die neue Struktur ersetzt.\n\nFortfahren?`
+      );
+      if (!confirmed) return;
+    }
+
+    // Recreate cards with new template structure, keeping count
+    const newCards = element.cards.map(() => createCardFromTemplate(newTemplate));
+
     dispatch({
       type: 'UPDATE_CONTENT',
       id: element.id,
-      updates: { templateId },
+      updates: { templateId, cards: newCards },
     });
   };
 
@@ -403,9 +455,12 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
             key={card.id}
             card={card}
             index={idx}
+            totalCards={element.cards.length}
             onChange={(updated) => handleCardChange(idx, updated)}
             onDelete={() => handleDeleteCard(idx)}
             onDuplicate={() => handleDuplicateCard(idx)}
+            onMoveUp={() => handleMoveCard(idx, 'up')}
+            onMoveDown={() => handleMoveCard(idx, 'down')}
           />
         ))}
       </div>

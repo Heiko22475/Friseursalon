@@ -259,10 +259,8 @@ export const CardsRenderer: React.FC<CardsRendererProps> = ({
       data-ve-id={element.id}
       data-ve-type="Cards"
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          e.stopPropagation();
-          onSelect(element.id);
-        }
+        e.stopPropagation();
+        onSelect(element.id);
       }}
       onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
       className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}

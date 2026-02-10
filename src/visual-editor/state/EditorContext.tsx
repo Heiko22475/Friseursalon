@@ -44,7 +44,7 @@ export interface EditorState {
   /** Navigator Panel offen? */
   navigatorOpen: boolean;
   /** Aktiver Navigator Tab */
-  navigatorTab: 'elements' | 'tree' | 'pages';
+  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets';
   /** Clipboard für Copy/Paste */
   clipboard: VEElement | null;
   /** ID des Elements das gerade inline editiert wird */
@@ -80,7 +80,7 @@ export type EditorAction =
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_NAVIGATOR' }
-  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' }
+  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' }
   // Page management
   | { type: 'SWITCH_PAGE'; pageId: string }
   | { type: 'ADD_PAGE'; name: string; route: string }
@@ -628,6 +628,15 @@ export function useEditorKeyboard() {
       if (ctrlOrCmd && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
         e.preventDefault();
         dispatch({ type: 'REDO' });
+      }
+
+      // Ctrl+S / Cmd+S → Speichern
+      if (ctrlOrCmd && e.key === 's') {
+        e.preventDefault();
+        if (state.isDirty) {
+          dispatch({ type: 'MARK_SAVED' });
+          // TODO: Supabase save integration
+        }
       }
 
       // Ctrl+C / Cmd+C → Kopieren

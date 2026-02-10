@@ -5,14 +5,16 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save, ChevronDown, FileText, Home } from 'lucide-react';
+import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Save, ChevronDown, FileText, Home, FileJson } from 'lucide-react';
 import { useEditor, useEditorKeyboard } from '../state/EditorContext';
+import { JsonImportDialog } from './JsonImportDialog';
 import type { VEViewport } from '../types/styles';
 
 export const TopBar: React.FC = () => {
   const { state, dispatch, breadcrumbs } = useEditor();
   const navigate = useNavigate();
   const [pageDropdownOpen, setPageDropdownOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Keyboard shortcuts aktivieren
@@ -294,6 +296,28 @@ export const TopBar: React.FC = () => {
         <div style={{ width: '1px', height: '20px', backgroundColor: '#3d3d4d', margin: '0 4px' }} />
 
         <button
+          onClick={() => setImportDialogOpen(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 10px',
+            borderRadius: '6px',
+            border: '1px solid #3d3d4d',
+            backgroundColor: 'transparent',
+            color: '#9ca3af',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 500,
+            transition: 'all 0.15s',
+          }}
+          title="JSON importieren (Superadmin)"
+        >
+          <FileJson size={14} />
+          Import
+        </button>
+
+        <button
           onClick={() => {
             // TODO: Speichern implementieren
             dispatch({ type: 'MARK_SAVED' });
@@ -318,6 +342,12 @@ export const TopBar: React.FC = () => {
           Speichern
         </button>
       </div>
+
+      {/* JSON Import Dialog */}
+      <JsonImportDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+      />
     </div>
   );
 };

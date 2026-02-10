@@ -1,0 +1,1259 @@
+{
+  "site_settings": {
+    "header_type": "simple",
+    "theme": {
+      "primary_color": "#1a1a1a",
+      "font_family": "sans"
+    }
+  },
+  "general": {
+    "name": "Dennis Friseur",
+    "full_name": "Dennis Friseur – Ihr Friseur in Hamburg",
+    "tagline": "Erlebe unser klassisches Friseur Ambiente",
+    "motto": "Individuelle, persönliche und stilvoll gestaltete Bereiche für Damen und Herren",
+    "description": "Friseursalon und Barbershop in der Hamburger Innenstadt. Individuelle Beratung, hochwertige Produkte von L'Oréal Professionnel und Barba Italiana."
+  },
+  "pages": [
+    {
+      "id": "page-home",
+      "title": "Home",
+      "slug": "home",
+      "is_home": true,
+      "is_published": true,
+      "show_in_menu": true,
+      "meta_description": "Dennis Friseur – Friseursalon und Barbershop in der Hamburger Innenstadt. Erlebe unser klassisches Friseur Ambiente.",
+      "seo_title": "Dennis Friseur | Friseur & Barbershop in Hamburg",
+      "display_order": 0,
+      "blocks": [
+        {
+          "id": "block-hero",
+          "type": "hero",
+          "position": 0,
+          "config": {
+            "backgroundImage": "https://www.dennisfriseur.de/img/slider1.jpg",
+            "backgroundPosition": { "x": 50, "y": 40 },
+            "overlay": {
+              "enabled": true,
+              "color": "#000000",
+              "opacity": 45
+            },
+            "height": {
+              "desktop": "85vh",
+              "tablet": "70vh",
+              "mobile": "60vh"
+            },
+            "logos": [
+              {
+                "id": "hero-logo-1",
+                "logoId": "",
+                "position": {
+                  "desktop": { "horizontal": "center", "vertical": "top-center", "offsetX": 0, "offsetY": -5 }
+                },
+                "scale": { "desktop": 100, "tablet": 80, "mobile": 60 },
+                "visible": { "desktop": true, "tablet": true, "mobile": true },
+                "belowImage": { "desktop": false },
+                "order": { "desktop": 0 }
+              }
+            ],
+            "texts": [
+              {
+                "id": "hero-text-headline",
+                "content": "Willkommen bei Dennis Friseur",
+                "fontFamily": "inter",
+                "fontSize": { "desktop": 52, "tablet": 40, "mobile": 30 },
+                "fontWeight": "700",
+                "color": "#ffffff",
+                "position": {
+                  "desktop": { "horizontal": "center", "vertical": "middle", "offsetX": 0, "offsetY": -3 }
+                },
+                "visible": { "desktop": true, "tablet": true, "mobile": true },
+                "belowImage": { "desktop": false },
+                "order": { "desktop": 1 }
+              },
+              {
+                "id": "hero-text-subline",
+                "content": "ERLEBE UNSER KLASSISCHES FRISEUR AMBIENTE",
+                "fontFamily": "inter",
+                "fontSize": { "desktop": 18, "tablet": 16, "mobile": 13 },
+                "fontWeight": "400",
+                "color": "#d4af37",
+                "position": {
+                  "desktop": { "horizontal": "center", "vertical": "middle", "offsetX": 0, "offsetY": 3 }
+                },
+                "visible": { "desktop": true, "tablet": true, "mobile": true },
+                "belowImage": { "desktop": false },
+                "order": { "desktop": 2 }
+              }
+            ],
+            "buttons": [
+              {
+                "id": "hero-btn-termin",
+                "text": "Online Termin buchen",
+                "action": {
+                  "type": "link",
+                  "value": "https://www.e-cut.de/online-buchung/index.php?id=2212"
+                },
+                "style": {
+                  "variant": "custom",
+                  "backgroundColor": "#d4af37",
+                  "textColor": "#1a1a1a",
+                  "borderColor": "#d4af37",
+                  "borderRadius": "pill",
+                  "size": "large"
+                },
+                "position": {
+                  "desktop": { "horizontal": "center", "vertical": "bottom-center", "offsetX": 0, "offsetY": -5 }
+                },
+                "visible": { "desktop": true, "tablet": true, "mobile": true },
+                "belowImage": { "desktop": false },
+                "order": { "desktop": 3 }
+              }
+            ]
+          },
+          "content": {
+            "title": "Willkommen bei Dennis Friseur",
+            "subtitle": "Erlebe unser klassisches Friseur Ambiente"
+          }
+        },
+        {
+          "id": "block-damen-herren",
+          "type": "generic-card",
+          "position": 1,
+          "config": {
+            "items": [
+              {
+                "id": "card-damen",
+                "title": "Damen",
+                "subtitle": "Unser Damensalon",
+                "description": "<p>Individuelle, persönliche und stilvoll gestaltete Bereiche laden zum Entspannen und Genießen ein. An bequemen Plätzen neue Farbtrends erleben und dabei einen Cappuccino oder ein Glas Sekt genießen.</p><p>Haarschnitte und Frisuren stimmen wir trendbewusst und typgerecht auf dich ab. Eine Kopfmassage, das Permanente Styling oder ein Tages Make Up? Kein Problem!</p><p>Hochwertige Pflege- und Styling Produkte von <strong>L'Oréal Professionnel</strong>, wie INOA und Metal DX runden deinen Besuch ab. Zudem sind wir ein zertifizierter <strong>Olaplex Salon</strong>.</p>",
+                "image": "https://www.dennisfriseur.de/img/damen.jpg",
+                "order": 0
+              },
+              {
+                "id": "card-herren",
+                "title": "Herren",
+                "subtitle": "Unser Barbershop",
+                "description": "<p>Die Herren entspannen sich im gemütlichen und rustikalen Retro Ambiente unseres Barbershops. Wir beraten dich gern über die neuesten Trends für den modernen Mann und bieten akkurate und passende Haarschnitte.</p><p>Traditionell auch Messerarbeiten, Bart-Rasuren (nass/trocken) und Styling. Zudem bieten wir professionelle Pflege und Styling Produkte für Haar und Bart von <strong>Barba Italiana</strong> an.</p>",
+                "image": "https://www.dennisfriseur.de/img/herren.jpg",
+                "order": 1
+              }
+            ],
+            "layout": "grid",
+            "cardLayoutVariant": "vertical",
+            "grid": {
+              "columns": { "desktop": 2, "tablet": 2, "mobile": 1 },
+              "gap": "lg",
+              "alignItems": "stretch"
+            },
+            "typography": {
+              "enabled": false,
+              "titleFont": "inter",
+              "titleWeight": 700,
+              "bodyFont": "inter",
+              "bodyWeight": 400
+            },
+            "cardStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#f9f7f4" },
+              "borderRadius": "lg",
+              "borderWidth": 0,
+              "borderColor": { "kind": "custom", "hex": "#e5e5e5" },
+              "shadow": "md",
+              "padding": "none",
+              "transitionDuration": 300,
+              "hoverEffect": "lift"
+            },
+            "imageStyle": {
+              "aspectRatio": "3:2",
+              "fit": "cover",
+              "borderRadius": "none"
+            },
+            "showImage": true,
+            "imageElementStyle": {
+              "padding": 0,
+              "enabled": true,
+              "marginBottom": 0
+            },
+            "iconStyle": {
+              "enabled": false,
+              "size": "md",
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "backgroundEnabled": false,
+              "backgroundShape": "circle",
+              "backgroundPadding": "md"
+            },
+            "overlineStyle": {
+              "enabled": false,
+              "marginBottom": 4
+            },
+            "titleStyle": {
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "marginBottom": 4,
+              "fontSize": { "desktop": 28, "tablet": 24, "mobile": 22 }
+            },
+            "subtitleStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "marginBottom": 12,
+              "fontSize": { "desktop": 16, "tablet": 14, "mobile": 13 }
+            },
+            "descriptionStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#4a4a4a" },
+              "marginBottom": 0,
+              "fontSize": { "desktop": 15, "tablet": 14, "mobile": 14 }
+            },
+            "textStyle": {
+              "titleSize": "2xl",
+              "titleWeight": "bold",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "titleAlign": "left",
+              "subtitleSize": "base",
+              "subtitleWeight": "medium",
+              "subtitleColor": { "kind": "custom", "hex": "#d4af37" },
+              "descriptionSize": "base",
+              "descriptionColor": { "kind": "custom", "hex": "#4a4a4a" }
+            },
+            "showSubtitle": true,
+            "showDescription": true,
+            "priceStyle": {
+              "enabled": false,
+              "position": "below-title",
+              "size": "lg",
+              "weight": "bold",
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "showOriginalPrice": false,
+              "originalPriceColor": { "kind": "custom", "hex": "#9ca3af" },
+              "showBadge": false,
+              "badgeColor": { "kind": "custom", "hex": "#ffffff" },
+              "badgeBackground": { "kind": "custom", "hex": "#ef4444" }
+            },
+            "ratingStyle": {
+              "enabled": false,
+              "style": "stars",
+              "size": "md",
+              "filledColor": { "kind": "custom", "hex": "#d4af37" },
+              "emptyColor": { "kind": "custom", "hex": "#d1d5db" },
+              "showCount": false,
+              "countColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "featuresStyle": {
+              "enabled": false,
+              "icon": "Check",
+              "iconColor": { "kind": "custom", "hex": "#22c55e" },
+              "textColor": { "kind": "custom", "hex": "#374151" },
+              "textSize": "sm",
+              "layout": "list"
+            },
+            "socialStyle": {
+              "enabled": false,
+              "iconStyle": "filled",
+              "iconSize": "md",
+              "iconColor": { "kind": "custom", "hex": "#6b7280" },
+              "iconHoverColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "layout": "row",
+              "gap": "sm"
+            },
+            "buttonStyle": {
+              "variant": "filled",
+              "size": "md",
+              "borderRadius": "md",
+              "backgroundColor": { "kind": "custom", "hex": "#d4af37" },
+              "textColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "borderColor": { "kind": "custom", "hex": "#d4af37" },
+              "fullWidth": false
+            },
+            "showButton": false,
+            "sectionStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#ffffff" },
+              "paddingY": "2xl",
+              "paddingX": "lg",
+              "maxWidth": "xl",
+              "showHeader": true,
+              "headerAlign": "center",
+              "title": "Unser Salon",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "subtitle": "Klassisches Ambiente für Damen & Herren",
+              "subtitleColor": { "kind": "custom", "hex": "#6b7280" }
+            }
+          },
+          "content": {}
+        },
+        {
+          "id": "block-services",
+          "type": "generic-card",
+          "position": 2,
+          "config": {
+            "items": [
+              {
+                "id": "svc-schnitt-damen",
+                "title": "Waschen, Schneiden, Föhnen",
+                "subtitle": "Damen",
+                "icon": "Scissors",
+                "description": "<p>Typgerechter Haarschnitt mit Beratung, Haarwäsche und professionellem Styling.</p>",
+                "order": 0
+              },
+              {
+                "id": "svc-farbe",
+                "title": "Coloration & Strähnen",
+                "subtitle": "Damen",
+                "icon": "Palette",
+                "description": "<p>Neue Farbtrends mit L'Oréal Professionnel INOA und Metal DX. Schonend und brillant.</p>",
+                "order": 1
+              },
+              {
+                "id": "svc-olaplex",
+                "title": "Olaplex Treatment",
+                "subtitle": "Damen & Herren",
+                "icon": "Sparkles",
+                "description": "<p>Zertifizierte Olaplex-Behandlung für gesundes, kräftiges und glänzendes Haar.</p>",
+                "order": 2
+              },
+              {
+                "id": "svc-herren-schnitt",
+                "title": "Herrenhaarschnitt",
+                "subtitle": "Herren",
+                "icon": "Scissors",
+                "description": "<p>Akkurate Haarschnitte für den modernen Mann – trendbewusst und typgerecht.</p>",
+                "order": 3
+              },
+              {
+                "id": "svc-bart",
+                "title": "Bartpflege & Rasur",
+                "subtitle": "Herren",
+                "icon": "CircleDot",
+                "description": "<p>Traditionelle Messerarbeiten und Bart-Rasuren (nass/trocken) im rustikalen Retro Ambiente.</p>",
+                "order": 4
+              },
+              {
+                "id": "svc-makeup",
+                "title": "Tages Make Up",
+                "subtitle": "Damen",
+                "icon": "Heart",
+                "description": "<p>Professionelles Make Up für den perfekten Look – für jeden Anlass.</p>",
+                "order": 5
+              }
+            ],
+            "layout": "grid",
+            "cardLayoutVariant": "vertical",
+            "grid": {
+              "columns": { "desktop": 3, "tablet": 2, "mobile": 1 },
+              "gap": "md",
+              "alignItems": "stretch"
+            },
+            "typography": {
+              "enabled": false,
+              "titleFont": "inter",
+              "titleWeight": 700,
+              "bodyFont": "inter",
+              "bodyWeight": 400
+            },
+            "cardStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "borderRadius": "lg",
+              "borderWidth": 1,
+              "borderColor": { "kind": "custom", "hex": "#333333" },
+              "shadow": "none",
+              "padding": "lg",
+              "transitionDuration": 300,
+              "hoverEffect": "glow"
+            },
+            "imageStyle": {
+              "aspectRatio": "1:1",
+              "fit": "cover",
+              "borderRadius": "md"
+            },
+            "showImage": false,
+            "imageElementStyle": {
+              "padding": 0,
+              "enabled": false,
+              "marginBottom": 0
+            },
+            "iconStyle": {
+              "enabled": true,
+              "size": "lg",
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "backgroundEnabled": true,
+              "backgroundShape": "circle",
+              "backgroundPadding": "md",
+              "backgroundColor": { "kind": "custom", "hex": "#2a2520" },
+              "horizontalAlign": "center"
+            },
+            "overlineStyle": {
+              "enabled": false,
+              "marginBottom": 4
+            },
+            "titleStyle": {
+              "color": { "kind": "custom", "hex": "#ffffff" },
+              "marginBottom": 4,
+              "fontSize": { "desktop": 20, "tablet": 18, "mobile": 18 }
+            },
+            "subtitleStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "marginBottom": 12,
+              "fontSize": { "desktop": 13, "tablet": 12, "mobile": 12 }
+            },
+            "descriptionStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#9ca3af" },
+              "marginBottom": 0,
+              "fontSize": { "desktop": 14, "tablet": 13, "mobile": 13 }
+            },
+            "textStyle": {
+              "titleSize": "xl",
+              "titleWeight": "semibold",
+              "titleColor": { "kind": "custom", "hex": "#ffffff" },
+              "titleAlign": "center",
+              "subtitleSize": "sm",
+              "subtitleWeight": "medium",
+              "subtitleColor": { "kind": "custom", "hex": "#d4af37" },
+              "descriptionSize": "sm",
+              "descriptionColor": { "kind": "custom", "hex": "#9ca3af" }
+            },
+            "showSubtitle": true,
+            "showDescription": true,
+            "priceStyle": {
+              "enabled": false,
+              "position": "below-title",
+              "size": "lg",
+              "weight": "bold",
+              "color": { "kind": "custom", "hex": "#ffffff" },
+              "showOriginalPrice": false,
+              "originalPriceColor": { "kind": "custom", "hex": "#6b7280" },
+              "showBadge": false,
+              "badgeColor": { "kind": "custom", "hex": "#ffffff" },
+              "badgeBackground": { "kind": "custom", "hex": "#ef4444" }
+            },
+            "ratingStyle": {
+              "enabled": false,
+              "style": "stars",
+              "size": "md",
+              "filledColor": { "kind": "custom", "hex": "#d4af37" },
+              "emptyColor": { "kind": "custom", "hex": "#374151" },
+              "showCount": false,
+              "countColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "featuresStyle": {
+              "enabled": false,
+              "icon": "Check",
+              "iconColor": { "kind": "custom", "hex": "#d4af37" },
+              "textColor": { "kind": "custom", "hex": "#d1d5db" },
+              "textSize": "sm",
+              "layout": "list"
+            },
+            "socialStyle": {
+              "enabled": false,
+              "iconStyle": "filled",
+              "iconSize": "md",
+              "iconColor": { "kind": "custom", "hex": "#6b7280" },
+              "iconHoverColor": { "kind": "custom", "hex": "#d4af37" },
+              "layout": "row",
+              "gap": "sm"
+            },
+            "buttonStyle": {
+              "variant": "outline",
+              "size": "md",
+              "borderRadius": "md",
+              "backgroundColor": { "kind": "custom", "hex": "#d4af37" },
+              "textColor": { "kind": "custom", "hex": "#d4af37" },
+              "borderColor": { "kind": "custom", "hex": "#d4af37" },
+              "fullWidth": false
+            },
+            "showButton": false,
+            "sectionStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#111111" },
+              "paddingY": "2xl",
+              "paddingX": "lg",
+              "maxWidth": "xl",
+              "showHeader": true,
+              "headerAlign": "center",
+              "title": "Unsere Leistungen",
+              "titleColor": { "kind": "custom", "hex": "#ffffff" },
+              "subtitle": "Professionelle Dienstleistungen für Damen und Herren",
+              "subtitleColor": { "kind": "custom", "hex": "#9ca3af" }
+            }
+          },
+          "content": {}
+        },
+        {
+          "id": "block-team",
+          "type": "generic-card",
+          "position": 3,
+          "config": {
+            "items": [
+              {
+                "id": "team-dennis",
+                "title": "Dennis",
+                "subtitle": "Inhaber & Friseurmeister",
+                "icon": "User",
+                "description": "<p>Gründer und Inhaber von Dennis Friseur. Leidenschaft für klassisches Friseurhandwerk und moderne Trends.</p>",
+                "order": 0
+              },
+              {
+                "id": "team-irina",
+                "title": "Irina",
+                "subtitle": "Stylistin",
+                "icon": "User",
+                "description": "<p>Spezialistin für Colorationen, Strähnen und kreative Farbkonzepte mit L'Oréal Professionnel.</p>",
+                "order": 1
+              },
+              {
+                "id": "team-mareike",
+                "title": "Mareike",
+                "subtitle": "Stylistin",
+                "icon": "User",
+                "description": "<p>Expertin für typgerechte Schnitte, Olaplex-Behandlungen und professionelles Styling.</p>",
+                "order": 2
+              },
+              {
+                "id": "team-hogir",
+                "title": "Hogir",
+                "subtitle": "Barber",
+                "icon": "User",
+                "description": "<p>Meister der traditionellen Bartpflege, Nassrasuren und moderner Herrenhaarschnitte.</p>",
+                "order": 3
+              }
+            ],
+            "layout": "grid",
+            "cardLayoutVariant": "vertical",
+            "grid": {
+              "columns": { "desktop": 4, "tablet": 2, "mobile": 1 },
+              "gap": "md",
+              "alignItems": "stretch"
+            },
+            "typography": {
+              "enabled": false,
+              "titleFont": "inter",
+              "titleWeight": 700,
+              "bodyFont": "inter",
+              "bodyWeight": 400
+            },
+            "cardStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#ffffff" },
+              "borderRadius": "lg",
+              "borderWidth": 1,
+              "borderColor": { "kind": "custom", "hex": "#e5e5e5" },
+              "shadow": "sm",
+              "padding": "lg",
+              "transitionDuration": 300,
+              "hoverEffect": "lift"
+            },
+            "imageStyle": {
+              "aspectRatio": "1:1",
+              "fit": "cover",
+              "borderRadius": "full"
+            },
+            "showImage": false,
+            "imageElementStyle": {
+              "padding": 0,
+              "enabled": false,
+              "marginBottom": 12
+            },
+            "iconStyle": {
+              "enabled": true,
+              "size": "xl",
+              "color": { "kind": "custom", "hex": "#ffffff" },
+              "backgroundEnabled": true,
+              "backgroundShape": "circle",
+              "backgroundPadding": "lg",
+              "backgroundColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "horizontalAlign": "center"
+            },
+            "overlineStyle": {
+              "enabled": false,
+              "marginBottom": 4
+            },
+            "titleStyle": {
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "marginBottom": 4,
+              "fontSize": { "desktop": 22, "tablet": 20, "mobile": 18 }
+            },
+            "subtitleStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "marginBottom": 8,
+              "fontSize": { "desktop": 14, "tablet": 13, "mobile": 12 }
+            },
+            "descriptionStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#6b7280" },
+              "marginBottom": 0,
+              "fontSize": { "desktop": 14, "tablet": 13, "mobile": 13 }
+            },
+            "textStyle": {
+              "titleSize": "xl",
+              "titleWeight": "semibold",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "titleAlign": "center",
+              "subtitleSize": "sm",
+              "subtitleWeight": "medium",
+              "subtitleColor": { "kind": "custom", "hex": "#d4af37" },
+              "descriptionSize": "sm",
+              "descriptionColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "showSubtitle": true,
+            "showDescription": true,
+            "priceStyle": {
+              "enabled": false,
+              "position": "below-title",
+              "size": "lg",
+              "weight": "bold",
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "showOriginalPrice": false,
+              "originalPriceColor": { "kind": "custom", "hex": "#9ca3af" },
+              "showBadge": false,
+              "badgeColor": { "kind": "custom", "hex": "#ffffff" },
+              "badgeBackground": { "kind": "custom", "hex": "#ef4444" }
+            },
+            "ratingStyle": {
+              "enabled": false,
+              "style": "stars",
+              "size": "md",
+              "filledColor": { "kind": "custom", "hex": "#d4af37" },
+              "emptyColor": { "kind": "custom", "hex": "#d1d5db" },
+              "showCount": false,
+              "countColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "featuresStyle": {
+              "enabled": false,
+              "icon": "Check",
+              "iconColor": { "kind": "custom", "hex": "#22c55e" },
+              "textColor": { "kind": "custom", "hex": "#374151" },
+              "textSize": "sm",
+              "layout": "list"
+            },
+            "socialStyle": {
+              "enabled": false,
+              "iconStyle": "filled",
+              "iconSize": "md",
+              "iconColor": { "kind": "custom", "hex": "#6b7280" },
+              "iconHoverColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "layout": "row",
+              "gap": "sm"
+            },
+            "buttonStyle": {
+              "variant": "filled",
+              "size": "md",
+              "borderRadius": "md",
+              "backgroundColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "textColor": { "kind": "custom", "hex": "#ffffff" },
+              "borderColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "fullWidth": false
+            },
+            "showButton": false,
+            "sectionStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#f9f7f4" },
+              "paddingY": "2xl",
+              "paddingX": "lg",
+              "maxWidth": "xl",
+              "showHeader": true,
+              "headerAlign": "center",
+              "title": "Unsere Stylisten",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "subtitle": "Lerne unser Team kennen",
+              "subtitleColor": { "kind": "custom", "hex": "#6b7280" }
+            }
+          },
+          "content": {}
+        },
+        {
+          "id": "block-partner",
+          "type": "generic-card",
+          "position": 4,
+          "config": {
+            "items": [
+              {
+                "id": "partner-loreal",
+                "title": "L'Oréal Professionnel",
+                "subtitle": "Offizieller Partner",
+                "image": "https://www.dennisfriseur.de/img/loreal.png",
+                "description": "<p>Hochwertige Pflege- und Styling Produkte. INOA, Metal DX und mehr.</p>",
+                "order": 0
+              },
+              {
+                "id": "partner-barba",
+                "title": "Barba Italiana",
+                "subtitle": "Barbershop Partner",
+                "image": "https://www.dennisfriseur.de/img/barbaitaliana.png",
+                "description": "<p>Professionelle Pflege und Styling Produkte für Haar und Bart.</p>",
+                "order": 1
+              },
+              {
+                "id": "partner-innung",
+                "title": "Friseurinnung Hamburg",
+                "subtitle": "Zertifiziert 2025",
+                "image": "https://www.dennisfriseur.de/img/innung2025.png",
+                "description": "<p>Mitglied der Friseurinnung Hamburg – geprüfte Qualität.</p>",
+                "order": 2
+              }
+            ],
+            "layout": "grid",
+            "cardLayoutVariant": "vertical",
+            "grid": {
+              "columns": { "desktop": 3, "tablet": 3, "mobile": 1 },
+              "gap": "lg",
+              "alignItems": "stretch"
+            },
+            "typography": {
+              "enabled": false,
+              "titleFont": "inter",
+              "titleWeight": 700,
+              "bodyFont": "inter",
+              "bodyWeight": 400
+            },
+            "cardStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#ffffff" },
+              "borderRadius": "lg",
+              "borderWidth": 1,
+              "borderColor": { "kind": "custom", "hex": "#e5e5e5" },
+              "shadow": "sm",
+              "padding": "lg",
+              "transitionDuration": 300,
+              "hoverEffect": "scale"
+            },
+            "imageStyle": {
+              "aspectRatio": "4:3",
+              "fit": "contain",
+              "borderRadius": "md"
+            },
+            "showImage": true,
+            "imageElementStyle": {
+              "padding": 16,
+              "enabled": true,
+              "marginBottom": 8
+            },
+            "iconStyle": {
+              "enabled": false,
+              "size": "md",
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "backgroundEnabled": false,
+              "backgroundShape": "circle",
+              "backgroundPadding": "md"
+            },
+            "overlineStyle": {
+              "enabled": false,
+              "marginBottom": 4
+            },
+            "titleStyle": {
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "marginBottom": 4,
+              "fontSize": { "desktop": 18, "tablet": 16, "mobile": 16 }
+            },
+            "subtitleStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#d4af37" },
+              "marginBottom": 8,
+              "fontSize": { "desktop": 13, "tablet": 12, "mobile": 12 }
+            },
+            "descriptionStyle": {
+              "enabled": true,
+              "color": { "kind": "custom", "hex": "#6b7280" },
+              "marginBottom": 0,
+              "fontSize": { "desktop": 14, "tablet": 13, "mobile": 13 }
+            },
+            "textStyle": {
+              "titleSize": "lg",
+              "titleWeight": "semibold",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "titleAlign": "center",
+              "subtitleSize": "sm",
+              "subtitleWeight": "medium",
+              "subtitleColor": { "kind": "custom", "hex": "#d4af37" },
+              "descriptionSize": "sm",
+              "descriptionColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "showSubtitle": true,
+            "showDescription": true,
+            "priceStyle": {
+              "enabled": false,
+              "position": "below-title",
+              "size": "lg",
+              "weight": "bold",
+              "color": { "kind": "custom", "hex": "#1a1a1a" },
+              "showOriginalPrice": false,
+              "originalPriceColor": { "kind": "custom", "hex": "#9ca3af" },
+              "showBadge": false,
+              "badgeColor": { "kind": "custom", "hex": "#ffffff" },
+              "badgeBackground": { "kind": "custom", "hex": "#ef4444" }
+            },
+            "ratingStyle": {
+              "enabled": false,
+              "style": "stars",
+              "size": "md",
+              "filledColor": { "kind": "custom", "hex": "#d4af37" },
+              "emptyColor": { "kind": "custom", "hex": "#d1d5db" },
+              "showCount": false,
+              "countColor": { "kind": "custom", "hex": "#6b7280" }
+            },
+            "featuresStyle": {
+              "enabled": false,
+              "icon": "Check",
+              "iconColor": { "kind": "custom", "hex": "#22c55e" },
+              "textColor": { "kind": "custom", "hex": "#374151" },
+              "textSize": "sm",
+              "layout": "list"
+            },
+            "socialStyle": {
+              "enabled": false,
+              "iconStyle": "filled",
+              "iconSize": "md",
+              "iconColor": { "kind": "custom", "hex": "#6b7280" },
+              "iconHoverColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "layout": "row",
+              "gap": "sm"
+            },
+            "buttonStyle": {
+              "variant": "filled",
+              "size": "md",
+              "borderRadius": "md",
+              "backgroundColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "textColor": { "kind": "custom", "hex": "#ffffff" },
+              "borderColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "fullWidth": false
+            },
+            "showButton": false,
+            "sectionStyle": {
+              "backgroundColor": { "kind": "custom", "hex": "#ffffff" },
+              "paddingY": "xl",
+              "paddingX": "lg",
+              "maxWidth": "xl",
+              "showHeader": true,
+              "headerAlign": "center",
+              "title": "Partner & Zertifikate",
+              "titleColor": { "kind": "custom", "hex": "#1a1a1a" },
+              "subtitle": "Qualität, der du vertrauen kannst",
+              "subtitleColor": { "kind": "custom", "hex": "#6b7280" }
+            }
+          },
+          "content": {}
+        }
+      ]
+    },
+    {
+      "id": "page-datenschutz",
+      "title": "Datenschutz",
+      "slug": "datenschutz",
+      "is_home": false,
+      "is_published": true,
+      "show_in_menu": false,
+      "meta_description": "Datenschutzerklärung von Dennis Friseur",
+      "seo_title": "Datenschutz | Dennis Friseur",
+      "display_order": 1,
+      "blocks": [
+        {
+          "id": "block-privacy",
+          "type": "static_content",
+          "position": 0,
+          "config": { "type": "privacy" },
+          "content": {}
+        }
+      ]
+    },
+    {
+      "id": "page-impressum",
+      "title": "Impressum",
+      "slug": "impressum",
+      "is_home": false,
+      "is_published": true,
+      "show_in_menu": false,
+      "meta_description": "Impressum von Dennis Friseur",
+      "seo_title": "Impressum | Dennis Friseur",
+      "display_order": 2,
+      "blocks": [
+        {
+          "id": "block-imprint",
+          "type": "static_content",
+          "position": 0,
+          "config": { "type": "imprint" },
+          "content": {}
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "svc-wsf-damen",
+      "name": "Waschen, Schneiden, Föhnen (Damen)",
+      "description": "Typgerechter Haarschnitt mit Beratung, Haarwäsche und professionellem Styling.",
+      "price": "ab 45 €",
+      "duration": 60,
+      "category": "Damen",
+      "is_featured": true,
+      "display_order": 0
+    },
+    {
+      "id": "svc-coloration",
+      "name": "Coloration",
+      "description": "Professionelle Farbbehandlung mit L'Oréal Professionnel INOA – ammoniakfrei.",
+      "price": "ab 55 €",
+      "duration": 90,
+      "category": "Damen",
+      "is_featured": true,
+      "display_order": 1
+    },
+    {
+      "id": "svc-straehnen",
+      "name": "Strähnen / Highlights",
+      "description": "Moderne Strähnentechniken für natürliche und kreative Farbeffekte.",
+      "price": "ab 65 €",
+      "duration": 120,
+      "category": "Damen",
+      "is_featured": false,
+      "display_order": 2
+    },
+    {
+      "id": "svc-olaplex",
+      "name": "Olaplex Treatment",
+      "description": "Intensiv-Behandlung für geschädigtes Haar – repariert und stärkt die Haarstruktur.",
+      "price": "ab 35 €",
+      "duration": 30,
+      "category": "Damen",
+      "is_featured": true,
+      "display_order": 3
+    },
+    {
+      "id": "svc-makeup",
+      "name": "Tages Make Up",
+      "description": "Professionelles Make Up für den perfekten Look – für jeden Anlass.",
+      "price": "ab 30 €",
+      "duration": 45,
+      "category": "Damen",
+      "is_featured": false,
+      "display_order": 4
+    },
+    {
+      "id": "svc-kopfmassage",
+      "name": "Kopfmassage",
+      "description": "Entspannende Kopfmassage für Wohlbefinden und gesunde Kopfhaut.",
+      "price": "ab 15 €",
+      "duration": 15,
+      "category": "Damen",
+      "is_featured": false,
+      "display_order": 5
+    },
+    {
+      "id": "svc-herren-schnitt",
+      "name": "Herrenhaarschnitt",
+      "description": "Akkurater und moderner Haarschnitt mit Beratung und Styling.",
+      "price": "ab 28 €",
+      "duration": 30,
+      "category": "Herren",
+      "is_featured": true,
+      "display_order": 6
+    },
+    {
+      "id": "svc-bartpflege",
+      "name": "Bartpflege & Styling",
+      "description": "Professionelle Bartpflege mit Trimmen, Konturieren und Styling.",
+      "price": "ab 15 €",
+      "duration": 20,
+      "category": "Herren",
+      "is_featured": true,
+      "display_order": 7
+    },
+    {
+      "id": "svc-nassrasur",
+      "name": "Nassrasur",
+      "description": "Traditionelle Nassrasur mit heißem Handtuch und Messer.",
+      "price": "ab 25 €",
+      "duration": 30,
+      "category": "Herren",
+      "is_featured": false,
+      "display_order": 8
+    },
+    {
+      "id": "svc-herren-komplett",
+      "name": "Herren Komplett (Schnitt + Bart)",
+      "description": "Herrenhaarschnitt und Bartpflege im Paket.",
+      "price": "ab 40 €",
+      "duration": 45,
+      "category": "Herren",
+      "is_featured": true,
+      "display_order": 9
+    }
+  ],
+  "contact": {
+    "phone": "+49 40 329 046 50",
+    "email": "info@dennisfriseur.de",
+    "street": "Ferdinandstraße 6",
+    "postal_code": "20095",
+    "city": "Hamburg",
+    "country": "Deutschland",
+    "instagram": "dennisfriseur",
+    "facebook_url": "https://www.facebook.com/dennisfriseur",
+    "instagram_url": "https://www.instagram.com/dennisfriseur",
+    "google_maps_url": "https://maps.google.com/?q=Ferdinandstra%C3%9Fe+6+20095+Hamburg"
+  },
+  "hours": {
+    "tuesday": "8:00 - 18:00",
+    "wednesday": "8:00 - 18:00",
+    "thursday": "9:00 - 19:00",
+    "friday": "9:00 - 19:00",
+    "saturday": "8:00 - 16:00"
+  },
+  "business_hours": [
+    { "id": "bh-mon", "day_of_week": 1, "day_name": "Montag", "is_open": false, "open_time": null, "close_time": null, "break_start": null, "break_end": null },
+    { "id": "bh-tue", "day_of_week": 2, "day_name": "Dienstag", "is_open": true, "open_time": "08:00", "close_time": "18:00", "break_start": null, "break_end": null },
+    { "id": "bh-wed", "day_of_week": 3, "day_name": "Mittwoch", "is_open": true, "open_time": "08:00", "close_time": "18:00", "break_start": null, "break_end": null },
+    { "id": "bh-thu", "day_of_week": 4, "day_name": "Donnerstag", "is_open": true, "open_time": "09:00", "close_time": "19:00", "break_start": null, "break_end": null },
+    { "id": "bh-fri", "day_of_week": 5, "day_name": "Freitag", "is_open": true, "open_time": "09:00", "close_time": "19:00", "break_start": null, "break_end": null },
+    { "id": "bh-sat", "day_of_week": 6, "day_name": "Samstag", "is_open": true, "open_time": "08:00", "close_time": "16:00", "break_start": null, "break_end": null },
+    { "id": "bh-sun", "day_of_week": 0, "day_name": "Sonntag", "is_open": false, "open_time": null, "close_time": null, "break_start": null, "break_end": null }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author_name": "Sabine M.",
+      "rating": 5,
+      "review_text": "Bin seit Jahren Stammkundin und immer begeistert! Die Beratung ist super und meine Farbe sieht jedes Mal perfekt aus. Das Team ist einfach klasse!",
+      "review_date": "2025-11-15",
+      "is_featured": true
+    },
+    {
+      "id": "rev-2",
+      "author_name": "Markus T.",
+      "rating": 5,
+      "review_text": "Bester Barbershop in Hamburg! Hogir macht einen großartigen Job mit Haarschnitt und Bartpflege. Das Retro-Ambiente ist genial.",
+      "review_date": "2025-10-22",
+      "is_featured": true
+    },
+    {
+      "id": "rev-3",
+      "author_name": "Jessica W.",
+      "rating": 5,
+      "review_text": "Olaplex-Behandlung bei Irina – meine Haare fühlen sich an wie neu! Dazu ein Glas Sekt und nette Gespräche. Absolut empfehlenswert.",
+      "review_date": "2025-12-03",
+      "is_featured": true
+    },
+    {
+      "id": "rev-4",
+      "author_name": "Thomas K.",
+      "rating": 4,
+      "review_text": "Sehr professioneller Salon mit tollem Ambiente. Die Nassrasur war ein Erlebnis! Einziger Nachteil: manchmal schwer einen Termin zu bekommen.",
+      "review_date": "2025-09-18",
+      "is_featured": false
+    }
+  ],
+  "about": {
+    "title": "Über uns",
+    "content": "<p><strong>Dennis Friseur</strong> in der Hamburger Innenstadt bietet seit Jahren erstklassige Friseurdienstleistungen in einem einzigartigen Ambiente. Unser Salon vereint modernen Damenbereich mit klassischem Barbershop – unter einem Dach.</p><p>Wir setzen auf individuelle Beratung, hochwertige Produkte und ein Erlebnis, das über den reinen Haarschnitt hinausgeht. Bei uns genießt du einen Cappuccino, ein Glas Sekt oder einfach eine entspannende Auszeit vom Alltag.</p><p>Als zertifizierter Olaplex Salon und offizieller Partner von L'Oréal Professionnel und Barba Italiana stehen wir für Qualität und Innovation.</p>",
+    "team_title": "Unser Team",
+    "team": [
+      {
+        "id": "team-m-dennis",
+        "name": "Dennis",
+        "position": "Inhaber & Friseurmeister",
+        "bio": "Gründer und Inhaber von Dennis Friseur. Leidenschaft für klassisches Friseurhandwerk und moderne Trends.",
+        "image_url": null,
+        "display_order": 0
+      },
+      {
+        "id": "team-m-irina",
+        "name": "Irina",
+        "position": "Stylistin",
+        "bio": "Spezialistin für Colorationen, Strähnen und kreative Farbkonzepte mit L'Oréal Professionnel.",
+        "image_url": null,
+        "display_order": 1
+      },
+      {
+        "id": "team-m-mareike",
+        "name": "Mareike",
+        "position": "Stylistin",
+        "bio": "Expertin für typgerechte Schnitte, Olaplex-Behandlungen und professionelles Styling.",
+        "image_url": null,
+        "display_order": 2
+      },
+      {
+        "id": "team-m-hogir",
+        "name": "Hogir",
+        "position": "Barber",
+        "bio": "Meister der traditionellen Bartpflege, Nassrasuren und moderner Herrenhaarschnitte.",
+        "image_url": null,
+        "display_order": 3
+      }
+    ]
+  },
+  "gallery": {
+    "images": [
+      {
+        "id": "gal-slider1",
+        "url": "https://www.dennisfriseur.de/img/slider1.jpg",
+        "alt_text": "Dennis Friseur Salon Interieur",
+        "caption": "Unser Salon",
+        "display_order": 0
+      },
+      {
+        "id": "gal-slider2",
+        "url": "https://www.dennisfriseur.de/img/slider2.jpg",
+        "alt_text": "Dennis Friseur Barbershop",
+        "caption": "Der Barbershop",
+        "display_order": 1
+      },
+      {
+        "id": "gal-slider3",
+        "url": "https://www.dennisfriseur.de/img/slider3.jpg",
+        "alt_text": "Dennis Friseur Styling",
+        "caption": "Styling & Ambiente",
+        "display_order": 2
+      },
+      {
+        "id": "gal-damen",
+        "url": "https://www.dennisfriseur.de/img/damen.jpg",
+        "alt_text": "Damenbereich",
+        "caption": "Unser Damenbereich",
+        "display_order": 3
+      },
+      {
+        "id": "gal-herren",
+        "url": "https://www.dennisfriseur.de/img/herren.jpg",
+        "alt_text": "Herrenbereich und Barbershop",
+        "caption": "Unser Barbershop",
+        "display_order": 4
+      }
+    ]
+  },
+  "static_content": {
+    "imprint": "<h1>Impressum</h1><h2>Angaben gemäß § 5 TMG</h2><p><strong>Dennis Friseur</strong><br/>Ferdinandstraße 6<br/>20095 Hamburg</p><p><strong>Kontakt:</strong><br/>Telefon: +49 40 329 046 50<br/>E-Mail: info@dennisfriseur.de</p><p><strong>Umsatzsteuer-ID:</strong><br/>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: [USt-IdNr.]</p><h2>Streitschlichtung</h2><p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href='https://ec.europa.eu/consumers/odr' target='_blank'>https://ec.europa.eu/consumers/odr</a>. Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>",
+    "privacy": "<h1>Datenschutzerklärung</h1><h2>1. Datenschutz auf einen Blick</h2><h3>Allgemeine Hinweise</h3><p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.</p><h3>Datenerfassung auf dieser Website</h3><p><strong>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</strong></p><p>Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber: Dennis Friseur, Ferdinandstraße 6, 20095 Hamburg, Telefon: +49 40 329 046 50, E-Mail: info@dennisfriseur.de.</p>",
+    "terms": "<h1>Allgemeine Geschäftsbedingungen</h1><p>Es gelten die üblichen Geschäftsbedingungen für Friseurdienstleistungen. Terminabsagen bitten wir mindestens 24 Stunden vorher mitzuteilen.</p>"
+  },
+  "header": {
+    "variant": "classic",
+    "logo": {
+      "type": "image",
+      "imageUrl": "https://www.dennisfriseur.de/img/logo.png",
+      "maxHeight": 50
+    },
+    "navigation": [
+      { "id": "nav-home", "label": "Home", "type": "page", "target": "/", "visible": true },
+      { "id": "nav-stylisten", "label": "Stylisten", "type": "scroll", "target": "#team", "visible": true },
+      { "id": "nav-damen", "label": "Damen", "type": "scroll", "target": "#damen", "visible": true },
+      { "id": "nav-herren", "label": "Herren", "type": "scroll", "target": "#herren", "visible": true },
+      { "id": "nav-salon", "label": "Salon", "type": "scroll", "target": "#salon", "visible": true },
+      { "id": "nav-kontakt", "label": "Kontakt", "type": "page", "target": "/impressum", "visible": true }
+    ],
+    "cta": {
+      "enabled": true,
+      "text": "Termin buchen",
+      "action": {
+        "type": "link",
+        "target": "https://www.e-cut.de/online-buchung/index.php?id=2212"
+      },
+      "style": {
+        "backgroundColor": { "kind": "custom", "hex": "#d4af37" },
+        "textColor": { "kind": "custom", "hex": "#1a1a1a" },
+        "borderRadius": "lg",
+        "size": "md"
+      }
+    },
+    "socialMedia": {
+      "enabled": false,
+      "position": "right",
+      "size": "sm"
+    },
+    "sticky": {
+      "enabled": true,
+      "showAfter": 100,
+      "style": "blur"
+    },
+    "transparent": {
+      "enabled": false,
+      "textColorLight": false
+    },
+    "mobile": {
+      "breakpoint": 768,
+      "menuStyle": "slide-right",
+      "showLogo": true,
+      "showCTA": true,
+      "animationDuration": 300
+    },
+    "style": {
+      "backgroundColor": { "kind": "custom", "hex": "#1a1a1a" },
+      "textColor": { "kind": "custom", "hex": "#e0e0e0" },
+      "activeColor": { "kind": "custom", "hex": "#d4af37" },
+      "hoverColor": { "kind": "custom", "hex": "#d4af37" },
+      "height": "md",
+      "padding": "md",
+      "shadow": "medium",
+      "borderBottom": {
+        "enabled": true,
+        "color": { "kind": "custom", "hex": "#333333" },
+        "width": 1
+      }
+    },
+    "logoPosition": "left",
+    "navPosition": "center",
+    "ctaPosition": "right"
+  },
+  "footer": {
+    "variant": "four-column",
+    "logo": {
+      "enabled": true,
+      "type": "image",
+      "imageUrl": "https://www.dennisfriseur.de/img/logo.png",
+      "maxHeight": 40
+    },
+    "socialMedia": {
+      "enabled": true,
+      "title": "Folge uns",
+      "size": "medium",
+      "variant": "with-background"
+    },
+    "copyright": {
+      "text": "Dennis Friseur",
+      "showYear": true
+    },
+    "legal": {
+      "links": [
+        { "id": "legal-imprint", "label": "Impressum", "url": "/impressum" },
+        { "id": "legal-privacy", "label": "Datenschutz", "url": "/datenschutz" },
+        { "id": "legal-agb", "label": "AGB", "url": "#" },
+        { "id": "legal-preisliste", "label": "Preisliste (PDF)", "url": "https://www.dennisfriseur.de/preisliste.pdf" }
+      ]
+    },
+    "style": {
+      "backgroundColor": { "kind": "custom", "hex": "#111111" },
+      "textColor": { "kind": "custom", "hex": "#9ca3af" },
+      "linkColor": { "kind": "custom", "hex": "#d4af37" },
+      "headingColor": { "kind": "custom", "hex": "#ffffff" },
+      "dividerColor": { "kind": "custom", "hex": "#333333" },
+      "padding": "lg"
+    },
+    "columns": [
+      {
+        "id": "col-about",
+        "title": "Dennis Friseur",
+        "type": "text",
+        "content": "Friseursalon & Barbershop in der Hamburger Innenstadt. Klassisches Ambiente, moderne Trends.",
+        "showLogo": true,
+        "showSocialMedia": false
+      },
+      {
+        "id": "col-contact",
+        "title": "Kontakt",
+        "type": "contact",
+        "showAddress": true,
+        "showPhone": true,
+        "showEmail": true
+      },
+      {
+        "id": "col-hours",
+        "title": "Öffnungszeiten",
+        "type": "hours"
+      },
+      {
+        "id": "col-social",
+        "title": "Social Media",
+        "type": "text",
+        "content": "Folge uns auf Social Media für die neuesten Trends und Einblicke in unseren Salon.",
+        "showLogo": false,
+        "showSocialMedia": true
+      }
+    ],
+    "columnLayout": {
+      "desktop": 4,
+      "tablet": 2,
+      "mobile": 1
+    }
+  }
+}

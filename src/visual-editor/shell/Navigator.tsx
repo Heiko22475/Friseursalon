@@ -4,19 +4,21 @@
 // =====================================================
 
 import React from 'react';
-import { Plus, Layers, FileText } from 'lucide-react';
+import { Plus, Layers, FileText, Image } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
 import { PagesPanel } from './PagesPanel';
+import { AssetsPanel } from './AssetsPanel';
 import type { VEElement } from '../types/elements';
 
-type NavigatorTab = 'elements' | 'tree' | 'pages';
+type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets';
 
 const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = [
   { key: 'elements', icon: <Plus size={20} />, label: 'Hinzufügen' },
   { key: 'tree', icon: <Layers size={20} />, label: 'Navigator' },
   { key: 'pages', icon: <FileText size={20} />, label: 'Seiten' },
+  { key: 'assets', icon: <Image size={20} />, label: 'Assets' },
 ];
 
 interface NavigatorProps {
@@ -34,6 +36,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         return <ElementsTree onContextMenu={onTreeContextMenu} />;
       case 'pages':
         return <PagesPanel />;
+      case 'assets':
+        return <AssetsPanel />;
       default:
         return null;
     }

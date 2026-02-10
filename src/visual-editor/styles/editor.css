@@ -75,7 +75,8 @@
 
 /* Only show hover on direct hover target, not parents */
 [data-ve-id]:not(.ve-selected):hover > [data-ve-id]:not(.ve-selected):hover {
-  /* nested hover – hide parent's hover */
+  /* nested hover – hide parent's hover outline */
+  outline: none !important;
 }
 
 /* Programmatic hover from tree panel */

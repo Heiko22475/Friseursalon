@@ -47,39 +47,9 @@
   background: #4d4d5d;
 }
 
-/* Hover-Effekt für nicht-selektierte Elemente */
-[data-ve-id]:not(.ve-selected):hover {
-  outline: 1px solid #60a5fa;
-  outline-offset: -1px;
-  z-index: 1;
-}
-
-/* Hover badge (obere linke Ecke) */
-[data-ve-id]:not(.ve-selected):hover::before {
-  content: attr(data-ve-type);
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  background-color: #60a5fa;
-  color: #ffffff;
-  font-size: 9px;
-  font-weight: 500;
-  padding: 0px 5px;
-  border-radius: 0 0 4px 0;
-  pointer-events: none;
-  z-index: 100;
-  line-height: 14px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  opacity: 0.85;
-}
-
-/* Only show hover on direct hover target, not parents */
-[data-ve-id]:not(.ve-selected):hover > [data-ve-id]:not(.ve-selected):hover {
-  /* nested hover – hide parent's hover outline */
-  outline: none !important;
-}
-
-/* Programmatic hover from tree panel */
+/* Hover-Effekt: JS-basiert via onMouseEnter → ve-hovered Klasse
+ * CSS :hover wird NICHT verwendet, da es zu allen Eltern bubbled
+ * und nicht auf das innerste Element beschränkt werden kann. */
 .ve-hovered:not(.ve-selected) {
   outline: 2px solid #60a5fa !important;
   outline-offset: -1px;

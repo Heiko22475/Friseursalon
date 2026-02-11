@@ -90,7 +90,7 @@ export interface StyleProperties {
   boxShadow?: string;
 
   // Position
-  position?: 'static' | 'relative' | 'absolute';
+  position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
   top?: SizeValueOrAuto;
   right?: SizeValueOrAuto;
   bottom?: SizeValueOrAuto;

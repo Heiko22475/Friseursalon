@@ -5,7 +5,7 @@
 // =====================================================
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone } from 'lucide-react';
+import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
 import { mergeStyles } from '../utils/styleResolver';
@@ -17,6 +17,7 @@ import { TypographySection } from '../properties/TypographySection';
 import { BackgroundSection } from '../properties/BackgroundSection';
 import { BorderSection } from '../properties/BorderSection';
 import { EffectsSection } from '../properties/EffectsSection';
+import { PositionSection } from '../properties/PositionSection';
 import { ContentSection } from '../properties/ContentSection';
 import { SpacingBox } from '../components/SpacingBox';
 import { FooterProperties } from '../properties/FooterProperties';
@@ -159,7 +160,17 @@ export const PropertiesPanel: React.FC = () => {
   const hasTypoValues = !!(merged.fontFamily || merged.fontSize || merged.fontWeight || merged.color);
   const hasBgValues = !!(merged.backgroundColor || merged.backgroundImage);
   const hasBorderValues = !!(merged.borderWidth || merged.borderColor || merged.borderRadius);
-  const hasEffectValues = !!(merged.boxShadow || merged.position);
+  const hasPositionValues = !!(merged.position || merged.top || merged.right || merged.bottom || merged.left || merged.zIndex);
+  const hasEffectValues = !!(merged.boxShadow || merged.overflow);
+
+  // Viewport visibility: check if display is 'none' on current viewport
+  const isHiddenOnViewport = (() => {
+    const vp = state.viewport;
+    const styles = selectedElement.styles;
+    if (vp === 'desktop') return styles?.desktop?.display === 'none';
+    if (vp === 'tablet') return styles?.tablet?.display === 'none';
+    return styles?.mobile?.display === 'none';
+  })();
 
   return (
     <div
@@ -250,6 +261,46 @@ export const PropertiesPanel: React.FC = () => {
             </span>
           )}
         </div>
+
+        {/* Viewport Visibility Toggle */}
+        {selectedElement.type !== 'Body' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+            <button
+              onClick={() => {
+                dispatch({
+                  type: 'UPDATE_STYLES',
+                  id: selectedElement.id,
+                  viewport: state.viewport,
+                  styles: { display: isHiddenOnViewport ? undefined : 'none' as any },
+                });
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 8px',
+                backgroundColor: isHiddenOnViewport ? '#ef444420' : '#10b98120',
+                border: `1px solid ${isHiddenOnViewport ? '#ef444440' : '#10b98140'}`,
+                borderRadius: '4px',
+                cursor: 'pointer',
+                color: isHiddenOnViewport ? '#f87171' : '#34d399',
+                fontSize: '11px',
+                fontWeight: 500,
+                width: '100%',
+              }}
+              title={isHiddenOnViewport
+                ? `Auf ${state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'} einblenden`
+                : `Auf ${state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'} ausblenden`
+              }
+            >
+              {isHiddenOnViewport ? <EyeOff size={12} /> : <Eye size={12} />}
+              {isHiddenOnViewport
+                ? `Ausgeblendet auf ${state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'}`
+                : `Sichtbar auf ${state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'}`
+              }
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Scrollable Properties */}
@@ -328,7 +379,14 @@ export const PropertiesPanel: React.FC = () => {
         </AccordionSection>
         )}
 
-        {/* Effects (Shadow, Position, Cursor) */}
+        {/* Position */}
+        {!isHeaderFooter && !isWebsiteBlock && (
+        <AccordionSection title="Position" hasValues={hasPositionValues}>
+          <PositionSection styles={merged} onChange={updateStyle} />
+        </AccordionSection>
+        )}
+
+        {/* Effects (Shadow, Overflow, Cursor) */}
         {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Effekte" hasValues={hasEffectValues}>
           <EffectsSection styles={merged} onChange={updateStyle} />

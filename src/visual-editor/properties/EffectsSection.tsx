@@ -1,11 +1,10 @@
 // =====================================================
 // VISUAL EDITOR – EFFECTS SECTION
-// Properties Panel: Box Shadow, Position, Cursor
+// Properties Panel: Box Shadow, Overflow, Cursor
 // =====================================================
 
 import React from 'react';
-import type { StyleProperties, SizeValue } from '../types/styles';
-import { UnitInput } from '../components/UnitInput';
+import type { StyleProperties } from '../types/styles';
 
 interface EffectsSectionProps {
   styles: Partial<StyleProperties>;
@@ -83,87 +82,78 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
         }}
       />
 
-      {/* Position */}
+      {/* Overflow */}
       <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-        Position
+        Overflow
       </label>
-      <Row label="Typ">
-        <select
-          value={styles.position ?? ''}
-          onChange={(e) => onChange('position', e.target.value || undefined)}
-          style={{
-            width: '100%',
-            padding: '4px 6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
-            borderRadius: '4px',
-            color: '#d1d5db',
-            fontSize: '12px',
-          }}
-        >
-          <option value="">–</option>
-          <option value="static">Static</option>
-          <option value="relative">Relative</option>
-          <option value="absolute">Absolute</option>
-        </select>
-      </Row>
-
-      {(styles.position === 'relative' || styles.position === 'absolute') && (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
-            <UnitInput
-              label="Top"
-              value={typeof styles.top === 'object' ? styles.top as SizeValue : undefined}
-              onChange={(v) => onChange('top', v)}
-              compact
-              units={['px', '%']}
-              placeholder="–"
-            />
-            <UnitInput
-              label="Right"
-              value={typeof styles.right === 'object' ? styles.right as SizeValue : undefined}
-              onChange={(v) => onChange('right', v)}
-              compact
-              units={['px', '%']}
-              placeholder="–"
-            />
-            <UnitInput
-              label="Bottom"
-              value={typeof styles.bottom === 'object' ? styles.bottom as SizeValue : undefined}
-              onChange={(v) => onChange('bottom', v)}
-              compact
-              units={['px', '%']}
-              placeholder="–"
-            />
-            <UnitInput
-              label="Left"
-              value={typeof styles.left === 'object' ? styles.left as SizeValue : undefined}
-              onChange={(v) => onChange('left', v)}
-              compact
-              units={['px', '%']}
-              placeholder="–"
-            />
-          </div>
-
-          <Row label="Z-Index">
-            <input
-              type="number"
-              value={styles.zIndex ?? ''}
-              onChange={(e) => onChange('zIndex', e.target.value ? Number(e.target.value) : undefined)}
-              placeholder="auto"
+      <Row label="Alle">
+        <div style={{ display: 'flex', gap: '2px' }}>
+          {(['visible', 'hidden', 'scroll', 'auto'] as const).map((val) => (
+            <button
+              key={val}
+              onClick={() => onChange('overflow', styles.overflow === val ? undefined : val)}
               style={{
-                width: '100%',
-                padding: '4px 8px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
-                borderRadius: '4px',
-                color: '#d1d5db',
-                fontSize: '12px',
+                flex: 1,
+                padding: '3px 4px',
+                backgroundColor: styles.overflow === val ? '#3b82f6' : '#2d2d3d',
+                border: '1px solid ' + (styles.overflow === val ? '#3b82f6' : '#3d3d4d'),
+                borderRadius: '3px',
+                color: styles.overflow === val ? '#fff' : '#9ca3af',
+                fontSize: '10px',
+                cursor: 'pointer',
+                fontWeight: 500,
+                textTransform: 'capitalize',
               }}
-            />
-          </Row>
-        </>
-      )}
+            >
+              {val}
+            </button>
+          ))}
+        </div>
+      </Row>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '12px' }}>
+        <Row label="X">
+          <select
+            value={styles.overflowX ?? ''}
+            onChange={(e) => onChange('overflowX', e.target.value || undefined)}
+            style={{
+              width: '100%',
+              padding: '4px 6px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3d3d4d',
+              borderRadius: '4px',
+              color: '#d1d5db',
+              fontSize: '11px',
+            }}
+          >
+            <option value="">–</option>
+            <option value="visible">visible</option>
+            <option value="hidden">hidden</option>
+            <option value="scroll">scroll</option>
+            <option value="auto">auto</option>
+          </select>
+        </Row>
+        <Row label="Y">
+          <select
+            value={styles.overflowY ?? ''}
+            onChange={(e) => onChange('overflowY', e.target.value || undefined)}
+            style={{
+              width: '100%',
+              padding: '4px 6px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3d3d4d',
+              borderRadius: '4px',
+              color: '#d1d5db',
+              fontSize: '11px',
+            }}
+          >
+            <option value="">–</option>
+            <option value="visible">visible</option>
+            <option value="hidden">hidden</option>
+            <option value="scroll">scroll</option>
+            <option value="auto">auto</option>
+          </select>
+        </Row>
+      </div>
 
       {/* Cursor */}
       <Row label="Cursor">

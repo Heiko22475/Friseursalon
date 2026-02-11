@@ -208,6 +208,30 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
     cursor: isSelected ? 'text' : 'default',
   };
 
+  // Split styles into layout (for wrapper) and typography (for editor content).
+  // Layout properties must stay on the outer wrapper so the element doesn't
+  // jump position when entering edit mode.
+  const layoutKeys = new Set([
+    'position', 'top', 'right', 'bottom', 'left',
+    'zIndex', 'display', 'flexGrow', 'flexShrink', 'alignSelf',
+    'gridColumn', 'gridRow',
+    'width', 'height', 'minWidth', 'maxWidth', 'minHeight', 'maxHeight',
+    'marginTop', 'marginRight', 'marginBottom', 'marginLeft',
+    'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+    'transform', 'opacity', 'overflow',
+  ]);
+
+  const wrapperStyles: React.CSSProperties = {};
+  const typographyStyles: React.CSSProperties = {};
+
+  for (const [key, value] of Object.entries(combinedStyles)) {
+    if (layoutKeys.has(key)) {
+      (wrapperStyles as any)[key] = value;
+    } else {
+      (typographyStyles as any)[key] = value;
+    }
+  }
+
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isSelected) {
@@ -254,10 +278,15 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
   // Inline editing mode
   if (isEditing) {
     return (
-      <div data-ve-id={element.id} data-ve-type={element.type}>
+      <div
+        data-ve-id={element.id}
+        data-ve-type={element.type}
+        className={isSelected ? 've-selected' : ''}
+        style={wrapperStyles}
+      >
         <InlineTextEditor
           element={element}
-          combinedStyles={combinedStyles}
+          combinedStyles={typographyStyles}
           onDone={handleEditDone}
         />
       </div>

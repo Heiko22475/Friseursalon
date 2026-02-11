@@ -39,10 +39,8 @@ export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, v
       data-ve-id={element.id}
       data-ve-type={element.type}
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          e.stopPropagation();
-          onSelect(element.id);
-        }
+        e.stopPropagation();
+        onSelect(element.id);
       }}
       onMouseEnter={(e) => { e.stopPropagation(); onHover?.(element.id); }}
       className={`${isSelected ? 've-selected' : ''} ${isHovered ? 've-hovered' : ''}`}

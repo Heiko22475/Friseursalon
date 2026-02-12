@@ -59,15 +59,21 @@ export function mergeVEPageIntoOriginal(vePage: any, originalPage: any): any {
     if (veElement.type === 'Section') {
       const meta = veElement._blockMeta;
       if (!meta) {
-        // Section created in VE without block metadata → preserve original if exists
+        // Section created in VE without block metadata.
+        // Check for new native VE children (Cards, Text, etc.) that need block conversion.
+        const veChildBlocks = convertVEChildrenToBlocks(veElement.children || [], veElement.id);
+        if (veChildBlocks.length > 0) {
+          // Preserve the original block if it exists, plus any new child blocks
+          const origBlock = blockMap.get(veElement.id);
+          changeCount += veChildBlocks.length;
+          if (origBlock) {
+            return [origBlock, ...veChildBlocks];
+          }
+          return veChildBlocks;
+        }
+        // No convertible children → preserve original if exists
         const origBlock = blockMap.get(veElement.id);
         if (origBlock) return origBlock;
-        // New section without meta → try to convert children to blocks
-        const childBlocks = convertVEChildrenToBlocks(veElement.children || [], veElement.id);
-        if (childBlocks.length > 0) {
-          changeCount += childBlocks.length;
-          return childBlocks;
-        }
         return null;
       }
 
@@ -86,19 +92,37 @@ export function mergeVEPageIntoOriginal(vePage: any, originalPage: any): any {
 
       if (changed) changeCount++;
 
-      return {
+      const mergedBlock = {
         id: veElement.id,
         type: meta.type,
         position: meta.position ?? 0,
         config: baseConfig,
         content: meta.content || origBlock?.content || {},
       };
+
+      // Check if new native VE children (Cards, etc.) were added to this section
+      // that are not part of the original block structure.
+      const newChildBlocks = findNewNativeChildren(veElement.children || []);
+      if (newChildBlocks.length > 0) {
+        changeCount += newChildBlocks.length;
+        console.log(`[VE Merge] Section "${veElement.id}" has ${newChildBlocks.length} new native child block(s)`);
+        return [mergedBlock, ...newChildBlocks];
+      }
+
+      return mergedBlock;
     }
 
     // ── Native VE Cards elements → convert to generic-card block ──
     if (veElement.type === 'Cards') {
       changeCount++;
-      return convertVECardsToBlock(veElement);
+      const block = convertVECardsToBlock(veElement);
+      console.log('[VE Merge] Cards element converted to generic-card block:', {
+        cardsId: veElement.id,
+        childCount: veElement.children?.length || 0,
+        blockId: block.id,
+        itemCount: block.config?.items?.length || 0,
+      });
+      return block;
     }
 
     // ── Other native VE elements (Text, Container, Image etc.) ──
@@ -269,6 +293,9 @@ export function convertVEPageToWebsitePage(vePage: any): any {
         config: child._blockMeta.config || {},
         content: child._blockMeta.content || {},
       });
+      // Also extract any new native children (Cards) added to this section
+      const newChildBlocks = findNewNativeChildren(child.children || []);
+      blocks.push(...newChildBlocks);
     } else if (child.type === 'Cards') {
       blocks.push(convertVECardsToBlock(child));
     } else if (['Text', 'Container', 'Image', 'Button'].includes(child.type)) {
@@ -442,6 +469,27 @@ function convertVEChildrenToBlocks(children: any[], _parentId: string): any[] {
       blocks.push(convertVECardsToBlock(child));
     } else if (['Text', 'Container', 'Image', 'Button'].includes(child.type)) {
       blocks.push(convertVENativeElementToBlock(child));
+    }
+  }
+  return blocks;
+}
+
+/**
+ * Findet native VE-Elemente (Cards, etc.) in den Kindern einer Section,
+ * die NICHT zur Original-Blockstruktur gehören (d.h. keine IDs mit
+ * dem Block-ID-Prefix wie __cards-grid, __text-0 etc.).
+ * Diese wurden vom Nutzer neu hinzugefügt und müssen als eigene Blöcke gespeichert werden.
+ */
+function findNewNativeChildren(children: any[]): any[] {
+  const blocks: any[] = [];
+  for (const child of children) {
+    // VECards are always "new" native elements that need their own block
+    if (child.type === 'Cards') {
+      blocks.push(convertVECardsToBlock(child));
+    }
+    // Recurse into containers to find nested Cards
+    if (child.children && Array.isArray(child.children)) {
+      blocks.push(...findNewNativeChildren(child.children));
     }
   }
   return blocks;

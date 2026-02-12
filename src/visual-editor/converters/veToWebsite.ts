@@ -6,7 +6,16 @@
 // Original-Konfiguration zu aktualisieren statt komplett
 // neu zu generieren – so bleiben alle Felder erhalten
 // die der VE nicht darstellt.
+//
+// Native VE-Elemente (Cards, Text, Container etc.) werden
+// in Website-JSON-Blöcke konvertiert, damit sie persistiert werden.
 // =====================================================
+
+import {
+  createDefaultGenericCardConfig,
+  createDefaultGenericCardItem,
+} from '../../types/GenericCard';
+import type { GenericCardConfig, GenericCardItem } from '../../types/GenericCard';
 
 /**
  * Merge einer VE-Page zurück in die originale Website-Page.
@@ -53,6 +62,12 @@ export function mergeVEPageIntoOriginal(vePage: any, originalPage: any): any {
         // Section created in VE without block metadata → preserve original if exists
         const origBlock = blockMap.get(veElement.id);
         if (origBlock) return origBlock;
+        // New section without meta → try to convert children to blocks
+        const childBlocks = convertVEChildrenToBlocks(veElement.children || [], veElement.id);
+        if (childBlocks.length > 0) {
+          changeCount += childBlocks.length;
+          return childBlocks;
+        }
         return null;
       }
 
@@ -80,8 +95,22 @@ export function mergeVEPageIntoOriginal(vePage: any, originalPage: any): any {
       };
     }
 
+    // ── Native VE Cards elements → convert to generic-card block ──
+    if (veElement.type === 'Cards') {
+      changeCount++;
+      return convertVECardsToBlock(veElement);
+    }
+
+    // ── Other native VE elements (Text, Container, Image etc.) ──
+    // These may be top-level elements created natively in the VE.
+    // Wrap them as static-text or generic-card blocks where possible.
+    if (['Text', 'Container', 'Image', 'Button'].includes(veElement.type)) {
+      changeCount++;
+      return convertVENativeElementToBlock(veElement);
+    }
+
     return null;
-  }).filter(Boolean);
+  }).flat().filter(Boolean);
 
   // Append original blocks not present in VE
   const mergedIds = new Set(mergedBlocks.map((b: any) => b.id));
@@ -217,8 +246,40 @@ function mergeGenericCardChanges(section: any, config: any): boolean {
 
 /**
  * Convert a brand-new VE page to Website JSON format.
+ * Also converts native VE elements (Cards etc.) to website blocks.
  */
 export function convertVEPageToWebsitePage(vePage: any): any {
+  const veChildren = vePage.body?.children || [];
+  const blocks: any[] = [];
+
+  for (const child of veChildren) {
+    if (child.type === 'WebsiteBlock') {
+      blocks.push({
+        id: child.originalBlockId || child.id,
+        type: child.blockType,
+        position: child.blockPosition ?? blocks.length,
+        config: child.blockConfig || {},
+        content: child.blockContent || {},
+      });
+    } else if (child.type === 'Section' && child._blockMeta) {
+      blocks.push({
+        id: child.id,
+        type: child._blockMeta.type,
+        position: child._blockMeta.position ?? blocks.length,
+        config: child._blockMeta.config || {},
+        content: child._blockMeta.content || {},
+      });
+    } else if (child.type === 'Cards') {
+      blocks.push(convertVECardsToBlock(child));
+    } else if (['Text', 'Container', 'Image', 'Button'].includes(child.type)) {
+      blocks.push(convertVENativeElementToBlock(child));
+    } else if (child.type === 'Section') {
+      // Plain section without meta – check for Cards inside
+      const childBlocks = convertVEChildrenToBlocks(child.children || [], child.id);
+      blocks.push(...childBlocks);
+    }
+  }
+
   return {
     id: vePage.id,
     title: vePage.name || 'Neue Seite',
@@ -229,6 +290,159 @@ export function convertVEPageToWebsitePage(vePage: any): any {
     meta_description: '',
     seo_title: vePage.name || '',
     display_order: 0,
-    blocks: [],
+    blocks,
   };
+}
+
+// =====================================================
+// VE CARDS → GENERIC-CARD BLOCK CONVERTER
+// =====================================================
+
+/**
+ * Konvertiert ein VECards-Element in einen generic-card Website-Block.
+ * Liest die VEContainer-Kinder (Karten) und deren VEText/VEImage/VEButton
+ * und baut daraus GenericCardConfig + GenericCardItems.
+ */
+function convertVECardsToBlock(cardsElement: any): any {
+  const children = cardsElement.children || [];
+  const layout = cardsElement.layout || { desktop: { columns: 3 } };
+
+  // Build GenericCardItems from card containers
+  const items: GenericCardItem[] = children.map((cardContainer: any, idx: number) => {
+    const cardChildren = cardContainer.children || [];
+    const item: GenericCardItem = {
+      ...createDefaultGenericCardItem(),
+      id: cardContainer.id || crypto.randomUUID(),
+      order: idx,
+      title: 'Karte',
+    };
+
+    for (const child of cardChildren) {
+      if (child.type === 'Image') {
+        item.image = child.content?.src || '';
+      } else if (child.type === 'Text') {
+        const textStyle = child.textStyle || 'body';
+        const content = child.content || '';
+
+        if (textStyle === 'h1' || textStyle === 'h2' || textStyle === 'h3') {
+          item.title = content;
+        } else if (textStyle === 'price') {
+          // Try to parse price
+          const priceMatch = content.match(/(\d+[\.,]?\d*)/);
+          if (priceMatch) {
+            item.price = parseFloat(priceMatch[1].replace(',', '.'));
+            item.priceUnit = content.replace(priceMatch[0], '').trim() || '€';
+          }
+        } else if (textStyle === 'label') {
+          // Could be overline or subtitle
+          if (!item.overline) {
+            item.overline = content;
+          } else {
+            item.subtitle = content;
+          }
+        } else {
+          // body text → description or subtitle
+          if (!item.subtitle && content.length < 80) {
+            item.subtitle = content;
+          } else {
+            item.description = content;
+          }
+        }
+      } else if (child.type === 'Button') {
+        item.ctaText = child.content?.text || 'Button';
+        item.ctaUrl = child.content?.link || '#';
+      }
+    }
+
+    return item;
+  });
+
+  // Determine if cards have images
+  const hasImages = items.some(i => !!i.image);
+  const hasButtons = items.some(i => !!i.ctaText);
+  const hasPrices = items.some(i => i.price !== undefined);
+
+  // Build grid config from VECards layout
+  const gapValue = layout.desktop?.gap?.value || 24;
+  const gapLabel = gapValue <= 8 ? 'xs' : gapValue <= 12 ? 'sm' : gapValue <= 16 ? 'md' : gapValue <= 24 ? 'lg' : 'xl';
+
+  // Build the GenericCardConfig
+  const config: GenericCardConfig = {
+    ...createDefaultGenericCardConfig(),
+    items,
+    layout: 'grid',
+    cardLayoutVariant: 'vertical',
+    grid: {
+      ...createDefaultGenericCardConfig().grid,
+      columns: {
+        desktop: layout.desktop?.columns || 3,
+        tablet: layout.tablet?.columns || 2,
+        mobile: layout.mobile?.columns || 1,
+      },
+      gap: gapLabel as any,
+    },
+    showImage: hasImages,
+    showButton: hasButtons,
+    sectionStyle: {
+      ...createDefaultGenericCardConfig().sectionStyle,
+      showHeader: false,
+    },
+  };
+
+  if (hasPrices) {
+    config.priceStyle = { ...config.priceStyle, enabled: true };
+  }
+
+  return {
+    id: cardsElement.id,
+    type: 'generic-card',
+    position: 0,
+    config,
+    content: {},
+  };
+}
+
+/**
+ * Konvertiert andere native VE-Elemente in einen einfachen Website-Block.
+ */
+function convertVENativeElementToBlock(veElement: any): any {
+  if (veElement.type === 'Text') {
+    return {
+      id: veElement.id,
+      type: 'static-text',
+      position: 0,
+      config: {
+        content: veElement.content || '',
+        textStyle: veElement.textStyle || 'body',
+      },
+      content: {},
+    };
+  }
+
+  // Container, Image, Button → wrap as static-text for now
+  return {
+    id: veElement.id,
+    type: 'static-text',
+    position: 0,
+    config: {
+      content: veElement.content || veElement.label || '',
+    },
+    content: {},
+  };
+}
+
+/**
+ * Konvertiert eine Liste von VE-Kindern in Website-Blöcke.
+ * Nützlich für Sections ohne _blockMeta, die native VE-Elemente enthalten.
+ */
+function convertVEChildrenToBlocks(children: any[], _parentId: string): any[] {
+  const blocks: any[] = [];
+  for (const child of children) {
+    if (child.type === 'Cards') {
+      blocks.push(convertVECardsToBlock(child));
+    } else if (['Text', 'Container', 'Image', 'Button'].includes(child.type)) {
+      blocks.push(convertVENativeElementToBlock(child));
+    }
+  }
+  return blocks;
 }

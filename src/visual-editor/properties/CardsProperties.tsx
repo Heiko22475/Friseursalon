@@ -10,7 +10,7 @@ import { Plus, Trash2, Copy, ChevronUp, ChevronDown, GripVertical } from 'lucide
 import type { VECards, VEElement } from '../types/elements';
 import { useEditor } from '../state/EditorContext';
 import { createCardFromTemplate, deepCloneWithNewIds, getChildren } from '../utils/elementHelpers';
-import { BUILT_IN_CARD_TEMPLATES } from '../types/cards';
+import { useCardTemplates } from '../hooks/useCardTemplates';
 
 interface CardsPropertiesProps {
   element: VECards;
@@ -37,9 +37,10 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => {
   const { dispatch } = useEditor();
+  const { templates } = useCardTemplates();
 
-  const template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === element.templateId)
-    ?? BUILT_IN_CARD_TEMPLATES[0];
+  const template = templates.find(t => t.id === element.templateId)
+    ?? templates[0];
 
   const children = element.children || [];
 
@@ -110,7 +111,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
   const handleTemplateChange = (templateId: string) => {
     if (templateId === element.templateId) return;
 
-    const newTemplate = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId);
+    const newTemplate = templates.find(t => t.id === templateId);
     if (!newTemplate) return;
 
     const confirmed = window.confirm(
@@ -137,9 +138,9 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
           onChange={(e) => handleTemplateChange(e.target.value)}
           style={inputStyle}
         >
-          {BUILT_IN_CARD_TEMPLATES.map(tpl => (
+          {templates.map(tpl => (
             <option key={tpl.id} value={tpl.id}>
-              {tpl.name}
+              {tpl.name}{!tpl.isBuiltIn ? ' (DB)' : ''}
             </option>
           ))}
         </select>

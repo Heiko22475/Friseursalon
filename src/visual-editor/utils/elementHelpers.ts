@@ -588,10 +588,17 @@ export function createCardFromTemplate(template: CardTemplate): VEElement {
 /**
  * Erstellt ein Cards-Element mit Template und Beispielkarten.
  * Jede Karte ist ein VEContainer mit echten VEElement-Kindern.
+ * Akzeptiert entweder eine templateId (Lookup aus Built-in) oder ein
+ * fertiges CardTemplate-Objekt (z.B. aus der Datenbank geladen).
  */
-export function createCards(templateId?: string, initialCardCount = 3): VEElement {
-  const template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId)
-    ?? BUILT_IN_CARD_TEMPLATES[0];
+export function createCards(templateIdOrTemplate?: string | CardTemplate, initialCardCount = 3): VEElement {
+  let template: CardTemplate;
+  if (typeof templateIdOrTemplate === 'object' && templateIdOrTemplate !== null) {
+    template = templateIdOrTemplate;
+  } else {
+    template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateIdOrTemplate)
+      ?? BUILT_IN_CARD_TEMPLATES[0];
+  }
 
   const cardContainers: VEElement[] = [];
   for (let i = 0; i < initialCardCount; i++) {

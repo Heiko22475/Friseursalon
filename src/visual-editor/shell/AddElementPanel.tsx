@@ -37,7 +37,8 @@ import {
   findParent,
 } from '../utils/elementHelpers';
 import type { VEElement } from '../types/elements';
-import { BUILT_IN_CARD_TEMPLATES } from '../types/cards';
+import type { CardTemplate } from '../types/cards';
+import { useCardTemplates } from '../hooks/useCardTemplates';
 
 interface AddableElement {
   label: string;
@@ -86,9 +87,11 @@ const categoryLabels: Record<string, string> = {
 // ===== CARD TEMPLATE PICKER =====
 
 const CardTemplatePicker: React.FC<{
-  onSelect: (templateId: string) => void;
+  templates: CardTemplate[];
+  loading: boolean;
+  onSelect: (template: CardTemplate) => void;
   onClose: () => void;
-}> = ({ onSelect, onClose }) => {
+}> = ({ templates, loading, onSelect, onClose }) => {
   return (
     <div
       style={{
@@ -108,7 +111,7 @@ const CardTemplatePicker: React.FC<{
           border: '1px solid #3d3d4d',
           borderRadius: '12px',
           padding: '24px',
-          width: '480px',
+          width: '560px',
           maxHeight: '80vh',
           overflow: 'auto',
           boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
@@ -121,7 +124,7 @@ const CardTemplatePicker: React.FC<{
               Karten-Vorlage wählen
             </h3>
             <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#6b7280' }}>
-              Wähle eine Vorlage für dein Karten-Layout
+              {loading ? 'Lade Vorlagen aus der Datenbank…' : `${templates.length} Vorlage${templates.length !== 1 ? 'n' : ''} verfügbar`}
             </p>
           </div>
           <button
@@ -140,12 +143,19 @@ const CardTemplatePicker: React.FC<{
           </button>
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div style={{ padding: '32px', textAlign: 'center', color: '#6b7280', fontSize: '13px' }}>
+            Lade Vorlagen…
+          </div>
+        )}
+
         {/* Template Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          {BUILT_IN_CARD_TEMPLATES.map((tpl) => (
+        {!loading && <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {templates.map((tpl) => (
             <button
               key={tpl.id}
-              onClick={() => onSelect(tpl.id)}
+              onClick={() => onSelect(tpl)}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -201,9 +211,14 @@ const CardTemplatePicker: React.FC<{
                   </span>
                 ))}
               </div>
+
+              {/* Source indicator */}
+              {!tpl.isBuiltIn && (
+                <span style={{ fontSize: '9px', color: '#22c55e', marginTop: '2px' }}>● aus Datenbank</span>
+              )}
             </button>
           ))}
-        </div>
+        </div>}
       </div>
     </div>
   );
@@ -212,6 +227,7 @@ const CardTemplatePicker: React.FC<{
 export const AddElementPanel: React.FC = () => {
   const { state, dispatch } = useEditor();
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const { templates: cardTemplates, loading: templatesLoading } = useCardTemplates();
 
   const insertElement = (newEl: VEElement) => {
     // Bestimme den Einfüge-Ort
@@ -250,9 +266,9 @@ export const AddElementPanel: React.FC = () => {
     insertElement(newEl);
   };
 
-  const handleTemplateSelect = (templateId: string) => {
+  const handleTemplateSelect = (template: CardTemplate) => {
     setShowTemplatePicker(false);
-    const newEl = createCards(templateId);
+    const newEl = createCards(template);
     insertElement(newEl);
   };
 
@@ -323,6 +339,8 @@ export const AddElementPanel: React.FC = () => {
       {/* Template Picker Modal */}
       {showTemplatePicker && (
         <CardTemplatePicker
+          templates={cardTemplates}
+          loading={templatesLoading}
           onSelect={handleTemplateSelect}
           onClose={() => setShowTemplatePicker(false)}
         />

@@ -3,8 +3,17 @@
 // Templates für das Karten-System
 // =====================================================
 
-import type { CardElement, CardImageLayout } from './elements';
 import type { ElementStyles } from './styles';
+
+// ===== CARD TEMPLATE ELEMENT TYPES =====
+
+/**
+ * Source element types used in templates.
+ * These define what kind of VEElement will be created from the template.
+ * CardImage → VEImage, CardText → VEText, CardButton → VEButton,
+ * CardBadge → VEText (label style), CardRating → VEText (stars), CardIcon → VEText (emoji)
+ */
+export type CardTemplateElementType = 'CardImage' | 'CardText' | 'CardBadge' | 'CardRating' | 'CardButton' | 'CardIcon';
 
 // ===== CARD TEMPLATE =====
 
@@ -13,12 +22,12 @@ export interface CardTemplate {
   name: string;
   description?: string;
   category: 'service' | 'team' | 'product' | 'testimonial' | 'general';
-  /** Default card styles */
+  /** Default card container styles */
   cardStyles?: ElementStyles;
-  /** Template elements (defines structure) */
+  /** Template elements (defines composition) */
   elements: CardTemplateElement[];
-  /** Image layout for the template */
-  imageLayout: CardImageLayout;
+  /** Image layout for the template (informational only) */
+  imageLayout: string;
   /** Preview thumbnail (optional) */
   previewImage?: string;
   isBuiltIn: boolean;
@@ -28,7 +37,7 @@ export interface CardTemplate {
 // ===== CARD TEMPLATE ELEMENT =====
 
 export interface CardTemplateElement {
-  type: CardElement['type'];
+  type: CardTemplateElementType;
   label: string;
   defaultContent?: any;
   textStyle?: string;

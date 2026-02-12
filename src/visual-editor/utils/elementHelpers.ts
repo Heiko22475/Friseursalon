@@ -3,7 +3,7 @@
 // Traversierung, Suche, Mutation von Element-Bäumen
 // =====================================================
 
-import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards, VECard, CardElement } from '../types/elements';
+import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
 import { createDefaultHeaderClassicConfig } from '../../types/Header';
 import { createDefaultFooterMinimalConfig } from '../../types/Footer';
@@ -82,7 +82,7 @@ export function getChildren(el: VEElement): VEElement[] {
  * Prüft ob ein Element Kinder haben kann (Container-Typ)
  */
 export function isContainer(type: VEElementType): boolean {
-  return type === 'Body' || type === 'Section' || type === 'Container';
+  return type === 'Body' || type === 'Section' || type === 'Container' || type === 'Cards';
 }
 
 /**
@@ -95,6 +95,7 @@ export function canContain(parentType: VEElementType, childType: VEElementType):
     Body: ['Section', 'Header', 'Footer', 'WebsiteBlock'],
     Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
     Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
+    Cards: ['Container', 'Text', 'Image', 'Button'],
   };
 
   const list = allowed[parentType];
@@ -456,41 +457,145 @@ export function createFooter(label?: string): VEElement {
 // ===== CARDS HELPERS =====
 
 /**
- * Erstellt ein einzelnes CardElement anhand eines Template-Elements
+ * Erstellt eine einzelne Karte (VEContainer) anhand eines Templates.
+ * Jede Karte ist ein generischer Container mit echten VEText/VEImage/VEButton-Kindern.
  */
-function createCardElement(
-  tplEl: CardTemplate['elements'][number]
-): CardElement {
+export function createCardFromTemplate(template: CardTemplate): VEElement {
+  const children: VEElement[] = template.elements.map(tplEl => {
+    switch (tplEl.type) {
+      case 'CardImage':
+        return {
+          id: generateId(),
+          type: 'Image',
+          label: tplEl.label,
+          content: tplEl.defaultContent || { src: '', alt: tplEl.label },
+          styles: tplEl.styles || {
+            desktop: {
+              width: { value: 100, unit: 'px' as const },
+              objectFit: 'cover',
+            },
+          },
+        } as VEElement;
+
+      case 'CardText':
+        return {
+          id: generateId(),
+          type: 'Text',
+          label: tplEl.label,
+          content: tplEl.defaultContent || tplEl.label,
+          textStyle: (tplEl.textStyle || 'body') as import('../types/elements').TextStylePreset,
+          styles: tplEl.styles || { desktop: {} },
+        } as VEElement;
+
+      case 'CardButton':
+        return {
+          id: generateId(),
+          type: 'Button',
+          label: tplEl.label,
+          content: tplEl.defaultContent || { text: 'Button', link: '#' },
+          styles: tplEl.styles || {
+            desktop: {
+              paddingTop: { value: 8, unit: 'px' },
+              paddingBottom: { value: 8, unit: 'px' },
+              paddingLeft: { value: 20, unit: 'px' },
+              paddingRight: { value: 20, unit: 'px' },
+              borderRadius: { value: 6, unit: 'px' },
+              fontSize: { value: 13, unit: 'px' },
+              fontWeight: 600,
+            },
+          },
+        } as VEElement;
+
+      case 'CardBadge':
+        return {
+          id: generateId(),
+          type: 'Text',
+          label: tplEl.label,
+          content: typeof tplEl.defaultContent === 'object' ? tplEl.defaultContent?.text || 'Badge' : tplEl.defaultContent || 'Badge',
+          textStyle: 'label' as import('../types/elements').TextStylePreset,
+          styles: tplEl.styles || {
+            desktop: {
+              fontSize: { value: 11, unit: 'px' },
+              fontWeight: 600,
+            },
+          },
+        } as VEElement;
+
+      case 'CardRating':
+        // Render rating as text (e.g. "★★★★★")
+        const ratingValue = tplEl.defaultContent?.value ?? 5;
+        const maxStars = tplEl.defaultContent?.maxStars ?? 5;
+        const stars = '★'.repeat(ratingValue) + '☆'.repeat(maxStars - ratingValue);
+        return {
+          id: generateId(),
+          type: 'Text',
+          label: tplEl.label,
+          content: stars,
+          textStyle: 'body' as import('../types/elements').TextStylePreset,
+          styles: tplEl.styles || {
+            desktop: {
+              fontSize: { value: 18, unit: 'px' },
+              color: { kind: 'custom', hex: '#f59e0b' },
+            },
+          },
+        } as VEElement;
+
+      case 'CardIcon':
+        return {
+          id: generateId(),
+          type: 'Text',
+          label: tplEl.label,
+          content: tplEl.defaultContent?.icon || '⭐',
+          textStyle: 'body' as import('../types/elements').TextStylePreset,
+          styles: tplEl.styles || {
+            desktop: {
+              fontSize: { value: 24, unit: 'px' },
+            },
+          },
+        } as VEElement;
+
+      default:
+        return {
+          id: generateId(),
+          type: 'Text',
+          label: tplEl.label,
+          content: tplEl.defaultContent || tplEl.label,
+          textStyle: 'body' as import('../types/elements').TextStylePreset,
+          styles: { desktop: {} },
+        } as VEElement;
+    }
+  });
+
+  // Return a Container representing one card
   return {
     id: generateId(),
-    type: tplEl.type,
-    label: tplEl.label,
-    content: tplEl.defaultContent ?? '',
-    textStyle: tplEl.textStyle as CardElement['textStyle'],
-    styles: tplEl.styles,
-  };
+    type: 'Container',
+    label: 'Karte',
+    children,
+    styles: template.cardStyles || {
+      desktop: {
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+        borderRadius: { value: 8, unit: 'px' },
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+        overflow: 'hidden',
+      },
+    },
+  } as VEElement;
 }
 
 /**
- * Erstellt eine einzelne VECard anhand eines Templates
- */
-export function createCardFromTemplate(template: CardTemplate): VECard {
-  return {
-    id: generateId(),
-    elements: template.elements.map(createCardElement),
-  };
-}
-
-/**
- * Erstellt ein Cards-Element mit Template und Beispielkarten
+ * Erstellt ein Cards-Element mit Template und Beispielkarten.
+ * Jede Karte ist ein VEContainer mit echten VEElement-Kindern.
  */
 export function createCards(templateId?: string, initialCardCount = 3): VEElement {
   const template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId)
     ?? BUILT_IN_CARD_TEMPLATES[0];
 
-  const cards: VECard[] = [];
+  const cardContainers: VEElement[] = [];
   for (let i = 0; i < initialCardCount; i++) {
-    cards.push(createCardFromTemplate(template));
+    cardContainers.push(createCardFromTemplate(template));
   }
 
   return {
@@ -503,7 +608,7 @@ export function createCards(templateId?: string, initialCardCount = 3): VEElemen
       tablet: { columns: 2, gap: { value: 16, unit: 'px' } },
       mobile: { columns: 1, gap: { value: 16, unit: 'px' } },
     },
-    cards,
+    children: cardContainers,
     styles: {
       desktop: {
         width: { value: 100, unit: '%' },

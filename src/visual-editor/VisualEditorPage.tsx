@@ -67,20 +67,20 @@ const EditorInner: React.FC = () => {
   // === Context Menu: Canvas right-click handler ===
   const handleCanvasContextMenu = useCallback((e: React.MouseEvent) => {
     // Walk up from target to find the closest [data-ve-id]
-    let target = e.target as HTMLElement;
-    while (target && !target.getAttribute('data-ve-id')) {
-      target = target.parentElement as HTMLElement;
+    let walker = e.target as HTMLElement;
+    while (walker && !walker.getAttribute('data-ve-id')) {
+      walker = walker.parentElement as HTMLElement;
     }
-    if (!target) return;
+    if (!walker) return;
 
-    const veId = target.getAttribute('data-ve-id');
+    const veId = walker.getAttribute('data-ve-id');
     if (!veId) return;
 
     const element = findElementById(state.page.body, veId);
     if (!element) return;
 
     openContextMenu(e, element);
-  }, [state.page.body, openContextMenu]);
+  }, [state.page.body, state.clipboard, dispatch, openContextMenu]);
 
   // === Context Menu: Tree right-click ===
   const handleTreeContextMenu = useCallback((e: React.MouseEvent, element: VEElement) => {

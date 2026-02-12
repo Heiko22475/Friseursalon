@@ -4,7 +4,7 @@
 // Phase 2: Voll integrierte Sections mit Theme-Support
 // =====================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
@@ -31,18 +31,21 @@ import type { VEFooter, VEHeader, VECards, VEWebsiteBlock } from '../types/eleme
 interface AccordionSectionProps {
   title: string;
   children: React.ReactNode;
-  defaultOpen?: boolean;
   /** Show dot indicator when section has values set */
   hasValues?: boolean;
+  /** Controlled: is this section open? */
+  isOpen?: boolean;
+  /** Controlled: toggle callback */
+  onToggle?: () => void;
 }
 
-const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, defaultOpen = false, hasValues }) => {
-  const [open, setOpen] = useState(defaultOpen);
+const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, hasValues, isOpen, onToggle }) => {
+  const open = isOpen ?? false;
 
   return (
     <div style={{ borderBottom: '1px solid #2d2d3d' }}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         style={{
           width: '100%',
           display: 'flex',
@@ -99,6 +102,17 @@ const TYPE_COLORS: Record<string, string> = {
 
 export const PropertiesPanel: React.FC = () => {
   const { state, dispatch, selectedElement } = useEditor();
+  // Single-accordion: only one section open at a time
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (key: string) => {
+    setOpenSection(prev => prev === key ? null : key);
+  };
+
+  // Reset open section when element changes
+  useEffect(() => {
+    setOpenSection(null);
+  }, [state.selectedId]);
 
   if (!selectedElement) {
     return (
@@ -125,6 +139,9 @@ export const PropertiesPanel: React.FC = () => {
 
   const merged = mergeStyles(selectedElement.styles, state.viewport);
 
+  // Check element types
+  const isCards = selectedElement.type === 'Cards';
+
   const updateStyle = (key: keyof StyleProperties, value: any) => {
     dispatch({
       type: 'UPDATE_STYLES',
@@ -146,10 +163,9 @@ export const PropertiesPanel: React.FC = () => {
 
   // Determine which sections are relevant for the element type
   const isTextLike = selectedElement.type === 'Text' || selectedElement.type === 'Button';
-  const isContainer = ['Body', 'Section', 'Container'].includes(selectedElement.type);
+  const isContainer = ['Body', 'Section', 'Container', 'Cards'].includes(selectedElement.type);
   const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
-  const isCards = selectedElement.type === 'Cards';
   const isWebsiteBlock = selectedElement.type === 'WebsiteBlock';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
 
@@ -313,82 +329,82 @@ export const PropertiesPanel: React.FC = () => {
 
         {/* Header/Footer: dedicated config panels */}
         {selectedElement.type === 'Footer' && (
-          <AccordionSection title="Footer Konfiguration" defaultOpen>
+          <AccordionSection title="Footer Konfiguration" isOpen={openSection === 'footer-config'} onToggle={() => toggleSection('footer-config')}>
             <FooterProperties element={selectedElement as VEFooter} />
           </AccordionSection>
         )}
 
         {selectedElement.type === 'Header' && (
-          <AccordionSection title="Header Konfiguration" defaultOpen>
+          <AccordionSection title="Header Konfiguration" isOpen={openSection === 'header-config'} onToggle={() => toggleSection('header-config')}>
             <HeaderProperties element={selectedElement as VEHeader} />
           </AccordionSection>
         )}
 
         {isCards && (
-          <AccordionSection title="Karten Konfiguration" defaultOpen>
+          <AccordionSection title="Karten Konfiguration" isOpen={openSection === 'cards-config'} onToggle={() => toggleSection('cards-config')}>
             <CardsProperties element={selectedElement as VECards} />
           </AccordionSection>
         )}
 
         {/* Content (element-specific) */}
         {hasContent && !isWebsiteBlock && (
-          <AccordionSection title="Inhalt" defaultOpen>
+          <AccordionSection title="Inhalt" isOpen={openSection === 'content'} onToggle={() => toggleSection('content')}>
             <ContentSection element={selectedElement} />
           </AccordionSection>
         )}
 
         {/* Layout */}
-        {isContainer && !isHeaderFooter && !isCards && !isWebsiteBlock && (
-          <AccordionSection title="Layout" defaultOpen={isContainer} hasValues={hasLayoutValues}>
+        {isContainer && !isHeaderFooter && !isWebsiteBlock && (
+          <AccordionSection title="Layout" isOpen={openSection === 'layout'} onToggle={() => toggleSection('layout')} hasValues={hasLayoutValues}>
             <LayoutSection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Spacing (Box Model) */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Spacing" hasValues={hasSpacingValues}>
+        <AccordionSection title="Spacing" isOpen={openSection === 'spacing'} onToggle={() => toggleSection('spacing')} hasValues={hasSpacingValues}>
           <SpacingBox styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
         )}
 
         {/* Size */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Größe" hasValues={hasSizeValues}>
+        <AccordionSection title="Größe" isOpen={openSection === 'size'} onToggle={() => toggleSection('size')} hasValues={hasSizeValues}>
           <SizeSection styles={merged} onChange={updateStyleBatch} />
         </AccordionSection>
         )}
 
         {/* Typography (only for text-like elements or containers that can have text) */}
         {(isTextLike || isContainer) && !isHeaderFooter && !isWebsiteBlock && (
-          <AccordionSection title="Typografie" defaultOpen={isTextLike} hasValues={hasTypoValues}>
+          <AccordionSection title="Typografie" isOpen={openSection === 'typography'} onToggle={() => toggleSection('typography')} hasValues={hasTypoValues}>
             <TypographySection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 
         {/* Background */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Hintergrund" hasValues={hasBgValues}>
+        <AccordionSection title="Hintergrund" isOpen={openSection === 'background'} onToggle={() => toggleSection('background')} hasValues={hasBgValues}>
           <BackgroundSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Border */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Rahmen" hasValues={hasBorderValues}>
+        <AccordionSection title="Rahmen" isOpen={openSection === 'border'} onToggle={() => toggleSection('border')} hasValues={hasBorderValues}>
           <BorderSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Position */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Position" hasValues={hasPositionValues}>
+        <AccordionSection title="Position" isOpen={openSection === 'position'} onToggle={() => toggleSection('position')} hasValues={hasPositionValues}>
           <PositionSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Effects (Shadow, Overflow, Cursor) */}
         {!isHeaderFooter && !isWebsiteBlock && (
-        <AccordionSection title="Effekte" hasValues={hasEffectValues}>
+        <AccordionSection title="Effekte" isOpen={openSection === 'effects'} onToggle={() => toggleSection('effects')} hasValues={hasEffectValues}>
           <EffectsSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}

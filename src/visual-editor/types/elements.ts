@@ -86,36 +86,22 @@ export interface VEButton extends VEBaseElement {
 
 // ===== CARDS =====
 
-export type CardImageLayout = 'top-full' | 'top-padded' | 'background';
-
-export type CardElementType = 'CardImage' | 'CardText' | 'CardBadge' | 'CardRating' | 'CardButton' | 'CardIcon';
-
-export interface CardElement {
-  id: string;
-  type: CardElementType;
-  label: string;
-  content: any;
-  textStyle?: TextStylePreset;
-  imageLayout?: CardImageLayout;
-  styles?: ElementStyles;
-}
-
-export interface VECard {
-  id: string;
-  elements: CardElement[];
-}
-
 export interface VECardsLayout {
   desktop: { columns: number; gap?: import('./styles').SizeValue };
   tablet?: { columns?: number; gap?: import('./styles').SizeValue };
   mobile?: { columns?: number; gap?: import('./styles').SizeValue };
 }
 
+/**
+ * VECards: A grid container whose children are standard VEContainers.
+ * Each child container represents one card with real VEText/VEImage/VEButton children.
+ * This enables inline editing, tree navigation, and individual property editing for card content.
+ */
 export interface VECards extends VEBaseElement {
   type: 'Cards';
   templateId: string;
   layout: VECardsLayout;
-  cards: VECard[];
+  children: VEElement[];
 }
 
 // ===== COMPONENT INSTANCE =====

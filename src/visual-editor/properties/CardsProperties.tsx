@@ -1,17 +1,16 @@
 // =====================================================
 // VISUAL EDITOR – CARDS PROPERTIES
-// Properties Panel: Karten-Verwaltung & Layout-Einstellungen
-// Template, Spalten, Gap, Karten hinzufügen/löschen/bearbeiten
+// Properties Panel: Karten-Layout-Einstellungen
+// Template, Spalten, Gap, Karten hinzufügen/löschen
+// Karten-Inhalte werden inline auf dem Canvas bearbeitet.
 // =====================================================
 
-import React, { useState } from 'react';
-import { Plus, Trash2, Copy, ChevronDown, ChevronRight, ChevronUp, GripVertical } from 'lucide-react';
-import type { VECards, VECard, CardElement } from '../types/elements';
+import React from 'react';
+import { Plus, Trash2, Copy, ChevronUp, ChevronDown, GripVertical } from 'lucide-react';
+import type { VECards, VEElement } from '../types/elements';
 import { useEditor } from '../state/EditorContext';
-import { createCardFromTemplate } from '../utils/elementHelpers';
+import { createCardFromTemplate, deepCloneWithNewIds, getChildren } from '../utils/elementHelpers';
 import { BUILT_IN_CARD_TEMPLATES } from '../types/cards';
-import { VEMediaPicker } from '../components/VEMediaPicker';
-import { generateId } from '../utils/elementHelpers';
 
 interface CardsPropertiesProps {
   element: VECards;
@@ -34,228 +33,6 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
   </div>
 );
 
-// ===== CARD ELEMENT EDITOR =====
-
-const CardElementEditor: React.FC<{
-  el: CardElement;
-  onChange: (updates: Partial<CardElement>) => void;
-}> = ({ el, onChange }) => {
-  switch (el.type) {
-    case 'CardText':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-            {el.textStyle && (
-              <span style={{ marginLeft: '4px', color: '#4a4a5a' }}>({el.textStyle})</span>
-            )}
-          </label>
-          <input
-            type="text"
-            value={typeof el.content === 'string' ? el.content : ''}
-            onChange={(e) => onChange({ content: e.target.value })}
-            placeholder={el.label}
-            style={inputStyle}
-          />
-        </div>
-      );
-
-    case 'CardImage':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-          </label>
-          <VEMediaPicker
-            value={typeof el.content === 'string' ? el.content : el.content?.src}
-            onChange={(url) => onChange({ content: { src: url || '', alt: el.label } })}
-            label={el.label}
-          />
-        </div>
-      );
-
-    case 'CardBadge':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-          </label>
-          <input
-            type="text"
-            value={typeof el.content === 'string' ? el.content : el.content?.text || ''}
-            onChange={(e) => onChange({ content: { text: e.target.value } })}
-            placeholder="Badge Text"
-            style={inputStyle}
-          />
-        </div>
-      );
-
-    case 'CardRating':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-          </label>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <input
-              type="number"
-              min={0}
-              max={el.content?.maxStars ?? 5}
-              value={el.content?.value ?? 5}
-              onChange={(e) => onChange({ content: { ...el.content, value: Number(e.target.value) } })}
-              style={{ ...inputStyle, width: '60px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#6b7280' }}>/ {el.content?.maxStars ?? 5} Sterne</span>
-          </div>
-        </div>
-      );
-
-    case 'CardButton':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-          </label>
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <input
-              type="text"
-              value={el.content?.text || ''}
-              onChange={(e) => onChange({ content: { ...el.content, text: e.target.value } })}
-              placeholder="Button Text"
-              style={{ ...inputStyle, flex: 1 }}
-            />
-            <input
-              type="text"
-              value={el.content?.link || ''}
-              onChange={(e) => onChange({ content: { ...el.content, link: e.target.value } })}
-              placeholder="Link"
-              style={{ ...inputStyle, flex: 1 }}
-            />
-          </div>
-        </div>
-      );
-
-    case 'CardIcon':
-      return (
-        <div style={{ marginBottom: '4px' }}>
-          <label style={{ fontSize: '10px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
-            {el.label}
-          </label>
-          <input
-            type="text"
-            value={el.content?.icon || ''}
-            onChange={(e) => onChange({ content: { icon: e.target.value } })}
-            placeholder="Emoji oder Icon"
-            style={inputStyle}
-          />
-        </div>
-      );
-
-    default:
-      return null;
-  }
-};
-
-// ===== SINGLE CARD EDITOR =====
-
-const SingleCardEditor: React.FC<{
-  card: VECard;
-  index: number;
-  totalCards: number;
-  onChange: (updated: VECard) => void;
-  onDelete: () => void;
-  onDuplicate: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-}> = ({ card, index, totalCards, onChange, onDelete, onDuplicate, onMoveUp, onMoveDown }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleElementChange = (elIdx: number, updates: Partial<CardElement>) => {
-    const newElements = [...card.elements];
-    newElements[elIdx] = { ...newElements[elIdx], ...updates };
-    onChange({ ...card, elements: newElements });
-  };
-
-  // Find a label for this card
-  const titleEl = card.elements.find(e => e.type === 'CardText' && (e.textStyle === 'h3' || e.textStyle === 'h2'));
-  const cardLabel = (titleEl && typeof titleEl.content === 'string' && titleEl.content)
-    || `Karte ${index + 1}`;
-
-  return (
-    <div
-      style={{
-        backgroundColor: '#252535',
-        border: '1px solid #3d3d4d',
-        borderRadius: '6px',
-        overflow: 'hidden',
-        marginBottom: '4px',
-      }}
-    >
-      {/* Card header */}
-      <div
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '8px 10px',
-          cursor: 'pointer',
-          userSelect: 'none',
-        }}
-      >
-        <GripVertical size={12} style={{ color: '#4a4a5a', flexShrink: 0 }} />
-        {open ? <ChevronDown size={12} style={{ color: '#6b7280' }} /> : <ChevronRight size={12} style={{ color: '#6b7280' }} />}
-        <span style={{ flex: 1, fontSize: '12px', color: '#d1d5db', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {cardLabel}
-        </span>
-        <button
-          onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
-          title="Nach oben"
-          disabled={index === 0}
-          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: index === 0 ? '#3d3d4d' : '#6b7280', cursor: index === 0 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
-        >
-          <ChevronUp size={12} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
-          title="Nach unten"
-          disabled={index === totalCards - 1}
-          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: index === totalCards - 1 ? '#3d3d4d' : '#6b7280', cursor: index === totalCards - 1 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
-        >
-          <ChevronDown size={12} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
-          title="Duplizieren"
-          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
-        >
-          <Copy size={12} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          title="Löschen"
-          style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
-        >
-          <Trash2 size={12} />
-        </button>
-      </div>
-
-      {/* Card elements editor */}
-      {open && (
-        <div style={{ padding: '8px 10px', borderTop: '1px solid #3d3d4d' }}>
-          {card.elements.map((el, elIdx) => (
-            <CardElementEditor
-              key={el.id}
-              el={el}
-              onChange={(updates) => handleElementChange(elIdx, updates)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
 // ===== MAIN COMPONENT =====
 
 export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => {
@@ -264,52 +41,54 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
   const template = BUILT_IN_CARD_TEMPLATES.find(t => t.id === element.templateId)
     ?? BUILT_IN_CARD_TEMPLATES[0];
 
-  // Helper: update the full cards array
-  const updateCards = (newCards: VECard[]) => {
+  const children = element.children || [];
+
+  // Helper: update the full children array
+  const updateChildren = (newChildren: VEElement[]) => {
     dispatch({
       type: 'UPDATE_CONTENT',
       id: element.id,
-      updates: { cards: newCards },
+      updates: { children: newChildren },
     });
   };
 
   // Add a new card from template
   const handleAddCard = () => {
     const newCard = createCardFromTemplate(template);
-    updateCards([...element.cards, newCard]);
+    updateChildren([...children, newCard]);
   };
 
   // Delete a card
   const handleDeleteCard = (idx: number) => {
-    updateCards(element.cards.filter((_, i) => i !== idx));
+    updateChildren(children.filter((_, i) => i !== idx));
   };
 
   // Duplicate a card
   const handleDuplicateCard = (idx: number) => {
-    const orig = element.cards[idx];
-    const clone: VECard = {
-      id: generateId(),
-      elements: orig.elements.map(el => ({ ...el, id: generateId() })),
-    };
-    const newCards = [...element.cards];
-    newCards.splice(idx + 1, 0, clone);
-    updateCards(newCards);
+    const orig = children[idx];
+    const clone = deepCloneWithNewIds(orig);
+    const newChildren = [...children];
+    newChildren.splice(idx + 1, 0, clone);
+    updateChildren(newChildren);
   };
 
   // Move card up/down
   const handleMoveCard = (idx: number, direction: 'up' | 'down') => {
     const newIdx = direction === 'up' ? idx - 1 : idx + 1;
-    if (newIdx < 0 || newIdx >= element.cards.length) return;
-    const newCards = [...element.cards];
-    [newCards[idx], newCards[newIdx]] = [newCards[newIdx], newCards[idx]];
-    updateCards(newCards);
+    if (newIdx < 0 || newIdx >= children.length) return;
+    const newChildren = [...children];
+    [newChildren[idx], newChildren[newIdx]] = [newChildren[newIdx], newChildren[idx]];
+    updateChildren(newChildren);
   };
 
-  // Update single card
-  const handleCardChange = (idx: number, updated: VECard) => {
-    const newCards = [...element.cards];
-    newCards[idx] = updated;
-    updateCards(newCards);
+  // Find a label for a card container
+  const getCardLabel = (card: VEElement, index: number): string => {
+    const cardChildren = getChildren(card);
+    const titleEl = cardChildren.find(c => c.type === 'Text' && ('textStyle' in c) && (c.textStyle === 'h3' || c.textStyle === 'h2'));
+    if (titleEl && 'content' in titleEl && typeof titleEl.content === 'string' && titleEl.content) {
+      return titleEl.content;
+    }
+    return card.label || `Karte ${index + 1}`;
   };
 
   // Update layout
@@ -334,29 +113,18 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
     const newTemplate = BUILT_IN_CARD_TEMPLATES.find(t => t.id === templateId);
     if (!newTemplate) return;
 
-    // Warn user about data loss
-    const hasContent = element.cards.some(card =>
-      card.elements.some(el => {
-        if (typeof el.content === 'string' && el.content) return true;
-        if (typeof el.content === 'object' && el.content?.src) return true;
-        return false;
-      })
+    const confirmed = window.confirm(
+      `Beim Wechsel der Vorlage zu „${newTemplate.name}" werden die bestehenden Karten durch die neue Struktur ersetzt.\n\nFortfahren?`
     );
-
-    if (hasContent) {
-      const confirmed = window.confirm(
-        `Beim Wechsel der Vorlage zu „${newTemplate.name}" werden die bestehenden Karten-Inhalte durch die neue Struktur ersetzt.\n\nFortfahren?`
-      );
-      if (!confirmed) return;
-    }
+    if (!confirmed) return;
 
     // Recreate cards with new template structure, keeping count
-    const newCards = element.cards.map(() => createCardFromTemplate(newTemplate));
+    const newChildren = children.map(() => createCardFromTemplate(newTemplate));
 
     dispatch({
       type: 'UPDATE_CONTENT',
       id: element.id,
-      updates: { templateId, cards: newCards },
+      updates: { templateId, children: newChildren },
     });
   };
 
@@ -424,10 +192,24 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
       {/* Divider */}
       <div style={{ borderTop: '1px solid #2d2d3d', margin: '12px 0' }} />
 
+      {/* Info hint */}
+      <div style={{
+        padding: '8px 10px',
+        backgroundColor: '#3b82f610',
+        border: '1px solid #3b82f630',
+        borderRadius: '6px',
+        marginBottom: '12px',
+        fontSize: '11px',
+        color: '#93c5fd',
+        lineHeight: 1.5,
+      }}>
+        💡 Karten-Inhalte (Text, Bilder) direkt auf dem Canvas bearbeiten – klicke einfach auf das Element in der Karte.
+      </div>
+
       {/* Cards List */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <label style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600 }}>
-          Karten ({element.cards.length})
+          Karten ({children.length})
         </label>
         <button
           onClick={handleAddCard}
@@ -450,22 +232,73 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
       </div>
 
       <div>
-        {element.cards.map((card, idx) => (
-          <SingleCardEditor
-            key={card.id}
-            card={card}
-            index={idx}
-            totalCards={element.cards.length}
-            onChange={(updated) => handleCardChange(idx, updated)}
-            onDelete={() => handleDeleteCard(idx)}
-            onDuplicate={() => handleDuplicateCard(idx)}
-            onMoveUp={() => handleMoveCard(idx, 'up')}
-            onMoveDown={() => handleMoveCard(idx, 'down')}
-          />
-        ))}
+        {children.map((card, idx) => {
+          const cardLabel = getCardLabel(card, idx);
+          return (
+            <div
+              key={card.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 8px',
+                backgroundColor: '#252535',
+                border: '1px solid #3d3d4d',
+                borderRadius: '6px',
+                marginBottom: '4px',
+              }}
+            >
+              <GripVertical size={12} style={{ color: '#4a4a5a', flexShrink: 0 }} />
+              <span style={{
+                flex: 1,
+                fontSize: '12px',
+                color: '#d1d5db',
+                fontWeight: 500,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+              }}
+                onClick={() => dispatch({ type: 'SELECT_ELEMENT', id: card.id })}
+              >
+                {cardLabel}
+              </span>
+              <button
+                onClick={() => handleMoveCard(idx, 'up')}
+                title="Nach oben"
+                disabled={idx === 0}
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === 0 ? '#3d3d4d' : '#6b7280', cursor: idx === 0 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+              >
+                <ChevronUp size={12} />
+              </button>
+              <button
+                onClick={() => handleMoveCard(idx, 'down')}
+                title="Nach unten"
+                disabled={idx === children.length - 1}
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === children.length - 1 ? '#3d3d4d' : '#6b7280', cursor: idx === children.length - 1 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+              >
+                <ChevronDown size={12} />
+              </button>
+              <button
+                onClick={() => handleDuplicateCard(idx)}
+                title="Duplizieren"
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
+              >
+                <Copy size={12} />
+              </button>
+              <button
+                onClick={() => handleDeleteCard(idx)}
+                title="Löschen"
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          );
+        })}
       </div>
 
-      {element.cards.length === 0 && (
+      {children.length === 0 && (
         <div style={{ padding: '16px', textAlign: 'center', color: '#6b7280', fontSize: '12px', backgroundColor: '#252535', borderRadius: '6px' }}>
           Keine Karten vorhanden.<br />
           Klicke „+ Karte" um eine hinzuzufügen.

@@ -113,6 +113,8 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
           isHovered={!!isHovered}
           onSelect={onSelect}
           onHover={onHover}
+          selectedId={selectedId}
+          hoveredId={hoveredId}
         />
       );
 

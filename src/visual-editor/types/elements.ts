@@ -15,7 +15,8 @@ export type VEElementType =
   | 'Image'
   | 'Button'
   | 'Cards'
-  | 'Header'
+  | 'Navbar'
+  | 'Header'   // @deprecated – use Navbar instead
   | 'Footer'
   | 'ComponentInstance'
   | 'WebsiteBlock';
@@ -113,9 +114,30 @@ export interface VEComponentInstance extends VEBaseElement {
 
 // ===== HEADER =====
 
+/** @deprecated Use VENavbar instead – this is the legacy opaque header */
 export interface VEHeader extends VEBaseElement {
   type: 'Header';
   config: import('../../types/Header').HeaderConfig;
+}
+
+// ===== NAVBAR (new compositional header) =====
+
+export type NavbarStickyMode = 'none' | 'sticky' | 'fixed';
+
+/**
+ * VENavbar: A compositional header/navigation element.
+ * Its children are freely editable VE elements (logo images, nav links, buttons, etc.).
+ * Uses viewport-specific visibility on children for desktop ↔ mobile switching.
+ * Rendered as a <nav> with flex layout.
+ */
+export interface VENavbar extends VEBaseElement {
+  type: 'Navbar';
+  /** Breakpoint in px at which the mobile menu is used instead of desktop nav */
+  mobileBreakpoint: number;
+  /** Sticky behaviour */
+  stickyMode: NavbarStickyMode;
+  /** Children: freely composable VE elements (containers, text, images, buttons) */
+  children: VEElement[];
 }
 
 // ===== FOOTER =====
@@ -151,6 +173,7 @@ export type VEElement =
   | VEImage
   | VEButton
   | VECards
+  | VENavbar
   | VEHeader
   | VEFooter
   | VEComponentInstance

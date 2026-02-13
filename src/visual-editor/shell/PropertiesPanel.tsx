@@ -23,8 +23,9 @@ import { SpacingBox } from '../components/SpacingBox';
 import { FooterProperties } from '../properties/FooterProperties';
 import { HeaderProperties } from '../properties/HeaderProperties';
 import { CardsProperties } from '../properties/CardsProperties';
+import { NavbarProperties } from '../properties/NavbarProperties';
 import { WebsiteBlockProperties } from './WebsiteBlockProperties';
-import type { VEFooter, VEHeader, VECards, VEWebsiteBlock } from '../types/elements';
+import type { VEFooter, VEHeader, VECards, VENavbar, VEWebsiteBlock } from '../types/elements';
 
 // ===== ACCORDION SECTION =====
 
@@ -93,6 +94,7 @@ const TYPE_COLORS: Record<string, string> = {
   Image: '#10b981',
   Button: '#f59e0b',
   Cards: '#ec4899',
+  Navbar: '#06b6d4',
   Header: '#14b8a6',
   Footer: '#f97316',
   WebsiteBlock: '#0ea5e9',
@@ -163,8 +165,9 @@ export const PropertiesPanel: React.FC = () => {
 
   // Determine which sections are relevant for the element type
   const isTextLike = selectedElement.type === 'Text' || selectedElement.type === 'Button';
-  const isContainer = ['Body', 'Section', 'Container', 'Cards'].includes(selectedElement.type);
+  const isContainer = ['Body', 'Section', 'Container', 'Cards', 'Navbar'].includes(selectedElement.type);
   const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
+  const isNavbar = selectedElement.type === 'Navbar';
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
   const isWebsiteBlock = selectedElement.type === 'WebsiteBlock';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
@@ -335,8 +338,14 @@ export const PropertiesPanel: React.FC = () => {
         )}
 
         {selectedElement.type === 'Header' && (
-          <AccordionSection title="Header Konfiguration" isOpen={openSection === 'header-config'} onToggle={() => toggleSection('header-config')}>
+          <AccordionSection title="Header Konfiguration (Legacy)" isOpen={openSection === 'header-config'} onToggle={() => toggleSection('header-config')}>
             <HeaderProperties element={selectedElement as VEHeader} />
+          </AccordionSection>
+        )}
+
+        {isNavbar && (
+          <AccordionSection title="Navbar Konfiguration" isOpen={openSection === 'navbar-config'} onToggle={() => toggleSection('navbar-config')}>
+            <NavbarProperties element={selectedElement as VENavbar} />
           </AccordionSection>
         )}
 

@@ -14,13 +14,15 @@ import {
   Heading1,
   Heading2,
   Heading3,
-  PanelTop,
   PanelBottom,
   X,
   Users,
   ShoppingBag,
   Star,
   Grid3X3,
+  Navigation,
+  AlignHorizontalDistributeCenter,
+  Menu,
 } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import {
@@ -29,9 +31,9 @@ import {
   createText,
   createImage,
   createButton,
-  createHeader,
   createFooter,
   createCards,
+  createNavbar,
   findElementById,
   isContainer,
   findParent,
@@ -51,8 +53,12 @@ const addableElements: AddableElement[] = [
   // Struktur
   { label: 'Section', icon: <Rows3 size={18} />, category: 'Struktur', create: createSection },
   { label: 'Container', icon: <Square size={18} />, category: 'Struktur', create: createContainer },
-  { label: 'Header', icon: <PanelTop size={18} />, category: 'Struktur', create: createHeader },
+  { label: 'Navbar', icon: <Navigation size={18} />, category: 'Struktur', create: () => createNavbar('classic') },
+  { label: 'Navbar (Zentriert)', icon: <AlignHorizontalDistributeCenter size={18} />, category: 'Struktur', create: () => createNavbar('centered') },
+  { label: 'Navbar (Minimal)', icon: <Menu size={18} />, category: 'Struktur', create: () => createNavbar('minimal') },
   { label: 'Footer', icon: <PanelBottom size={18} />, category: 'Struktur', create: createFooter },
+  // Header (Legacy – deprecated)
+  // { label: 'Header (Legacy)', icon: <PanelTop size={18} />, category: 'Struktur', create: createHeader },
   // Typografie
   { label: 'Heading 1', icon: <Heading1 size={18} />, category: 'Inhalt', create: () => createText('Überschrift', 'h1') },
   { label: 'Heading 2', icon: <Heading2 size={18} />, category: 'Inhalt', create: () => createText('Überschrift', 'h2') },
@@ -232,13 +238,25 @@ export const AddElementPanel: React.FC = () => {
   const insertElement = (newEl: VEElement) => {
     // Bestimme den Einfüge-Ort
     let parentId = state.page.body.id;
+    let insertIndex: number | undefined;
 
     if (state.selectedId) {
       const selected = findElementById(state.page.body, state.selectedId);
       if (selected) {
-        // Section, Header, Footer → nur in Body
-        if (newEl.type === 'Section' || newEl.type === 'Header' || newEl.type === 'Footer' || newEl.type === 'WebsiteBlock') {
+        // Section, Navbar, Header, Footer → nur in Body
+        if (newEl.type === 'Section' || newEl.type === 'Navbar' || newEl.type === 'Header' || newEl.type === 'Footer' || newEl.type === 'WebsiteBlock') {
           parentId = state.page.body.id;
+          // Insert above the currently selected top-level element
+          const bodyChildren = state.page.body.children || [];
+          // Find the top-level ancestor of the selection
+          const topLevelIdx = bodyChildren.findIndex(c => {
+            if (c.id === state.selectedId) return true;
+            // Check if selection is nested inside this child
+            return findElementById(c, state.selectedId!) !== null;
+          });
+          if (topLevelIdx >= 0) {
+            insertIndex = topLevelIdx;
+          }
         }
         // Wenn ausgewähltes Element ein Container ist → da rein
         else if (isContainer(selected.type) && selected.type !== 'Body') {
@@ -252,7 +270,7 @@ export const AddElementPanel: React.FC = () => {
       }
     }
 
-    dispatch({ type: 'INSERT_ELEMENT', parentId, element: newEl });
+    dispatch({ type: 'INSERT_ELEMENT', parentId, element: newEl, index: insertIndex });
   };
 
   const handleAdd = (creator: () => VEElement, label: string) => {

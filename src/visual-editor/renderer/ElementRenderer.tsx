@@ -15,8 +15,9 @@ import { ButtonRenderer } from './ButtonRenderer';
 import { HeaderRenderer } from './HeaderRenderer';
 import { FooterRenderer } from './FooterRenderer';
 import { CardsRenderer } from './CardsRenderer';
+import { NavbarRenderer } from './NavbarRenderer';
 import { WebsiteBlockRenderer } from './WebsiteBlockRenderer';
-import type { VEHeader, VEFooter, VECards, VEWebsiteBlock } from '../types/elements';
+import type { VEHeader, VEFooter, VECards, VENavbar, VEWebsiteBlock } from '../types/elements';
 
 interface ElementRendererProps {
   element: VEElement;
@@ -108,6 +109,20 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
       return (
         <CardsRenderer
           element={element as VECards}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+          selectedId={selectedId}
+          hoveredId={hoveredId}
+        />
+      );
+
+    case 'Navbar':
+      return (
+        <NavbarRenderer
+          element={element as VENavbar}
           viewport={viewport}
           isSelected={isSelected}
           isHovered={!!isHovered}

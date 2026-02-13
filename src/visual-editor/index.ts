@@ -22,6 +22,8 @@ export type {
   VEImage,
   VEButton,
   VECards,
+  VENavbar,
+  NavbarStickyMode,
   VEComponentInstance,
   VEWebsiteBlock,
   VEPage,
@@ -67,6 +69,7 @@ export {
   createText,
   createImage,
   createButton,
+  createNavbar,
   createPage,
 } from './utils/elementHelpers';
 

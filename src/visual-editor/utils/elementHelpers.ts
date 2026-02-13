@@ -3,7 +3,7 @@
 // Traversierung, Suche, Mutation von Element-Bäumen
 // =====================================================
 
-import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards } from '../types/elements';
+import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards, VENavbar } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
 import { createDefaultHeaderClassicConfig } from '../../types/Header';
 import { createDefaultFooterMinimalConfig } from '../../types/Footer';
@@ -82,7 +82,7 @@ export function getChildren(el: VEElement): VEElement[] {
  * Prüft ob ein Element Kinder haben kann (Container-Typ)
  */
 export function isContainer(type: VEElementType): boolean {
-  return type === 'Body' || type === 'Section' || type === 'Container' || type === 'Cards';
+  return type === 'Body' || type === 'Section' || type === 'Container' || type === 'Cards' || type === 'Navbar';
 }
 
 /**
@@ -92,10 +92,11 @@ export function canContain(parentType: VEElementType, childType: VEElementType):
   if (childType === 'Body') return false; // Body kann nie Kind sein
 
   const allowed: Record<string, VEElementType[]> = {
-    Body: ['Section', 'Header', 'Footer', 'WebsiteBlock', 'Cards'],
+    Body: ['Section', 'Navbar', 'Header', 'Footer', 'WebsiteBlock', 'Cards'],
     Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
     Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
     Cards: ['Container', 'Text', 'Image', 'Button'],
+    Navbar: ['Container', 'Text', 'Image', 'Button'],
   };
 
   const list = allowed[parentType];
@@ -429,16 +430,311 @@ export function createPage(name: string, route: string): VEPage {
 }
 
 /**
+ * @deprecated Use createNavbar() instead
  * Erstellt ein Header-Element mit Default-Konfiguration
  */
 export function createHeader(label?: string): VEElement {
   return {
     id: generateId(),
     type: 'Header',
-    label: label || 'Header',
+    label: label || 'Header (Legacy)',
     styles: { desktop: {} },
     config: createDefaultHeaderClassicConfig(),
   } as VEHeader;
+}
+
+// ===== NAVBAR HELPERS =====
+
+export type NavbarPreset = 'classic' | 'centered' | 'minimal';
+
+/**
+ * Erstellt eine Navbar (Kompositions-Header) mit frei editierbaren Kindern.
+ * Preset bestimmt das Basis-Layout:
+ *  - 'classic': Logo links, Nav-Links rechts, CTA-Button rechts
+ *  - 'centered': Logo zentriert oben, Nav-Links zentriert darunter
+ *  - 'minimal': Logo links, Hamburger-Button rechts
+ */
+export function createNavbar(preset: NavbarPreset = 'classic'): VEElement {
+  switch (preset) {
+    case 'centered':
+      return createNavbarCentered();
+    case 'minimal':
+      return createNavbarMinimal();
+    default:
+      return createNavbarClassic();
+  }
+}
+
+function createNavbarClassic(): VENavbar {
+  const logoId = generateId();
+  const navLinksId = generateId();
+  const ctaId = generateId();
+  const mobileToggleId = generateId();
+  const mobileMenuId = generateId();
+
+  return {
+    id: generateId(),
+    type: 'Navbar',
+    label: 'Navbar',
+    mobileBreakpoint: 768,
+    stickyMode: 'sticky',
+    styles: {
+      desktop: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: { value: 100, unit: '%' },
+        paddingTop: { value: 12, unit: 'px' },
+        paddingBottom: { value: 12, unit: 'px' },
+        paddingLeft: { value: 24, unit: 'px' },
+        paddingRight: { value: 24, unit: 'px' },
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+      },
+    },
+    children: [
+      // Logo
+      {
+        id: logoId,
+        type: 'Text',
+        label: 'Logo',
+        content: 'Salon Name',
+        textStyle: 'h3',
+        styles: {
+          desktop: {
+            fontWeight: 700,
+            color: { kind: 'custom', hex: '#1a1a2e' },
+          },
+        },
+      },
+      // Desktop Nav Links Container
+      {
+        id: navLinksId,
+        type: 'Container',
+        label: 'Nav-Links',
+        children: [
+          { id: generateId(), type: 'Button', label: 'Start', content: { text: 'Start', link: '/' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Leistungen', content: { text: 'Leistungen', link: '/leistungen' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Kontakt', content: { text: 'Kontakt', link: '/kontakt' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+        ],
+        styles: {
+          desktop: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: { value: 4, unit: 'px' },
+          },
+          mobile: { display: 'none' as any },
+        },
+      },
+      // CTA Button (desktop)
+      {
+        id: ctaId,
+        type: 'Button',
+        label: 'CTA',
+        content: { text: 'Termin buchen', link: '/kontakt' },
+        styles: {
+          desktop: {
+            backgroundColor: { kind: 'custom', hex: '#1a1a2e' },
+            color: { kind: 'custom', hex: '#ffffff' },
+            paddingLeft: { value: 20, unit: 'px' },
+            paddingRight: { value: 20, unit: 'px' },
+            paddingTop: { value: 8, unit: 'px' },
+            paddingBottom: { value: 8, unit: 'px' },
+            borderRadius: { value: 6, unit: 'px' },
+            fontSize: { value: 14, unit: 'px' },
+            fontWeight: 600,
+          },
+          mobile: { display: 'none' as any },
+        },
+      },
+      // Mobile menu toggle (hidden on desktop)
+      {
+        id: mobileToggleId,
+        type: 'Button',
+        label: '☰ Menü-Toggle',
+        content: { text: '☰', link: '#mobile-menu' },
+        styles: {
+          desktop: { display: 'none' as any },
+          mobile: {
+            display: 'flex' as any,
+            backgroundColor: undefined,
+            color: { kind: 'custom', hex: '#1a1a2e' },
+            fontSize: { value: 24, unit: 'px' },
+            borderWidth: undefined,
+            paddingLeft: { value: 8, unit: 'px' },
+            paddingRight: { value: 8, unit: 'px' },
+          },
+          tablet: {
+            display: 'flex' as any,
+            backgroundColor: undefined,
+            color: { kind: 'custom', hex: '#1a1a2e' },
+            fontSize: { value: 24, unit: 'px' },
+            borderWidth: undefined,
+          },
+        },
+      },
+      // Mobile Menu Overlay (hidden on desktop, controlled via JS)
+      {
+        id: mobileMenuId,
+        type: 'Container',
+        label: 'Mobile Menü',
+        children: [
+          { id: generateId(), type: 'Button', label: 'Start', content: { text: 'Start', link: '/' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Leistungen', content: { text: 'Leistungen', link: '/leistungen' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Kontakt', content: { text: 'Kontakt', link: '/kontakt' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Termin buchen', content: { text: 'Termin buchen', link: '/kontakt' }, styles: { desktop: { backgroundColor: { kind: 'custom', hex: '#1a1a2e' }, color: { kind: 'custom', hex: '#ffffff' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderRadius: { value: 6, unit: 'px' }, marginTop: { value: 8, unit: 'px' } } } },
+        ],
+        styles: {
+          desktop: { display: 'none' as any },
+          mobile: {
+            display: 'flex' as any,
+            flexDirection: 'column',
+            width: { value: 100, unit: '%' },
+            paddingTop: { value: 12, unit: 'px' },
+            paddingBottom: { value: 12, unit: 'px' },
+            backgroundColor: { kind: 'custom', hex: '#f9fafb' },
+            gap: { value: 4, unit: 'px' },
+          },
+          tablet: {
+            display: 'flex' as any,
+            flexDirection: 'column',
+            width: { value: 100, unit: '%' },
+            paddingTop: { value: 12, unit: 'px' },
+            paddingBottom: { value: 12, unit: 'px' },
+            backgroundColor: { kind: 'custom', hex: '#f9fafb' },
+            gap: { value: 4, unit: 'px' },
+          },
+        },
+      } as any,
+    ],
+  };
+}
+
+function createNavbarCentered(): VENavbar {
+  return {
+    id: generateId(),
+    type: 'Navbar',
+    label: 'Navbar (Zentriert)',
+    mobileBreakpoint: 768,
+    stickyMode: 'sticky',
+    styles: {
+      desktop: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: { value: 100, unit: '%' },
+        paddingTop: { value: 16, unit: 'px' },
+        paddingBottom: { value: 16, unit: 'px' },
+        paddingLeft: { value: 24, unit: 'px' },
+        paddingRight: { value: 24, unit: 'px' },
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
+        gap: { value: 12, unit: 'px' },
+      },
+    },
+    children: [
+      // Logo centered
+      {
+        id: generateId(),
+        type: 'Text',
+        label: 'Logo',
+        content: 'Salon Name',
+        textStyle: 'h2',
+        styles: {
+          desktop: {
+            fontWeight: 700,
+            color: { kind: 'custom', hex: '#1a1a2e' },
+            textAlign: 'center',
+          },
+        },
+      },
+      // Nav Links centered
+      {
+        id: generateId(),
+        type: 'Container',
+        label: 'Nav-Links',
+        children: [
+          { id: generateId(), type: 'Button', label: 'Start', content: { text: 'Start', link: '/' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#6b7280' }, paddingLeft: { value: 16, unit: 'px' }, paddingRight: { value: 16, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 13, unit: 'px' }, fontWeight: 500, borderWidth: undefined, textTransform: 'uppercase' as any, letterSpacing: { value: 1, unit: 'px' } } } },
+          { id: generateId(), type: 'Button', label: 'Leistungen', content: { text: 'Leistungen', link: '/leistungen' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#6b7280' }, paddingLeft: { value: 16, unit: 'px' }, paddingRight: { value: 16, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 13, unit: 'px' }, fontWeight: 500, borderWidth: undefined, textTransform: 'uppercase' as any, letterSpacing: { value: 1, unit: 'px' } } } },
+          { id: generateId(), type: 'Button', label: 'Kontakt', content: { text: 'Kontakt', link: '/kontakt' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#6b7280' }, paddingLeft: { value: 16, unit: 'px' }, paddingRight: { value: 16, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 13, unit: 'px' }, fontWeight: 500, borderWidth: undefined, textTransform: 'uppercase' as any, letterSpacing: { value: 1, unit: 'px' } } } },
+        ],
+        styles: {
+          desktop: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: { value: 4, unit: 'px' },
+          },
+          mobile: { display: 'none' as any },
+        },
+      } as any,
+      // Mobile toggle
+      {
+        id: generateId(),
+        type: 'Button',
+        label: '☰ Menü-Toggle',
+        content: { text: '☰', link: '#mobile-menu' },
+        styles: {
+          desktop: { display: 'none' as any },
+          tablet: { display: 'flex' as any, backgroundColor: undefined, color: { kind: 'custom', hex: '#1a1a2e' }, fontSize: { value: 24, unit: 'px' }, borderWidth: undefined },
+          mobile: { display: 'flex' as any, backgroundColor: undefined, color: { kind: 'custom', hex: '#1a1a2e' }, fontSize: { value: 24, unit: 'px' }, borderWidth: undefined },
+        },
+      },
+    ],
+  };
+}
+
+function createNavbarMinimal(): VENavbar {
+  return {
+    id: generateId(),
+    type: 'Navbar',
+    label: 'Navbar (Minimal)',
+    mobileBreakpoint: 768,
+    stickyMode: 'sticky',
+    styles: {
+      desktop: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: { value: 100, unit: '%' },
+        paddingTop: { value: 16, unit: 'px' },
+        paddingBottom: { value: 16, unit: 'px' },
+        paddingLeft: { value: 24, unit: 'px' },
+        paddingRight: { value: 24, unit: 'px' },
+        backgroundColor: { kind: 'custom', hex: '#1a1a2e' },
+      },
+    },
+    children: [
+      // Logo
+      {
+        id: generateId(),
+        type: 'Text',
+        label: 'Logo',
+        content: 'Salon',
+        textStyle: 'h3',
+        styles: {
+          desktop: {
+            fontWeight: 700,
+            color: { kind: 'custom', hex: '#ffffff' },
+          },
+        },
+      },
+      // Hamburger button (always visible)
+      {
+        id: generateId(),
+        type: 'Button',
+        label: '☰ Menü',
+        content: { text: '☰', link: '#mobile-menu' },
+        styles: {
+          desktop: {
+            backgroundColor: undefined,
+            color: { kind: 'custom', hex: '#ffffff' },
+            fontSize: { value: 24, unit: 'px' },
+            borderWidth: undefined,
+            paddingLeft: { value: 8, unit: 'px' },
+            paddingRight: { value: 8, unit: 'px' },
+          },
+        },
+      },
+    ],
+  };
 }
 
 /**

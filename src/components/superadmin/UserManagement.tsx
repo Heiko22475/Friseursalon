@@ -676,25 +676,98 @@ Each folder contains a complete website backup:
 
     try {
       setRestoring(true);
-      setRestoreStatus('Entpacke Backup...');
-      
-      const zip = new JSZip();
-      const unzipped = await zip.loadAsync(restoreFile);
 
-      // 1. Read website.json
-      if (!unzipped.file("website.json")) {
-        throw new Error("Keine website.json im Backup gefunden");
-      }
-      
-      const websiteJsonString = await unzipped.file("website.json")?.async("string");
-      if (!websiteJsonString) throw new Error("Konnte website.json nicht lesen");
-      
-      const websiteContent = JSON.parse(websiteJsonString);
+      // Detect file type: JSON or ZIP
+      const isJsonFile = restoreFile.name.toLowerCase().endsWith('.json') || restoreFile.type === 'application/json';
 
-      // 2. Read site_info for domain_name
+      let websiteContent: any;
       let siteInfo: any = null;
-      if (unzipped.file("site_info.json")) {
-        siteInfo = JSON.parse(await unzipped.file("site_info.json")!.async("string"));
+      let websiteJsonString: string | null = null;
+
+      if (isJsonFile) {
+        // ── JSON Import (kein ZIP) ──
+        setRestoreStatus('Lese JSON-Datei...');
+        const text = await restoreFile.text();
+        const parsed = JSON.parse(text);
+
+        // Prüfen ob es ein reines Website-Content-JSON ist (pages, header, etc.)
+        // oder ein Backup-Wrapper mit customer_id + content
+        if (parsed.content && parsed.customer_id) {
+          // Backup-Format: { customer_id, content: {...} }
+          websiteContent = parsed.content;
+          siteInfo = { customer_id: parsed.customer_id, site_name: parsed.content?.general?.name };
+        } else if (parsed.pages || parsed.site_settings || parsed.general) {
+          // Direktes Website-Content-JSON
+          websiteContent = parsed;
+        } else {
+          throw new Error('Unbekanntes JSON-Format. Erwartet wird ein Website-Content-JSON mit pages, site_settings oder general.');
+        }
+        websiteJsonString = JSON.stringify(websiteContent);
+
+      } else {
+        // ── ZIP Import (bestehender Flow) ──
+        setRestoreStatus('Entpacke Backup...');
+      
+        const zip = new JSZip();
+        const unzipped = await zip.loadAsync(restoreFile);
+
+        // 1. Read website.json
+        if (!unzipped.file("website.json")) {
+          throw new Error("Keine website.json im Backup gefunden");
+        }
+      
+        websiteJsonString = await unzipped.file("website.json")?.async("string") || null;
+        if (!websiteJsonString) throw new Error("Konnte website.json nicht lesen");
+      
+        websiteContent = JSON.parse(websiteJsonString);
+
+        // 2. Read site_info for domain_name
+        if (unzipped.file("site_info.json")) {
+          siteInfo = JSON.parse(await unzipped.file("site_info.json")!.async("string"));
+        }
+
+        // 4. Restore Images from ZIP and upload to storage
+        const imagesFolder = unzipped.folder("images");
+        const uploadedFiles: { filename: string, storagePath: string, mimeType: string, size: number }[] = [];
+      
+        if (imagesFolder) {
+          setRestoreStatus('Stelle Bilder wieder her...');
+
+          // Collect all files from zip
+          const files: { path: string; fileObj: JSZip.JSZipObject }[] = [];
+          imagesFolder.forEach((relativePath, file) => {
+            if (!file.dir) {
+              files.push({ path: relativePath, fileObj: file });
+            }
+          });
+
+          for (const { path, fileObj } of files) {
+            const blob = await fileObj.async("blob");
+          
+            // Determine category based on mime type
+            let subfolder = 'images';
+            if (blob.type.startsWith('video/')) subfolder = 'videos';
+            if (blob.type === 'application/pdf') subfolder = 'documents';
+          
+            const storagePath = `${restoreCustomerId}/${subfolder}/${path}`;
+          
+            // Upload to storage
+            await supabase.storage
+              .from('media-customer')
+              .upload(storagePath, blob, { upsert: true });
+            
+            uploadedFiles.push({
+              filename: path,
+              storagePath,
+              mimeType: blob.type || 'image/jpeg',
+              size: blob.size
+            });
+          }
+
+          // Sync to database for documentation
+          setRestoreStatus('Synchronisiere Mediathek-Datenbank...');
+          await syncMediaToDatabase(restoreCustomerId, uploadedFiles);
+        }
       }
 
       // 3. Update Website Record
@@ -726,53 +799,10 @@ Each folder contains a complete website backup:
             is_published: false
          });
       }
-
-      // 4. Restore Images from ZIP and upload to storage
-      const imagesFolder = unzipped.folder("images");
-      const uploadedFiles: { filename: string, storagePath: string, mimeType: string, size: number }[] = [];
-      
-      if (imagesFolder) {
-        setRestoreStatus('Stelle Bilder wieder her...');
-
-        // Collect all files from zip
-        const files: { path: string; fileObj: JSZip.JSZipObject }[] = [];
-        imagesFolder.forEach((relativePath, file) => {
-          if (!file.dir) {
-            files.push({ path: relativePath, fileObj: file });
-          }
-        });
-
-        for (const { path, fileObj } of files) {
-          const blob = await fileObj.async("blob");
-          
-          // Determine category based on mime type
-          let subfolder = 'images';
-          if (blob.type.startsWith('video/')) subfolder = 'videos';
-          if (blob.type === 'application/pdf') subfolder = 'documents';
-          
-          const storagePath = `${restoreCustomerId}/${subfolder}/${path}`;
-          
-          // Upload to storage
-          await supabase.storage
-            .from('media-customer')
-            .upload(storagePath, blob, { upsert: true });
-            
-          uploadedFiles.push({
-            filename: path,
-            storagePath,
-            mimeType: blob.type || 'image/jpeg',
-            size: blob.size
-          });
-        }
-
-        // Sync to database for documentation
-        setRestoreStatus('Synchronisiere Mediathek-Datenbank...');
-        await syncMediaToDatabase(restoreCustomerId, uploadedFiles);
-      }
       
       // 5. URL Fixup in JSON
       // If we have old ID:
-      if (siteInfo?.customer_id && siteInfo.customer_id !== restoreCustomerId) {
+      if (siteInfo?.customer_id && siteInfo.customer_id !== restoreCustomerId && websiteJsonString) {
          setRestoreStatus('Passe Bild-URLs an...');
          // Naive string replace on stringified JSON
          const fixedJsonStr = websiteJsonString.split(`/${siteInfo.customer_id}/`).join(`/${restoreCustomerId}/`);
@@ -980,7 +1010,7 @@ Each folder contains a complete website backup:
       <Modal isOpen={isRestoreOpen} onClose={() => setIsRestoreOpen(false)} title="Website Wiederherstellen / Importieren">
          <div className="space-y-4">
             <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
-               Laden Sie ein Zip-Backup hoch, um die Website für <strong>{restoreCustomerId}</strong> wiederherzustellen.
+               Laden Sie ein Zip-Backup oder eine JSON-Datei hoch, um die Website für <strong>{restoreCustomerId}</strong> wiederherzustellen.
                Dies überschreibt die aktuelle Konfiguration!
             </p>
             <div>
@@ -994,10 +1024,10 @@ Each folder contains a complete website backup:
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Backup Zip-Datei</label>
+                <label className="block text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Backup-Datei (.zip oder .json)</label>
                 <input 
                     type="file" 
-                    accept=".zip"
+                    accept=".zip,.json"
                     onChange={e => setRestoreFile(e.target.files?.[0] || null)}
                     className="mt-1 block w-full"
                     style={{ color: 'var(--admin-text)' }}

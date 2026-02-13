@@ -9,7 +9,7 @@
 // werden – über das bestehende VE-System.
 // =====================================================
 
-import type { VEPage, VEBody, VEElement, VESection, VEText, VEImage, VEButton, VEContainer, TextStylePreset } from '../types/elements';
+import type { VEPage, VEBody, VEElement, VESection, VEText, VEImage, VEButton, VEContainer, VENavbar, TextStylePreset, NavbarStickyMode } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 import { sv } from '../types/styles';
@@ -58,6 +58,8 @@ function convertBlock(block: any, idx: number, pageId: string): VEElement {
       return convertHeroBlock(block.config, blockId, idx);
     case 'generic-card':
       return convertGenericCardBlock(block.config, blockId, idx);
+    case 'navbar':
+      return convertNavbarBlock(block.config, blockId);
     default:
       return convertFallbackBlock(block, blockId, idx);
   }
@@ -183,6 +185,55 @@ function convertHeroBlock(config: HeroConfig | undefined, blockId: string, posit
     // Store original block metadata for save-merge
     _blockMeta: { type: 'hero', config: cfg, position },
   } as VESection & { _blockMeta: any };
+}
+
+// ===== NAVBAR → VE ELEMENTS =====
+
+/**
+ * Konvertiert einen gespeicherten navbar-Block zurück in ein VENavbar-Element.
+ * Deserialisiert die Kinder rekursiv zu VEText/VEButton/VEImage/VEContainer.
+ */
+function convertNavbarBlock(config: any, blockId: string): VENavbar {
+  const cfg = config || {};
+
+  const deserializeChild = (data: any): VEElement => {
+    const base: any = {
+      id: data.id || crypto.randomUUID(),
+      type: data.type || 'Text',
+      label: data.label || data.type || 'Element',
+      styles: data.style || {},
+    };
+
+    if (data.type === 'Text') {
+      base.content = data.content || '';
+      base.textStyle = data.textStyle || 'body';
+    } else if (data.type === 'Button') {
+      base.content = data.content || {};
+    } else if (data.type === 'Image') {
+      base.content = data.content || {};
+    } else if (data.type === 'Container') {
+      base.children = (data.children || []).map(deserializeChild);
+    }
+
+    if (data.children && data.type !== 'Container') {
+      // Other types with children (e.g. future types)
+      base.children = data.children.map(deserializeChild);
+    }
+
+    return base as VEElement;
+  };
+
+  const children: VEElement[] = (cfg.children || []).map(deserializeChild);
+
+  return {
+    id: blockId,
+    type: 'Navbar',
+    label: 'Navbar',
+    styles: { desktop: {} },
+    stickyMode: (cfg.stickyMode as NavbarStickyMode) || 'none',
+    mobileBreakpoint: cfg.mobileBreakpoint || 768,
+    children,
+  };
 }
 
 // ===== GENERIC CARD → VE ELEMENTS =====

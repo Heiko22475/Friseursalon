@@ -125,6 +125,17 @@ export function mergeVEPageIntoOriginal(vePage: any, originalPage: any): any {
       return block;
     }
 
+    // ── VE Navbar → convert to navbar block ──
+    if (veElement.type === 'Navbar') {
+      changeCount++;
+      const block = convertVENavbarToBlock(veElement);
+      console.log('[VE Merge] Navbar element converted to navbar block:', {
+        navbarId: veElement.id,
+        childCount: veElement.children?.length || 0,
+      });
+      return block;
+    }
+
     // ── Other native VE elements (Text, Container, Image etc.) ──
     // These may be top-level elements created natively in the VE.
     // Wrap them as static-text or generic-card blocks where possible.
@@ -298,6 +309,8 @@ export function convertVEPageToWebsitePage(vePage: any): any {
       blocks.push(...newChildBlocks);
     } else if (child.type === 'Cards') {
       blocks.push(convertVECardsToBlock(child));
+    } else if (child.type === 'Navbar') {
+      blocks.push(convertVENavbarToBlock(child));
     } else if (['Text', 'Container', 'Image', 'Button'].includes(child.type)) {
       blocks.push(convertVENativeElementToBlock(child));
     } else if (child.type === 'Section') {
@@ -425,6 +438,56 @@ function convertVECardsToBlock(cardsElement: any): any {
     type: 'generic-card',
     position: 0,
     config,
+    content: {},
+  };
+}
+
+// =====================================================
+// VE NAVBAR → NAVBAR BLOCK CONVERTER
+// =====================================================
+
+/**
+ * Konvertiert ein VENavbar-Element in einen navbar Website-Block.
+ * Serialisiert die Kinder (Logo, Nav-Links, CTA, etc.) und
+ * Navbar-spezifische Einstellungen (sticky, breakpoint).
+ */
+function convertVENavbarToBlock(navbarElement: any): any {
+  const children = navbarElement.children || [];
+
+  // Serialize children recursively
+  const serializeChild = (el: any): any => {
+    const base: any = {
+      id: el.id,
+      type: el.type,
+    };
+
+    if (el.style) base.style = el.style;
+
+    if (el.type === 'Text') {
+      base.content = el.content || '';
+      base.textStyle = el.textStyle || 'body';
+    } else if (el.type === 'Button') {
+      base.content = el.content || {};
+    } else if (el.type === 'Image') {
+      base.content = el.content || {};
+    }
+
+    if (el.children && Array.isArray(el.children) && el.children.length > 0) {
+      base.children = el.children.map(serializeChild);
+    }
+
+    return base;
+  };
+
+  return {
+    id: navbarElement.id,
+    type: 'navbar',
+    position: 0,
+    config: {
+      stickyMode: navbarElement.stickyMode || 'none',
+      mobileBreakpoint: navbarElement.mobileBreakpoint || 768,
+      children: children.map(serializeChild),
+    },
     content: {},
   };
 }

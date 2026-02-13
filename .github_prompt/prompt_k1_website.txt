@@ -1,0 +1,165 @@
+
+
+Die zu erstellende Webseite ("K1 Friseure") hat folgende Farb- und Schrift-paletten: 
+
+# Design-Spezifikation: K1 Friseure (k1-friseure.de)
+Dieses Dokument enthält die präzisen Farbwerte und typografischen Vorgaben, um die warme, luxuriöse Ästhetik der Webseite originalgetreu nachzubauen.
+
+---
+
+## 1. Farbpalette (Color Palette)
+
+Die Farbwahl verzichtet auf hartes Reinweiß und Tiefschwarz, um eine organische und hochwertige Atmosphäre zu schaffen.
+
+| Kategorie | Name | Hex-Code | Verwendung |
+| :--- | :--- | :--- | :--- |
+| **Primary Background** | Creamy Off-White | `#F9F7F2` | Haupt-Hintergrund der Seite. |
+| **Secondary Background** | Soft Nude / Sand | `#EFEBE3` | Abgesetzte Sektionen, Cards und Hover-Effekte. |
+| **Primary Text** | Warm Charcoal | `#2D2926` | Alle Hauptüberschriften und Fließtexte. |
+| **Secondary Text** | Muted Taupe | `#8C8279` | Untertitel, Preisangaben und Metadaten. |
+| **Accent / Lines** | Pale Linen | `#DED9D0` | Filigrane Trennlinien und Rahmen. |
+
+---
+
+## 2. Typografie (Typography)
+
+Die Typografie ist das Herzstück des Designs. Sie wirkt durch den Kontrast zwischen sehr fetten Headlines und sehr leichtem Fließtext.
+
+### Schriftart-Empfehlungen
+* **Webfont-Alternative:** *Montserrat* oder *Poppins* (Google Fonts).
+* **Systemfont-Alternative:** *SF Pro Display* (Apple) oder *Inter*.
+
+### Schriftschnitte (Styles)
+* **H1 / H2 Headlines:**
+    * **Gewicht:** Bold (700) oder Extra-Bold (800).
+    * **Farbe:** `#2D2926`.
+    * **Besonderheit:** Enges Letter-Spacing (`-0.02em`) für einen modernen Editorial-Look.
+* **Body Text (Fließtext):**
+    * **Gewicht:** Light (300) oder Regular (400).
+    * **Zeilenabstand:** Großzügig (`1.6` bis `1.8`), um Luftigkeit zu erzeugen.
+    * **Farbe:** `#2D2926`.
+* **Labels / Navigation:**
+    * **Gewicht:** Medium (500).
+    * **Stil:** Oft in Versalien (All-Caps) mit leicht erhöhtem Zeichenabstand.
+
+---
+
+## 3. UI-Elemente & Komponenten
+
+### Buttons
+* **Primary:** Hintergrund `#2D2926`, Text `#F9F7F2`. Form: Minimal abgerundet (2-4px Border-Radius).
+* **Secondary:** Border `1px solid #2D2926`, Text `#2D2926`, Hintergrund transparent.
+
+### Trennlinien (Dividers)
+* **Stil:** `1px solid #DED9D0`.
+* **Einsatz:** Essential für die Preistabellen, um die Sektionen ohne optische Schwere zu gliedern.
+
+### Bildsprache
+* **Filter:** Alle Fotos sollten einen warmen Unterton haben (Gold- und Beigetöne betont), um mit dem Hintergrund zu harmonieren.
+
+---
+
+## 4. CSS-Variablen (für Entwickler)
+
+```css
+:root {
+  --color-bg-primary: #f9f7f2;
+  --color-bg-secondary: #efebe3;
+  --color-text-primary: #2d2926;
+  --color-text-secondary: #8c8279;
+  --color-border: #ded9d0;
+  --font-main: 'Montserrat', sans-serif;
+}
+
+Die zu erstellende Webseite lässt sich in folgende Sektionen aufteilen: 
+
+
+
+### 1. Header & Navigation (The "Sticky Frame")
+
+* **Inhalt:** Logo (links), kompaktes Menü (rechts), Call-to-Action (Termin buchen).
+* **Stil:** Transparent beim Scrollen oder semi-transparent (Glassmorphism), sehr schmal, minimalistisch.
+
+### 2. Hero-Section (The "Statement")
+
+* **Inhalt:** Eine emotionale Headline („Wir hören zu, analysieren deinen Typ...“), ein kurzer Einführungstext und ein primärer Button.
+* **Stil:** Große Typografie-Hierarchie, viel Weißraum, oft kombiniert mit einem großflächigen Hintergrundbild oder Video, das sofort die Qualität der Arbeit zeigt.
+
+### 3. "Über uns" / Philosophie (The "Story")
+
+* **Inhalt:** Textblöcke kombiniert mit atmosphärischen Bildern (Salon-Interieur, Detailaufnahmen).
+* **Stil:** Wechselndes Layout (Text links/Bild rechts und umgekehrt), Fokus auf Lesbarkeit und "Editorial Design" (sieht aus wie ein hochwertiges Magazin).
+
+### 4. Leistungs-Cards / Services (The "Benefits")
+
+* **Inhalt:** Kurze Sektionen zu Balayage, Men's Wellness, Haarschnitt.
+* **Stil:** Icons oder kleine quadratische Bilder kombiniert mit prägnanten Überschriften. Klare visuelle Trennung der Themengebiete.
+
+### 5. Interaktive Preistabelle (The "Details")
+
+* **Inhalt:** Die komplexe Liste für Damen, Herren, Kinder und Farben (S, M, L, XL).
+* **Stil:** Filigranes Tabellen-Design, keine dicken Rahmen, nur feine horizontale Linien. Sehr übersichtlich und funktional.
+
+### 6. Portfolio / Vorher-Nachher (The "Social Proof")
+
+* **Inhalt:** Pakete wie "Seasalt Balayage" mit detaillierter Auflistung und Bildvergleichen.
+* **Stil:** Card-Design mit "Hover-Effekten" oder Kacheln, die beim Klick mehr Details preisgeben.
+
+---
+
+
+
+# Sektions-Spezifikation: 01 - Header & Navigation
+
+Der Header bildet den funktionalen Rahmen der Seite. Er ist minimalistisch, unaufdringlich und darauf ausgelegt, maximale Eleganz durch Einfachheit zu vermitteln.
+
+---
+
+## 1. Visueller Aufbau & Struktur
+* **Layout:** Horizontaler Flex-Container. Das Logo befindet sich linksbündig, die Navigationslinks rechtsbündig.
+* **Positionierung:** `Sticky` (beim Scrollen am oberen Bildschirmrand fixiert).
+* **Hintergrund:** Semi-transparentes Off-White (`#F9F7F2` mit ca. 90% Deckkraft) oder mit einem subtilen Blur-Effekt (Glassmorphism), um sich sanft vom Hintergrund der Sektionen abzuheben.
+* **Höhe:** Sehr schmal und kompakt (ca. 60px - 80px), um den Fokus auf dem Content der Seite zu belassen.
+
+---
+
+## 2. Komponenten-Details
+
+### A. Logo (Links)
+* **Stil:** Text-basiertes Logo oder minimalistische Wortmarke. 
+* **Farbe:** Deep Warm Charcoal (`#2D2926`).
+* **Schrift:** Bold Sans-Serif, sauber und zeitlos.
+
+### B. Navigations-Menü (Rechts)
+* **Links:** "Über uns", "Leistungen", "Preisliste", "Service", "Team", "Fragen".
+* **Typografie:** * Schriftart: Montserrat / Poppins.
+    * Gewicht: Medium (500).
+    * Größe: Klein (ca. 13px - 14px).
+    * Stil: Sentence Case (nur Anfangsbuchstaben groß) oder dezente All-Caps.
+    * Farbe: `#2D2926`.
+* **Abstände:** Großzügiger horizontaler Abstand zwischen den einzelnen Links (`gap: 2rem`).
+
+### C. Call-to-Action (CTA)
+* **Element:** Ein "Termin buchen"-Link oder Button.
+* **Stil:** Hebt sich leicht ab, entweder durch Fettdruck oder als Outline-Button (Rahmen: `#2D2926`).
+
+---
+
+## 3. Interaktions-Design (Hover & States)
+* **Hover-Effekt:** Die Navigationslinks ändern beim Drüberfahren dezent die Farbe (zu `#8C8279`) oder zeigen eine sehr feine Unterstreichung (`1px underline`).
+* **Transition:** Weiche Übergänge (ca. 0.3s ease-in-out) bei Farbänderungen.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI)
+
+> "Designe einen ultra-minimalistischen, fixierten Header für eine Luxus-Webseite. 
+> Hintergrund: `#F9F7F2` mit leichter Transparenz. 
+> Logo auf der linken Seite in dunklem Anthrazit (`#2D2926`). 
+> Navigationsmenü auf der rechten Seite mit den Punkten 'Über uns', 'Leistungen', 'Preisliste', 'Team', 'Termin buchen'. 
+> Typografie: Serifenlos, modern, Schriftgewicht Medium, Schriftgröße 14px, Farbe `#2D2926`. 
+> Keine Schatten, nur eine sehr feine Trennlinie am unteren Rand in Farbe `#DED9D0`. 
+> Layout: Maximale Breite 1440px mit seitlichem Padding von 4rem."
+
+---
+

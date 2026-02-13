@@ -1,0 +1,99 @@
+{
+  "site_settings": {
+    "header_type": "simple",
+    "theme": {
+      "primary_color": "#2D2926",
+      "font_family": "montserrat"
+    }
+  },
+  "general": {
+    "name": "K1 Friseure",
+    "full_name": "K1 Friseure – Ihr Salon für Haar & Style",
+    "tagline": "Wir hören zu, analysieren deinen Typ und kreieren deinen perfekten Look",
+    "motto": "Qualität, Stil und persönliche Beratung",
+    "description": "K1 Friseure – Ihr Premium-Friseursalon. Wir bieten hochwertige Haarschnitte, Balayage, Colorationen und Wellness-Behandlungen für Damen, Herren und Kinder."
+  },
+  "pages": [
+    {
+      "id": "page-home",
+      "title": "Home",
+      "slug": "home",
+      "is_home": true,
+      "is_published": true,
+      "show_in_menu": true,
+      "meta_description": "K1 Friseure – Premium-Friseursalon für Damen, Herren und Kinder. Haarschnitte, Balayage, Colorationen und Wellness.",
+      "seo_title": "K1 Friseure | Ihr Salon für Haar & Style",
+      "display_order": 0,
+      "blocks": []
+    }
+  ],
+  "header": {
+    "variant": "classic",
+    "logo": {
+      "type": "text",
+      "text": "K1 FRISEURE",
+      "maxHeight": 50
+    },
+    "navigation": [
+      { "id": "nav-ueber-uns", "label": "Über uns", "type": "scroll", "target": "#ueber-uns", "visible": true },
+      { "id": "nav-leistungen", "label": "Leistungen", "type": "scroll", "target": "#leistungen", "visible": true },
+      { "id": "nav-preisliste", "label": "Preisliste", "type": "scroll", "target": "#preisliste", "visible": true },
+      { "id": "nav-service", "label": "Service", "type": "scroll", "target": "#service", "visible": true },
+      { "id": "nav-team", "label": "Team", "type": "scroll", "target": "#team", "visible": true },
+      { "id": "nav-fragen", "label": "Fragen", "type": "scroll", "target": "#fragen", "visible": true }
+    ],
+    "cta": {
+      "enabled": true,
+      "text": "Termin buchen",
+      "action": {
+        "type": "link",
+        "target": "#termin"
+      },
+      "style": {
+        "backgroundColor": { "kind": "custom", "hex": "#F9F7F2" },
+        "textColor": { "kind": "custom", "hex": "#2D2926" },
+        "borderColor": { "kind": "custom", "hex": "#2D2926" },
+        "borderRadius": "sm",
+        "size": "md"
+      }
+    },
+    "socialMedia": {
+      "enabled": false,
+      "position": "right",
+      "size": "sm"
+    },
+    "sticky": {
+      "enabled": true,
+      "showAfter": 0,
+      "style": "blur"
+    },
+    "transparent": {
+      "enabled": false,
+      "textColorLight": false
+    },
+    "mobile": {
+      "breakpoint": 768,
+      "menuStyle": "slide-right",
+      "showLogo": true,
+      "showCTA": true,
+      "animationDuration": 300
+    },
+    "style": {
+      "backgroundColor": { "kind": "custom", "hex": "#F9F7F2" },
+      "textColor": { "kind": "custom", "hex": "#2D2926" },
+      "activeColor": { "kind": "custom", "hex": "#2D2926" },
+      "hoverColor": { "kind": "custom", "hex": "#8C8279" },
+      "height": "sm",
+      "padding": "md",
+      "shadow": "none",
+      "borderBottom": {
+        "enabled": true,
+        "color": { "kind": "custom", "hex": "#DED9D0" },
+        "width": 1
+      }
+    },
+    "logoPosition": "left",
+    "navPosition": "right",
+    "ctaPosition": "right"
+  }
+}

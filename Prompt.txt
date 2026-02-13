@@ -35,3 +35,12 @@ ein ähnliches Dropdown mit Slider, "auto" und vordefinierten WErden geben könn
 
 
 
+-------------------------------
+
+Ich möchte weitere Features von Webflow umsetzen. 
+Ich bin mir nicht sicher, wie ich einen Header gestalten sollte. 
+Wir haben zwar einen Header, bei der man sich Varianten aussuchen kann, der hat aber das Manko, dass man ihn nicht mit dem 
+visuellen Editor gut individuall gestalten kann.
+Was für eine Lösung hat Webflow dann dafür?  
+Ich überlege, den Header als Komposition zu rendern, allerdings gäbe es ja 
+noch die mobile Variante. Bitte schreibe mir zunächst Vorschläge, bevor du etwas umsetzt. 

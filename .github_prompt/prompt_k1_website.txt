@@ -163,3 +163,335 @@ Der Header bildet den funktionalen Rahmen der Seite. Er ist minimalistisch, unau
 
 ---
 
+
+# Sektions-Spezifikation: 02 - Hero-Sektion (The Statement)
+
+Die Hero-Sektion von K1 Friseure ist eine meisterhafte Übung in Understatement. Sie nutzt "Visual Silence", um Kompetenz und Exklusivität auszustrahlen.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Typ:** Split-Layout oder Full-Width mit zentriertem Fokus.
+* **Hintergrund:** Primär das warme Off-White (`#F9F7F2`). Optional ein großflächiges, weichgezeichnetes Bild eines Haar-Details (Balayage-Verlauf) mit hoher Helligkeit.
+* **Padding:** Extrem großzügige vertikale Abstände (`padding-top: 120px`, `padding-bottom: 100px`), um die Botschaft atmen zu lassen.
+* **Anordnung:** Die Elemente sind streng vertikal zentriert (Center-aligned).
+
+---
+
+## 2. Komponenten-Details
+
+### A. Headline (H1 - Das Kernversprechen)
+* **Text-Beispiel:** "Wir hören zu, analysieren deinen Typ – und kreieren Farbe & Schnitt, die wirklich zu dir passen."
+* **Typografie:**
+    * **Größe:** 48px bis 64px (Desktop).
+    * **Gewicht:** Extra-Bold (800).
+    * **Zeilenhöhe:** Kompakt (`1.1` bis `1.2`).
+    * **Farbe:** Deep Warm Charcoal (`#2D2926`).
+    * **Effekt:** Die Headline sollte in 2-3 Zeilen umbrechen, um eine grafische Block-Wirkung zu erzielen.
+
+### B. Subheadline / Einführungstext
+* **Inhalt:** Ein kurzer, zweizeiliger Text über die Expertise (Balayage, Airtouch).
+* **Typografie:**
+    * **Größe:** 18px bis 20px.
+    * **Gewicht:** Light oder Regular (300/400).
+    * **Farbe:** Warm Charcoal (`#2D2926`).
+    * **Max-Width:** Ca. 600px (zentriert), damit der Text nicht über die gesamte Breite läuft.
+
+### C. Primary Call-to-Action (CTA)
+* **Label:** "Jetzt Termin buchen"
+* **Zusatz-Info:** "in 2 Minuten online" (kleiner, dezent darunter oder daneben).
+* **Design:** * **Hintergrund:** `#2D2926`.
+    * **Text:** `#F9F7F2`.
+    * **Form:** Rechteckig mit minimalem Radius (4px).
+    * **Padding:** `16px 32px`.
+
+---
+
+## 3. Visuelle Akzente & Bilder
+* **Hero-Image:** Ein High-End-Portrait oder eine Detailaufnahme einer Balayage-Färbung. 
+* **Bildstil:** Sehr weiches Licht, keine harten Schatten, Fokus auf Glanz und Textur. Die Farben im Bild müssen die Nude-Palette der Seite (`#EFEBE3` und Goldtöne) widerspiegeln.
+* **Platzierung:** Entweder als dezentes Hintergrundbild mit geringer Opazität oder als freigestelltes Element, das hinter der Headline liegt.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI / DALL-E)
+
+> "Erstelle eine High-End Hero-Sektion für eine Friseur-Landingpage. 
+> Hintergrund: Warmes Off-White (`#F9F7F2`). 
+> Im Zentrum steht eine massive, fette Headline in Anthrazit: 'Individualität in Farbe & Schnitt'. 
+> Darunter ein eleganter, leichter Textblock und ein schwarzer Button mit der Aufschrift 'Termin buchen'. 
+> Das gesamte Design wirkt extrem luftig, luxuriös und minimalistisch. 
+> Integriere subtile, warme Beigetöne (`#EFEBE3`) als grafische Akzente. 
+> Typografie: Moderne geometrische Sans-Serif. 
+> Atmosphäre: Wie ein Editorial-Layout eines Luxus-Magazins (Vogue-Style)."
+
+---
+
+# Sektions-Spezifikation: 03 - Über uns / Philosophie (The Story)
+
+Diese Sektion bricht das zentrierte Layout der Hero-Sektion auf und führt ein rhythmisches "Asymmetrisches Grid" ein, das den Nutzer durch die Markengeschichte leitet.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Struktur:** Abwechselndes 2-Spalten-Layout (Zick-Zack-Muster).
+    * Reihe 1: Bild links / Text rechts.
+    * Reihe 2: Text links / Bild rechts.
+* **Abstände:** Großer vertikaler Abstand zwischen den Reihen (`gap: 100px`), um den "Magazin-Charakter" zu unterstreichen.
+* **Hintergrund:** Wechsel zwischen Primary Background (`#F9F7F2`) und Secondary Background (`#EFEBE3`), um die Sektionen optisch voneinander abzuheben.
+
+---
+
+## 2. Komponenten-Details
+
+### A. Bild-Elemente
+* **Stil:** Authentische Fotografie des Salon-Interieurs oder Detailaufnahmen (z.B. eine Tasse Kaffee, Hände bei der Arbeit).
+* **Format:** Hochformat (Portrait) oder quadratisch mit leicht abgerundeten Ecken (max. 4px).
+* **Rahmen:** Optional ein sehr feiner, heller Rahmen in `#DED9D0`.
+
+### B. Text-Blöcke
+* **Überschrift (H2):** * **Inhalt:** Kurze Fragen oder Statements (z.B. "Unsere Mission", "Deine Auszeit").
+    * **Typografie:** Bold (700), ca. 32px - 40px, Farbe `#2D2926`.
+* **Fließtext:**
+    * **Typografie:** Regular (400), ca. 16px - 18px, hohe Zeilenhöhe (1.8).
+    * **Max-Width:** Ca. 450px pro Textblock, um die Lesbarkeit zu optimieren.
+* **Akzent-Headline (Pre-Title):** Ein kleiner, in All-Caps gesetzter Text über der H2 in der Farbe Muted Taupe (`#8C8279`), um das Thema einzuleiten.
+
+---
+
+## 3. Besonderheiten (The "Social Proof")
+* **Kundenstimmen / Icons:** Integriere kleine, minimalistische Siegel oder Rezensions-Zähler (z.B. "Über 1.100 Bewertungen"), die in einer der Textspalten dezent platziert sind.
+* **Farb-Akzente:** Einzelne Worte im Text können dezent in einer Akzentfarbe oder kursiv hervorgehoben werden, um die persönliche Note zu betonen.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI)
+
+> "Erstelle ein 'Über uns'-Sektionslayout für eine Premium-Webseite. 
+> Nutze ein zweispaltiges Grid-System mit viel Weißraum. 
+> Links: Ein ästhetisches Hochformat-Foto eines modernen, hellen Friseursalons. 
+> Rechts: Ein Textblock bestehend aus einer kleinen, grauen Dachzeile ('UNSERE PHILOSOPHIE'), einer großen fetten Headline in Warm Charcoal (`#2D2926`) und einem luftigen Fließtext. 
+> Hintergrundfarbe: Ein sehr helles, warmes Beige (`#F9F7F2`). 
+> Die gesamte Komposition soll Ruhe, Sauberkeit und Hochwertigkeit ausstrahlen. 
+> Keine harten Kanten, keine Schatten, rein flaches Design."
+
+---
+
+# Sektions-Spezifikation: 04 - Leistungs-Cards / Services (The Benefits)
+
+Diese Sektion dient als schneller Überblick über das Portfolio. Sie nutzt ein modulares Design, um komplexe Dienstleistungen in leicht verdauliche, ästhetische Häppchen zu zerlegen.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Struktur:** Ein flexibles 3- oder 4-spaltiges Grid (Desktop), das auf Mobilgeräten zu einem vertikalen Stack wird.
+* **Karten-Stil:** Minimalistische Info-Cards ohne sichtbare Rahmen. Die Trennung erfolgt allein durch den Weißraum oder einen dezenten Hintergrundwechsel.
+* **Hintergrund:** Diese Sektion kann auf dem dunkleren Nude-Ton (`#EFEBE3`) sitzen, um sich von der "Über uns"-Sektion abzuheben.
+
+---
+
+## 2. Komponenten-Details (Die Card-Anatomie)
+
+Jede Karte folgt einem strengen hierarchischen Aufbau:
+
+### A. Visueller Anker (Oben)
+* **Option 1 (Bild):** Ein quadratisches oder rundes Detailbild der Dienstleistung (z.B. Pinselauftrag bei Balayage).
+* **Option 2 (Icon):** Sehr feine Line-Icons (Strichstärke 1px) in Warm Charcoal (`#2D2926`).
+* **Stil:** Die Bilder/Icons sind zentriert oder linksbündig ausgerichtet.
+
+### B. Titel & Text
+* **Headline (H3):** * **Typografie:** Bold (700), ca. 20px - 24px.
+    * **Text:** Prägnante Begriffe wie "Men's Wellness" oder "Signature Color".
+* **Beschreibung:** * **Typografie:** Light (300), ca. 15px.
+    * **Farbe:** Muted Taupe (`#8C8279`).
+    * **Länge:** Max. 2-3 Zeilen (ca. 80-100 Zeichen).
+
+### C. CTA-Link (Optional)
+* **Stil:** Ein dezenter Text-Link ("Mehr erfahren" oder "Details") mit einem kleinen Pfeil-Icon (`→`).
+* **Interaktion:** Beim Hovern färbt sich der Link von Charcoal zu Taupe oder die Linie darunter verlängert sich.
+
+---
+
+## 3. Design-Variante: Die "Feature-Liste"
+Anstatt klassischer Boxen können die Services auch als schlichte, untereinander gelistete Reihen dargestellt werden (ähnlich der Preisliste), was den "Handwerks-Charakter" stärker betont.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI)
+
+> "Erstelle ein Service-Grid für eine Luxus-Friseurseite. 
+> Anordnung: 3 Spalten mit viel horizontalem Padding. 
+> Jedes Element besteht aus einem kleinen, kreisrunden Foto eines Haar-Details, einer fetten Headline in `#2D2926` und einem kurzen, eleganten Beschreibungstext in `#8C8279`. 
+> Hintergrund der gesamten Sektion: Ein sanfter Sandton (`#EFEBE3`). 
+> Die Karten haben keine Schatten und keine Rahmen, sie wirken wie auf das Layout gedruckt. 
+> Typografie: Minimalistische Sans-Serif (Montserrat), sauberer Zeilenabstand von 1.6."
+
+---
+
+# Sektions-Spezifikation: 05 - Interaktive Preistabelle (The Details)
+
+Die Preistabelle von K1 Friseure bricht mit dem klassischen "Box-Design" und nutzt stattdessen ein minimalistisches Listen-System, das an die Menükarten gehobener Gastronomie erinnert.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Struktur:** Vertikaler Aufbau nach Kategorien (Damen, Herren, Kinder, Farbe).
+* **Grid-System:** * Eine Header-Zeile pro Kategorie mit den Spaltenbezeichnungen (S, M, L, XL).
+    * Darunter folgen die Dienstleistungen als Zeilen.
+* **Trennlinien:** Jede Zeile ist durch eine ultra-feine horizontale Linie (`1px solid #DED9D0`) von der nächsten getrennt.
+* **Hintergrund:** Wechselt idealerweise zurück auf das helle Off-White (`#F9F7F2`), um die Lesbarkeit der Zahlen zu maximieren.
+
+---
+
+## 2. Komponenten-Details
+
+### A. Kategorie-Header (H3)
+* **Stil:** Großgeschrieben (All-Caps), Bold (700), Farbe `#2D2926`.
+* **Abstand:** Deutlicher Abstand zur vorherigen Tabelle, um die Segmente klar zu trennen.
+
+### B. Service-Zeile (Das Kernstück)
+* **Linke Spalte (Service-Name):** Typografie Regular (400), Farbe `#2D2926`.
+* **Rechte Spalten (Preise):** * Die Preise sind unter den entsprechenden Größen (S, M, L, XL) ausgerichtet.
+    * Typografie: Medium (500), Farbe `#2D2926`.
+    * Währungssymbol (€) steht dezent vor oder hinter dem Betrag.
+* **Interaktion:** Beim Hovern über eine Zeile kann sich der Hintergrund ganz dezent zu `#EFEBE3` verfärben (Highlight-Effekt).
+
+### C. Fußnoten & Hinweise
+* **Inhalt:** Infos zu Inklusivleistungen (Getränke, Beratung) oder Zahlungsarten.
+* **Stil:** Kleinerer Text (12px - 14px), Farbe Muted Taupe (`#8C8279`), oft als Bullet-Points oder kleiner Textblock unter der Tabelle.
+
+---
+
+## 3. Design-Logik für Mobilgeräte
+Da die Tabelle 5 Spalten hat (Name + 4 Größen), muss sie auf Mobilgeräten entweder:
+1. Horizontal scrollbar sein.
+2. In ein Akkordeon-System umgewandelt werden, bei dem man die Größe wählt und dann die Preise sieht.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI / Code)
+
+> "Erstelle eine hochgradig minimalistische Preistabelle für einen Luxus-Friseur. 
+> Hintergrund: `#F9F7F2`. 
+> Keine vertikalen Linien, nur horizontale Trennlinien in `#DED9D0`. 
+> Spalten: 'Dienstleistung', 'S', 'M', 'L', 'XL'. 
+> Headlines in fettem Anthrazit (`#2D2926`), Preise in der gleichen Farbe, aber mittlerem Gewicht. 
+> Schriftart: Montserrat. 
+> Padding: Jede Zeile hat ein Padding von 15px oben und unten. 
+> Füge am Ende einen Infoblock für 'Inklusivleistungen' hinzu, der in einem sanften Taupe (`#8C8279`) und kleinerer Schriftgröße gehalten ist. 
+> Der Look soll sauber, luftig und exklusiv wie eine Preisliste in einem 5-Sterne-Spa wirken."
+
+---
+
+# Sektions-Spezifikation: 06 - Portfolio / Vorher-Nachher (The Social Proof)
+
+Diese Sektion nutzt ein kachelbasiertes Layout, um die beeindruckenden Transformationen (besonders Balayage und AirTouch) hochwertig zu präsentieren. Sie kombiniert technische Details mit emotionaler Bildsprache.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Struktur:** Ein großflächiges Card-System (1- oder 2-spaltig).
+* **Card-Design:** Jedes "Paket" (z.B. Seasalt Balayage) wird in einer eigenen, großzügigen Box dargestellt.
+* **Bild-Anordnung:** Ein Split-View-System pro Karte:
+    * **Links:** Vorher-Bild (kleiner oder dezent beschriftet).
+    * **Rechts:** Nachher-Bild (groß, strahlend, Fokus-Punkt).
+* **Hintergrund:** Wechselt oft auf den Secondary Background (`#EFEBE3`), um die Bildkarten optisch einzurahmen.
+
+---
+
+## 2. Komponenten-Details (Die Portfolio-Card)
+
+### A. Bild-Vergleich (The Visual)
+* **Format:** Portrait (3:4) oder Quadratisch.
+* **Labeling:** Kleine, minimalistische Badges in den Ecken der Bilder ("Vorher" / "Nachher") in Weiß oder hellem Beige mit geringer Deckkraft.
+* **Qualität:** Fokus auf extremen Glanz, Detailreichtum der Farbabstufungen und weiches Licht.
+
+### B. Paket-Details (The Info)
+* **Headline (H3):** Paketname (z.B. "Soft Contrast Dimension") in Bold (`#2D2926`).
+* **Preis-Badge:** Der Preis wird prominent, aber elegant daneben oder darunter platziert (z.B. "ab 385 €").
+* **Leistungs-Liste:** * Aufzählung der enthaltenen Schritte (Beratung, Technik, Glossing, Styling).
+    * Stil: Kleine Bullet-Points oder eine schlichte Liste mit viel Zeilenabstand.
+    * Farbe: Muted Taupe (`#8C8279`).
+
+### C. Interaktive Elemente
+* **"Mehr Details"-Button:** Ein kleiner Text-Link oder ein zentrierter Button unter der Beschreibung.
+* **Modals:** Beim Klick öffnet sich ein Overlay mit einer noch detaillierteren Beschreibung ("Für wen geeignet", "Dauer", etc.).
+
+---
+
+## 3. Design-Rhythmus
+* **Weißraum:** Zwischen den einzelnen Paket-Karten liegt ein sehr großer vertikaler Abstand (ca. 80px - 100px), damit jedes Ergebnis für sich allein wirken kann und die Seite nicht überladen wirkt.
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI / DALL-E)
+
+> "Erstelle ein luxuriöses Vorher-Nachher-Portfolio-Layout für einen Hair-Artist. 
+> Hintergrund: Warmes Nude-Beige (`#EFEBE3`). 
+> Im Fokus steht eine große Karte, die zwei Bilder nebeneinander zeigt: Ein 'Vorher' (matt, dunkler) und ein 'Nachher' (strahlendes Blond, glänzend). 
+> Rechts neben oder unter den Bildern steht in eleganter, fetter Schrift der Paket-Name 'Natural Dimension Balayage'. 
+> Darunter eine minimalistische Liste der Leistungen in einem feinen Grau-Braun (`#8C8279`). 
+> Das gesamte Design wirkt wie eine Seite aus einem High-End-Modekatalog: Sauber, teuer, ästhetisch und ohne unnötige Schnörkel. 
+> Typografie: Modern Sans-Serif (Montserrat)."
+
+---
+
+# Sektions-Spezifikation: 07 - Footer (The Foundation)
+
+Der Footer bildet den optischen Anker der Seite. Er ist massiver als der Header, behält aber die strikte typografische Hierarchie und die warme Farbwelt bei.
+
+---
+
+## 1. Visueller Aufbau & Layout
+* **Struktur:** 3- bis 4-spaltiges Grid-Layout (Desktop), das sich auf Mobilgeräten in einer einzelnen Spalte stapelt.
+* **Hintergrund:** Ein dunklerer Akzentton innerhalb der Palette, um den Abschluss der Seite zu signalisieren (z.B. das volle `Secondary Background` #EFEBE3 oder ein sehr helles Taupe).
+* **Padding:** Großzügiges vertikales Padding (`padding: 60px 0`), um eine gedrungene Optik zu vermeiden.
+* **Trennlinie:** Eine dezente horizontale Linie (`1px solid #DED9D0`) markiert den Übergang vom Hauptcontent zum Footer.
+
+---
+
+## 2. Komponenten-Details (Die Spalten)
+
+### Spalte 1: Branding & Kurz-Info
+* **Inhalt:** Das Logo (Wiederholung aus dem Header) und eine kurze Standortangabe oder ein Slogan.
+* **Social Media:** Minimalistische Icons für Instagram und Facebook in Warm Charcoal (`#2D2926`). Keine bunten Logos, nur Outlines oder monochrome Flächen.
+
+### Spalte 2: Öffnungszeiten
+* **Headline:** "Öffnungszeiten" (Bold, 16px).
+* **Struktur:** Eine Liste der Wochentage. 
+* **Stil:** Tag und Uhrzeit sind sauber untereinander oder durch Tabulatoren getrennt ausgerichtet. Samstag wird oft hervorgehoben (kürzere Zeit).
+
+### Spalte 3: Kontakt & Standort
+* **Inhalt:** Adresse (Glauburgstraße 38, Frankfurt) und die Telefonnummer prominent platziert.
+* **Interaktion:** Die Telefonnummer ist als `tel:`-Link hinterlegt (Klickbar für Mobilnutzer).
+* **Google Maps:** Optional ein kleiner, statischer Kartenausschnitt oder ein dezenter Link zur Routenplanung.
+
+### Spalte 4: Rechtliches (Sub-Footer)
+* **Inhalt:** "Impressum", "Datenschutz", "AGB".
+* **Position:** Oft ganz unten in einer separaten, flachen Zeile (Copyright-Zeile).
+* **Typografie:** Sehr klein (12px), Farbe Muted Taupe (`#8C8279`), um nicht vom Hauptinhalt abzulenken.
+
+---
+
+## 3. Besonderheit: Google Maps Integration
+Unmittelbar über oder im Footer befindet sich oft die interaktive Karte.
+* **Stil:** Die Karte sollte durch einen Graustufen-Filter oder ein Custom-Styling an die warme Farbwelt der Seite angepasst sein (kein knalliges Google-Blau/Grün).
+
+---
+
+## 4. Prompt für KI-Tools (Generative UI / Code)
+
+> "Erstelle einen vierteiligen Footer für eine Premium-Dienstleistungs-Webseite. 
+> Hintergrundfarbe: Soft Nude-Beige (`#EFEBE3`). 
+> Schriftfarbe: Deep Charcoal (`#2D2926`). 
+> Spalte 1: Logo und Social Media Icons. 
+> Spalte 2: Eine saubere Tabelle mit Öffnungszeiten (Mo-Sa). 
+> Spalte 3: Kontaktinfos inklusive Adresse und Telefonnummer. 
+> Spalte 4: Ein kleiner Kartenausschnitt oder Link zu Google Maps. 
+> Ganz unten eine schmale Zeile für Impressum und Datenschutz in kleinerer Schriftgröße (12px). 
+> Alles streng minimalistisch, ohne dekorative Elemente, nur durch Typografie und Weißraum strukturiert. 
+> Schriftart: Montserrat."
+
+---
+
+

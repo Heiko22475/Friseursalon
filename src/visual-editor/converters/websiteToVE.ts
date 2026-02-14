@@ -539,6 +539,7 @@ function heroTextStyles(t: HeroText): ElementStyles {
     ...(belowImage ? {} : {
       left: sv(leftPct, '%'),
       top: sv(topPct, '%'),
+      transform: 'translate(-50%, -50%)',
     }),
     color: colorVal(t.color || '#ffffff'),
     fontSize: sv(fontSize),
@@ -581,6 +582,7 @@ function heroButtonStyles(b: HeroButtonType): ElementStyles {
     ...(belowImage ? {} : {
       left: sv(leftPct, '%'),
       top: sv(topPct, '%'),
+      transform: 'translate(-50%, -50%)',
     }),
     zIndex: 2,
     cursor: 'pointer',

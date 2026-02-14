@@ -163,6 +163,9 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   if (props.objectFit) css.objectFit = props.objectFit;
   if (props.objectPosition) css.objectPosition = props.objectPosition;
 
+  // Transform
+  if (props.transform) css.transform = props.transform;
+
   // Cursor
   if (props.cursor) css.cursor = props.cursor;
 

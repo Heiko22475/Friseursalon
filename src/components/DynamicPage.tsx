@@ -11,6 +11,7 @@ import Contact from './Contact';
 import StaticContent from './StaticContent';
 import { Grid } from './Grid';
 import { GenericCard } from './blocks/GenericCard';
+import { NavbarBlock } from './blocks/NavbarBlock';
 import Footer from './Footer';
 import { FooterBlock } from './blocks/FooterBlock';
 import { HeaderBlock } from './blocks/HeaderBlock';
@@ -81,6 +82,8 @@ export const DynamicPage: React.FC = () => {
     const instanceId = block.position;
     
     switch (block.type) {
+      case 'navbar':
+        return <NavbarBlock key={key} config={block.config} />;
       case 'hero':
         return <div key={key} id={`hero-${instanceId}`}><Hero config={block.config} instanceId={instanceId} blockId={block.id} /></div>;
       case 'services':
@@ -123,24 +126,33 @@ export const DynamicPage: React.FC = () => {
     );
   }
 
+  // Check if page blocks contain a navbar (replaces legacy header)
+  const hasNavbarBlock = page.blocks.some(b => b.type === 'navbar');
+  // Check if page blocks contain a footer block (replaces legacy footer)
+  const hasFooterBlock = page.blocks.some(b => b.id?.includes('footer'));
+
   return (
     <div className="min-h-screen">
-      {/* Header: use new HeaderBlock if config exists, else old Header */}
-      {website?.header ? (
-        <HeaderBlock config={website.header} />
-      ) : (
-        <Header />
+      {/* Header: skip if page has navbar block */}
+      {!hasNavbarBlock && (
+        website?.header ? (
+          <HeaderBlock config={website.header} />
+        ) : (
+          <Header />
+        )
       )}
 
       {page.blocks
         .sort((a, b) => a.position - b.position)
         .map((block) => renderBlock(block))}
 
-      {/* Footer: use new FooterBlock if config exists, else old Footer */}
-      {website?.footer ? (
-        <FooterBlock config={website.footer} />
-      ) : (
-        <Footer />
+      {/* Footer: skip if page has footer block, else use FooterBlock config or legacy Footer */}
+      {!hasFooterBlock && (
+        website?.footer ? (
+          <FooterBlock config={website.footer} />
+        ) : (
+          <Footer />
+        )
       )}
       
       {/* Edit Mode Toggle (nur für Admins) */}

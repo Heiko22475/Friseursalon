@@ -130,6 +130,8 @@ export const getResponsiveValue = <T>(
   responsive: { desktop: T; tablet?: T; mobile?: T },
   viewport: Viewport
 ): T => {
+  // Guard against undefined/null responsive objects (e.g. missing belowImage/visible)
+  if (!responsive) return undefined as unknown as T;
   if (viewport === 'mobile') {
     return responsive.mobile ?? responsive.tablet ?? responsive.desktop;
   }

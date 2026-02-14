@@ -107,6 +107,9 @@ export interface StyleProperties {
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
   objectPosition?: string;
 
+  // Transform
+  transform?: string;
+
   // Cursor
   cursor?: 'pointer' | 'default' | 'text' | 'move' | 'not-allowed';
 }

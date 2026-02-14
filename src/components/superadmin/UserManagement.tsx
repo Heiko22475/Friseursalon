@@ -99,7 +99,9 @@ export const UserManagement: React.FC = () => {
 
       if (error) throw error;
 
-      setLocalhostCustomerId(customerId);
+      // 3. Reload page so useCustomerId re-queries the DB
+      //    and WebsiteProvider picks up the new customer
+      window.location.reload();
     } catch (error: any) {
       console.error('Error setting localhost:', error);
       await showError('Fehler', 'Fehler beim Setzen von localhost: ' + (error?.message || error?.code || 'Unknown error. Check if "domain" column exists in websites table.'));

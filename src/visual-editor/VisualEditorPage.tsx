@@ -218,8 +218,8 @@ const VisualEditorPage: React.FC = () => {
     return localStorage.getItem('ve-selected-customer') || '';
   });
 
-  // Load customer list on mount
-  useEffect(() => {
+  // Load customer list on mount and when switching to live mode
+  const loadCustomerList = useCallback(() => {
     supabase.from('websites').select('id, customer_id, site_name').then(({ data }) => {
       if (data) setCustomerList(data.map(w => ({
         id: w.id,
@@ -229,13 +229,21 @@ const VisualEditorPage: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    loadCustomerList();
+  }, [loadCustomerList]);
+
   // Load live data when source or customer changes
   useEffect(() => {
     if (dataSource !== 'live' || !selectedCustomer) {
       setLivePages(null);
+      setOriginalContent(null);
       return;
     }
 
+    // Reset previous data immediately so EditorProvider doesn't mount with stale pages
+    setLivePages(null);
+    setOriginalContent(null);
     setLiveLoading(true);
     setLiveError(null);
 
@@ -251,12 +259,17 @@ const VisualEditorPage: React.FC = () => {
           return;
         }
         setOriginalContent(data.content);
-        const pages = convertWebsiteToVEPages(data.content);
-        if (pages.length === 0) {
-          setLiveError('Keine Seiten im JSON gefunden');
-          return;
+        try {
+          const pages = convertWebsiteToVEPages(data.content);
+          if (pages.length === 0) {
+            setLiveError('Keine Seiten im JSON gefunden');
+            return;
+          }
+          setLivePages(pages);
+        } catch (conversionError: any) {
+          console.error('[VE] Fehler beim Konvertieren der Website-Daten:', conversionError);
+          setLiveError(`Konvertierungsfehler: ${conversionError.message || 'Unbekannt'}`);
         }
-        setLivePages(pages);
       });
   }, [dataSource, selectedCustomer]);
 
@@ -273,6 +286,10 @@ const VisualEditorPage: React.FC = () => {
     setLivePages(null);
     setLiveError(null);
     setOriginalContent(null);
+    // Refresh customer list when switching to live mode (picks up newly imported customers)
+    if (source === 'live') {
+      loadCustomerList();
+    }
   };
 
   // Determine which pages to use

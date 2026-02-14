@@ -35,12 +35,18 @@ ein ähnliches Dropdown mit Slider, "auto" und vordefinierten WErden geben könn
 
 
 
--------------------------------
+Es gibt Unstimmigkeiten zwischen der Webseite und der Darstellung im Visual Editor
+1) Es wurde ein Footer gerendert, der auf der WEbseite dargestellt wird, 
+aber im VE nicht. 
+Ich weiß nicht, wie dieser Footer im JSON umgesetzt wird, 
+aber wenn es ein Legacy footer ist, dann sollte er für die JSON
+Generierung nicht genutzt werden, und auch au der Code-Basis entfernt. 
+Vielmehr sollte der Footer ähnlich wie in Webflow eine Komposition sein. 
+Bitte aktualisiere daher das JSON, und rendere einen Footer mit Hilfe von generischen 
+Komponenten. 
+2) Die Position der Texte im Hero sind auf der Webseite zentriert dargestellt, 
+aber im VE Editor starten die Texte Linksbündig an der Mitte der SEite. 
+3) Der Header wird nicht konsistenz auf Webseite und VE Editor angezeigt, bitte 
+investigieren. 
 
-Ich möchte weitere Features von Webflow umsetzen. 
-Ich bin mir nicht sicher, wie ich einen Header gestalten sollte. 
-Wir haben zwar einen Header, bei der man sich Varianten aussuchen kann, der hat aber das Manko, dass man ihn nicht mit dem 
-visuellen Editor gut individuall gestalten kann.
-Was für eine Lösung hat Webflow dann dafür?  
-Ich überlege, den Header als Komposition zu rendern, allerdings gäbe es ja 
-noch die mobile Variante. Bitte schreibe mir zunächst Vorschläge, bevor du etwas umsetzt. 
+

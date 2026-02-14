@@ -112,12 +112,6 @@ const InlineTextEditor: React.FC<{
 const BLOCK_LABELS: Record<string, string> = {
   hero: 'Hero',
   'generic-card': 'Karten',
-  static_content: 'Statisch',
-  'static-content': 'Statisch',
-  gallery: 'Galerie',
-  services: 'Services',
-  reviews: 'Bewertungen',
-  contact: 'Kontakt',
 };
 
 // ===== MAIN COMPONENT =====
@@ -212,14 +206,6 @@ export const WebsiteBlockRenderer: React.FC<WebsiteBlockRendererProps> = ({
         return <Hero config={element.blockConfig} instanceId={element.blockPosition} />;
       case 'generic-card':
         return <GenericCard config={element.blockConfig} instanceId={element.blockPosition} />;
-      case 'static_content':
-      case 'static-content':
-        return (
-          <div style={{ padding: '48px 24px', backgroundColor: '#f9fafb', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
-            <div style={{ fontSize: '24px', marginBottom: '8px' }}>📄</div>
-            Statischer Inhalt: {element.blockConfig?.type || 'Unbekannt'}
-          </div>
-        );
       default:
         return (
           <div style={{ padding: '48px 24px', backgroundColor: '#fef2f2', textAlign: 'center', color: '#dc2626', fontSize: '14px', border: '2px dashed #fca5a5', borderRadius: '8px' }}>

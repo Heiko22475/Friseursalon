@@ -28,7 +28,7 @@ const inputStyle: React.CSSProperties = {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -148,7 +148,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
 
       {/* Layout: Columns per viewport */}
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
+        <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
           Spalten
         </label>
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -159,7 +159,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
             const label = vp === 'desktop' ? '🖥' : vp === 'tablet' ? '📱' : '📲';
             return (
               <div key={vp} style={{ flex: 1 }}>
-                <label style={{ fontSize: '10px', color: '#4a4a5a', display: 'block', marginBottom: '2px', textAlign: 'center' }}>
+                <label style={{ fontSize: '10px', color: '#9ca3af', display: 'block', marginBottom: '2px', textAlign: 'center' }}>
                   {label}
                 </label>
                 <input
@@ -187,7 +187,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
           onChange={(e) => updateLayout('desktop', 'gap', { value: Number(e.target.value), unit: 'px' })}
           style={{ ...inputStyle, width: '80px' }}
         />
-        <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: '4px' }}>px</span>
+        <span style={{ fontSize: '11px', color: '#b0b7c3', marginLeft: '4px' }}>px</span>
       </Row>
 
       {/* Divider */}
@@ -209,7 +209,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
 
       {/* Cards List */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <label style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600 }}>
+        <label style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>
           Karten ({children.length})
         </label>
         <button
@@ -249,7 +249,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
                 marginBottom: '4px',
               }}
             >
-              <GripVertical size={12} style={{ color: '#4a4a5a', flexShrink: 0 }} />
+              <GripVertical size={12} style={{ color: '#9ca3af', flexShrink: 0 }} />
               <span style={{
                 flex: 1,
                 fontSize: '12px',
@@ -268,7 +268,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
                 onClick={() => handleMoveCard(idx, 'up')}
                 title="Nach oben"
                 disabled={idx === 0}
-                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === 0 ? '#3d3d4d' : '#6b7280', cursor: idx === 0 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === 0 ? '#3d3d4d' : '#b0b7c3', cursor: idx === 0 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
               >
                 <ChevronUp size={12} />
               </button>
@@ -276,14 +276,14 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
                 onClick={() => handleMoveCard(idx, 'down')}
                 title="Nach unten"
                 disabled={idx === children.length - 1}
-                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === children.length - 1 ? '#3d3d4d' : '#6b7280', cursor: idx === children.length - 1 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: idx === children.length - 1 ? '#3d3d4d' : '#b0b7c3', cursor: idx === children.length - 1 ? 'default' : 'pointer', display: 'flex', borderRadius: '3px' }}
               >
                 <ChevronDown size={12} />
               </button>
               <button
                 onClick={() => handleDuplicateCard(idx)}
                 title="Duplizieren"
-                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
+                style={{ padding: '2px', backgroundColor: 'transparent', border: 'none', color: '#b0b7c3', cursor: 'pointer', display: 'flex', borderRadius: '3px' }}
               >
                 <Copy size={12} />
               </button>
@@ -300,7 +300,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
       </div>
 
       {children.length === 0 && (
-        <div style={{ padding: '16px', textAlign: 'center', color: '#6b7280', fontSize: '12px', backgroundColor: '#252535', borderRadius: '6px' }}>
+        <div style={{ padding: '16px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px', backgroundColor: '#252535', borderRadius: '6px' }}>
           Keine Karten vorhanden.<br />
           Klicke „+ Karte" um eine hinzuzufügen.
         </div>

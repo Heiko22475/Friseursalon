@@ -129,7 +129,7 @@ const CardTemplatePicker: React.FC<{
             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#d1d5db' }}>
               Karten-Vorlage wählen
             </h3>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#6b7280' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#b0b7c3' }}>
               {loading ? 'Lade Vorlagen aus der Datenbank…' : `${templates.length} Vorlage${templates.length !== 1 ? 'n' : ''} verfügbar`}
             </p>
           </div>
@@ -139,7 +139,7 @@ const CardTemplatePicker: React.FC<{
               padding: '6px',
               backgroundColor: 'transparent',
               border: 'none',
-              color: '#6b7280',
+              color: '#b0b7c3',
               cursor: 'pointer',
               borderRadius: '4px',
               display: 'flex',
@@ -151,7 +151,7 @@ const CardTemplatePicker: React.FC<{
 
         {/* Loading state */}
         {loading && (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#6b7280', fontSize: '13px' }}>
+          <div style={{ padding: '32px', textAlign: 'center', color: '#b0b7c3', fontSize: '13px' }}>
             Lade Vorlagen…
           </div>
         )}
@@ -186,7 +186,7 @@ const CardTemplatePicker: React.FC<{
               {/* Category badge */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ color: '#6366f1' }}>{categoryIcons[tpl.category] || categoryIcons.general}</span>
-                <span style={{ fontSize: '10px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                <span style={{ fontSize: '10px', color: '#b0b7c3', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                   {categoryLabels[tpl.category] || tpl.category}
                 </span>
               </div>
@@ -196,7 +196,7 @@ const CardTemplatePicker: React.FC<{
               </span>
               {/* Description */}
               {tpl.description && (
-                <span style={{ fontSize: '11px', color: '#6b7280', lineHeight: 1.4 }}>
+                <span style={{ fontSize: '11px', color: '#b0b7c3', lineHeight: 1.4 }}>
                   {tpl.description}
                 </span>
               )}
@@ -210,7 +210,7 @@ const CardTemplatePicker: React.FC<{
                       backgroundColor: '#1e1e2e',
                       borderRadius: '3px',
                       fontSize: '10px',
-                      color: '#9ca3af',
+                      color: '#b0b7c3',
                     }}
                   >
                     {el.label}
@@ -303,7 +303,7 @@ export const AddElementPanel: React.FC = () => {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#6b7280',
+              color: '#b0b7c3',
               padding: '4px 8px',
               marginBottom: '4px',
             }}
@@ -346,7 +346,7 @@ export const AddElementPanel: React.FC = () => {
                     e.currentTarget.style.borderColor = '#3d3d4d';
                   }}
                 >
-                  <span style={{ color: '#9ca3af' }}>{el.icon}</span>
+                  <span style={{ color: '#b0b7c3' }}>{el.icon}</span>
                   {el.label}
                 </button>
               ))}

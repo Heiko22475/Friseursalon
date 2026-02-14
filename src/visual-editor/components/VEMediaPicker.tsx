@@ -149,7 +149,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
             border: '2px dashed #3d3d4d',
             borderRadius: '6px',
             cursor: 'pointer',
-            color: '#6b7280',
+            color: '#9ca3af',
             fontSize: '11px',
             transition: 'all 0.15s',
           }}
@@ -159,7 +159,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#3d3d4d';
-            e.currentTarget.style.color = '#6b7280';
+            e.currentTarget.style.color = '#9ca3af';
           }}
         >
           <ImagePlus size={20} />
@@ -172,7 +172,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
         <div style={{
           marginTop: '4px',
           fontSize: '10px',
-          color: '#4a4a5a',
+          color: '#9ca3af',
           wordBreak: 'break-all',
           lineHeight: '1.4',
         }}>
@@ -234,7 +234,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
                   backgroundColor: 'transparent',
                   border: 'none',
                   borderRadius: '4px',
-                  color: '#6b7280',
+                  color: '#9ca3af',
                   cursor: 'pointer',
                 }}
               >

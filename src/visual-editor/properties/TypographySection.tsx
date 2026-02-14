@@ -13,6 +13,7 @@ import {
   Underline,
   Strikethrough,
   Type,
+  Italic,
   ChevronDown,
 } from 'lucide-react';
 import type { StyleProperties, SizeValue } from '../types/styles';
@@ -53,7 +54,7 @@ function IconToggle({
         border: 'none',
         borderRadius: '3px',
         cursor: 'pointer',
-        color: active ? '#fff' : '#6b7280',
+        color: active ? '#fff' : '#b0b7c3',
         transition: 'all 0.1s',
       }}
     >
@@ -103,7 +104,7 @@ const FontDropdown: React.FC<{
           backgroundColor: '#2d2d3d',
           border: '1px solid #3d3d4d',
           borderRadius: '4px',
-          color: value ? '#d1d5db' : '#6b7280',
+          color: value ? '#d1d5db' : '#b0b7c3',
           fontSize: '12px',
           cursor: 'pointer',
           fontFamily: value || 'inherit',
@@ -162,7 +163,7 @@ const FontDropdown: React.FC<{
               <div>
                 <div style={{
                   fontSize: '10px',
-                  color: '#6b7280',
+                  color: '#b0b7c3',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -188,7 +189,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeHeadingFont.name}</span>
-                    <span style={{ fontSize: '10px', color: '#6b7280' }}>Heading</span>
+                    <span style={{ fontSize: '10px', color: '#b0b7c3' }}>Heading</span>
                   </button>
                 )}
                 {themeBodyFont && themeBodyFont.id !== themeHeadingFont?.id && (
@@ -209,7 +210,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeBodyFont.name}</span>
-                    <span style={{ fontSize: '10px', color: '#6b7280' }}>Body</span>
+                    <span style={{ fontSize: '10px', color: '#b0b7c3' }}>Body</span>
                   </button>
                 )}
               </div>
@@ -220,7 +221,7 @@ const FontDropdown: React.FC<{
               <div key={cat}>
                 <div style={{
                   fontSize: '10px',
-                  color: '#6b7280',
+                  color: '#b0b7c3',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -274,7 +275,7 @@ const FontDropdown: React.FC<{
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '52px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '52px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -298,7 +299,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
         {/* Weight */}
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '3px' }}>Gewicht</label>
+          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Gewicht</label>
           <select
             value={styles.fontWeight ?? ''}
             onChange={(e) => onChange('fontWeight', e.target.value ? Number(e.target.value) : undefined)}
@@ -385,7 +386,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
                 border: 'none',
                 borderRadius: '3px',
                 cursor: 'pointer',
-                color: styles.textAlign === opt.value ? '#fff' : '#6b7280',
+                color: styles.textAlign === opt.value ? '#fff' : '#b0b7c3',
               }}
             >
               {opt.icon}
@@ -397,6 +398,12 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
       {/* Decoration toggles */}
       <Row label="Stil">
         <div style={{ display: 'flex', gap: '2px', backgroundColor: '#1a1a2a', borderRadius: '4px', padding: '2px' }}>
+          <IconToggle
+            icon={<Italic size={sz} />}
+            active={styles.fontStyle === 'italic'}
+            onClick={() => onChange('fontStyle', styles.fontStyle === 'italic' ? 'normal' : 'italic')}
+            title="Kursiv"
+          />
           <IconToggle
             icon={<Type size={sz} />}
             active={styles.textTransform === 'uppercase'}

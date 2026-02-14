@@ -52,7 +52,7 @@ export const ImageRenderer: React.FC<ImageRendererProps> = ({ element, viewport,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             fontSize: '14px',
             borderRadius: resolvedStyles.borderRadius,
           }}

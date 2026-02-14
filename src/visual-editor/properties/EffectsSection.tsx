@@ -13,7 +13,7 @@ interface EffectsSectionProps {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -34,10 +34,55 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
   // Find which preset matches (if any)
   const currentPreset = SHADOW_PRESETS.find((p) => p.value === (styles.boxShadow || ''));
 
+  const opacityPercent = styles.opacity !== undefined ? Math.round(styles.opacity * 100) : 100;
+
   return (
     <div>
+      {/* Opacity */}
+      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
+        Opacity
+      </label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={opacityPercent}
+          onChange={(e) => onChange('opacity', Number(e.target.value) / 100)}
+          style={{
+            flex: 1,
+            height: '4px',
+            accentColor: '#3b82f6',
+            cursor: 'pointer',
+          }}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            value={opacityPercent}
+            onChange={(e) => {
+              const val = Math.min(100, Math.max(0, Number(e.target.value) || 0));
+              onChange('opacity', val / 100);
+            }}
+            style={{
+              width: '42px',
+              padding: '3px 4px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3d3d4d',
+              borderRadius: '3px',
+              color: '#d1d5db',
+              fontSize: '11px',
+              textAlign: 'right',
+            }}
+          />
+          <span style={{ fontSize: '10px', color: '#b0b7c3' }}>%</span>
+        </div>
+      </div>
+
       {/* Box Shadow */}
-      <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
         Schatten
       </label>
 
@@ -52,7 +97,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
               backgroundColor: currentPreset?.label === preset.label ? '#3b82f6' : '#2d2d3d',
               border: '1px solid ' + (currentPreset?.label === preset.label ? '#3b82f6' : '#3d3d4d'),
               borderRadius: '3px',
-              color: currentPreset?.label === preset.label ? '#fff' : '#9ca3af',
+              color: currentPreset?.label === preset.label ? '#fff' : '#b0b7c3',
               fontSize: '10px',
               cursor: 'pointer',
               fontWeight: 500,
@@ -83,7 +128,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
       />
 
       {/* Overflow */}
-      <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
         Overflow
       </label>
       <Row label="Alle">
@@ -98,7 +143,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
                 backgroundColor: styles.overflow === val ? '#3b82f6' : '#2d2d3d',
                 border: '1px solid ' + (styles.overflow === val ? '#3b82f6' : '#3d3d4d'),
                 borderRadius: '3px',
-                color: styles.overflow === val ? '#fff' : '#9ca3af',
+                color: styles.overflow === val ? '#fff' : '#b0b7c3',
                 fontSize: '10px',
                 cursor: 'pointer',
                 fontWeight: 500,

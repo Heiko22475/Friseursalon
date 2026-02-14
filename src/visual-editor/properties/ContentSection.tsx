@@ -17,7 +17,7 @@ interface ContentSectionProps {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -75,7 +75,7 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
       </Row>
 
       {/* Text Content */}
-      <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '4px' }}>
         Inhalt
       </label>
       <VERichTextEditor
@@ -89,7 +89,7 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
         }
         placeholder="Text eingeben…"
       />
-      <div style={{ fontSize: '10px', color: '#4a4a5a', marginTop: '4px' }}>
+      <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px' }}>
         💡 Doppelklick auf Canvas für Inline-Editing
       </div>
     </div>
@@ -106,7 +106,7 @@ const ImageContent: React.FC<{ element: VEImage }> = ({ element }) => {
   return (
     <div>
       {/* Media Picker */}
-      <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '4px' }}>
         Bild
       </label>
       <VEMediaPicker
@@ -198,8 +198,8 @@ const ButtonContent: React.FC<{ element: VEButton }> = ({ element }) => {
             }
             style={{ accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '12px', color: '#9ca3af' }}>Neuer Tab</span>
-          <ExternalLink size={12} style={{ color: '#6b7280' }} />
+          <span style={{ fontSize: '12px', color: '#b0b7c3' }}>Neuer Tab</span>
+          <ExternalLink size={12} style={{ color: '#b0b7c3' }} />
         </label>
       </Row>
     </div>

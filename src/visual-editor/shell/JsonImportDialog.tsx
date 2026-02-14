@@ -330,7 +330,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
               <div style={{ fontWeight: 600, fontSize: '15px', color: '#e0e0e0' }}>
                 JSON Import
               </div>
-              <div style={{ fontSize: '12px', color: '#6b7280' }}>
+              <div style={{ fontSize: '12px', color: '#b0b7c3' }}>
                 Website-Content aus JSON-Datei importieren
               </div>
             </div>
@@ -338,7 +338,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
           <button
             onClick={onClose}
             style={{
-              background: 'none', border: 'none', color: '#6b7280',
+              background: 'none', border: 'none', color: '#b0b7c3',
               cursor: 'pointer', padding: '4px', borderRadius: '4px',
             }}
           >
@@ -363,7 +363,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                 borderRadius: '6px',
                 border: '1px solid #3d3d4d',
               }}>
-                <Search size={14} style={{ color: '#6b7280' }} />
+                <Search size={14} style={{ color: '#b0b7c3' }} />
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -379,11 +379,11 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
               flex: 1, overflowY: 'auto', padding: '4px',
             }} className="ve-nav-scroll">
               {loading ? (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+                <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
                   Lade Kunden...
                 </div>
               ) : filteredWebsites.length === 0 ? (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+                <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
                   Keine Kunden gefunden
                 </div>
               ) : (
@@ -417,7 +417,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                     </div>
                     <div style={{
                       fontSize: '10px',
-                      color: '#6b7280',
+                      color: '#b0b7c3',
                       fontFamily: 'monospace',
                       marginTop: '2px',
                     }}>
@@ -460,7 +460,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                   )}
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <div>AI-generiertes JSON laden</div>
-                    <div style={{ fontSize: '10px', fontWeight: 400, color: '#6b7280', marginTop: '2px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: 400, color: '#b0b7c3', marginTop: '2px' }}>
                       .github_generated/website_import.json
                     </div>
                   </div>
@@ -469,7 +469,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
 
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '12px',
-                marginBottom: '16px', color: '#4a4a5a', fontSize: '11px',
+                marginBottom: '16px', color: '#9ca3af', fontSize: '11px',
               }}>
                 <div style={{ flex: 1, height: '1px', backgroundColor: '#2d2d3d' }} />
                 <span>oder</span>
@@ -478,7 +478,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
 
               {/* Datei auswählen */}
               <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginBottom: '6px', display: 'block' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#b0b7c3', marginBottom: '6px', display: 'block' }}>
                   JSON-Datei hochladen
                 </label>
                 <input
@@ -496,7 +496,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                     backgroundColor: '#2d2d3d',
                     border: '1px dashed #4d4d5d',
                     borderRadius: '8px',
-                    color: '#9ca3af',
+                    color: '#b0b7c3',
                     cursor: 'pointer',
                     fontSize: '13px',
                     width: '100%',
@@ -511,7 +511,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
 
               {/* Oder Textarea */}
               <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginBottom: '6px', display: 'block' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#b0b7c3', marginBottom: '6px', display: 'block' }}>
                   Oder JSON direkt einfügen
                 </label>
                 <textarea
@@ -566,7 +566,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                       JSON valide
                     </span>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#9ca3af', lineHeight: '1.6' }}>
+                  <div style={{ fontSize: '11px', color: '#b0b7c3', lineHeight: '1.6' }}>
                     <div>Top-Level Keys: <code style={{ color: '#60a5fa' }}>{jsonPreview.keys.join(', ')}</code></div>
                     {jsonPreview.pageCount > 0 && <div>Seiten: <strong>{jsonPreview.pageCount}</strong></div>}
                     {jsonPreview.hasSettings && <div>✓ Site Settings</div>}
@@ -580,7 +580,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
               {/* Import-Modus */}
               {jsonValid && (
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginBottom: '6px', display: 'block' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#b0b7c3', marginBottom: '6px', display: 'block' }}>
                     Import-Modus
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -594,7 +594,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                           borderRadius: '6px',
                           border: `1px solid ${importMode === mode ? '#3b82f6' : '#3d3d4d'}`,
                           backgroundColor: importMode === mode ? '#3b82f620' : '#2d2d3d',
-                          color: importMode === mode ? '#60a5fa' : '#9ca3af',
+                          color: importMode === mode ? '#60a5fa' : '#b0b7c3',
                           cursor: 'pointer',
                           fontSize: '12px',
                           textAlign: 'center',
@@ -603,7 +603,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                         <div style={{ fontWeight: 600 }}>
                           {mode === 'full' ? 'Vollständig' : 'Nur Seiten'}
                         </div>
-                        <div style={{ fontSize: '10px', marginTop: '2px', color: '#6b7280' }}>
+                        <div style={{ fontSize: '10px', marginTop: '2px', color: '#b0b7c3' }}>
                           {mode === 'full' ? 'Ersetzt gesamten Content' : 'Ersetzt nur pages[]'}
                         </div>
                       </button>
@@ -615,7 +615,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
               {/* Version Label */}
               {jsonValid && (
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginBottom: '6px', display: 'block' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#b0b7c3', marginBottom: '6px', display: 'block' }}>
                     Versions-Bezeichnung (für History)
                   </label>
                   <input
@@ -639,7 +639,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                     onClick={() => setHistoryOpen(!historyOpen)}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '6px',
-                      background: 'none', border: 'none', color: '#9ca3af',
+                      background: 'none', border: 'none', color: '#b0b7c3',
                       cursor: 'pointer', fontSize: '12px', fontWeight: 600,
                       padding: '4px 0',
                     }}
@@ -652,9 +652,9 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                   {historyOpen && (
                     <div style={{ marginTop: '8px' }}>
                       {historyLoading ? (
-                        <div style={{ fontSize: '11px', color: '#6b7280', padding: '8px 0' }}>Lade...</div>
+                        <div style={{ fontSize: '11px', color: '#b0b7c3', padding: '8px 0' }}>Lade...</div>
                       ) : history.length === 0 ? (
-                        <div style={{ fontSize: '11px', color: '#6b7280', padding: '8px 0' }}>
+                        <div style={{ fontSize: '11px', color: '#b0b7c3', padding: '8px 0' }}>
                           Keine History-Einträge vorhanden.
                           {' '}Tipp: Führe zuerst das SQL-Skript <code style={{ color: '#60a5fa' }}>supabase-content-history.sql</code> aus.
                         </div>
@@ -676,7 +676,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                                 <div style={{ color: '#c0c0c0', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {h.version_label || h.source}
                                 </div>
-                                <div style={{ color: '#6b7280', fontSize: '10px' }}>
+                                <div style={{ color: '#b0b7c3', fontSize: '10px' }}>
                                   {new Date(h.created_at).toLocaleString('de-DE')} · {h.source}
                                 </div>
                               </div>
@@ -743,7 +743,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-              <div style={{ fontSize: '11px', color: '#6b7280' }}>
+              <div style={{ fontSize: '11px', color: '#b0b7c3' }}>
                 {selectedCustomerId
                   ? `Ziel: ${websites.find(w => w.customer_id === selectedCustomerId)?.site_name} (${selectedCustomerId})`
                   : 'Bitte einen Kunden auswählen'}
@@ -754,7 +754,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                   style={{
                     padding: '8px 16px', borderRadius: '6px',
                     border: '1px solid #3d3d4d', backgroundColor: 'transparent',
-                    color: '#9ca3af', cursor: 'pointer', fontSize: '13px',
+                    color: '#b0b7c3', cursor: 'pointer', fontSize: '13px',
                   }}
                 >
                   Abbrechen
@@ -766,7 +766,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                     display: 'flex', alignItems: 'center', gap: '6px',
                     padding: '8px 20px', borderRadius: '6px', border: 'none',
                     backgroundColor: (!selectedCustomerId || !jsonValid || saving) ? '#2d2d3d' : '#3b82f6',
-                    color: (!selectedCustomerId || !jsonValid || saving) ? '#6b7280' : '#ffffff',
+                    color: (!selectedCustomerId || !jsonValid || saving) ? '#b0b7c3' : '#ffffff',
                     cursor: (!selectedCustomerId || !jsonValid || saving) ? 'default' : 'pointer',
                     fontSize: '13px', fontWeight: 600,
                     transition: 'all 0.15s',

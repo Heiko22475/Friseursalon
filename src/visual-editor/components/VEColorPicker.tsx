@@ -70,14 +70,14 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
   const neutrals = [
     { hex: '#ffffff', label: 'Weiß' },
     { hex: '#f3f4f6', label: 'Hellgrau' },
-    { hex: '#9ca3af', label: 'Grau' },
+    { hex: '#b0b7c3', label: 'Grau' },
     { hex: '#374151', label: 'Dunkelgrau' },
     { hex: '#000000', label: 'Schwarz' },
   ];
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#9ca3af' }}>
+      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#b0b7c3' }}>
         {label}
       </label>
 
@@ -162,7 +162,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
                   backgroundColor: !value ? '#2563eb22' : '#2d2d3d',
                   border: !value ? '1px solid #3b82f6' : '1px solid #3d3d4d',
                   borderRadius: '4px',
-                  color: '#9ca3af',
+                  color: '#b0b7c3',
                   cursor: 'pointer',
                   fontSize: '11px',
                   display: 'flex',
@@ -177,7 +177,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
             {/* Theme Colors */}
             {swatches.length > 0 && (
               <div style={{ marginBottom: '10px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', marginBottom: '6px', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
                   Theme-Farben
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -209,7 +209,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Neutral Colors */}
             <div style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Neutral
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
@@ -240,7 +240,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Custom Color */}
             <div>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Eigene Farbe
               </div>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>

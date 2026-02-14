@@ -51,7 +51,7 @@ const btnStyle: React.CSSProperties = {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -60,7 +60,7 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 const Toggle: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({ label, checked, onChange }) => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-    <span style={{ fontSize: '11px', color: '#9ca3af' }}>{label}</span>
+    <span style={{ fontSize: '11px', color: '#b0b7c3' }}>{label}</span>
     <button
       onClick={() => onChange(!checked)}
       style={{
@@ -104,7 +104,7 @@ const Collapsible: React.FC<{ title: string; children: React.ReactNode; defaultO
           padding: '6px 8px',
           backgroundColor: '#2d2d3d',
           border: 'none',
-          color: '#9ca3af',
+          color: '#b0b7c3',
           fontSize: '11px',
           fontWeight: 600,
           cursor: 'pointer',

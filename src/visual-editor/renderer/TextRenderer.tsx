@@ -171,7 +171,7 @@ const InlineTextEditor: React.FC<{
               backgroundColor: editor.isActive(key) ? '#3b82f6' : 'transparent',
               border: 'none',
               borderRadius: '3px',
-              color: editor.isActive(key) ? '#fff' : '#9ca3af',
+              color: editor.isActive(key) ? '#fff' : '#b0b7c3',
               fontSize: '12px',
               cursor: 'pointer',
               ...style,

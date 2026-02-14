@@ -141,7 +141,7 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
       {/* Header */}
       <div style={{
         fontSize: '10px',
-        color: '#6b7280',
+        color: '#b0b7c3',
         marginBottom: '8px',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
@@ -214,7 +214,7 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
               backgroundColor: autoActive ? '#3b82f6' : '#2d2d3d',
               border: `1px solid ${autoActive ? '#3b82f6' : '#3d3d4d'}`,
               borderRadius: '4px',
-              color: autoActive ? '#fff' : '#9ca3af',
+              color: autoActive ? '#fff' : '#b0b7c3',
               fontSize: '11px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -244,7 +244,7 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
                   backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
                   border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
                   borderRadius: '3px',
-                  color: isActive ? '#fff' : '#9ca3af',
+                  color: isActive ? '#fff' : '#b0b7c3',
                   fontSize: '11px',
                   cursor: 'pointer',
                   fontWeight: isActive ? 600 : 400,
@@ -291,7 +291,7 @@ const ClickableSizeValue: React.FC<{
     >
       <span style={{
         fontSize: '9px',
-        color: '#6b7280',
+        color: '#b0b7c3',
         textTransform: 'uppercase',
         letterSpacing: '0.04em',
         fontWeight: 500,
@@ -301,7 +301,7 @@ const ClickableSizeValue: React.FC<{
       <span style={{
         fontSize: '12px',
         fontWeight: active ? 700 : 500,
-        color: active ? '#3b82f6' : hasValue ? '#d1d5db' : '#4a4a5a',
+        color: active ? '#3b82f6' : hasValue ? '#d1d5db' : '#9ca3af',
       }}>
         {display}
       </span>
@@ -313,7 +313,7 @@ const ClickableSizeValue: React.FC<{
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -416,7 +416,7 @@ export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange }) =>
             onChange={(e) => onChange('opacity', parseFloat(e.target.value))}
             style={{ flex: 1, accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '11px', color: '#9ca3af', width: '36px', textAlign: 'right' }}>
+          <span style={{ fontSize: '11px', color: '#b0b7c3', width: '36px', textAlign: 'right' }}>
             {Math.round((styles.opacity ?? 1) * 100)}%
           </span>
         </div>

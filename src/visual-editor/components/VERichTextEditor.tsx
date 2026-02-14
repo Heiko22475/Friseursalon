@@ -54,7 +54,7 @@ const ToolbarButton: React.FC<{
       border: 'none',
       borderRadius: '3px',
       cursor: disabled ? 'default' : 'pointer',
-      color: active ? '#fff' : disabled ? '#4a4a5a' : '#9ca3af',
+      color: active ? '#fff' : disabled ? '#9ca3af' : '#b0b7c3',
       transition: 'all 0.1s',
       opacity: disabled ? 0.5 : 1,
     }}
@@ -92,7 +92,7 @@ const LinkDialog: React.FC<{
       padding: '8px',
       boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
-      <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ fontSize: '10px', color: '#9ca3af', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Link URL
       </div>
       <div style={{ display: 'flex', gap: '4px' }}>
@@ -141,7 +141,7 @@ const LinkDialog: React.FC<{
             backgroundColor: '#2d2d3d',
             border: '1px solid #3d3d4d',
             borderRadius: '4px',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             fontSize: '11px',
             cursor: 'pointer',
           }}
@@ -302,7 +302,7 @@ export const VERichTextEditor: React.FC<VERichTextEditorProps> = ({ value, onCha
           bottom: '10px',
           left: '10px',
           fontSize: '12px',
-          color: '#4a4a5a',
+          color: '#9ca3af',
           pointerEvents: 'none',
         }}>
           {placeholder}

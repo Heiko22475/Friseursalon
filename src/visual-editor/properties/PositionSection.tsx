@@ -30,7 +30,7 @@ const POSITION_OPTIONS: { value: PositionType; label: string; icon: string; desc
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -139,7 +139,7 @@ const InsetVisual: React.FC<{
             justifyContent: 'center',
           }}
         >
-          <span style={{ fontSize: '9px', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '9px', color: '#b0b7c3', fontWeight: 600, textTransform: 'uppercase' }}>
             {posType.slice(0, 3)}
           </span>
         </div>
@@ -272,7 +272,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
                 style={{
                   fontSize: '9px',
                   fontWeight: isActive ? 600 : 400,
-                  color: isActive ? '#ffffff' : '#9ca3af',
+                  color: isActive ? '#ffffff' : '#b0b7c3',
                   lineHeight: 1,
                 }}
               >
@@ -294,7 +294,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
             marginBottom: '10px',
           }}
         >
-          <span style={{ fontSize: '10px', color: '#6b7280', lineHeight: 1.4 }}>
+          <span style={{ fontSize: '10px', color: '#b0b7c3', lineHeight: 1.4 }}>
             {POSITION_OPTIONS.find((o) => o.value === currentPosition)?.description}
           </span>
         </div>
@@ -330,7 +330,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
 
           {/* Quick inset presets */}
           <div style={{ marginTop: '4px' }}>
-            <label style={{ fontSize: '10px', color: '#4a4a5a', display: 'block', marginBottom: '4px' }}>
+            <label style={{ fontSize: '10px', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>
               Schnell-Presets
             </label>
             <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
@@ -413,7 +413,7 @@ const PresetButton: React.FC<{
       backgroundColor: '#2d2d3d',
       border: `1px solid ${danger ? '#ef444440' : '#3d3d4d'}`,
       borderRadius: '3px',
-      color: danger ? '#f87171' : '#9ca3af',
+      color: danger ? '#f87171' : '#b0b7c3',
       fontSize: '10px',
       cursor: 'pointer',
       fontWeight: 500,

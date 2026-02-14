@@ -60,7 +60,7 @@ export const BodyRenderer: React.FC<BodyRendererProps> = ({ element, viewport, s
             alignItems: 'center',
             justifyContent: 'center',
             padding: '80px 40px',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             fontSize: '16px',
             textAlign: 'center',
             gap: '8px',

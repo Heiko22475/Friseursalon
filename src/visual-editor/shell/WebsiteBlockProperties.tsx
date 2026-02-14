@@ -53,7 +53,7 @@ const Accordion: React.FC<{
 // ===== FIELD COMPONENTS =====
 
 const FieldLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <label style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
+  <label style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
     {children}
   </label>
 );
@@ -134,7 +134,7 @@ const NumberInput: React.FC<{
           fontSize: '12px',
         }}
       />
-      {suffix && <span style={{ fontSize: '11px', color: '#6b7280', flexShrink: 0 }}>{suffix}</span>}
+      {suffix && <span style={{ fontSize: '11px', color: '#b0b7c3', flexShrink: 0 }}>{suffix}</span>}
     </div>
   </div>
 );
@@ -320,7 +320,7 @@ const HeroBlockEditor: React.FC<{
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600 }}>Text {idx + 1}</span>
+              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>Text {idx + 1}</span>
               <button
                 onClick={() => {
                   const newTexts = texts.filter((_: any, i: number) => i !== idx);
@@ -392,7 +392,7 @@ const HeroBlockEditor: React.FC<{
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600 }}>Button {idx + 1}</span>
+              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>Button {idx + 1}</span>
             </div>
             <TextInput
               label="Text"
@@ -525,7 +525,7 @@ const GenericCardBlockEditor: React.FC<{
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600 }}>
+              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>
                 Karte {idx + 1}: {card.title || '(kein Titel)'}
               </span>
               <button

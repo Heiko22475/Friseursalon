@@ -59,7 +59,7 @@ export class VEErrorBoundary extends React.Component<Props, State> {
           <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#ef4444' }}>
             Ein Fehler ist aufgetreten
           </h3>
-          <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af', textAlign: 'center', maxWidth: '400px' }}>
+          <p style={{ margin: 0, fontSize: '13px', color: '#b0b7c3', textAlign: 'center', maxWidth: '400px' }}>
             {this.state.error?.message || 'Unbekannter Fehler im Visual Editor.'}
           </p>
           <button

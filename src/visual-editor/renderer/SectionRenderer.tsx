@@ -65,7 +65,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewp
             padding: '40px',
             border: '2px dashed #d1d5db',
             borderRadius: '8px',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             textAlign: 'center',
             fontSize: '14px',
             width: '100%',

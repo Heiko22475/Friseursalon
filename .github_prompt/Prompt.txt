@@ -50,3 +50,12 @@ aber im VE Editor starten die Texte Linksbündig an der Mitte der SEite.
 investigieren. 
 
 
+Erstelle einen Plan unter .github_prompts für die Migration weiterer Features von Webflow. 
+Zunächst Elemente wie Layout (Grid, Columns), uws. Alles was fehlt. 
+Zu jedem Element benötige ich die gleichen Eigenschaften wie bei Webflow. 
+Nebenbei pflegen wir die create_json.md. 
+
+
+
+
+

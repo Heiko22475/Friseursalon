@@ -98,7 +98,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
         border: 'none',
         borderRadius: '4px',
         cursor: disabled ? 'default' : 'pointer',
-        color: disabled ? '#4a4a5a' : danger ? '#ef4444' : '#d1d5db',
+        color: disabled ? '#9ca3af' : danger ? '#ef4444' : '#d1d5db',
         fontSize: '12px',
         fontFamily: 'inherit',
         textAlign: 'left',
@@ -118,7 +118,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
         width: '16px',
         justifyContent: 'center',
         flexShrink: 0,
-        color: disabled ? '#4a4a5a' : danger ? '#ef4444' : '#9ca3af',
+        color: disabled ? '#9ca3af' : danger ? '#ef4444' : '#b0b7c3',
       }}>
         {icon}
       </span>
@@ -126,7 +126,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
       {shortcut && (
         <span style={{
           fontSize: '10px',
-          color: '#6b7280',
+          color: '#9ca3af',
           fontFamily: 'monospace',
           letterSpacing: '0.02em',
         }}>
@@ -234,7 +234,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        color: '#6b7280',
+        color: '#9ca3af',
         borderBottom: '1px solid #2d2d3d',
         marginBottom: '4px',
       }}>

@@ -74,6 +74,8 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   if (props.alignSelf) css.alignSelf = props.alignSelf;
   if (props.flexGrow !== undefined) css.flexGrow = props.flexGrow;
   if (props.flexShrink !== undefined) css.flexShrink = props.flexShrink;
+  if (props.flexBasis !== undefined) css.flexBasis = resolveSizeOrNumber(props.flexBasis);
+  if (props.order !== undefined) css.order = props.order;
   if (props.gap) css.gap = sizeValueToCSS(props.gap);
   if (props.rowGap) css.rowGap = sizeValueToCSS(props.rowGap);
   if (props.columnGap) css.columnGap = sizeValueToCSS(props.columnGap);
@@ -81,8 +83,14 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   // Grid
   if (props.gridTemplateColumns) css.gridTemplateColumns = props.gridTemplateColumns;
   if (props.gridTemplateRows) css.gridTemplateRows = props.gridTemplateRows;
+  if (props.gridAutoFlow) css.gridAutoFlow = props.gridAutoFlow;
+  if (props.gridAutoColumns) css.gridAutoColumns = props.gridAutoColumns;
+  if (props.gridAutoRows) css.gridAutoRows = props.gridAutoRows;
+  if (props.justifyItems) css.justifyItems = props.justifyItems;
+  if (props.alignContent) css.alignContent = props.alignContent;
   if (props.gridColumn) css.gridColumn = props.gridColumn;
   if (props.gridRow) css.gridRow = props.gridRow;
+  if (props.justifySelf) css.justifySelf = props.justifySelf;
 
   // Size
   if (props.width !== undefined) css.width = resolveSizeOrNumber(props.width);
@@ -118,8 +126,10 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   if (props.letterSpacing) css.letterSpacing = sizeValueToCSS(props.letterSpacing);
   if (props.textAlign) css.textAlign = props.textAlign;
   if (props.color) css.color = resolveColor(props.color);
+  if (props.fontStyle) css.fontStyle = props.fontStyle;
   if (props.textTransform) css.textTransform = props.textTransform;
   if (props.textDecoration) css.textDecoration = props.textDecoration;
+  if (props.whiteSpace) css.whiteSpace = props.whiteSpace;
 
   // Background
   if (props.backgroundColor) css.backgroundColor = resolveColor(props.backgroundColor);

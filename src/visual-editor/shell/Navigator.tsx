@@ -82,7 +82,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: isActive ? '#2563eb33' : 'transparent',
-                color: isActive ? '#60a5fa' : '#6b7280',
+                color: isActive ? '#60a5fa' : '#b0b7c3',
                 transition: 'all 0.15s',
               }}
             >
@@ -112,7 +112,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#9ca3af',
+              color: '#b0b7c3',
               borderBottom: '1px solid #2d2d3d',
             }}
           >

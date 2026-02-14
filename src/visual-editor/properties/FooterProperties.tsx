@@ -47,7 +47,7 @@ const selectStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: '11px',
-  color: '#6b7280',
+  color: '#b0b7c3',
   marginBottom: '4px',
   display: 'block',
 };
@@ -66,7 +66,7 @@ const btnStyle: React.CSSProperties = {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -75,7 +75,7 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 const Toggle: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({ label, checked, onChange }) => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-    <span style={{ fontSize: '11px', color: '#9ca3af' }}>{label}</span>
+    <span style={{ fontSize: '11px', color: '#b0b7c3' }}>{label}</span>
     <button
       onClick={() => onChange(!checked)}
       style={{
@@ -119,7 +119,7 @@ const Collapsible: React.FC<{ title: string; children: React.ReactNode; defaultO
           padding: '6px 8px',
           backgroundColor: '#2d2d3d',
           border: 'none',
-          color: '#9ca3af',
+          color: '#b0b7c3',
           fontSize: '11px',
           fontWeight: 600,
           cursor: 'pointer',
@@ -477,7 +477,7 @@ const ColumnItem: React.FC<{
           backgroundColor: '#2d2d3d',
           cursor: 'pointer',
           fontSize: '11px',
-          color: '#9ca3af',
+          color: '#b0b7c3',
         }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -536,12 +536,12 @@ const ColumnItem: React.FC<{
               <Toggle label="Adresse" checked={(column as FooterContactColumn).showAddress} onChange={(v) => onUpdate({ ...column, showAddress: v } as FooterContactColumn)} />
               <Toggle label="Telefon" checked={(column as FooterContactColumn).showPhone} onChange={(v) => onUpdate({ ...column, showPhone: v } as FooterContactColumn)} />
               <Toggle label="E-Mail" checked={(column as FooterContactColumn).showEmail} onChange={(v) => onUpdate({ ...column, showEmail: v } as FooterContactColumn)} />
-              <p style={{ fontSize: '10px', color: '#6b7280' }}>Daten aus Kontakt-Einstellungen.</p>
+              <p style={{ fontSize: '10px', color: '#b0b7c3' }}>Daten aus Kontakt-Einstellungen.</p>
             </>
           )}
 
           {column.type === 'hours' && (
-            <p style={{ fontSize: '10px', color: '#6b7280' }}>Zeiten aus Kontakt-Einstellungen.</p>
+            <p style={{ fontSize: '10px', color: '#b0b7c3' }}>Zeiten aus Kontakt-Einstellungen.</p>
           )}
         </div>
       )}

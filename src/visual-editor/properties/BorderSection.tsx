@@ -30,7 +30,7 @@ export const BorderSection: React.FC<BorderSectionProps> = ({ styles, onChange }
           />
         </div>
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '3px' }}>Stil</label>
+          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Stil</label>
           <select
             value={styles.borderStyle ?? ''}
             onChange={(e) => onChange('borderStyle', e.target.value || undefined)}
@@ -62,7 +62,7 @@ export const BorderSection: React.FC<BorderSectionProps> = ({ styles, onChange }
 
       {/* Border Radius */}
       <div style={{ marginTop: '8px' }}>
-        <label style={{ fontSize: '11px', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
+        <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
           Ecken-Radius
         </label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>

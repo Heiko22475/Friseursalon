@@ -26,15 +26,25 @@ export interface StyleProperties {
   alignSelf?: 'auto' | 'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline';
   flexGrow?: number;
   flexShrink?: number;
+  flexBasis?: SizeValueOrAuto;
+  order?: number;
   gap?: SizeValue;
   rowGap?: SizeValue;
   columnGap?: SizeValue;
 
-  // Grid
+  // Grid (Parent)
   gridTemplateColumns?: string;
   gridTemplateRows?: string;
+  gridAutoFlow?: 'row' | 'column' | 'dense' | 'row dense' | 'column dense';
+  gridAutoColumns?: string;
+  gridAutoRows?: string;
+  justifyItems?: 'start' | 'center' | 'end' | 'stretch';
+  alignContent?: 'start' | 'center' | 'end' | 'stretch' | 'space-between' | 'space-around' | 'space-evenly';
+
+  // Grid (Child)
   gridColumn?: string;
   gridRow?: string;
+  justifySelf?: 'auto' | 'start' | 'center' | 'end' | 'stretch';
 
   // Size
   width?: SizeValueOrAuto;
@@ -62,8 +72,10 @@ export interface StyleProperties {
   letterSpacing?: SizeValue;
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   color?: ColorValue;
+  fontStyle?: 'normal' | 'italic';
   textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   textDecoration?: 'none' | 'underline' | 'line-through';
+  whiteSpace?: 'normal' | 'nowrap' | 'pre' | 'pre-wrap' | 'pre-line';
 
   // Background
   backgroundColor?: ColorValue;

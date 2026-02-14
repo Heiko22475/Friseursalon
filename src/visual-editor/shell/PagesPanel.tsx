@@ -132,7 +132,7 @@ const PageItem: React.FC<PageItemProps> = ({
         <GripVertical
           size={14}
           style={{
-            color: '#4a4a5a',
+            color: '#9ca3af',
             flexShrink: 0,
             opacity: showActions ? 1 : 0,
             transition: 'opacity 0.15s',
@@ -153,9 +153,9 @@ const PageItem: React.FC<PageItemProps> = ({
           }}
         >
           {isHomePage ? (
-            <Home size={14} style={{ color: isActive ? '#60a5fa' : '#9ca3af' }} />
+            <Home size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3' }} />
           ) : (
-            <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#9ca3af' }} />
+            <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3' }} />
           )}
         </div>
 
@@ -219,7 +219,7 @@ const PageItem: React.FC<PageItemProps> = ({
                   border: '1px solid #3b82f6',
                   borderRadius: '4px',
                   padding: '2px 6px',
-                  color: '#9ca3af',
+                  color: '#b0b7c3',
                   fontSize: '11px',
                   outline: 'none',
                   fontFamily: 'monospace',
@@ -231,7 +231,7 @@ const PageItem: React.FC<PageItemProps> = ({
             <div
               style={{
                 fontSize: '11px',
-                color: '#6b7280',
+                color: '#b0b7c3',
                 fontFamily: 'monospace',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -349,7 +349,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, title, onClick, dange
       border: 'none',
       cursor: disabled ? 'default' : 'pointer',
       backgroundColor: 'transparent',
-      color: disabled ? '#3d3d4d' : danger ? '#ef4444' : '#9ca3af',
+      color: disabled ? '#3d3d4d' : danger ? '#ef4444' : '#b0b7c3',
       transition: 'all 0.15s',
       opacity: disabled ? 0.4 : 1,
     }}
@@ -399,13 +399,13 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
         backgroundColor: '#1a1a2a',
       }}
     >
-      <div style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginBottom: '8px' }}>
+      <div style={{ fontSize: '12px', fontWeight: 600, color: '#b0b7c3', marginBottom: '8px' }}>
         Neue Seite
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div>
-          <label style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
+          <label style={{ fontSize: '11px', color: '#b0b7c3', marginBottom: '2px', display: 'block' }}>
             Seitenname
           </label>
           <input
@@ -432,7 +432,7 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
         </div>
 
         <div>
-          <label style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px', display: 'block' }}>
+          <label style={{ fontSize: '11px', color: '#b0b7c3', marginBottom: '2px', display: 'block' }}>
             Route
           </label>
           <input
@@ -449,7 +449,7 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
               background: '#2d2d3d',
               border: '1px solid #3d3d4d',
               borderRadius: '4px',
-              color: '#9ca3af',
+              color: '#b0b7c3',
               fontSize: '13px',
               fontFamily: 'monospace',
               outline: 'none',
@@ -466,7 +466,7 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
               borderRadius: '4px',
               border: '1px solid #3d3d4d',
               background: 'transparent',
-              color: '#9ca3af',
+              color: '#b0b7c3',
               fontSize: '12px',
               cursor: 'pointer',
             }}
@@ -481,7 +481,7 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
               borderRadius: '4px',
               border: 'none',
               background: name.trim() ? '#3b82f6' : '#2d2d3d',
-              color: name.trim() ? '#ffffff' : '#6b7280',
+              color: name.trim() ? '#ffffff' : '#b0b7c3',
               fontSize: '12px',
               fontWeight: 500,
               cursor: name.trim() ? 'pointer' : 'default',
@@ -584,7 +584,7 @@ export const PagesPanel: React.FC = () => {
           padding: '8px 12px',
         }}
       >
-        <span style={{ fontSize: '12px', color: '#6b7280' }}>
+        <span style={{ fontSize: '12px', color: '#b0b7c3' }}>
           {pages.length} {pages.length === 1 ? 'Seite' : 'Seiten'}
         </span>
         <button

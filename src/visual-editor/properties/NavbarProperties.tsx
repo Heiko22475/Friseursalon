@@ -34,7 +34,7 @@ const inputStyle: React.CSSProperties = {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '90px', flexShrink: 0, fontSize: '11px', color: '#6b7280' }}>{label}</label>
+    <label style={{ width: '90px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -98,7 +98,7 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
             step={1}
             style={{ ...inputStyle, width: '80px' }}
           />
-          <span style={{ fontSize: '11px', color: '#6b7280' }}>px</span>
+          <span style={{ fontSize: '11px', color: '#b0b7c3' }}>px</span>
         </div>
       </Row>
 
@@ -109,7 +109,7 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
         backgroundColor: '#2d2d3d',
         borderRadius: '4px',
         fontSize: '11px',
-        color: '#9ca3af',
+        color: '#b0b7c3',
       }}>
         {element.children?.length || 0} Kind-Element(e)
       </div>

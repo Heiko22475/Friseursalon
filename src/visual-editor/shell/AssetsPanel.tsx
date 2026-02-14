@@ -110,7 +110,7 @@ export const AssetsPanel: React.FC = () => {
               borderRadius: '4px',
               border: 'none',
               backgroundColor: activeTab === tab ? '#2563eb33' : 'transparent',
-              color: activeTab === tab ? '#60a5fa' : '#6b7280',
+              color: activeTab === tab ? '#60a5fa' : '#b0b7c3',
               fontSize: '11px',
               fontWeight: activeTab === tab ? 600 : 400,
               cursor: 'pointer',
@@ -139,7 +139,7 @@ export const AssetsPanel: React.FC = () => {
             borderRadius: '4px',
           }}
         >
-          <Search size={12} style={{ color: '#6b7280', flexShrink: 0 }} />
+          <Search size={12} style={{ color: '#b0b7c3', flexShrink: 0 }} />
           <input
             type="text"
             value={search}
@@ -167,11 +167,11 @@ export const AssetsPanel: React.FC = () => {
         className="ve-canvas-scroll"
       >
         {loading ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+          <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
             Laden...
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+          <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
             {search ? 'Keine Ergebnisse.' : activeTab === 'user' ? 'Keine Medien vorhanden.' : 'Keine Stock Fotos.'}
           </div>
         ) : (
@@ -254,7 +254,7 @@ export const AssetsPanel: React.FC = () => {
             alignItems: 'center',
             gap: '4px',
             fontSize: '11px',
-            color: '#6b7280',
+            color: '#b0b7c3',
             textDecoration: 'none',
           }}
         >

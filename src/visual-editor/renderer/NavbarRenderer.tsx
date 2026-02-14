@@ -104,7 +104,7 @@ export const NavbarRenderer: React.FC<NavbarRendererProps> = ({
             padding: '20px 40px',
             border: '2px dashed #d1d5db',
             borderRadius: '8px',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             textAlign: 'center',
             fontSize: '14px',
             width: '100%',

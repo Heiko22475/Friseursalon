@@ -279,7 +279,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           <span style={{
             display: 'flex',
             alignItems: 'center',
-            color: '#4a4a5a',
+            color: '#9ca3af',
             flexShrink: 0,
             cursor: 'grab',
           }}>
@@ -299,7 +299,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6b7280',
+            color: '#b0b7c3',
             flexShrink: 0,
           }}
         >
@@ -309,7 +309,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         </span>
 
         {/* Icon */}
-        <span style={{ color: isSelected ? '#60a5fa' : '#9ca3af', flexShrink: 0, display: 'flex' }}>
+        <span style={{ color: isSelected ? '#60a5fa' : '#b0b7c3', flexShrink: 0, display: 'flex' }}>
           {typeIcons[element.type]}
         </span>
 

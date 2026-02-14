@@ -476,3 +476,132 @@ Für eine konsistente Optik sollten Sektionen abwechselnd den Primary und Second
 | Block ohne `"content": {}` | Immer `"content": {}` anhängen |
 | Footer-ID ohne "footer" | `"id": "block-footer"` (damit Legacy-Footer unterdrückt wird) |
 | Legacy Block-Typ `"type": "services"` | `"type": "generic-card"` verwenden |
+
+---
+
+## 13. Navbar: Vollständige Style-Properties-Referenz
+
+Navbar-, Container-, Text-, Button- und Image-Elemente nutzen das gleiche Style-System des Visual Editors.
+Hier alle unterstützten Felder in `style.desktop` (sowie `style.tablet` / `style.mobile` für Overrides):
+
+### Layout
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `display` | `"block"` \| `"flex"` \| `"grid"` \| `"inline"` \| `"inline-block"` \| `"inline-flex"` \| `"none"` | `"flex"` |
+| `flexDirection` | `"row"` \| `"column"` \| `"row-reverse"` \| `"column-reverse"` | `"row"` |
+| `justifyContent` | `"flex-start"` \| `"center"` \| `"flex-end"` \| `"space-between"` \| `"space-around"` \| `"space-evenly"` | `"space-between"` |
+| `alignItems` | `"flex-start"` \| `"center"` \| `"flex-end"` \| `"stretch"` \| `"baseline"` | `"center"` |
+| `flexWrap` | `"nowrap"` \| `"wrap"` \| `"wrap-reverse"` | `"nowrap"` |
+| `gap` | SizeValue | `{ "value": 16, "unit": "px" }` |
+| `rowGap` | SizeValue | `{ "value": 8, "unit": "px" }` |
+| `columnGap` | SizeValue | `{ "value": 24, "unit": "px" }` |
+| `alignSelf` | `"auto"` \| `"flex-start"` \| `"center"` \| `"flex-end"` \| `"stretch"` \| `"baseline"` | `"center"` |
+| `flexGrow` | number | `1` |
+| `flexShrink` | number | `0` |
+
+### Grid (Parent)
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `gridTemplateColumns` | string | `"1fr 1fr 1fr"` |
+| `gridTemplateRows` | string | `"auto 1fr"` |
+| `gridColumn` | string (Child) | `"1 / 3"` |
+| `gridRow` | string (Child) | `"1 / 2"` |
+
+### Größe
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `width` | SizeValueOrAuto | `{ "value": 100, "unit": "%" }` oder `"auto"` |
+| `height` | SizeValueOrAuto | `{ "value": 400, "unit": "px" }` |
+| `minWidth` | SizeValue | `{ "value": 200, "unit": "px" }` |
+| `maxWidth` | SizeValue | `{ "value": 1200, "unit": "px" }` |
+| `minHeight` | SizeValue | `{ "value": 40, "unit": "px" }` |
+| `maxHeight` | SizeValue | `{ "value": 800, "unit": "px" }` |
+
+### Spacing
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `paddingTop` | SizeValue | `{ "value": 16, "unit": "px" }` |
+| `paddingRight` | SizeValue | `{ "value": 24, "unit": "px" }` |
+| `paddingBottom` | SizeValue | `{ "value": 16, "unit": "px" }` |
+| `paddingLeft` | SizeValue | `{ "value": 24, "unit": "px" }` |
+| `marginTop` | SizeValueOrAuto | `{ "value": 0, "unit": "px" }` oder `"auto"` |
+| `marginRight` | SizeValueOrAuto | `"auto"` |
+| `marginBottom` | SizeValueOrAuto | `{ "value": 32, "unit": "px" }` |
+| `marginLeft` | SizeValueOrAuto | `"auto"` |
+
+### Typografie
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `fontFamily` | string (Font-ID) | `"montserrat"` |
+| `fontSize` | SizeValue | `{ "value": 16, "unit": "px" }` |
+| `fontWeight` | number | `700` |
+| `lineHeight` | SizeValue | `{ "value": 1.5, "unit": "em" }` |
+| `letterSpacing` | SizeValue | `{ "value": 2, "unit": "px" }` |
+| `textAlign` | `"left"` \| `"center"` \| `"right"` \| `"justify"` | `"center"` |
+| `textTransform` | `"none"` \| `"uppercase"` \| `"lowercase"` \| `"capitalize"` | `"uppercase"` |
+| `textDecoration` | `"none"` \| `"underline"` \| `"line-through"` | `"none"` |
+| `whiteSpace` | `"normal"` \| `"nowrap"` \| `"pre"` \| `"pre-wrap"` | `"nowrap"` |
+| `color` | ColorValue | `{ "kind": "custom", "hex": "#2D2926" }` |
+
+### Hintergrund
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `backgroundColor` | ColorValue | `{ "kind": "custom", "hex": "#F9F7F2" }` |
+| `backgroundImage` | string (URL) | `"url(https://...)"` |
+| `backgroundSize` | `"cover"` \| `"contain"` \| `"auto"` | `"cover"` |
+| `backgroundPosition` | string | `"center center"` |
+| `backgroundRepeat` | `"no-repeat"` \| `"repeat"` \| `"repeat-x"` \| `"repeat-y"` | `"no-repeat"` |
+
+### Border
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `borderWidth` | SizeValue | `{ "value": 1, "unit": "px" }` |
+| `borderStyle` | `"none"` \| `"solid"` \| `"dashed"` \| `"dotted"` | `"solid"` |
+| `borderColor` | ColorValue | `{ "kind": "custom", "hex": "#DED9D0" }` |
+| `borderRadius` | SizeValue | `{ "value": 8, "unit": "px" }` |
+| `borderTopWidth` | SizeValue | `{ "value": 1, "unit": "px" }` |
+| `borderRightWidth` | SizeValue | `{ "value": 0, "unit": "px" }` |
+| `borderBottomWidth` | SizeValue | `{ "value": 1, "unit": "px" }` |
+| `borderLeftWidth` | SizeValue | `{ "value": 0, "unit": "px" }` |
+| `borderTopLeftRadius` | SizeValue | `{ "value": 8, "unit": "px" }` |
+| `borderTopRightRadius` | SizeValue | `{ "value": 0, "unit": "px" }` |
+| `borderBottomRightRadius` | SizeValue | `{ "value": 8, "unit": "px" }` |
+| `borderBottomLeftRadius` | SizeValue | `{ "value": 0, "unit": "px" }` |
+
+### Effekte & Position
+
+| Property | Typ | Beispiel |
+|----------|-----|---------|
+| `opacity` | number (0-1) | `0.9` |
+| `boxShadow` | string | `"0 4px 12px rgba(0,0,0,0.08)"` |
+| `overflow` | `"visible"` \| `"hidden"` \| `"scroll"` \| `"auto"` | `"hidden"` |
+| `overflowX` | same as overflow | `"hidden"` |
+| `overflowY` | same as overflow | `"auto"` |
+| `position` | `"static"` \| `"relative"` \| `"absolute"` \| `"fixed"` \| `"sticky"` | `"relative"` |
+| `top` | SizeValueOrAuto | `{ "value": 0, "unit": "px" }` |
+| `right` | SizeValueOrAuto | `"auto"` |
+| `bottom` | SizeValueOrAuto | `"auto"` |
+| `left` | SizeValueOrAuto | `{ "value": 0, "unit": "px" }` |
+| `zIndex` | number | `100` |
+| `cursor` | string | `"pointer"` |
+| `transform` | string | `"translateY(-50%)"` |
+| `objectFit` | `"contain"` \| `"cover"` \| `"fill"` \| `"none"` \| `"scale-down"` | `"cover"` |
+| `objectPosition` | string | `"center center"` |
+
+---
+
+## 14. Weiterführende Dokumente
+
+| Dokument | Pfad | Inhalt |
+|----------|------|--------|
+| Webflow-Migrations-Plan | `.github_prompt/webflow_migration_plan.md` | Geplante Features, fehlende Elemente & Style-Properties vs. Webflow |
+| Copilot Instructions | `.github/copilot-instructions.md` | Projekt-Überblick, Architektur, Coding-Guidelines |
+| VE Style-Types | `src/visual-editor/types/styles.ts` | TypeScript-Definitionen aller Style-Properties |
+| VE Element-Types | `src/visual-editor/types/elements.ts` | TypeScript-Definitionen aller VE-Elemente |

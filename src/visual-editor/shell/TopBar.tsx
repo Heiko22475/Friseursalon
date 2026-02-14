@@ -95,7 +95,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -118,13 +118,13 @@ export const TopBar: React.FC = () => {
         >
           {breadcrumbs.map((el, i) => (
             <React.Fragment key={el.id}>
-              {i > 0 && <span style={{ color: '#4a4a5a', margin: '0 2px' }}>/</span>}
+              {i > 0 && <span style={{ color: '#9ca3af', margin: '0 2px' }}>/</span>}
               <button
                 onClick={() => dispatch({ type: 'SELECT_ELEMENT', id: el.id })}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: i === breadcrumbs.length - 1 ? '#60a5fa' : '#9ca3af',
+                  color: i === breadcrumbs.length - 1 ? '#60a5fa' : '#b0b7c3',
                   cursor: 'pointer',
                   padding: '2px 4px',
                   borderRadius: '3px',
@@ -137,7 +137,7 @@ export const TopBar: React.FC = () => {
             </React.Fragment>
           ))}
           {breadcrumbs.length === 0 && (
-            <span style={{ color: '#6b7280' }}>{state.page.name}</span>
+            <span style={{ color: '#b0b7c3' }}>{state.page.name}</span>
           )}
         </div>
       </div>
@@ -162,11 +162,11 @@ export const TopBar: React.FC = () => {
           }}
           title="Seite wechseln"
         >
-          <FileText size={14} style={{ color: '#9ca3af' }} />
+          <FileText size={14} style={{ color: '#b0b7c3' }} />
           <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {state.page.name}
           </span>
-          <ChevronDown size={12} style={{ color: '#6b7280' }} />
+          <ChevronDown size={12} style={{ color: '#b0b7c3' }} />
         </button>
 
         {pageDropdownOpen && (
@@ -214,9 +214,9 @@ export const TopBar: React.FC = () => {
                   }}
                 >
                   {isHome ? (
-                    <Home size={14} style={{ color: isActive ? '#60a5fa' : '#6b7280', flexShrink: 0 }} />
+                    <Home size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3', flexShrink: 0 }} />
                   ) : (
-                    <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#6b7280', flexShrink: 0 }} />
+                    <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3', flexShrink: 0 }} />
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
@@ -229,7 +229,7 @@ export const TopBar: React.FC = () => {
                     </div>
                     <div style={{
                       fontSize: '10px',
-                      color: '#6b7280',
+                      color: '#b0b7c3',
                       fontFamily: 'monospace',
                     }}>
                       {p.route}
@@ -281,7 +281,7 @@ export const TopBar: React.FC = () => {
               border: 'none',
               cursor: 'pointer',
               backgroundColor: state.viewport === vp.key ? '#3b82f6' : 'transparent',
-              color: state.viewport === vp.key ? '#ffffff' : '#9ca3af',
+              color: state.viewport === vp.key ? '#ffffff' : '#b0b7c3',
               transition: 'all 0.15s',
             }}
           >
@@ -298,7 +298,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: state.undoStack.length > 0 ? '#9ca3af' : '#4a4a5a',
+            color: state.undoStack.length > 0 ? '#b0b7c3' : '#9ca3af',
             cursor: state.undoStack.length > 0 ? 'pointer' : 'default',
             padding: '4px',
             borderRadius: '4px',
@@ -315,7 +315,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: state.redoStack.length > 0 ? '#9ca3af' : '#4a4a5a',
+            color: state.redoStack.length > 0 ? '#b0b7c3' : '#9ca3af',
             cursor: state.redoStack.length > 0 ? 'pointer' : 'default',
             padding: '4px',
             borderRadius: '4px',
@@ -339,7 +339,7 @@ export const TopBar: React.FC = () => {
             borderRadius: '6px',
             border: '1px solid #3d3d4d',
             backgroundColor: 'transparent',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             cursor: 'pointer',
             fontSize: '12px',
             fontWeight: 500,
@@ -370,7 +370,7 @@ export const TopBar: React.FC = () => {
               : state.isDirty
               ? '#3b82f6'
               : '#2d2d3d',
-            color: isSaving || state.isDirty || saveStatus !== 'idle' ? '#ffffff' : '#6b7280',
+            color: isSaving || state.isDirty || saveStatus !== 'idle' ? '#ffffff' : '#b0b7c3',
             cursor: isSaving ? 'wait' : state.isDirty ? 'pointer' : 'default',
             fontSize: '13px',
             fontWeight: 500,

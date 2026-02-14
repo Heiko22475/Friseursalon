@@ -1,6 +1,6 @@
 // =====================================================
 // VISUAL EDITOR – PROPERTIES PANEL
-// Rechte Seite: Styling + Content Properties (~320px)
+// Rechte Seite: Styling + Content Properties (~370px)
 // Phase 2: Voll integrierte Sections mit Theme-Support
 // =====================================================
 
@@ -11,7 +11,7 @@ import type { StyleProperties } from '../types/styles';
 import { mergeStyles } from '../utils/styleResolver';
 
 // Section Components
-import { LayoutSection } from '../properties/LayoutSection';
+import { LayoutSection, FlexChildSection, GridChildSection } from '../properties/LayoutSection';
 import { SizeSection } from '../properties/SizeSection';
 import { TypographySection } from '../properties/TypographySection';
 import { BackgroundSection } from '../properties/BackgroundSection';
@@ -25,6 +25,7 @@ import { HeaderProperties } from '../properties/HeaderProperties';
 import { CardsProperties } from '../properties/CardsProperties';
 import { NavbarProperties } from '../properties/NavbarProperties';
 import { WebsiteBlockProperties } from './WebsiteBlockProperties';
+import { findParent } from '../utils/elementHelpers';
 import type { VEFooter, VEHeader, VECards, VENavbar, VEWebsiteBlock } from '../types/elements';
 
 // ===== ACCORDION SECTION =====
@@ -120,14 +121,14 @@ export const PropertiesPanel: React.FC = () => {
     return (
       <div
         style={{
-          width: '320px',
+          width: '370px',
           backgroundColor: '#1e1e2e',
           borderLeft: '1px solid #2d2d3d',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#6b7280',
+          color: '#b0b7c3',
           fontSize: '13px',
           flexShrink: 0,
           gap: '8px',
@@ -143,6 +144,14 @@ export const PropertiesPanel: React.FC = () => {
 
   // Check element types
   const isCards = selectedElement.type === 'Cards';
+
+  // Detect parent display mode for flex-child / grid-child sections
+  const parentElement = selectedElement.type !== 'Body'
+    ? findParent(state.page.body, selectedElement.id)
+    : null;
+  const parentMerged = parentElement ? mergeStyles(parentElement.styles, state.viewport) : {};
+  const parentIsFlex = parentMerged.display === 'flex' || parentMerged.display === 'inline-flex';
+  const parentIsGrid = parentMerged.display === 'grid';
 
   const updateStyle = (key: keyof StyleProperties, value: any) => {
     dispatch({
@@ -170,7 +179,7 @@ export const PropertiesPanel: React.FC = () => {
   const isNavbar = selectedElement.type === 'Navbar';
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
   const isWebsiteBlock = selectedElement.type === 'WebsiteBlock';
-  const typeColor = TYPE_COLORS[selectedElement.type] || '#6b7280';
+  const typeColor = TYPE_COLORS[selectedElement.type] || '#b0b7c3';
 
   // Check which sections have values
   const hasLayoutValues = !!(merged.display || merged.flexDirection || merged.justifyContent || merged.alignItems);
@@ -180,7 +189,7 @@ export const PropertiesPanel: React.FC = () => {
   const hasBgValues = !!(merged.backgroundColor || merged.backgroundImage);
   const hasBorderValues = !!(merged.borderWidth || merged.borderColor || merged.borderRadius);
   const hasPositionValues = !!(merged.position || merged.top || merged.right || merged.bottom || merged.left || merged.zIndex);
-  const hasEffectValues = !!(merged.boxShadow || merged.overflow);
+  const hasEffectValues = !!(merged.boxShadow || merged.overflow || merged.opacity !== undefined);
 
   // Viewport visibility: check if display is 'none' on current viewport
   const isHiddenOnViewport = (() => {
@@ -194,7 +203,7 @@ export const PropertiesPanel: React.FC = () => {
   return (
     <div
       style={{
-        width: '320px',
+        width: '370px',
         backgroundColor: '#1e1e2e',
         borderLeft: '1px solid #2d2d3d',
         display: 'flex',
@@ -239,7 +248,7 @@ export const PropertiesPanel: React.FC = () => {
                 padding: '4px',
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: selectedElement.type === 'Body' ? '#3d3d4d' : '#9ca3af',
+                color: selectedElement.type === 'Body' ? '#3d3d4d' : '#b0b7c3',
                 cursor: selectedElement.type === 'Body' ? 'default' : 'pointer',
                 borderRadius: '4px',
                 display: 'flex',
@@ -268,14 +277,14 @@ export const PropertiesPanel: React.FC = () => {
 
         {/* Viewport indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
-          {state.viewport === 'desktop' && <Monitor size={12} style={{ color: '#6b7280' }} />}
-          {state.viewport === 'tablet' && <Tablet size={12} style={{ color: '#6b7280' }} />}
-          {state.viewport === 'mobile' && <Smartphone size={12} style={{ color: '#6b7280' }} />}
-          <span style={{ fontSize: '11px', color: '#6b7280' }}>
+          {state.viewport === 'desktop' && <Monitor size={12} style={{ color: '#b0b7c3' }} />}
+          {state.viewport === 'tablet' && <Tablet size={12} style={{ color: '#b0b7c3' }} />}
+          {state.viewport === 'mobile' && <Smartphone size={12} style={{ color: '#b0b7c3' }} />}
+          <span style={{ fontSize: '11px', color: '#b0b7c3' }}>
             {state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'} Styles
           </span>
           {state.viewport !== 'desktop' && (
-            <span style={{ fontSize: '10px', color: '#4a4a5a', marginLeft: '4px' }}>
+            <span style={{ fontSize: '10px', color: '#9ca3af', marginLeft: '4px' }}>
               (erbt von Desktop)
             </span>
           )}
@@ -366,6 +375,30 @@ export const PropertiesPanel: React.FC = () => {
         {isContainer && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection title="Layout" isOpen={openSection === 'layout'} onToggle={() => toggleSection('layout')} hasValues={hasLayoutValues}>
             <LayoutSection styles={merged} onChange={updateStyle} />
+          </AccordionSection>
+        )}
+
+        {/* Flex Child (shown when parent is flex) */}
+        {parentIsFlex && !isHeaderFooter && !isWebsiteBlock && (
+          <AccordionSection
+            title="Flex Kind"
+            isOpen={openSection === 'flex-child'}
+            onToggle={() => toggleSection('flex-child')}
+            hasValues={!!(merged.flexGrow || merged.flexShrink || merged.flexBasis || merged.alignSelf || merged.order)}
+          >
+            <FlexChildSection styles={merged} onChange={updateStyle} />
+          </AccordionSection>
+        )}
+
+        {/* Grid Child (shown when parent is grid) */}
+        {parentIsGrid && !isHeaderFooter && !isWebsiteBlock && (
+          <AccordionSection
+            title="Grid Kind"
+            isOpen={openSection === 'grid-child'}
+            onToggle={() => toggleSection('grid-child')}
+            hasValues={!!(merged.gridColumn || merged.gridRow || merged.alignSelf || merged.justifySelf)}
+          >
+            <GridChildSection styles={merged} onChange={updateStyle} />
           </AccordionSection>
         )}
 

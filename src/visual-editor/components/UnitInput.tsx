@@ -88,7 +88,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
   if (compact) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <span style={{ fontSize: '10px', color: '#6b7280', textAlign: 'center' }}>{label}</span>
+        <span style={{ fontSize: '10px', color: '#9ca3af', textAlign: 'center' }}>{label}</span>
         <div style={{ display: 'flex', position: 'relative' }}>
           <input
             ref={inputRef}
@@ -120,7 +120,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
               backgroundColor: '#252535',
               border: '1px solid #3d3d4d',
               borderRadius: '0 4px 4px 0',
-              color: '#9ca3af',
+              color: '#b0b7c3',
               fontSize: '10px',
               cursor: 'pointer',
               minWidth: '26px',
@@ -173,7 +173,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
   // Standard layout (inline)
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#9ca3af' }}>
+      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#b0b7c3' }}>
         {label}
       </label>
       <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
@@ -206,7 +206,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
             backgroundColor: '#252535',
             border: '1px solid #3d3d4d',
             borderRadius: '0 4px 4px 0',
-            color: '#9ca3af',
+            color: '#b0b7c3',
             fontSize: '11px',
             cursor: 'pointer',
             minWidth: '36px',

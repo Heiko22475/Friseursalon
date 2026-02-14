@@ -4,6 +4,7 @@
 // =====================================================
 
 import type { ElementStyles } from './styles';
+import type { ColorValue } from '../../types/theme';
 
 // ===== ELEMENT TYPES =====
 
@@ -19,7 +20,12 @@ export type VEElementType =
   | 'Header'   // @deprecated – use Navbar instead
   | 'Footer'
   | 'ComponentInstance'
-  | 'WebsiteBlock';
+  | 'WebsiteBlock'
+  | 'Divider'
+  | 'Spacer'
+  | 'Icon'
+  | 'List'
+  | 'ListItem';
 
 // ===== TEXT STYLE PRESETS =====
 
@@ -163,6 +169,78 @@ export interface VEWebsiteBlock extends VEBaseElement {
   originalBlockId: string;
 }
 
+// ===== DIVIDER =====
+
+export interface VEDivider extends VEBaseElement {
+  type: 'Divider';
+  content: {
+    /** Line style: solid, dashed, dotted, double */
+    lineStyle: 'solid' | 'dashed' | 'dotted' | 'double';
+    /** Line thickness in px */
+    thickness: number;
+    /** Line color – uses ColorValue for theme integration */
+    color: ColorValue;
+    /** Width as CSS value (e.g. '100%', '80%', '200px') */
+    width: string;
+  };
+}
+
+// ===== SPACER =====
+
+export interface VESpacer extends VEBaseElement {
+  type: 'Spacer';
+  content: {
+    /** Height in px */
+    height: number;
+  };
+}
+
+// ===== ICON =====
+
+export interface VEIcon extends VEBaseElement {
+  type: 'Icon';
+  content: {
+    /** Lucide icon name (e.g. 'Heart', 'Star', 'Phone') */
+    iconName: string;
+    /** Icon size numeric value */
+    size: number;
+    /** Size unit – px (default), %, or em */
+    sizeUnit: 'px' | '%' | 'em';
+    /** Icon color – uses ColorValue for theme integration */
+    color: ColorValue;
+    /** Stroke width */
+    strokeWidth: number;
+    /** Optional container background color */
+    containerBg: ColorValue | null;
+    /** Container border-radius in px (0 = square, half of size+padding = circle) */
+    containerBorderRadius: number;
+  };
+}
+
+// ===== LIST =====
+
+export type VEListType = 'unordered' | 'ordered';
+
+export interface VEList extends VEBaseElement {
+  type: 'List';
+  content: {
+    /** List type */
+    listType: VEListType;
+  };
+  /** Each child is a VEListItem */
+  children: VEElement[];
+}
+
+// ===== LIST ITEM =====
+
+export interface VEListItem extends VEBaseElement {
+  type: 'ListItem';
+  content: {
+    /** Text content (HTML string) */
+    text: string;
+  };
+}
+
 // ===== UNION TYPE =====
 
 export type VEElement =
@@ -177,7 +255,12 @@ export type VEElement =
   | VEHeader
   | VEFooter
   | VEComponentInstance
-  | VEWebsiteBlock;
+  | VEWebsiteBlock
+  | VEDivider
+  | VESpacer
+  | VEIcon
+  | VEList
+  | VEListItem;
 
 // ===== PAGE =====
 

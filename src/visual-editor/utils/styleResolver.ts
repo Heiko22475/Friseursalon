@@ -175,6 +175,21 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
 
   // Transform
   if (props.transform) css.transform = props.transform;
+  if (props.transformOrigin) css.transformOrigin = props.transformOrigin;
+
+  // Aspect Ratio
+  if (props.aspectRatio) (css as any).aspectRatio = props.aspectRatio;
+
+  // Background Gradient (overrides backgroundImage if set)
+  if (props.backgroundGradient) {
+    const g = props.backgroundGradient;
+    const stops = g.stops.map(s => `${s.color} ${s.position}%`).join(', ');
+    if (g.type === 'linear') {
+      css.backgroundImage = `linear-gradient(${g.angle ?? 180}deg, ${stops})`;
+    } else {
+      css.backgroundImage = `radial-gradient(circle, ${stops})`;
+    }
+  }
 
   // Cursor
   if (props.cursor) css.cursor = props.cursor;

@@ -6,10 +6,12 @@
 
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
-import type { VEElement, VEText, VEImage, VEButton, TextStylePreset } from '../types/elements';
+import type { VEElement, VEText, VEImage, VEButton, TextStylePreset, VEDivider, VESpacer, VEIcon } from '../types/elements';
 import { useEditor } from '../state/EditorContext';
 import { VERichTextEditor } from '../components/VERichTextEditor';
 import { VEMediaPicker } from '../components/VEMediaPicker';
+import { VEColorPicker } from '../components/VEColorPicker';
+import { VEIconPicker } from '../components/VEIconPicker';
 
 interface ContentSectionProps {
   element: VEElement;
@@ -216,7 +218,260 @@ export const ContentSection: React.FC<ContentSectionProps> = ({ element }) => {
       return <ImageContent element={element as VEImage} />;
     case 'Button':
       return <ButtonContent element={element as VEButton} />;
+    case 'Divider':
+      return <DividerContent element={element as VEDivider} />;
+    case 'Spacer':
+      return <SpacerContent element={element as VESpacer} />;
+    case 'Icon':
+      return <IconContent element={element as VEIcon} />;
     default:
       return null;
   }
+};
+
+// ===== DIVIDER CONTENT =====
+
+const DividerContent: React.FC<{ element: VEDivider }> = ({ element }) => {
+  const { dispatch } = useEditor();
+  const { lineStyle, thickness, color, width } = element.content;
+
+  const update = (field: string, value: any) => {
+    dispatch({
+      type: 'UPDATE_CONTENT',
+      id: element.id,
+      updates: { content: { ...element.content, [field]: value } } as any,
+    });
+  };
+
+  return (
+    <div>
+      <Row label="Stil">
+        <select value={lineStyle} onChange={(e) => update('lineStyle', e.target.value)} style={inputStyle}>
+          <option value="solid">Durchgezogen</option>
+          <option value="dashed">Gestrichelt</option>
+          <option value="dotted">Gepunktet</option>
+          <option value="double">Doppelt</option>
+        </select>
+      </Row>
+      <Row label="Stärke">
+        <input
+          type="number"
+          value={thickness}
+          onChange={(e) => update('thickness', Math.max(1, parseInt(e.target.value) || 1))}
+          min={1}
+          max={20}
+          style={{ ...inputStyle, width: '70px' }}
+        />
+      </Row>
+      <VEColorPicker
+        label="Farbe"
+        value={color}
+        onChange={(cv) => update('color', cv || { kind: 'custom', hex: '#d1d5db' })}
+        allowNoColor={false}
+      />
+      <Row label="Breite">
+        <input
+          type="text"
+          value={width}
+          onChange={(e) => update('width', e.target.value)}
+          placeholder="100%"
+          style={inputStyle}
+        />
+      </Row>
+    </div>
+  );
+};
+
+// ===== SPACER CONTENT =====
+
+const SpacerContent: React.FC<{ element: VESpacer }> = ({ element }) => {
+  const { dispatch } = useEditor();
+  const { height } = element.content;
+
+  return (
+    <div>
+      <Row label="Höhe">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input
+            type="range"
+            min={4}
+            max={200}
+            value={height}
+            onChange={(e) =>
+              dispatch({
+                type: 'UPDATE_CONTENT',
+                id: element.id,
+                updates: { content: { height: parseInt(e.target.value) } } as any,
+              })
+            }
+            style={{ flex: 1, accentColor: '#3b82f6' }}
+          />
+          <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '40px', textAlign: 'right' }}>{height}px</span>
+        </div>
+      </Row>
+      {/* Quick presets */}
+      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+        {[8, 16, 24, 32, 48, 64, 80, 120].map((h) => (
+          <button
+            key={h}
+            onClick={() =>
+              dispatch({
+                type: 'UPDATE_CONTENT',
+                id: element.id,
+                updates: { content: { height: h } } as any,
+              })
+            }
+            style={{
+              padding: '2px 6px',
+              backgroundColor: height === h ? '#3b82f620' : '#2d2d3d',
+              border: `1px solid ${height === h ? '#3b82f6' : '#3d3d4d'}`,
+              borderRadius: '3px',
+              fontSize: '10px',
+              color: height === h ? '#3b82f6' : '#b0b7c3',
+              cursor: 'pointer',
+            }}
+          >
+            {h}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ===== ICON CONTENT =====
+
+const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
+  const { dispatch } = useEditor();
+  const { iconName, size, color, strokeWidth, containerBg, containerBorderRadius } = element.content;
+
+  const update = (field: string, value: any) => {
+    dispatch({
+      type: 'UPDATE_CONTENT',
+      id: element.id,
+      updates: { content: { ...element.content, [field]: value } } as any,
+    });
+  };
+
+  const sizeUnit = element.content.sizeUnit || 'px';
+
+  // Slider max depends on unit
+  const sliderMax = sizeUnit === 'px' ? 96 : sizeUnit === 'em' ? 10 : 100;
+  const sliderStep = sizeUnit === 'em' ? 0.25 : 1;
+  const sliderMin = sizeUnit === 'em' ? 0.5 : sizeUnit === '%' ? 1 : 12;
+
+  // Max border-radius for a perfect circle (based on current icon size + padding in styles)
+  const maxRadius = Math.round(size * 1.5);
+
+  return (
+    <div>
+      {/* ── Icon Picker ─────────────── */}
+      <VEIconPicker
+        value={iconName}
+        onChange={(name) => update('iconName', name)}
+      />
+
+      <Row label="Größe">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <input
+            type="range"
+            min={sliderMin}
+            max={sliderMax}
+            step={sliderStep}
+            value={Math.min(size, sliderMax)}
+            onChange={(e) => update('size', parseFloat(e.target.value))}
+            style={{ flex: 1, accentColor: '#3b82f6' }}
+          />
+          <input
+            type="number"
+            min={0}
+            step={sliderStep}
+            value={size}
+            onChange={(e) => {
+              const v = parseFloat(e.target.value);
+              if (!isNaN(v) && v >= 0) update('size', v);
+            }}
+            style={{
+              width: '48px',
+              padding: '3px 4px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3d3d4d',
+              borderRadius: '4px',
+              color: '#d1d5db',
+              fontSize: '11px',
+              textAlign: 'right',
+              outline: 'none',
+            }}
+          />
+          <select
+            value={sizeUnit}
+            onChange={(e) => update('sizeUnit', e.target.value)}
+            style={{
+              width: '46px',
+              padding: '3px 2px',
+              backgroundColor: '#2d2d3d',
+              border: '1px solid #3d3d4d',
+              borderRadius: '4px',
+              color: '#d1d5db',
+              fontSize: '11px',
+              cursor: 'pointer',
+              outline: 'none',
+            }}
+          >
+            <option value="px">px</option>
+            <option value="%">%</option>
+            <option value="em">em</option>
+          </select>
+        </div>
+      </Row>
+
+      <VEColorPicker
+        label="Farbe"
+        value={color}
+        onChange={(cv) => update('color', cv || { kind: 'custom', hex: '#6b7280' })}
+        allowNoColor={false}
+      />
+
+      <Row label="Linie">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input
+            type="range"
+            min={0.5}
+            max={4}
+            step={0.25}
+            value={strokeWidth}
+            onChange={(e) => update('strokeWidth', parseFloat(e.target.value))}
+            style={{ flex: 1, accentColor: '#3b82f6' }}
+          />
+          <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '24px', textAlign: 'right' }}>{strokeWidth}</span>
+        </div>
+      </Row>
+
+      {/* ── Container ─────────────── */}
+      <div style={{ borderTop: '1px solid #3d3d4d', marginTop: '10px', paddingTop: '10px' }}>
+        <div style={{ fontSize: '11px', color: '#8b92a0', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Container</div>
+
+        <VEColorPicker
+          label="Hintergrund"
+          value={containerBg}
+          onChange={(cv) => update('containerBg', cv)}
+          allowNoColor={true}
+        />
+
+        <Row label="Rundung">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="range"
+              min={0}
+              max={maxRadius}
+              value={containerBorderRadius}
+              onChange={(e) => update('containerBorderRadius', parseInt(e.target.value))}
+              style={{ flex: 1, accentColor: '#3b82f6' }}
+            />
+            <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '32px', textAlign: 'right' }}>{containerBorderRadius}px</span>
+          </div>
+        </Row>
+      </div>
+    </div>
+  );
 };

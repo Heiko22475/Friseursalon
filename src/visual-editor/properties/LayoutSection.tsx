@@ -33,6 +33,8 @@ import { UnitInput } from '../components/UnitInput';
 interface LayoutSectionProps {
   styles: Partial<StyleProperties>;
   onChange: (key: keyof StyleProperties, value: any) => void;
+  /** Pro-Modus: zeigt Grid und erweiterte Display-Optionen */
+  proMode?: boolean;
 }
 
 // ===== ICON BUTTON GROUP =====
@@ -521,16 +523,23 @@ const SectionLabel: React.FC<{ label: string }> = ({ label }) => (
 
 // ===== COMPONENT =====
 
-export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange }) => {
+export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, proMode = false }) => {
   const sz = 13;
 
-  const displayOptions: IconButtonOption<NonNullable<StyleProperties['display']>>[] = [
-    { value: 'block', icon: <Minus size={sz} />, title: 'Block' },
-    { value: 'flex', icon: <Columns size={sz} />, title: 'Flex' },
-    { value: 'grid', icon: <LayoutGrid size={sz} />, title: 'Grid' },
-    { value: 'inline-block', icon: <Rows size={sz} />, title: 'Inline Block' },
-    { value: 'none', icon: <EyeOff size={sz} />, title: 'None' },
-  ];
+  // Standard: block, flex, none. Pro adds: grid, inline-block
+  const displayOptions: IconButtonOption<NonNullable<StyleProperties['display']>>[] = proMode
+    ? [
+        { value: 'block', icon: <Minus size={sz} />, title: 'Block' },
+        { value: 'flex', icon: <Columns size={sz} />, title: 'Flex' },
+        { value: 'grid', icon: <LayoutGrid size={sz} />, title: 'Grid' },
+        { value: 'inline-block', icon: <Rows size={sz} />, title: 'Inline Block' },
+        { value: 'none', icon: <EyeOff size={sz} />, title: 'None' },
+      ]
+    : [
+        { value: 'block', icon: <Minus size={sz} />, title: 'Block' },
+        { value: 'flex', icon: <Columns size={sz} />, title: 'Flex' },
+        { value: 'none', icon: <EyeOff size={sz} />, title: 'None' },
+      ];
 
   const directionOptions: IconButtonOption<NonNullable<StyleProperties['flexDirection']>>[] = [
     { value: 'row', icon: <ArrowRight size={sz} />, title: 'Row (→)' },

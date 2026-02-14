@@ -23,6 +23,11 @@ import {
   Navigation,
   AlignHorizontalDistributeCenter,
   Menu,
+  Minus,
+  MoveVertical,
+  Smile,
+  List,
+  ListOrdered,
 } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import {
@@ -34,6 +39,10 @@ import {
   createFooter,
   createCards,
   createNavbar,
+  createDivider,
+  createSpacer,
+  createIcon,
+  createList,
   findElementById,
   isContainer,
   findParent,
@@ -70,6 +79,12 @@ const addableElements: AddableElement[] = [
   { label: 'Button', icon: <MousePointerClick size={18} />, category: 'Interaktion', create: createButton },
   // Komposition
   { label: 'Cards', icon: <LayoutGrid size={18} />, category: 'Komposition', create: () => createCards() },
+  // Bausteine
+  { label: 'Trennlinie', icon: <Minus size={18} />, category: 'Bausteine', create: createDivider },
+  { label: 'Abstand', icon: <MoveVertical size={18} />, category: 'Bausteine', create: createSpacer },
+  { label: 'Icon', icon: <Smile size={18} />, category: 'Bausteine', create: () => createIcon() },
+  { label: 'Liste', icon: <List size={18} />, category: 'Bausteine', create: () => createList('unordered') },
+  { label: 'Num. Liste', icon: <ListOrdered size={18} />, category: 'Bausteine', create: () => createList('ordered') },
 ];
 
 // ===== CATEGORY ICONS FOR CARD TEMPLATES =====

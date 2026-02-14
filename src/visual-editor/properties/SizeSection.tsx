@@ -18,6 +18,8 @@ type SizeUnit = SizeValue['unit'];
 interface SizeSectionProps {
   styles: Partial<StyleProperties>;
   onChange: (key: keyof StyleProperties, value: any) => void;
+  /** Pro-Modus: zeigt Min/Max und Aspect Ratio */
+  proMode?: boolean;
 }
 
 // ===== HELPERS =====
@@ -320,7 +322,17 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 // ===== COMPONENT =====
 
-export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange }) => {
+const ASPECT_RATIO_PRESETS = [
+  { label: 'Auto', value: '' },
+  { label: '1:1', value: '1/1' },
+  { label: '4:3', value: '4/3' },
+  { label: '16:9', value: '16/9' },
+  { label: '3:2', value: '3/2' },
+  { label: '2:1', value: '2/1' },
+  { label: '9:16', value: '9/16' },
+];
+
+export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange, proMode = false }) => {
   const [activeProperty, setActiveProperty] = useState<SizeProperty | null>(null);
 
   const getValue = (prop: SizeProperty): SizeValueOrAuto | undefined => {
@@ -340,12 +352,10 @@ export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange }) =>
     }
   };
 
-  // Pair definitions: [property1, property2]
-  const pairs: [SizeProperty, SizeProperty][] = [
-    ['width', 'height'],
-    ['minWidth', 'minHeight'],
-    ['maxWidth', 'maxHeight'],
-  ];
+  // Standard: only W/H. Pro: also min/max
+  const pairs: [SizeProperty, SizeProperty][] = proMode
+    ? [['width', 'height'], ['minWidth', 'minHeight'], ['maxWidth', 'maxHeight']]
+    : [['width', 'height']];
 
   return (
     <div>
@@ -379,48 +389,36 @@ export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange }) =>
         </React.Fragment>
       ))}
 
-      {/* Overflow */}
-      <div style={{ marginTop: '8px' }}>
-        <Row label="Overflow">
-          <select
-            value={styles.overflow ?? ''}
-            onChange={(e) => onChange('overflow', e.target.value || undefined)}
-            style={{
-              width: '100%',
-              padding: '4px 6px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
-              borderRadius: '4px',
-              color: '#d1d5db',
-              fontSize: '12px',
-            }}
-          >
-            <option value="">–</option>
-            <option value="visible">Visible</option>
-            <option value="hidden">Hidden</option>
-            <option value="scroll">Scroll</option>
-            <option value="auto">Auto</option>
-          </select>
-        </Row>
-      </div>
-
-      {/* Opacity */}
-      <Row label="Opacity">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={styles.opacity ?? 1}
-            onChange={(e) => onChange('opacity', parseFloat(e.target.value))}
-            style={{ flex: 1, accentColor: '#3b82f6' }}
-          />
-          <span style={{ fontSize: '11px', color: '#b0b7c3', width: '36px', textAlign: 'right' }}>
-            {Math.round((styles.opacity ?? 1) * 100)}%
-          </span>
+      {/* Aspect Ratio (Pro only) */}
+      {proMode && (
+        <div style={{ marginTop: '8px' }}>
+          <Row label="Ratio">
+            <div style={{ display: 'flex', gap: '2px', flexWrap: 'wrap' }}>
+              {ASPECT_RATIO_PRESETS.map((preset) => {
+                const isActive = (styles.aspectRatio || '') === preset.value;
+                return (
+                  <button
+                    key={preset.label}
+                    onClick={() => onChange('aspectRatio', preset.value || undefined)}
+                    style={{
+                      padding: '3px 6px',
+                      backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
+                      border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
+                      borderRadius: '3px',
+                      color: isActive ? '#fff' : '#b0b7c3',
+                      fontSize: '10px',
+                      cursor: 'pointer',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
+          </Row>
         </div>
-      </Row>
+      )}
     </div>
   );
 };

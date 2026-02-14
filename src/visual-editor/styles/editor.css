@@ -3,6 +3,12 @@
  * Selection, Hover und Hilfsklassen
  * ===================================================== */
 
+/* Prevent any horizontal scrollbar on the Visual Editor page */
+.ve-canvas-scroll,
+.ve-canvas-scroll *:not(input):not(textarea):not(select) {
+  max-width: 100%;
+}
+
 /* Selection Outline */
 .ve-selected {
   outline: 2px solid #3b82f6 !important;

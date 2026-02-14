@@ -28,6 +28,11 @@ import {
   PanelTop,
   PanelBottom,
   Navigation,
+  Minus,
+  MoveVertical,
+  Smile,
+  List,
+  ListMinus,
 } from 'lucide-react';
 import type { VEElement, VEElementType } from '../types/elements';
 import { getChildren, isContainer, canContain, findParent } from '../utils/elementHelpers';
@@ -48,6 +53,11 @@ const typeIcons: Record<VEElementType, React.ReactNode> = {
   Footer: <PanelBottom size={14} />,
   ComponentInstance: <Puzzle size={14} />,
   WebsiteBlock: <Rows3 size={14} />,
+  Divider: <Minus size={14} />,
+  Spacer: <MoveVertical size={14} />,
+  Icon: <Smile size={14} />,
+  List: <List size={14} />,
+  ListItem: <ListMinus size={14} />,
 };
 
 // ===== DROP POSITION =====

@@ -121,6 +121,17 @@ export interface StyleProperties {
 
   // Transform
   transform?: string;
+  transformOrigin?: string;
+
+  // Aspect Ratio
+  aspectRatio?: string;
+
+  // Background Gradient (compiled to backgroundImage CSS)
+  backgroundGradient?: {
+    type: 'linear' | 'radial';
+    angle?: number;
+    stops: { color: string; position: number }[];
+  };
 
   // Cursor
   cursor?: 'pointer' | 'default' | 'text' | 'move' | 'not-allowed';

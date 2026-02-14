@@ -51,6 +51,8 @@ export interface EditorState {
   editingId: string | null;
   /** Timestamp des letzten Undo-Pushes (für Debounce) */
   _lastUndoPush: number;
+  /** Pro-Modus: Erweiterte CSS-Properties anzeigen */
+  proMode: boolean;
 }
 
 // ===== ACTIONS =====
@@ -87,7 +89,9 @@ export type EditorAction =
   | { type: 'DELETE_PAGE'; pageId: string }
   | { type: 'DUPLICATE_PAGE'; pageId: string }
   | { type: 'UPDATE_PAGE_META'; pageId: string; updates: Partial<Pick<VEPage, 'name' | 'route' | 'isPublished'>> }
-  | { type: 'MOVE_PAGE'; pageId: string; direction: 'up' | 'down' };
+  | { type: 'MOVE_PAGE'; pageId: string; direction: 'up' | 'down' }
+  | { type: 'TOGGLE_PRO_MODE' }
+  | { type: 'APPLY_TO_SIBLING_CARDS'; sourceCardId: string };
 
 // ===== INITIAL STATE =====
 
@@ -107,6 +111,7 @@ export function createInitialState(pages: VEPage[]): EditorState {
     clipboard: null,
     editingId: null,
     _lastUndoPush: 0,
+    proMode: typeof window !== 'undefined' && localStorage.getItem('ve-pro-mode') === 'true',
   };
 }
 
@@ -360,6 +365,69 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
       };
     }
 
+    case 'APPLY_TO_SIBLING_CARDS': {
+      const sourceCard = findElementById(state.page.body, action.sourceCardId);
+      if (!sourceCard) return state;
+      const cardsParent = findParent(state.page.body, action.sourceCardId);
+      if (!cardsParent || cardsParent.type !== 'Cards') return state;
+      const siblings = getChildren(cardsParent);
+      if (siblings.length <= 1) return state;
+
+      /**
+       * Recursively apply the source element's styles, content, and label
+       * to a target element, matching children by index.
+       * IDs are kept — only appearance properties are overwritten.
+       */
+      function applyAppearance(source: VEElement, target: VEElement): VEElement {
+        // Copy styles + content + label from source, keep target's id + type + children structure
+        const result: any = {
+          ...target,
+          styles: source.styles ? JSON.parse(JSON.stringify(source.styles)) : target.styles,
+          label: source.label,
+        };
+        // Copy content (for Text, Image, Button, Icon, Divider, etc.)
+        if ('content' in source) {
+          result.content = JSON.parse(JSON.stringify((source as any).content));
+        }
+        // Copy textStyle for Text elements
+        if ('textStyle' in source) {
+          result.textStyle = (source as any).textStyle;
+        }
+        // Copy layout for Cards elements (if a card contains nested Cards)
+        if ('layout' in source) {
+          result.layout = JSON.parse(JSON.stringify((source as any).layout));
+        }
+
+        // Recursively match children by index
+        const sourceChildren = getChildren(source);
+        const targetChildren = getChildren(target);
+        if (sourceChildren.length > 0 && targetChildren.length > 0) {
+          const newChildren = targetChildren.map((tChild, i) => {
+            if (i < sourceChildren.length) {
+              return applyAppearance(sourceChildren[i], tChild);
+            }
+            return tChild; // extra target children are left as-is
+          });
+          result.children = newChildren;
+        }
+
+        return result as VEElement;
+      }
+
+      const newSiblings = siblings.map(card => {
+        if (card.id === sourceCard.id) return card; // skip the source itself
+        return applyAppearance(sourceCard, card);
+      });
+
+      const newParent = { ...cardsParent, children: newSiblings } as VEElement;
+      const newBody = replaceElement(state.page.body, cardsParent.id, newParent) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
     case 'START_INLINE_EDIT':
       return { ...state, editingId: action.id, selectedId: action.id };
 
@@ -392,6 +460,12 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
 
     case 'MARK_SAVED':
       return { ...state, isDirty: false };
+
+    case 'TOGGLE_PRO_MODE': {
+      const newPro = !state.proMode;
+      try { localStorage.setItem('ve-pro-mode', String(newPro)); } catch {}
+      return { ...state, proMode: newPro };
+    }
 
     case 'TOGGLE_NAVIGATOR':
       return { ...state, navigatorOpen: !state.navigatorOpen };

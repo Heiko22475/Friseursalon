@@ -5,7 +5,7 @@
 // =====================================================
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff, Zap } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
 import { mergeStyles } from '../utils/styleResolver';
@@ -18,6 +18,7 @@ import { BackgroundSection } from '../properties/BackgroundSection';
 import { BorderSection } from '../properties/BorderSection';
 import { EffectsSection } from '../properties/EffectsSection';
 import { PositionSection } from '../properties/PositionSection';
+import { TransformSection } from '../properties/TransformSection';
 import { ContentSection } from '../properties/ContentSection';
 import { SpacingBox } from '../components/SpacingBox';
 import { FooterProperties } from '../properties/FooterProperties';
@@ -99,6 +100,11 @@ const TYPE_COLORS: Record<string, string> = {
   Header: '#14b8a6',
   Footer: '#f97316',
   WebsiteBlock: '#0ea5e9',
+  Divider: '#9ca3af',
+  Spacer: '#6b7280',
+  Icon: '#a78bfa',
+  List: '#22d3ee',
+  ListItem: '#67e8f9',
 };
 
 // ===== PROPERTIES PANEL =====
@@ -144,6 +150,7 @@ export const PropertiesPanel: React.FC = () => {
 
   // Check element types
   const isCards = selectedElement.type === 'Cards';
+  const proMode = state.proMode;
 
   // Detect parent display mode for flex-child / grid-child sections
   const parentElement = selectedElement.type !== 'Body'
@@ -174,11 +181,14 @@ export const PropertiesPanel: React.FC = () => {
 
   // Determine which sections are relevant for the element type
   const isTextLike = selectedElement.type === 'Text' || selectedElement.type === 'Button';
-  const isContainer = ['Body', 'Section', 'Container', 'Cards', 'Navbar'].includes(selectedElement.type);
-  const hasContent = ['Text', 'Image', 'Button'].includes(selectedElement.type);
+  const isContainer = ['Body', 'Section', 'Container', 'Cards', 'Navbar', 'List'].includes(selectedElement.type);
+  const hasContent = ['Text', 'Image', 'Button', 'Divider', 'Spacer', 'Icon'].includes(selectedElement.type);
   const isNavbar = selectedElement.type === 'Navbar';
   const isHeaderFooter = selectedElement.type === 'Header' || selectedElement.type === 'Footer';
   const isWebsiteBlock = selectedElement.type === 'WebsiteBlock';
+  /** Elements whose size is derived from content, not from width/height styles */
+  const isIntrinsicSize = ['Icon', 'Divider', 'Spacer'].includes(selectedElement.type);
+  const isIcon = selectedElement.type === 'Icon';
   const typeColor = TYPE_COLORS[selectedElement.type] || '#b0b7c3';
 
   // Check which sections have values
@@ -329,10 +339,36 @@ export const PropertiesPanel: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Pro Mode Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+          <button
+            onClick={() => dispatch({ type: 'TOGGLE_PRO_MODE' })}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 8px',
+              backgroundColor: proMode ? '#f59e0b20' : '#3d3d4d40',
+              border: `1px solid ${proMode ? '#f59e0b50' : '#3d3d4d'}`,
+              borderRadius: '4px',
+              cursor: 'pointer',
+              color: proMode ? '#fbbf24' : '#6b7280',
+              fontSize: '11px',
+              fontWeight: 600,
+              width: '100%',
+              transition: 'all 0.15s',
+            }}
+            title={proMode ? 'Profi-Modus deaktivieren' : 'Profi-Modus aktivieren – erweiterte CSS-Properties'}
+          >
+            <Zap size={12} />
+            {proMode ? 'PRO aktiv – Erweiterte Properties' : 'PRO – Erweiterte Properties anzeigen'}
+          </button>
+        </div>
       </div>
 
       {/* Scrollable Properties */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div className="ve-props-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingRight: '6px' }}>
 
         {/* WebsiteBlock: full config editor */}
         {isWebsiteBlock && (
@@ -374,12 +410,12 @@ export const PropertiesPanel: React.FC = () => {
         {/* Layout */}
         {isContainer && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection title="Layout" isOpen={openSection === 'layout'} onToggle={() => toggleSection('layout')} hasValues={hasLayoutValues}>
-            <LayoutSection styles={merged} onChange={updateStyle} />
+            <LayoutSection styles={merged} onChange={updateStyle} proMode={proMode} />
           </AccordionSection>
         )}
 
-        {/* Flex Child (shown when parent is flex) */}
-        {parentIsFlex && !isHeaderFooter && !isWebsiteBlock && (
+        {/* Flex Child (shown when parent is flex, Pro only) */}
+        {proMode && parentIsFlex && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection
             title="Flex Kind"
             isOpen={openSection === 'flex-child'}
@@ -390,8 +426,8 @@ export const PropertiesPanel: React.FC = () => {
           </AccordionSection>
         )}
 
-        {/* Grid Child (shown when parent is grid) */}
-        {parentIsGrid && !isHeaderFooter && !isWebsiteBlock && (
+        {/* Grid Child (shown when parent is grid, Pro only) */}
+        {proMode && parentIsGrid && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection
             title="Grid Kind"
             isOpen={openSection === 'grid-child'}
@@ -409,10 +445,10 @@ export const PropertiesPanel: React.FC = () => {
         </AccordionSection>
         )}
 
-        {/* Size */}
-        {!isHeaderFooter && !isWebsiteBlock && (
+        {/* Size (not for Icon/Divider/Spacer – their size is intrinsic from content) */}
+        {!isHeaderFooter && !isWebsiteBlock && !isIntrinsicSize && (
         <AccordionSection title="Größe" isOpen={openSection === 'size'} onToggle={() => toggleSection('size')} hasValues={hasSizeValues}>
-          <SizeSection styles={merged} onChange={updateStyleBatch} />
+          <SizeSection styles={merged} onChange={updateStyleBatch} proMode={proMode} />
         </AccordionSection>
         )}
 
@@ -423,10 +459,10 @@ export const PropertiesPanel: React.FC = () => {
           </AccordionSection>
         )}
 
-        {/* Background */}
-        {!isHeaderFooter && !isWebsiteBlock && (
+        {/* Background (not for Icon – container bg is in content) */}
+        {!isHeaderFooter && !isWebsiteBlock && !isIcon && (
         <AccordionSection title="Hintergrund" isOpen={openSection === 'background'} onToggle={() => toggleSection('background')} hasValues={hasBgValues}>
-          <BackgroundSection styles={merged} onChange={updateStyle} />
+          <BackgroundSection styles={merged} onChange={updateStyle} proMode={proMode} />
         </AccordionSection>
         )}
 
@@ -437,17 +473,24 @@ export const PropertiesPanel: React.FC = () => {
         </AccordionSection>
         )}
 
-        {/* Position */}
-        {!isHeaderFooter && !isWebsiteBlock && (
+        {/* Position (Pro only) */}
+        {proMode && !isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Position" isOpen={openSection === 'position'} onToggle={() => toggleSection('position')} hasValues={hasPositionValues}>
           <PositionSection styles={merged} onChange={updateStyle} />
+        </AccordionSection>
+        )}
+
+        {/* Transform (Pro only) */}
+        {proMode && !isHeaderFooter && !isWebsiteBlock && (
+        <AccordionSection title="Transform" isOpen={openSection === 'transform'} onToggle={() => toggleSection('transform')} hasValues={!!(merged.transform || merged.transformOrigin)}>
+          <TransformSection styles={merged} onChange={updateStyle} />
         </AccordionSection>
         )}
 
         {/* Effects (Shadow, Overflow, Cursor) */}
         {!isHeaderFooter && !isWebsiteBlock && (
         <AccordionSection title="Effekte" isOpen={openSection === 'effects'} onToggle={() => toggleSection('effects')} hasValues={hasEffectValues}>
-          <EffectsSection styles={merged} onChange={updateStyle} />
+          <EffectsSection styles={merged} onChange={updateStyle} proMode={proMode} />
         </AccordionSection>
         )}
       </div>

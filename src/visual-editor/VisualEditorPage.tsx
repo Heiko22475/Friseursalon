@@ -50,6 +50,35 @@ const EditorInner: React.FC = () => {
     // Select the element
     dispatch({ type: 'SELECT_ELEMENT', id: element.id });
 
+    // Walk up ancestors to find if this element is inside a card (direct child of Cards)
+    let isCardInCards = false;
+    let cardContainerId: string | undefined;
+    if (!isBody) {
+      // Check if this element itself is a direct child of Cards
+      if (parent && parent.type === 'Cards') {
+        const cardSiblings = getChildren(parent);
+        if (cardSiblings.length > 1) {
+          isCardInCards = true;
+          cardContainerId = element.id;
+        }
+      } else {
+        // Walk up further: maybe this element is nested inside a card
+        let walker: VEElement | null = parent;
+        while (walker && walker.type !== 'Body') {
+          const walkerParent = findParent(state.page.body, walker.id);
+          if (walkerParent && walkerParent.type === 'Cards') {
+            const cardSiblings = getChildren(walkerParent);
+            if (cardSiblings.length > 1) {
+              isCardInCards = true;
+              cardContainerId = walker.id;
+            }
+            break;
+          }
+          walker = walkerParent;
+        }
+      }
+    }
+
     setContextMenu({
       position: { x: e.clientX, y: e.clientY },
       element,
@@ -61,6 +90,8 @@ const EditorInner: React.FC = () => {
       canWrap: !isBody,
       hasClipboard: state.clipboard !== null,
       canPasteInto: isContainerType,
+      isCardInCards,
+      cardContainerId,
     });
   }, [state.page.body, state.clipboard, dispatch]);
 
@@ -134,6 +165,9 @@ const EditorInner: React.FC = () => {
       case 'toggle-visibility':
         dispatch({ type: 'TOGGLE_VISIBILITY', id: action.elementId });
         break;
+      case 'apply-to-sibling-cards':
+        dispatch({ type: 'APPLY_TO_SIBLING_CARDS', sourceCardId: action.elementId });
+        break;
     }
   }, [dispatch, state.page.body]);
 
@@ -142,8 +176,8 @@ const EditorInner: React.FC = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
-        width: '100vw',
+        flex: 1,
+        minHeight: 0,
         overflow: 'hidden',
         backgroundColor: '#13131b',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -299,6 +333,7 @@ const VisualEditorPage: React.FC = () => {
   return (
     <VEErrorBoundary>
       <VEThemeProvider>
+        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* Data Source Selector Bar */}
         <div
           style={{
@@ -457,6 +492,7 @@ const VisualEditorPage: React.FC = () => {
             )}
           </div>
         )}
+        </div>
       </VEThemeProvider>
     </VEErrorBoundary>
   );

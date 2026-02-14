@@ -3,7 +3,7 @@
 // Traversierung, Suche, Mutation von Element-Bäumen
 // =====================================================
 
-import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards, VENavbar } from '../types/elements';
+import type { VEElement, VEBody, VEPage, VEElementType, VEHeader, VEFooter, VECards, VENavbar, VEDivider, VESpacer, VEIcon, VEList, VEListItem } from '../types/elements';
 import type { ElementStyles, StyleProperties } from '../types/styles';
 import { createDefaultHeaderClassicConfig } from '../../types/Header';
 import { createDefaultFooterMinimalConfig } from '../../types/Footer';
@@ -82,7 +82,7 @@ export function getChildren(el: VEElement): VEElement[] {
  * Prüft ob ein Element Kinder haben kann (Container-Typ)
  */
 export function isContainer(type: VEElementType): boolean {
-  return type === 'Body' || type === 'Section' || type === 'Container' || type === 'Cards' || type === 'Navbar';
+  return type === 'Body' || type === 'Section' || type === 'Container' || type === 'Cards' || type === 'Navbar' || type === 'List';
 }
 
 /**
@@ -93,10 +93,11 @@ export function canContain(parentType: VEElementType, childType: VEElementType):
 
   const allowed: Record<string, VEElementType[]> = {
     Body: ['Section', 'Navbar', 'Header', 'Footer', 'WebsiteBlock', 'Cards'],
-    Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
-    Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance'],
+    Section: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance', 'Divider', 'Spacer', 'Icon', 'List'],
+    Container: ['Container', 'Text', 'Image', 'Button', 'Cards', 'ComponentInstance', 'Divider', 'Spacer', 'Icon', 'List'],
     Cards: ['Container', 'Text', 'Image', 'Button'],
     Navbar: ['Container', 'Text', 'Image', 'Button'],
+    List: ['ListItem'],
   };
 
   const list = allowed[parentType];
@@ -408,6 +409,112 @@ export function createButton(text = 'Button', link = '#'): VEElement {
       },
     },
   } as VEElement;
+}
+
+// ===== NEW ELEMENT FACTORIES (Phase 2) =====
+
+/**
+ * Erstellt ein Divider-Element (horizontale Trennlinie)
+ */
+export function createDivider(): VEElement {
+  return {
+    id: generateId(),
+    type: 'Divider',
+    label: 'Trennlinie',
+    content: {
+      lineStyle: 'solid',
+      thickness: 1,
+      color: { kind: 'custom', hex: '#d1d5db' },
+      width: '100%',
+    },
+    styles: {
+      desktop: {
+        marginTop: { value: 16, unit: 'px' },
+        marginBottom: { value: 16, unit: 'px' },
+      },
+    },
+  } as VEDivider;
+}
+
+/**
+ * Erstellt ein Spacer-Element (vertikaler Abstand)
+ */
+export function createSpacer(height = 40): VEElement {
+  return {
+    id: generateId(),
+    type: 'Spacer',
+    label: 'Abstand',
+    content: { height },
+    styles: {},
+  } as VESpacer;
+}
+
+/**
+ * Erstellt ein Icon-Element
+ */
+export function createIcon(iconName = 'Star'): VEElement {
+  return {
+    id: generateId(),
+    type: 'Icon',
+    label: 'Icon',
+    content: {
+      iconName,
+      size: 24,
+      sizeUnit: 'px' as const,
+      color: { kind: 'custom', hex: '#6b7280' },
+      strokeWidth: 2,
+      containerBg: null,
+      containerBorderRadius: 0,
+    },
+    styles: {
+      desktop: {
+        paddingTop: { value: 8, unit: 'px' },
+        paddingBottom: { value: 8, unit: 'px' },
+        paddingLeft: { value: 8, unit: 'px' },
+        paddingRight: { value: 8, unit: 'px' },
+      },
+    },
+  } as VEIcon;
+}
+
+/**
+ * Erstellt ein List-Element mit initialen Items
+ */
+export function createList(listType: 'unordered' | 'ordered' = 'unordered'): VEElement {
+  return {
+    id: generateId(),
+    type: 'List',
+    label: listType === 'ordered' ? 'Nummerierte Liste' : 'Liste',
+    content: { listType },
+    children: [
+      createListItem('Listenpunkt 1'),
+      createListItem('Listenpunkt 2'),
+      createListItem('Listenpunkt 3'),
+    ],
+    styles: {
+      desktop: {
+        paddingLeft: { value: 20, unit: 'px' },
+      },
+    },
+  } as VEList;
+}
+
+/**
+ * Erstellt ein einzelnes List-Item
+ */
+export function createListItem(text = 'Neuer Punkt'): VEElement {
+  return {
+    id: generateId(),
+    type: 'ListItem',
+    label: text,
+    content: { text },
+    styles: {
+      desktop: {
+        marginBottom: { value: 4, unit: 'px' },
+        fontSize: { value: 16, unit: 'px' },
+      },
+    },
+  } as VEListItem;
 }
 
 /**

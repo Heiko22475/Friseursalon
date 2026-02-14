@@ -20,8 +20,8 @@ Dieser Plan dokumentiert alle Webflow-Features, die im Visual Editor (VE) noch f
 | **Image** | ✅ | ✅ Image | ✅ Vorhanden |
 | **Cards** | ✅ | ✅ Cards | ✅ Vorhanden |
 | **Columns** | ✅ | ❌ | 🔴 Phase 1 |
-| **Grid** | ✅ | ⚠️ CSS vorhanden, kein visueller Builder | 🟡 Phase 1 |
-| **List / List Item** | ✅ | ❌ | 🟡 Phase 2 |
+| **Grid** | ✅ | ✅ Grid Builder (Phase 1) | ✅ Implementiert |
+| **List / List Item** | ✅ | ✅ List + ListItem (Phase 2) | ✅ Implementiert |
 | **Link Block** | ✅ | ❌ | 🟡 Phase 2 |
 | **Rich Text** | ✅ | ⚠️ TipTap Editor vorhanden | 🟡 Phase 2 |
 | **Video** | ✅ | ❌ | 🔴 Phase 3 |
@@ -29,8 +29,8 @@ Dieser Plan dokumentiert alle Webflow-Features, die im Visual Editor (VE) noch f
 | **Form** | ✅ | ❌ | 🔴 Phase 4 |
 | **Input / Textarea / Select** | ✅ | ❌ | 🔴 Phase 4 |
 | **Map** | ✅ | ❌ | 🔴 Phase 4 |
-| **Divider / Spacer** | ✅ | ❌ | 🟡 Phase 2 |
-| **Icon (SVG)** | ✅ | ❌ | 🟡 Phase 2 |
+| **Divider / Spacer** | ✅ | ✅ Divider + Spacer (Phase 2) | ✅ Implementiert |
+| **Icon (SVG)** | ✅ | ✅ Icon mit IconPicker (Phase 2) | ✅ Implementiert |
 | **Background Video** | ✅ | ❌ | 🔴 Phase 5 |
 | **Lightbox** | ✅ | ❌ | 🔴 Phase 5 |
 | **Tabs** | ✅ | ❌ | 🔴 Phase 5 |
@@ -43,40 +43,42 @@ Dieser Plan dokumentiert alle Webflow-Features, die im Visual Editor (VE) noch f
 |---------------|---------|----------|-------------|--------|
 | **Display** | block, flex, grid, inline-block, none | ✅ Alle 6 | ✅ 5 (inline fehlt) | ✅ |
 | **Flex Parent** | direction, justify, align, wrap, gap | ✅ | ✅ | ✅ |
-| **Flex Child** | grow, shrink, alignSelf, order | ⚠️ grow, shrink, alignSelf | ❌ Kein UI | 🔴 Phase 1 |
-| **Grid Parent** | columns, rows, gap, template areas | ⚠️ columns, rows, gap | ⚠️ Text-Input | 🔴 Phase 1 |
-| **Grid Child** | column span, row span, area | ⚠️ gridColumn, gridRow | ❌ Kein UI | 🔴 Phase 1 |
+| **Flex Child** | grow, shrink, alignSelf, order | ✅ grow, shrink, alignSelf, flexBasis, order | ✅ FlexChildSection | ✅ Phase 1 |
+| **Grid Parent** | columns, rows, gap, template areas | ✅ Alle Properties | ✅ Grid Builder UI | ✅ Phase 1 |
+| **Grid Child** | column span, row span, area | ✅ gridColumn, gridRow | ✅ GridChildSection | ✅ Phase 1 |
 | **Spacing** | Margin (4) + Padding (4) | ✅ | ✅ SpacingBox | ✅ |
 | **Size** | W, H, minW, maxW, minH, maxH | ✅ | ✅ SizeSection | ✅ |
 | **Typography** | font, weight, size, height, spacing, align, color, transform, decoration | ✅ | ✅ | ✅ |
-| **Font Style (italic)** | ✅ | ❌ | ❌ | 🔴 Phase 1 |
+| **Font Style (italic)** | ✅ | ✅ fontStyle | ✅ Italic-Toggle | ✅ Phase 1 |
 | **Background Color** | ✅ | ✅ | ✅ | ✅ |
 | **Background Image** | ✅ size, position, repeat, attachment | ✅ size, pos, repeat | ✅ | ✅ |
-| **Background Gradient** | linear, radial, conic | ❌ | ❌ | 🟡 Phase 2 |
+| **Background Gradient** | linear, radial, conic | ✅ GradientConfig | ✅ Gradient Builder | ✅ Phase 2 |
 | **Multiple Backgrounds** | ✅ Stacking | ❌ | ❌ | 🔴 Phase 3 |
 | **Border** | width (4), style, color, radius (4) | ✅ | ✅ | ✅ |
 | **Per-Side Border Style/Color** | ✅ | ❌ | ❌ | 🟡 Phase 3 |
-| **Box Shadow** | ✅ Multi-shadow, visual builder | ⚠️ String-Presets | ⚠️ Presets + Text | 🟡 Phase 2 |
+| **Box Shadow** | ✅ Multi-shadow, visual builder | ✅ BoxShadowValue[] | ✅ Shadow Builder | ✅ Phase 2 |
 | **Text Shadow** | ✅ | ❌ | ❌ | 🟡 Phase 3 |
 | **Position** | static, relative, absolute, fixed, sticky | ✅ | ✅ | ✅ |
-| **Opacity** | ✅ Slider 0-100% | ✅ Type | ❌ Kein UI | 🔴 Phase 1 |
+| **Opacity** | ✅ Slider 0-100% | ✅ opacity | ✅ EffectsSection | ✅ Phase 1 |
 | **Overflow** | visible, hidden, scroll, auto | ✅ | ✅ | ✅ |
-| **Transform** | translate, rotate, scale, skew | ⚠️ Raw String | ❌ Kein UI | 🟡 Phase 2 |
+| **Transform** | translate, rotate, scale, skew | ✅ TransformConfig | ✅ TransformSection | ✅ Phase 2 |
 | **Transitions** | property, duration, easing, delay | ❌ | ❌ | 🟡 Phase 3 |
 | **CSS Filters** | blur, brightness, contrast, etc. | ❌ | ❌ | 🟡 Phase 3 |
 | **Backdrop Filter** | blur, etc. (Glassmorphism) | ❌ | ❌ | 🟡 Phase 3 |
 | **Blend Modes** | mix-blend-mode, bg-blend-mode | ❌ | ❌ | 🔴 Phase 4 |
 | **Hover/Focus States** | ✅ Pseudo-Klassen | ❌ | ❌ | 🔴 Phase 3 |
-| **Aspect Ratio** | ✅ | ❌ | ❌ | 🟡 Phase 2 |
+| **Aspect Ratio** | ✅ | ✅ aspectRatio | ✅ SizeSection | ✅ Phase 2 |
 | **Cursor** | ✅ | ✅ | ✅ | ✅ |
 | **Classes / Combo Classes** | ✅ | ❌ | ❌ | 🔴 Phase 5 |
 | **Interactions / Animations** | ✅ Scroll, hover, click triggers | ❌ | ❌ | 🔴 Phase 5 |
 
 ---
 
-## Phase 1 – Layout & Grundlagen (Priorität: HOCH)
+## Phase 1 – Layout & Grundlagen ✅ ABGESCHLOSSEN
 
 Ziel: Vollständige Layout-Kontrolle wie in Webflow. Der Nutzer kann alle gängigen Layouts bauen.
+
+> **Status:** Alle Features implementiert – Grid Builder, Flex-Child-Controls, Opacity UI, Font-Italic.
 
 ### 1.1 Grid – Visueller Builder
 
@@ -219,7 +221,9 @@ fontStyle?: 'normal' | 'italic';
 
 ---
 
-## Phase 2 – Erweiterte Styles & Neue Elemente (Priorität: MITTEL)
+## Phase 2 – Erweiterte Styles & Neue Elemente ✅ ABGESCHLOSSEN
+
+> **Status:** Alle Features implementiert – TransformSection (ohne Skew), Shadow Builder (Multi-Shadow), Gradient Builder, Aspect Ratio, Divider, Spacer, Icon (mit VEIconPicker 700px-Flyout, 30px Icons, Lucide-Bibliothek), List/ListItem, ProMode-Toggle, EffectsSection.
 
 ### 2.1 Transform-Builder (UI fehlt)
 
@@ -655,9 +659,9 @@ Symbol-ähnliche wiederverwendbare Komponenten mit Varianten (like Webflow Symbo
 
 | Phase | Umfang | Aufwand | Priorität |
 |-------|--------|---------|-----------|
-| **Phase 1** | Grid Builder, Columns, Flex-Child, Opacity UI, Font-Italic | ~3-5 Tage | 🔴 HOCH |
-| **Phase 2** | Transform Builder, Shadow Builder, Gradient, Aspect-Ratio, Divider, Spacer, Icon, List | ~5-8 Tage | 🟡 MITTEL |
-| **Phase 3** | Hover States, Transitions, Filters, Text-Shadow, Per-Side Borders | ~5-8 Tage | 🟡 MITTEL |
+| **Phase 1** | Grid Builder, Columns, Flex-Child, Opacity UI, Font-Italic | ~3-5 Tage | ✅ ABGESCHLOSSEN |
+| **Phase 2** | Transform Builder, Shadow Builder, Gradient, Aspect-Ratio, Divider, Spacer, Icon, List | ~5-8 Tage | ✅ ABGESCHLOSSEN |
+| **Phase 3** | Hover States, Transitions, Filters, Text-Shadow, Per-Side Borders | ~5-8 Tage | 🔴 NÄCHSTE |
 | **Phase 4** | Video, Embed, Map, Form-Elemente | ~5-7 Tage | 🟠 NIEDRIG |
 | **Phase 5** | Klassen, Animations, Tabs, Accordion, Slider, Lightbox | ~10+ Tage | ⚪ ZUKUNFT |
 

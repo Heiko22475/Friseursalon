@@ -26,6 +26,7 @@ import {
   Eye,
   EyeOff,
   ChevronsUp,
+  CopyCheck,
 } from 'lucide-react';
 import type { VEElement } from '../types/elements';
 
@@ -49,6 +50,10 @@ export interface ContextMenuData {
   hasClipboard: boolean;
   /** Kann in dieses Element eingefügt werden (Container) */
   canPasteInto: boolean;
+  /** This element is inside a card that is a direct child of a Cards element */
+  isCardInCards: boolean;
+  /** The ID of the card container (direct child of Cards) – set when isCardInCards is true */
+  cardContainerId?: string;
 }
 
 export interface ContextMenuAction {
@@ -65,7 +70,8 @@ export interface ContextMenuAction {
     | 'wrap-in-container'
     | 'unwrap'
     | 'reset-styles'
-    | 'toggle-visibility';
+    | 'toggle-visibility'
+    | 'apply-to-sibling-cards';
   elementId: string;
 }
 
@@ -334,6 +340,21 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         disabled={isBody}
         onClick={() => fire('toggle-visibility')}
       />
+
+      {/* Apply card styles to all sibling cards */}
+      {data.isCardInCards && data.cardContainerId && (
+        <>
+          <Divider />
+          <MenuItem
+            label="Auf alle Karten anwenden"
+            icon={<CopyCheck size={14} />}
+            onClick={() => {
+              onAction({ type: 'apply-to-sibling-cards', elementId: data.cardContainerId! });
+              onClose();
+            }}
+          />
+        </>
+      )}
 
       <Divider />
 

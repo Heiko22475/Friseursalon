@@ -173,6 +173,13 @@ Colors use `ColorValue` type supporting:
 
 Components: `ThemeColorPicker` for color selection with theme integration
 
+**⚠️ CRITICAL RULE – Color Pickers in Visual Editor:**
+- **NEVER use `<input type="color">`** for any color property. Always use `<VEColorPicker>` (`src/visual-editor/components/VEColorPicker.tsx`).
+- `VEColorPicker` provides Theme-Palette, Neutral swatches, and a custom hex input – enabling users to style elements with their theme colors.
+- All color properties in element `content` types (e.g., `VEIcon.content.color`, `VEDivider.content.color`) must be typed as `ColorValue`, not `string`.
+- In renderers, resolve `ColorValue` to a CSS string via `const { resolveColorValue } = useVETheme()`.
+- In factories (`createDivider`, `createIcon`, etc.), use `{ kind: 'custom', hex: '#...' }` as the default color value.
+
 ### 2. Responsive Values
 Many properties support viewport-specific values:
 ```typescript
@@ -345,6 +352,13 @@ npm run format
 - **Use multi_replace_string_in_file** for multiple independent edits
 - **Include 3-5 lines of context** when using replace_string_in_file
 - **Never create summary markdown files** unless explicitly requested
+
+### Visual Editor Rules
+- **Color pickers**: Always `<VEColorPicker>`, never `<input type="color">`. All element color properties must be `ColorValue`, not `string`.
+- **Icon elements**: The icon lives in a square container. Container size is intrinsic: `icon size + 2 × padding`. Content holds `iconName`, `size`, `color` (ColorValue), `strokeWidth`, `containerBg` (ColorValue | null), `containerBorderRadius`. Padding + margin come from the normal Spacing section. The Size section and Background section are hidden for Icons. Never set width/height on an Icon element.
+- **Divider/Spacer**: Content-specific settings (height, thickness, style) go in `content`; spacing/position via `styles`.
+- **ProMode gating**: Advanced properties (Grid, Position, Transform, Flex/Grid-Child, Min/Max, Aspect Ratio, Gradient, Shadow Builder, Overflow, Cursor) must be wrapped in `proMode` conditionals.
+- **New elements checklist**: 1) Type in `elements.ts`, 2) Factory in `elementHelpers.ts`, 3) Renderer in `renderer/`, 4) Switch case in `ElementRenderer.tsx`, 5) Icon in `ElementsTree.tsx`, 6) Entry in `AddElementPanel.tsx`, 7) Content editor in `ContentSection.tsx`, 8) Color in `TYPE_COLORS` in `PropertiesPanel.tsx`.
 
 ---
 

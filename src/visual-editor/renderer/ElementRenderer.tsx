@@ -17,7 +17,11 @@ import { FooterRenderer } from './FooterRenderer';
 import { CardsRenderer } from './CardsRenderer';
 import { NavbarRenderer } from './NavbarRenderer';
 import { WebsiteBlockRenderer } from './WebsiteBlockRenderer';
-import type { VEHeader, VEFooter, VECards, VENavbar, VEWebsiteBlock } from '../types/elements';
+import { DividerRenderer } from './DividerRenderer';
+import { SpacerRenderer } from './SpacerRenderer';
+import { IconRenderer } from './IconRenderer';
+import { ListRenderer } from './ListRenderer';
+import type { VEHeader, VEFooter, VECards, VENavbar, VEWebsiteBlock, VEDivider, VESpacer, VEIcon, VEList } from '../types/elements';
 
 interface ElementRendererProps {
   element: VEElement;
@@ -168,6 +172,60 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({ element, viewp
           onHover={onHover}
         />
       );
+
+    case 'Divider':
+      return (
+        <DividerRenderer
+          element={element as VEDivider}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
+      );
+
+    case 'Spacer':
+      return (
+        <SpacerRenderer
+          element={element as VESpacer}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
+      );
+
+    case 'Icon':
+      return (
+        <IconRenderer
+          element={element as VEIcon}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+        />
+      );
+
+    case 'List':
+      return (
+        <ListRenderer
+          element={element as VEList}
+          viewport={viewport}
+          isSelected={isSelected}
+          isHovered={!!isHovered}
+          onSelect={onSelect}
+          onHover={onHover}
+          selectedId={selectedId}
+          hoveredId={hoveredId}
+        />
+      );
+
+    case 'ListItem':
+      // ListItem is rendered by ListRenderer, not directly
+      return null;
 
     case 'ComponentInstance':
       // Phase 4 – Platzhalter

@@ -14,7 +14,7 @@ import type {
 } from '../types/elements';
 import type {
   ElementStyles, StyleProperties, SizeValue,
-  SizeValueOrAuto,
+  SizeValueOrAuto, PseudoState, PseudoStateStyles,
 } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 
@@ -266,18 +266,47 @@ function resolveV2Styles(
   // Nothing → no styles
   if (Object.keys(merged).length === 0) return undefined;
 
-  // Split into desktop / tablet / mobile
+  // Classify keys:  pseudo-states, breakpoints, and regular props
+  const PSEUDO_KEYS = new Set([':hover', ':focus', ':active']);
+
+  // Split into desktop / tablet / mobile + pseudo-states
   const desktopRaw: Record<string, any> = {};
   const tabletRaw: Record<string, any> = {};
   const mobileRaw: Record<string, any> = {};
+  const pseudoRaw: Record<string, Record<string, any>> = {};
 
   for (const [key, val] of Object.entries(merged)) {
     if (key === '@tablet' && typeof val === 'object') {
-      Object.assign(tabletRaw, val);
+      // Extract pseudo-states from tablet override too
+      for (const [tKey, tVal] of Object.entries(val as Record<string, any>)) {
+        if (PSEUDO_KEYS.has(tKey)) {
+          const pName = tKey.slice(1) as PseudoState; // ':hover' → 'hover'
+          if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+          if (!pseudoRaw[pName]['@tablet']) pseudoRaw[pName]['@tablet'] = {};
+          Object.assign(pseudoRaw[pName]['@tablet'], tVal);
+        } else {
+          tabletRaw[tKey] = tVal;
+        }
+      }
     } else if (key === '@mobile' && typeof val === 'object') {
-      Object.assign(mobileRaw, val);
-    } else if (key.startsWith(':') || key === '_extends' || key === 'transition' || key === 'transitions') {
-      // Pseudo-states & transitions: skip for now (VE doesn't support them on elements yet)
+      for (const [mKey, mVal] of Object.entries(val as Record<string, any>)) {
+        if (PSEUDO_KEYS.has(mKey)) {
+          const pName = mKey.slice(1) as PseudoState;
+          if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+          if (!pseudoRaw[pName]['@mobile']) pseudoRaw[pName]['@mobile'] = {};
+          Object.assign(pseudoRaw[pName]['@mobile'], mVal);
+        } else {
+          mobileRaw[mKey] = mVal;
+        }
+      }
+    } else if (PSEUDO_KEYS.has(key) && typeof val === 'object') {
+      const pName = key.slice(1) as PseudoState; // ':hover' → 'hover'
+      if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+      // Desktop-level pseudo props
+      Object.assign(pseudoRaw[pName], val);
+    } else if (key === '_extends' || key === 'transition' || key === 'transitions') {
+      // Transitions: store as regular desktop prop (pass through)
+      if (key === 'transition') desktopRaw[key] = val;
       continue;
     } else {
       desktopRaw[key] = val;
@@ -292,6 +321,36 @@ function resolveV2Styles(
   }
   if (Object.keys(mobileRaw).length > 0) {
     result.mobile = v2PropsToVE(mobileRaw);
+  }
+
+  // Convert pseudo-states
+  const pseudoEntries = Object.entries(pseudoRaw);
+  if (pseudoEntries.length > 0) {
+    result.pseudoStyles = {};
+    for (const [pName, pData] of pseudoEntries) {
+      // pData has desktop-level props + possibly @tablet, @mobile sub-objects
+      const pDesktop: Record<string, any> = {};
+      const pTablet: Record<string, any> = {};
+      const pMobile: Record<string, any> = {};
+
+      for (const [pk, pv] of Object.entries(pData)) {
+        if (pk === '@tablet' && typeof pv === 'object') {
+          Object.assign(pTablet, pv);
+        } else if (pk === '@mobile' && typeof pv === 'object') {
+          Object.assign(pMobile, pv);
+        } else {
+          pDesktop[pk] = pv;
+        }
+      }
+
+      const ps: PseudoStateStyles = {
+        desktop: v2PropsToVE(pDesktop),
+      };
+      if (Object.keys(pTablet).length > 0) ps.tablet = v2PropsToVE(pTablet);
+      if (Object.keys(pMobile).length > 0) ps.mobile = v2PropsToVE(pMobile);
+
+      result.pseudoStyles[pName as PseudoState] = ps;
+    }
   }
 
   return result;
@@ -450,7 +509,7 @@ function v2ElementToVE(
 // =====================================================
 
 /**
- * Convert VE ElementStyles back to v2 flat styles with @breakpoints.
+ * Convert VE ElementStyles back to v2 flat styles with @breakpoints and :pseudo-states.
  */
 function veStylesToV2(styles: ElementStyles | undefined): Record<string, any> | undefined {
   if (!styles) return undefined;
@@ -470,6 +529,31 @@ function veStylesToV2(styles: ElementStyles | undefined): Record<string, any> | 
   // Mobile overrides
   if (styles.mobile && Object.keys(styles.mobile).length > 0) {
     result['@mobile'] = vePropsToV2(styles.mobile);
+  }
+
+  // Pseudo-states → :hover, :focus, :active
+  if (styles.pseudoStyles) {
+    for (const [state, ps] of Object.entries(styles.pseudoStyles)) {
+      if (!ps) continue;
+      const key = `:${state}`; // 'hover' → ':hover'
+
+      // Desktop-level pseudo props
+      if (ps.desktop && Object.keys(ps.desktop).length > 0) {
+        result[key] = vePropsToV2(ps.desktop);
+      }
+
+      // Tablet pseudo overrides → nested inside @tablet
+      if (ps.tablet && Object.keys(ps.tablet).length > 0) {
+        if (!result['@tablet']) result['@tablet'] = {};
+        result['@tablet'][key] = vePropsToV2(ps.tablet);
+      }
+
+      // Mobile pseudo overrides → nested inside @mobile
+      if (ps.mobile && Object.keys(ps.mobile).length > 0) {
+        if (!result['@mobile']) result['@mobile'] = {};
+        result['@mobile'][key] = vePropsToV2(ps.mobile);
+      }
+    }
   }
 
   return Object.keys(result).length > 0 ? result : undefined;

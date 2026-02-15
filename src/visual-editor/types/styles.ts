@@ -137,12 +137,27 @@ export interface StyleProperties {
   cursor?: 'pointer' | 'default' | 'text' | 'move' | 'not-allowed';
 }
 
+// ===== PSEUDO-STATES =====
+
+/** Supported pseudo-states for interactive elements */
+export type PseudoState = 'hover' | 'focus' | 'active';
+
+/** Per-viewport style overrides for a pseudo-state */
+export interface PseudoStateStyles {
+  desktop: Partial<StyleProperties>;
+  tablet?: Partial<StyleProperties>;
+  mobile?: Partial<StyleProperties>;
+}
+
 // ===== RESPONSIVE STYLES =====
 
 export interface ElementStyles {
   desktop: Partial<StyleProperties>;
   tablet?: Partial<StyleProperties>;
   mobile?: Partial<StyleProperties>;
+
+  /** Pseudo-state style overrides (hover, focus, active) */
+  pseudoStyles?: Partial<Record<PseudoState, PseudoStateStyles>>;
 }
 
 // ===== VIEWPORT =====

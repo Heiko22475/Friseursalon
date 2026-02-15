@@ -146,7 +146,19 @@ export const PropertiesPanel: React.FC = () => {
     );
   }
 
-  const merged = mergeStyles(selectedElement.styles, state.viewport);
+  const baseMerged = mergeStyles(selectedElement.styles, state.viewport);
+
+  // When editing a pseudo-state, show base styles merged with pseudo overrides
+  const activeState = state.activeState;
+  const pseudoMerged = (() => {
+    if (!activeState) return baseMerged;
+    const ps = selectedElement.styles?.pseudoStyles?.[activeState];
+    if (!ps) return baseMerged;
+    // Merge pseudo on top of base so user sees the combined effect
+    const vpStyles = ps[state.viewport] || {};
+    return { ...baseMerged, ...vpStyles };
+  })();
+  const merged = pseudoMerged;
 
   // Check element types
   const isCards = selectedElement.type === 'Cards';
@@ -161,22 +173,42 @@ export const PropertiesPanel: React.FC = () => {
   const parentIsGrid = parentMerged.display === 'grid';
 
   const updateStyle = (key: keyof StyleProperties, value: any) => {
-    dispatch({
-      type: 'UPDATE_STYLES',
-      id: selectedElement.id,
-      viewport: state.viewport,
-      styles: { [key]: value === '' ? undefined : value },
-    });
+    if (activeState) {
+      dispatch({
+        type: 'UPDATE_PSEUDO_STYLES',
+        id: selectedElement.id,
+        pseudoState: activeState,
+        viewport: state.viewport,
+        styles: { [key]: value === '' ? undefined : value },
+      });
+    } else {
+      dispatch({
+        type: 'UPDATE_STYLES',
+        id: selectedElement.id,
+        viewport: state.viewport,
+        styles: { [key]: value === '' ? undefined : value },
+      });
+    }
   };
 
   /** Debounced variant for slider / rapid changes (fewer undo entries) */
   const updateStyleBatch = (key: keyof StyleProperties, value: any) => {
-    dispatch({
-      type: 'UPDATE_STYLES_BATCH',
-      id: selectedElement.id,
-      viewport: state.viewport,
-      styles: { [key]: value === '' ? undefined : value },
-    });
+    if (activeState) {
+      dispatch({
+        type: 'UPDATE_PSEUDO_STYLES',
+        id: selectedElement.id,
+        pseudoState: activeState,
+        viewport: state.viewport,
+        styles: { [key]: value === '' ? undefined : value },
+      });
+    } else {
+      dispatch({
+        type: 'UPDATE_STYLES_BATCH',
+        id: selectedElement.id,
+        viewport: state.viewport,
+        styles: { [key]: value === '' ? undefined : value },
+      });
+    }
   };
 
   // Determine which sections are relevant for the element type
@@ -365,6 +397,70 @@ export const PropertiesPanel: React.FC = () => {
             {proMode ? 'PRO aktiv – Erweiterte Properties' : 'PRO – Erweiterte Properties anzeigen'}
           </button>
         </div>
+
+        {/* Pseudo-State Toggle: Normal / Hover / Focus / Active */}
+        {selectedElement.type !== 'Body' && (
+          <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
+            {([null, 'hover', 'focus', 'active'] as const).map(s => {
+              const isActive = activeState === s;
+              const label = s === null ? 'Normal' : s === 'hover' ? 'Hover' : s === 'focus' ? 'Focus' : 'Active';
+              const stateColor = s === null ? '#3b82f6' : s === 'hover' ? '#f59e0b' : s === 'focus' ? '#8b5cf6' : '#ef4444';
+              // Show dot if this pseudo-state has values
+              const hasPseudoValues = s !== null && selectedElement.styles?.pseudoStyles?.[s]
+                && Object.keys(selectedElement.styles.pseudoStyles[s]?.desktop || {}).length > 0;
+              return (
+                <button
+                  key={label}
+                  onClick={() => dispatch({ type: 'SET_ACTIVE_STATE', state: s })}
+                  style={{
+                    flex: 1,
+                    padding: '4px 6px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    borderRadius: '4px',
+                    border: `1px solid ${isActive ? stateColor + '80' : '#2d2d3d'}`,
+                    backgroundColor: isActive ? stateColor + '20' : 'transparent',
+                    color: isActive ? stateColor : '#6b7280',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    position: 'relative',
+                  }}
+                >
+                  {label}
+                  {hasPseudoValues && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '2px',
+                      right: '2px',
+                      width: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      backgroundColor: stateColor,
+                    }} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Active state indicator banner */}
+        {activeState && (
+          <div style={{
+            marginTop: '6px',
+            padding: '4px 8px',
+            fontSize: '10px',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            color: activeState === 'hover' ? '#f59e0b' : activeState === 'focus' ? '#8b5cf6' : '#ef4444',
+            backgroundColor: (activeState === 'hover' ? '#f59e0b' : activeState === 'focus' ? '#8b5cf6' : '#ef4444') + '15',
+            borderRadius: '4px',
+            textAlign: 'center',
+          }}>
+            Bearbeite :{activeState} Styles
+          </div>
+        )}
       </div>
 
       {/* Scrollable Properties */}

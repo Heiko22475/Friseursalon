@@ -5,9 +5,10 @@
 // No editor overhead – pure rendering.
 // =====================================================
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   resolveV2ElementStyles,
+  resolveV2ResponsiveStyles,
   isV2ElementVisible,
 } from '../visual-editor/converters/v2Converter';
 import type { Viewport } from '../hooks/useViewport';
@@ -18,6 +19,146 @@ interface V2ElementRendererProps {
   allStyles: Record<string, any>;
   themeColors: Record<string, string>;
   viewport: Viewport;
+  /** Internal: whether this is the root call (renders <style> tag) */
+  _isRoot?: boolean;
+}
+
+// =====================================================
+// PSEUDO-STATE CSS GENERATOR
+// Collects :hover/:focus/:active from element tree
+// and generates scoped CSS rules.
+// =====================================================
+
+const PSEUDO_KEYS = [':hover', ':focus', ':active'] as const;
+
+/** Convert camelCase to kebab-case for CSS properties */
+function toKebab(str: string): string {
+  return str.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+}
+
+/**
+ * Collect pseudo-state CSS rules from the entire element tree.
+ * Resolves named classes + inline styles for each pseudo-state,
+ * then emits CSS rules like [data-v2-id="xxx"]:hover { ... }
+ */
+function collectPseudoCSS(
+  element: any,
+  allStyles: Record<string, any>,
+  viewport: 'desktop' | 'tablet' | 'mobile',
+  themeColors: Record<string, string>,
+): string[] {
+  const rules: string[] = [];
+
+  // Merge class-level + inline-level pseudo-states for this element
+  const mergedStyles: Record<string, any> = {};
+
+  // From classes
+  if (element.class && Array.isArray(element.class)) {
+    for (const cls of element.class) {
+      const classDef = allStyles[cls];
+      if (!classDef) continue;
+      // Resolve _extends chain to get all pseudo-states
+      const resolved = resolveClassChain(cls, allStyles);
+      for (const pk of PSEUDO_KEYS) {
+        if (resolved[pk]) {
+          if (!mergedStyles[pk]) mergedStyles[pk] = {};
+          Object.assign(mergedStyles[pk], resolved[pk]);
+        }
+      }
+    }
+  }
+
+  // From inline styles (override class-level)
+  if (element.styles) {
+    for (const pk of PSEUDO_KEYS) {
+      if (element.styles[pk]) {
+        if (!mergedStyles[pk]) mergedStyles[pk] = {};
+        Object.assign(mergedStyles[pk], element.styles[pk]);
+      }
+      // Also check inside @tablet/@mobile for nested pseudo-states
+      if (viewport === 'tablet' || viewport === 'mobile') {
+        const bpKey = `@${viewport}`;
+        if (element.styles[bpKey]?.[pk]) {
+          if (!mergedStyles[pk]) mergedStyles[pk] = {};
+          Object.assign(mergedStyles[pk], element.styles[bpKey][pk]);
+        }
+      }
+      // For mobile, also check @tablet (cascade)
+      if (viewport === 'mobile' && element.styles['@tablet']?.[pk]) {
+        if (!mergedStyles[pk]) mergedStyles[pk] = {};
+        // Tablet first, then mobile overrides
+        const combined = { ...element.styles['@tablet'][pk] };
+        if (element.styles['@mobile']?.[pk]) {
+          Object.assign(combined, element.styles['@mobile'][pk]);
+        }
+        mergedStyles[pk] = { ...mergedStyles[pk], ...combined };
+      }
+    }
+  }
+
+  // Generate CSS rules
+  for (const pk of PSEUDO_KEYS) {
+    const pseudoProps = mergedStyles[pk];
+    if (!pseudoProps || Object.keys(pseudoProps).length === 0) continue;
+
+    // Resolve v2 values to CSS via resolveV2ResponsiveStyles (desktop-only, no breakpoints inside pseudo)
+    const cssObj = resolveV2ResponsiveStyles(pseudoProps, 'desktop', themeColors);
+    const declarations = Object.entries(cssObj)
+      .filter(([, v]) => v !== undefined && v !== null && v !== '')
+      .map(([k, v]) => `${toKebab(k)}: ${v}`)
+      .join('; ');
+
+    if (declarations) {
+      rules.push(`[data-v2-id="${element.id}"]${pk} { ${declarations} }`);
+    }
+  }
+
+  // Also check for transition on the element (needed for hover transitions to work)
+  // We handle this via inline styles already, but ensure transition CSS property is present
+  // if pseudo-states exist but no transition was set inline
+  if (Object.keys(mergedStyles).length > 0) {
+    const inlineTransition = element.styles?.transition;
+    const classTransition = element.class?.reduce((t: string | undefined, cls: string) => {
+      const resolved = resolveClassChain(cls, allStyles);
+      return resolved.transition || t;
+    }, undefined);
+    const transition = inlineTransition || classTransition;
+    if (transition) {
+      rules.push(`[data-v2-id="${element.id}"] { transition: ${transition} }`);
+    }
+  }
+
+  // Recurse children
+  if (element.children) {
+    for (const child of element.children) {
+      rules.push(...collectPseudoCSS(child, allStyles, viewport, themeColors));
+    }
+  }
+
+  return rules;
+}
+
+/** Resolve a full class chain including _extends */
+function resolveClassChain(name: string, allStyles: Record<string, any>, visited = new Set<string>()): Record<string, any> {
+  if (visited.has(name)) return {};
+  visited.add(name);
+  const def = allStyles[name];
+  if (!def) return {};
+
+  let resolved: Record<string, any> = {};
+  if (def._extends) {
+    resolved = resolveClassChain(def._extends, allStyles, visited);
+  }
+  for (const [key, val] of Object.entries(def)) {
+    if (key === '_extends') continue;
+    if (key.startsWith(':')) {
+      // Merge pseudo sub-objects
+      resolved[key] = { ...(resolved[key] || {}), ...(val as Record<string, any>) };
+    } else {
+      resolved[key] = val;
+    }
+  }
+  return resolved;
 }
 
 /**
@@ -29,6 +170,7 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
   allStyles,
   themeColors,
   viewport,
+  _isRoot = true,
 }) => {
   if (!element) return null;
 
@@ -46,6 +188,13 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
     themeColors,
   );
 
+  // Collect pseudo-state CSS rules for the entire tree (only at root level)
+  const pseudoCSSRules = useMemo(() => {
+    if (!_isRoot) return '';
+    const rules = collectPseudoCSS(element, allStyles, viewport, themeColors);
+    return rules.length > 0 ? rules.join('\n') : '';
+  }, [_isRoot, element, allStyles, viewport, themeColors]);
+
   // Render children recursively
   const renderChildren = () => {
     if (!element.children || element.children.length === 0) return null;
@@ -56,6 +205,7 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
         allStyles={allStyles}
         themeColors={themeColors}
         viewport={viewport}
+        _isRoot={false}
       />
     ));
   };
@@ -71,6 +221,9 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
     case 'body':
       return (
         <div data-v2-id={element.id} style={css}>
+          {pseudoCSSRules && (
+            <style dangerouslySetInnerHTML={{ __html: pseudoCSSRules }} />
+          )}
           {renderChildren()}
         </div>
       );

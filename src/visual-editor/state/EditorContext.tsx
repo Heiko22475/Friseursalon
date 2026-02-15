@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { VEPage, VEElement } from '../types/elements';
-import type { VEViewport, StyleProperties } from '../types/styles';
+import type { VEViewport, StyleProperties, PseudoState } from '../types/styles';
 import {
   findElementById,
   getBreadcrumbPath,
@@ -53,6 +53,8 @@ export interface EditorState {
   _lastUndoPush: number;
   /** Pro-Modus: Erweiterte CSS-Properties anzeigen */
   proMode: boolean;
+  /** Active pseudo-state being edited (null = normal/none) */
+  activeState: PseudoState | null;
 }
 
 // ===== ACTIONS =====
@@ -91,6 +93,8 @@ export type EditorAction =
   | { type: 'UPDATE_PAGE_META'; pageId: string; updates: Partial<Pick<VEPage, 'name' | 'route' | 'isPublished'>> }
   | { type: 'MOVE_PAGE'; pageId: string; direction: 'up' | 'down' }
   | { type: 'TOGGLE_PRO_MODE' }
+  | { type: 'SET_ACTIVE_STATE'; state: PseudoState | null }
+  | { type: 'UPDATE_PSEUDO_STYLES'; id: string; pseudoState: PseudoState; viewport: VEViewport; styles: Partial<StyleProperties> }
   | { type: 'APPLY_TO_SIBLING_CARDS'; sourceCardId: string };
 
 // ===== INITIAL STATE =====
@@ -112,6 +116,7 @@ export function createInitialState(pages: VEPage[]): EditorState {
     editingId: null,
     _lastUndoPush: 0,
     proMode: typeof window !== 'undefined' && localStorage.getItem('ve-pro-mode') === 'true',
+    activeState: null,
   };
 }
 
@@ -164,7 +169,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
 function editorReducerInner(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case 'SELECT_ELEMENT':
-      return { ...state, selectedId: action.id };
+      return { ...state, selectedId: action.id, activeState: null };
 
     case 'HOVER_ELEMENT':
       return { ...state, hoveredId: action.id };
@@ -465,6 +470,36 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
       const newPro = !state.proMode;
       try { localStorage.setItem('ve-pro-mode', String(newPro)); } catch {}
       return { ...state, proMode: newPro };
+    }
+
+    case 'SET_ACTIVE_STATE':
+      return { ...state, activeState: action.state };
+
+    case 'UPDATE_PSEUDO_STYLES': {
+      const el = findElementById(state.page.body, action.id);
+      if (!el) return state;
+
+      const currentStyles = el.styles || { desktop: {} };
+      const ps = currentStyles.pseudoStyles || {};
+      const currentPseudo = ps[action.pseudoState] || { desktop: {} };
+      const currentVP = currentPseudo[action.viewport] || {};
+
+      const updatedPseudo = {
+        ...currentPseudo,
+        [action.viewport]: { ...currentVP, ...action.styles },
+      };
+
+      const newStyles = {
+        ...currentStyles,
+        pseudoStyles: { ...ps, [action.pseudoState]: updatedPseudo },
+      };
+
+      const newBody = replaceElement(state.page.body, action.id, { ...el, styles: newStyles }) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
     }
 
     case 'TOGGLE_NAVIGATOR':

@@ -5,17 +5,6 @@ import { Plus, Trash2, ChevronUp, ChevronDown, Eye, Edit, Layers } from 'lucide-
 import { Modal } from './Modal';
 import { AdminHeader } from './AdminHeader';
 import { Hero } from '../blocks/Hero';
-import Services from '../Services';
-import Gallery from '../Gallery';
-import Reviews from '../Reviews';
-import Pricing from '../Pricing';
-import Contact from '../Contact';
-import StaticContent from '../StaticContent';
-import { Grid } from '../Grid';
-// Card Building Blocks
-import { CardTeam } from '../blocks/CardTeam';
-import { CardService } from '../blocks/CardService';
-import { CardTestimonial } from '../blocks/CardTestimonial';
 import { GenericCard } from '../blocks/GenericCard';
 import { CardTemplateSelectionDialog } from './CardTemplateSelectionDialog';
 import type { CardTemplate } from './CardTemplateSelectionDialog';
@@ -32,17 +21,7 @@ interface PageBlock {
 // Available block types
 const AVAILABLE_BLOCKS = [
   { block_type: 'hero', block_name: 'Hero-Banner', can_repeat: true },
-  { block_type: 'services', block_name: 'Leistungen', can_repeat: true },
-  { block_type: 'gallery', block_name: 'Galerie', can_repeat: true },
-  { block_type: 'reviews', block_name: 'Bewertungen', can_repeat: true },
-  { block_type: 'pricing', block_name: 'Preise', can_repeat: true },
-  { block_type: 'contact', block_name: 'Kontakt', can_repeat: false },
-  { block_type: 'static-content', block_name: 'Statischer Inhalt', can_repeat: true },
-  { block_type: 'grid', block_name: 'Raster/Grid', can_repeat: true },
-  // Card Building Blocks
-  { block_type: 'card-team', block_name: 'Team-Karten', can_repeat: true },
-  { block_type: 'card-service', block_name: 'Service-Karten', can_repeat: true },
-  { block_type: 'card-testimonial', block_name: 'Bewertungs-Karten', can_repeat: true },
+  { block_type: 'navbar', block_name: 'Navigation', can_repeat: false },
   { block_type: 'generic-card', block_name: 'Flexible Karten', can_repeat: true },
 ];
 
@@ -252,26 +231,6 @@ export const BlockManagerNew: React.FC = () => {
     switch (block.type) {
       case 'hero':
         return <Hero config={block.config as any} instanceId={instanceId} />;
-      case 'services':
-        return <Services instanceId={instanceId} />;
-      case 'gallery':
-        return <Gallery instanceId={instanceId} />;
-      case 'reviews':
-        return <Reviews instanceId={instanceId} />;
-      case 'pricing':
-        return <Pricing instanceId={instanceId} />;
-      case 'contact':
-        return <Contact />;
-      case 'static-content':
-        return <StaticContent instanceId={instanceId} />;
-      case 'grid':
-        return <Grid instanceId={instanceId} />;
-      case 'card-team':
-        return <CardTeam config={block.config as any} instanceId={instanceId} />;
-      case 'card-service':
-        return <CardService config={block.config as any} instanceId={instanceId} />;
-      case 'card-testimonial':
-        return <CardTestimonial config={block.config as any} instanceId={instanceId} />;
       case 'generic-card':
         return <GenericCard config={block.config as any} instanceId={instanceId} />;
       default:
@@ -285,34 +244,10 @@ export const BlockManagerNew: React.FC = () => {
       return `/admin/hero/${pageId}/${block.id}`;
     }
     
-    // Card blocks with pageId and blockId
-    if (block.type === 'card-team') {
-      return `/admin/card-team/${pageId}/${block.id}`;
-    }
-    if (block.type === 'card-service') {
-      return `/admin/card-service/${pageId}/${block.id}`;
-    }
-    if (block.type === 'card-testimonial') {
-      return `/admin/card-testimonial/${pageId}/${block.id}`;
-    }
     if (block.type === 'generic-card') {
       return `/admin/generic-card/${pageId}/${block.id}`;
     }
     
-    const editorMap: { [key: string]: string } = {
-      services: 'services',
-      gallery: 'gallery',
-      reviews: 'reviews',
-      pricing: 'pricing',
-      contact: 'contact',
-      'static-content': 'static-content',
-      'grid': 'grid',
-    };
-
-    const editorPath = editorMap[block.type];
-    if (editorPath) {
-      return `/admin/${editorPath}`;
-    }
     return null;
   };
 

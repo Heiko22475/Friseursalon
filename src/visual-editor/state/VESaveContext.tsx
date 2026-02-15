@@ -6,6 +6,7 @@
 
 import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { vePagesTov2Pages } from '../converters/v2Converter';
 import type { VEDataSource } from '../VisualEditorPage';
 
 // ===== TYPES =====
@@ -107,25 +108,9 @@ export const VESaveProvider: React.FC<VESaveProviderProps> = ({
         pagesInVE: effectivePages.length,
       });
 
-      // Step 2: Convert VE pages to website JSON page format (native VE format)
-      const updatedPages = effectivePages.map((vePage: any) => {
-        // Find existing page to preserve non-VE fields (display_order, meta, etc.)
-        const originalPage = original.pages?.find(
-          (p: any) => p.id === vePage.id
-        );
-
-        // Build website page with veBody (full VE element tree)
-        return {
-          ...(originalPage || {}),
-          id: vePage.id,
-          title: vePage.name || 'Seite',
-          slug: (vePage.route || '/').replace(/^\//, '') || 'home',
-          is_home: vePage.route === '/',
-          is_published: vePage.isPublished ?? true,
-          isVisualEditor: true,
-          veBody: vePage.body,
-        };
-      });
+      // Step 2: Convert VE pages to v2 JSON page format
+      const originalPages = original.pages || [];
+      const updatedPages = vePagesTov2Pages(effectivePages, originalPages);
 
       // Step 3: Build the complete updated content object
       // We preserve ALL original fields and only replace pages

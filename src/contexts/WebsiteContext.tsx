@@ -35,15 +35,34 @@ export interface Page {
   id: string;
   title: string;
   slug: string;
-  is_home: boolean;
-  is_published: boolean;
-  show_in_menu: boolean;
-  meta_description: string | null;
-  seo_title: string | null;
-  display_order: number;
-  blocks: Block[];
+  // v2 field names (preferred)
+  isHome?: boolean;
+  isPublished?: boolean;
+  showInMenu?: boolean;
+  body?: any;
+  seo?: { title?: string; description?: string };
+  // v1 field names (backward compat)
+  is_home?: boolean;
+  is_published?: boolean;
+  show_in_menu?: boolean;
+  blocks?: Block[];
+  meta_description?: string | null;
+  seo_title?: string | null;
+  display_order?: number;
   created_at?: string;
   updated_at?: string;
+}
+
+// ===== PAGE FIELD HELPERS (v1/v2 compat) =====
+
+export function pageIsHome(p: Page): boolean {
+  return p.isHome ?? p.is_home ?? false;
+}
+export function pageIsPublished(p: Page): boolean {
+  return p.isPublished ?? p.is_published ?? true;
+}
+export function pageShowInMenu(p: Page): boolean {
+  return p.showInMenu ?? p.show_in_menu ?? true;
 }
 
 export interface Contact {
@@ -172,17 +191,23 @@ export interface SiteSettings {
 }
 
 export interface Website {
-  site_settings: SiteSettings;
+  // v2 top-level fields
+  settings?: any;
+  styles?: Record<string, any>;
+  components?: Record<string, any>;
+
+  // v1 legacy fields (optional for backward compat)
+  site_settings?: SiteSettings;
   pages: Page[];
-  services: Service[];
-  contact: Contact;
-  hours: Hours;
-  business_hours: BusinessHour[];
-  reviews: Review[];
-  about: About;
-  gallery: Gallery;
-  static_content: StaticContent;
-  general: GeneralInfo;
+  services?: Service[];
+  contact?: Contact;
+  hours?: Hours;
+  business_hours?: BusinessHour[];
+  reviews?: Review[];
+  about?: About;
+  gallery?: Gallery;
+  static_content?: StaticContent;
+  general?: GeneralInfo;
   logos?: LogoDesign[];
   typography?: import('../types/typography').TypographyConfig;
   header?: import('../types/Header').HeaderConfig;
@@ -321,7 +346,7 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
   const updateSiteSettings = async (settings: Partial<SiteSettings>) => {
     if (!websiteRecord) return;
     await updateWebsite({
-      site_settings: { ...websiteRecord.content.site_settings, ...settings },
+      site_settings: { ...(websiteRecord.content.site_settings || { header_type: 'simple', theme: { primary_color: '#e11d48', font_family: 'sans' } }), ...settings },
     });
   };
 
@@ -357,7 +382,7 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
 
   const updateService = async (serviceId: string, updates: Partial<Service>) => {
     if (!websiteRecord) return;
-    const newServices = websiteRecord.content.services.map((s) =>
+    const newServices = (websiteRecord.content.services || []).map((s) =>
       s.id === serviceId ? { ...s, ...updates } : s
     );
     await updateServices(newServices);
@@ -367,27 +392,27 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
     if (!websiteRecord) throw new Error('No website loaded');
     const newId = crypto.randomUUID();
     const newService: Service = { ...service, id: newId };
-    await updateServices([...websiteRecord.content.services, newService]);
+    await updateServices([...(websiteRecord.content.services || []), newService]);
     return newId;
   };
 
   const deleteService = async (serviceId: string) => {
     if (!websiteRecord) return;
-    const newServices = websiteRecord.content.services.filter((s) => s.id !== serviceId);
+    const newServices = (websiteRecord.content.services || []).filter((s) => s.id !== serviceId);
     await updateServices(newServices);
   };
 
   const updateContact = async (contact: Partial<Contact>) => {
     if (!websiteRecord) return;
     await updateWebsite({ 
-      contact: { ...websiteRecord.content.contact, ...contact } 
+      contact: { ...(websiteRecord.content.contact || { phone: '', email: '', street: '', postal_code: '', city: '', country: 'Deutschland', instagram: null, facebook_url: null, instagram_url: null, google_maps_url: null }), ...contact } as Contact
     });
   };
 
   const updateHours = async (hours: Partial<Hours>) => {
     if (!websiteRecord) return;
     await updateWebsite({ 
-      hours: { ...websiteRecord.content.hours, ...hours } 
+      hours: { ...(websiteRecord.content.hours || { tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '' }), ...hours } as Hours
     });
   };
 
@@ -424,7 +449,7 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
   const updateStaticContent = async (content: Partial<StaticContent>) => {
     if (!websiteRecord) return;
     await updateWebsite({
-      static_content: { ...websiteRecord.content.static_content, ...content },
+      static_content: { ...(websiteRecord.content.static_content || { imprint: '', privacy: '', terms: '' }), ...content } as StaticContent,
     });
   };
 

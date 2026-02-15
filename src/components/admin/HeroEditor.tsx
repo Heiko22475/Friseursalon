@@ -62,7 +62,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
     if (website?.pages) {
       const page = website.pages.find(p => p.id === pageId);
       if (page) {
-        const block = page.blocks.find(b => b.id === blockId);
+        const block = page.blocks?.find(b => b.id === blockId);
         if (block && block.config) {
           setConfig({ ...createDefaultHeroConfig(), ...block.config });
         }
@@ -76,7 +76,7 @@ export const HeroEditor: React.FC<HeroEditorProps> = (props) => {
     try {
       const page = website?.pages.find(p => p.id === pageId);
       if (page) {
-        const updatedBlocks = page.blocks.map(b => 
+        const updatedBlocks = (page.blocks || []).map(b => 
           b.id === blockId ? { ...b, config } : b
         );
         await updatePage(pageId, { blocks: updatedBlocks });

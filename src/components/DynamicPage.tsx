@@ -1,43 +1,25 @@
+// =====================================================
+// DYNAMIC PAGE – v2 Format Renderer
+// Rendert eine Seite aus dem v2 body Elementbaum.
+// Keine blocks[] mehr – alles kommt aus body.children.
+// =====================================================
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useWebsite } from '../contexts/WebsiteContext';
-import Header from './Header';
-import { Hero } from './blocks/Hero';
-import Services from './Services';
-import Reviews from './Reviews';
-import Gallery from './Gallery';
-import Pricing from './Pricing';
-import Contact from './Contact';
-import StaticContent from './StaticContent';
-import { Grid } from './Grid';
-import { GenericCard } from './blocks/GenericCard';
-import { NavbarBlock } from './blocks/NavbarBlock';
-import Footer from './Footer';
-import { FooterBlock } from './blocks/FooterBlock';
-import { HeaderBlock } from './blocks/HeaderBlock';
+import { useWebsite, pageIsHome, pageIsPublished } from '../contexts/WebsiteContext';
+import type { Page } from '../contexts/WebsiteContext';
+import { V2ElementRenderer } from './V2ElementRenderer';
 import { EditModeToggle } from './admin/EditModeToggle';
+import { useViewport } from '../hooks/useViewport';
 
-interface PageBlock {
-  id: string;
-  type: string;
-  position: number;
-  config: any;
-  content: any;
-}
-
-interface Page {
-  id: string;
-  slug: string;
-  title: string;
-  meta_description: string | null;
-  blocks: PageBlock[];
-}
+// ===== COMPONENT =====
 
 export const DynamicPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { website, loading: websiteLoading } = useWebsite();
+  const { website, websiteRecord, loading: websiteLoading } = useWebsite();
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
+  const viewport = useViewport();
 
   useEffect(() => {
     if (!websiteLoading && website) {
@@ -47,11 +29,17 @@ export const DynamicPage: React.FC = () => {
 
   const loadPage = () => {
     try {
-      // Find page by slug in JSONB
       const targetSlug = slug || 'home';
-      const foundPage = website?.pages.find(
-        (p) => p.slug === targetSlug && p.is_published
+      const pages = website?.pages || [];
+
+      let foundPage = pages.find(
+        (p) => p.slug === targetSlug && pageIsPublished(p)
       );
+
+      // Fallback: if no 'home' slug found, try first published home page
+      if (!foundPage && !slug) {
+        foundPage = pages.find((p) => pageIsHome(p) && pageIsPublished(p));
+      }
 
       if (!foundPage) {
         setPage(null);
@@ -60,52 +48,29 @@ export const DynamicPage: React.FC = () => {
       }
 
       setPage(foundPage);
-
-      // Update page title and meta
-      document.title = foundPage.title + ' - Friseursalon Sarah Soriano';
-      if (foundPage.meta_description) {
-        const metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) {
-          metaDesc.setAttribute('content', foundPage.meta_description);
-        }
-      }
-
+      updateMeta(foundPage);
       setLoading(false);
     } catch (error) {
-      console.error('Error loading page:', error);
+      console.error('[DynamicPage] Error loading page:', error);
       setLoading(false);
     }
   };
 
-  const renderBlock = (block: PageBlock) => {
-    const key = `${block.type}-${block.position}`;
-    const instanceId = block.position;
-    
-    switch (block.type) {
-      case 'navbar':
-        return <NavbarBlock key={key} config={block.config} />;
-      case 'hero':
-        return <div key={key} id={`hero-${instanceId}`}><Hero config={block.config} instanceId={instanceId} blockId={block.id} /></div>;
-      case 'services':
-        return <div key={key} id="services"><Services instanceId={instanceId} /></div>;
-      case 'gallery':
-        return <div key={key} id="gallery"><Gallery instanceId={instanceId} /></div>;
-      case 'reviews':
-        return <div key={key} id="reviews"><Reviews instanceId={instanceId} /></div>;
-      case 'pricing':
-        return <div key={key} id="pricing"><Pricing instanceId={instanceId} /></div>;
-      case 'contact':
-        return <div key={key} id="contact"><Contact /></div>;
-      case 'static-content':
-        return <div key={key} id="static-content"><StaticContent instanceId={instanceId} /></div>;
-      case 'grid':
-        return <div key={key} id="grid"><Grid instanceId={instanceId} /></div>;
-      case 'generic-card':
-        return <div key={key} id={`generic-card-${instanceId}`}><GenericCard config={block.config} instanceId={instanceId} blockId={block.id} /></div>;
-      default:
-        return null;
+  const updateMeta = (p: Page) => {
+    const siteName = websiteRecord?.site_name || website?.general?.name || '';
+    const seoTitle = p.seo?.title || p.seo_title;
+    document.title = seoTitle || (p.title + (siteName ? ` – ${siteName}` : ''));
+
+    const metaDesc = p.seo?.description || p.meta_description;
+    if (metaDesc) {
+      const metaEl = document.querySelector('meta[name="description"]');
+      if (metaEl) {
+        metaEl.setAttribute('content', metaDesc);
+      }
     }
   };
+
+  // ===== LOADING STATE =====
 
   if (loading || websiteLoading) {
     return (
@@ -114,6 +79,8 @@ export const DynamicPage: React.FC = () => {
       </div>
     );
   }
+
+  // ===== 404 =====
 
   if (!page) {
     return (
@@ -126,37 +93,33 @@ export const DynamicPage: React.FC = () => {
     );
   }
 
-  // Check if page blocks contain a navbar (replaces legacy header)
-  const hasNavbarBlock = page.blocks.some(b => b.type === 'navbar');
-  // Check if page blocks contain a footer block (replaces legacy footer)
-  const hasFooterBlock = page.blocks.some(b => b.id?.includes('footer'));
+  // ===== RENDER =====
 
+  // Get theme colors from settings for color ref resolution
+  const themeColors = website?.settings?.theme?.colors || {};
+  const allStyles = website?.styles || {};
+
+  // v2 format: render from body element tree
+  if (page.body) {
+    return (
+      <div className="min-h-screen">
+        <V2ElementRenderer
+          element={page.body}
+          allStyles={allStyles}
+          themeColors={themeColors}
+          viewport={viewport}
+        />
+        <EditModeToggle />
+      </div>
+    );
+  }
+
+  // Fallback: empty page
   return (
-    <div className="min-h-screen">
-      {/* Header: skip if page has navbar block */}
-      {!hasNavbarBlock && (
-        website?.header ? (
-          <HeaderBlock config={website.header} />
-        ) : (
-          <Header />
-        )
-      )}
-
-      {page.blocks
-        .sort((a, b) => a.position - b.position)
-        .map((block) => renderBlock(block))}
-
-      {/* Footer: skip if page has footer block, else use FooterBlock config or legacy Footer */}
-      {!hasFooterBlock && (
-        website?.footer ? (
-          <FooterBlock config={website.footer} />
-        ) : (
-          <Footer />
-        )
-      )}
-      
-      {/* Edit Mode Toggle (nur für Admins) */}
-      <EditModeToggle />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center text-gray-500">
+        <p>Diese Seite hat noch keinen Inhalt.</p>
+      </div>
     </div>
   );
 };

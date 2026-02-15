@@ -114,7 +114,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
         if (page.id === targetPage!.id) {
           return {
             ...page,
-            blocks: page.blocks.map(block => {
+            blocks: (page.blocks || []).map(block => {
               if (block.id === blockId) {
                 return { ...block, config: updatedConfig };
               }

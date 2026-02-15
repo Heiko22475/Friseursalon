@@ -622,7 +622,7 @@ export const GenericCardEditorPage: React.FC = () => {
   useEffect(() => {
     if (!loading && website && pageId && blockId) {
       const page = website.pages.find((p) => p.id === pageId);
-      const block = page?.blocks.find((b) => b.id === blockId);
+      const block = page?.blocks?.find((b) => b.id === blockId);
 
       const loadedConfig = block?.config
         ? { ...createDefaultGenericCardConfig(), ...block.config }
@@ -850,7 +850,7 @@ export const GenericCardEditorPage: React.FC = () => {
             if (page.id !== pageId) return page;
             return {
               ...page,
-              blocks: page.blocks.map((block) => {
+              blocks: (page.blocks || []).map((block) => {
                 if (block.id !== blockId) return block;
                 return {
                   ...block,
@@ -887,7 +887,7 @@ export const GenericCardEditorPage: React.FC = () => {
         if (page.id !== pageId) return page;
         return {
           ...page,
-          blocks: page.blocks.map((block) => {
+          blocks: (page.blocks || []).map((block) => {
             if (block.id !== blockId) return block;
             return {
               ...block,

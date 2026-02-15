@@ -1,15 +1,175 @@
 // src/lib/defaultTemplate.ts
+// Default website template in v2 format
 import { Website } from '../contexts/WebsiteContext';
 
 export const createDefaultWebsiteContent = (siteName: string): Website => {
   return {
-    site_settings: {
-      header_type: 'simple',
+    settings: {
       theme: {
-        primary_color: '#e11d48', // rose-600 default
-        font_family: 'sans',
+        colors: {
+          primary: '#e11d48',
+          secondary: '#1e293b',
+          accent: '#f59e0b',
+        },
+        fonts: {
+          heading: 'inter',
+          body: 'inter',
+        },
       },
     },
+    styles: {},
+    components: {},
+    pages: [
+      {
+        id: crypto.randomUUID(),
+        title: 'Home',
+        slug: 'home',
+        isHome: true,
+        isPublished: true,
+        showInMenu: true,
+        seo: {
+          title: 'Home | ' + siteName,
+          description: 'Welcome to our homepage',
+        },
+        body: {
+          id: crypto.randomUUID(),
+          tag: 'body',
+          styles: {
+            fontFamily: 'Inter, sans-serif',
+            color: '#1e293b',
+            margin: '0',
+          },
+          children: [
+            {
+              id: crypto.randomUUID(),
+              tag: 'section',
+              styles: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: [80, 'vh'],
+                padding: [48, 'px'],
+                textAlign: 'center',
+                backgroundColor: '#f8fafc',
+              },
+              children: [
+                {
+                  id: crypto.randomUUID(),
+                  tag: 'text',
+                  html: `<h1>Welcome to ${siteName}</h1>`,
+                  styles: {
+                    fontSize: [48, 'px'],
+                    fontWeight: '700',
+                    marginBottom: [16, 'px'],
+                    color: '#0f172a',
+                    '@mobile': {
+                      fontSize: [32, 'px'],
+                    },
+                  },
+                },
+                {
+                  id: crypto.randomUUID(),
+                  tag: 'text',
+                  html: '<p>We provide excellent service.</p>',
+                  styles: {
+                    fontSize: [18, 'px'],
+                    color: '#64748b',
+                    marginBottom: [32, 'px'],
+                  },
+                },
+                {
+                  id: crypto.randomUUID(),
+                  tag: 'button',
+                  text: 'Get Started',
+                  href: '#contact',
+                  styles: {
+                    display: 'inline-block',
+                    padding: [12, 'px'],
+                    paddingLeft: [32, 'px'],
+                    paddingRight: [32, 'px'],
+                    backgroundColor: '#e11d48',
+                    color: '#ffffff',
+                    borderRadius: [8, 'px'],
+                    fontWeight: '600',
+                    fontSize: [16, 'px'],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: crypto.randomUUID(),
+        title: 'Datenschutz',
+        slug: 'datenschutz',
+        isHome: false,
+        isPublished: true,
+        showInMenu: false,
+        seo: {
+          title: 'Datenschutz | ' + siteName,
+          description: 'Datenschutzerklärung',
+        },
+        body: {
+          id: crypto.randomUUID(),
+          tag: 'body',
+          children: [
+            {
+              id: crypto.randomUUID(),
+              tag: 'section',
+              styles: {
+                maxWidth: [800, 'px'],
+                margin: '0 auto',
+                padding: [32, 'px'],
+              },
+              children: [
+                {
+                  id: crypto.randomUUID(),
+                  tag: 'text',
+                  html: '<h1>Datenschutzerklärung</h1><p>Verantwortlicher...</p>',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: crypto.randomUUID(),
+        title: 'Impressum',
+        slug: 'impressum',
+        isHome: false,
+        isPublished: true,
+        showInMenu: false,
+        seo: {
+          title: 'Impressum | ' + siteName,
+          description: 'Impressum',
+        },
+        body: {
+          id: crypto.randomUUID(),
+          tag: 'body',
+          children: [
+            {
+              id: crypto.randomUUID(),
+              tag: 'section',
+              styles: {
+                maxWidth: [800, 'px'],
+                margin: '0 auto',
+                padding: [32, 'px'],
+              },
+              children: [
+                {
+                  id: crypto.randomUUID(),
+                  tag: 'text',
+                  html: '<h1>Impressum</h1><p>Angaben gemäß § 5 TMG...</p>',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    // Legacy fields kept for backward compat – can be removed later
     general: {
       name: siteName,
       full_name: siteName,
@@ -17,73 +177,6 @@ export const createDefaultWebsiteContent = (siteName: string): Website => {
       motto: 'Quality and Style',
       description: 'Welcome to your new website.',
     },
-    pages: [
-      {
-        id: crypto.randomUUID(),
-        title: 'Home',
-        slug: 'home',
-        is_home: true,
-        is_published: true,
-        show_in_menu: true,
-        meta_description: 'Welcome to our homepage',
-        seo_title: 'Home | ' + siteName,
-        display_order: 0,
-        blocks: [
-          {
-            id: crypto.randomUUID(),
-            type: 'hero',
-            position: 0,
-            config: {},
-            content: {
-              title: 'Welcome to ' + siteName,
-              subtitle: 'We provide excellent service.',
-              buttonText: 'Get Started',
-              buttonLink: '#contact'
-            },
-          },
-        ],
-      },
-      {
-        id: crypto.randomUUID(),
-        title: 'Datenschutz',
-        slug: 'datenschutz',
-        is_home: false,
-        is_published: true,
-        show_in_menu: false, // Usually in footer
-        meta_description: 'Datenschutzerklärung',
-        seo_title: 'Datenschutz | ' + siteName,
-        display_order: 1,
-        blocks: [
-          {
-            id: crypto.randomUUID(),
-            type: 'static_content',
-            position: 0,
-            config: { type: 'privacy' },
-            content: {},
-          },
-        ],
-      },
-      {
-        id: crypto.randomUUID(),
-        title: 'Impressum',
-        slug: 'impressum',
-        is_home: false,
-        is_published: true,
-        show_in_menu: false,
-        meta_description: 'Impressum',
-        seo_title: 'Impressum | ' + siteName,
-        display_order: 2,
-        blocks: [
-          {
-            id: crypto.randomUUID(),
-            type: 'static_content',
-            position: 0,
-            config: { type: 'imprint' },
-            content: {},
-          },
-        ],
-      },
-    ],
     services: [],
     contact: {
       phone: '',

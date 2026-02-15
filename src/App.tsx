@@ -7,39 +7,15 @@ import { useCustomerId } from './hooks/useCustomerId';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
 import { AdminDashboard } from './components/AdminDashboard';
-// import { GeneralEditor } from './components/admin/GeneralEditor';
 import { GeneralEditorNew as GeneralEditor } from './components/admin/GeneralEditorNew';
-// import { SettingsEditor as SettingsEditorOld } from './components/admin/SettingsEditor';
 import { SettingsEditorNew as SettingsEditor } from './components/admin/SettingsEditorNew';
-// import { ServicesEditor as ServicesEditorOld } from './components/admin/ServicesEditor';
-import { ServicesEditorNew as ServicesEditor } from './components/admin/ServicesEditorNew';
-// import { ContactEditor as ContactEditorOld } from './components/admin/ContactEditor';
-import { ContactEditorNew as ContactEditor } from './components/admin/ContactEditorNew';
-// import { HoursEditor as HoursEditorOld } from './components/admin/HoursEditor';
-// import { HoursEditorNew as HoursEditor } from './components/admin/HoursEditorNew'; // REMOVED
-// import { ReviewsEditor as ReviewsEditorOld } from './components/admin/ReviewsEditor';
-import { ReviewsEditorNew as ReviewsEditor } from './components/admin/ReviewsEditorNew';
-// import { AboutEditor as AboutEditorOld } from './components/admin/AboutEditor';
-// import { AboutEditorNew as AboutEditor } from './components/admin/AboutEditorNew'; // REMOVED
 import { DataExport } from './components/admin/DataExport';
 import { BackupAndRestore } from './components/admin/BackupAndRestore';
-// import { PageManager as PageManagerOld } from './components/admin/PageManager';
 import { PageManagerNew as PageManager } from './components/admin/PageManagerNew';
-// import { BlockManager as BlockManagerOld } from './components/admin/BlockManager';
 import { BlockManagerNew as BlockManager } from './components/admin/BlockManagerNew';
-// import { StaticContentEditor as StaticContentEditorOld } from './components/admin/StaticContentEditor';
-import { StaticContentEditorNew as StaticContentEditor } from './components/admin/StaticContentEditorNew';
-import { GridEditor } from './components/admin/GridEditor';
-// import { default as GalleryEditorOld } from './components/admin/GalleryEditor';
-import { GalleryEditorNew as GalleryEditor } from './components/admin/GalleryEditorNew';
 import { MediaLibrary } from './components/admin/MediaLibrary';
 import { LogoList, LogoEditor } from './components/admin/LogoDesigner';
 import { HeroEditor } from './components/admin/HeroEditor';
-// FooterEditorPage is now integrated into the Visual Editor
-// import { FooterEditorPage } from './components/admin/FooterEditor';
-import { CardTeamEditorPage } from './components/admin/CardTeamEditorPage';
-import { CardServiceEditorPage } from './components/admin/CardServiceEditorPage';
-import { CardTestimonialEditorPage } from './components/admin/CardTestimonialEditorPage';
 import { GenericCardEditorPage } from './components/admin/GenericCardEditorPage';
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
@@ -140,96 +116,6 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-            path="/admin/settings-old"
-            element={
-              <ProtectedRoute>
-                <SettingsEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          <Route
-            path="/admin/services"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><ServicesEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route
-            path="/admin/services-old"
-            element={
-              <ProtectedRoute>
-                <ServicesEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          <Route
-            path="/admin/contact"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><ContactEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route
-            path="/admin/contact-old"
-            element={
-              <ProtectedRoute>
-                <ContactEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          {/* Hours Editor - REMOVED */}
-          {/* <Route
-            path="/admin/hours"
-            element={
-              <ProtectedRoute>
-                <HoursEditor />
-              </ProtectedRoute>
-            }
-          /> */}
-          {/* <Route
-            path="/admin/hours-old"
-            element={
-              <ProtectedRoute>
-                <HoursEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          <Route
-            path="/admin/reviews"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><ReviewsEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route
-            path="/admin/reviews-old"
-            element={
-              <ProtectedRoute>
-                <ReviewsEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          {/* About Editor - REMOVED */}
-          {/* <Route
-            path="/admin/about"
-            element={
-              <ProtectedRoute>
-                <AboutEditor />
-              </ProtectedRoute>
-            }
-          /> */}
-          {/* <Route
-            path="/admin/about-old"
-            element={
-              <ProtectedRoute>
-                <AboutEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
           <Route
             path="/admin/export"
             element={
@@ -246,22 +132,6 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/admin/gallery"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><GalleryEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route
-            path="/admin/gallery-old"
-            element={
-              <ProtectedRoute>
-                <GalleryEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
           <Route
             path="/admin/pages"
             element={
@@ -291,30 +161,6 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <AdminLayout><BlockManager /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/static-content"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><StaticContentEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route
-            path="/admin/static-content-old"
-            element={
-              <ProtectedRoute>
-                <StaticContentEditorOld />
-              </ProtectedRoute>
-            }
-          /> */}
-          <Route
-            path="/admin/grid"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><GridEditor /></AdminLayout>
               </ProtectedRoute>
             }
           />
@@ -373,30 +219,6 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <AdminLayout><HeroEditor /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/card-team/:pageId/:blockId"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><CardTeamEditorPage /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/card-service/:pageId/:blockId"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><CardServiceEditorPage /></AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/card-testimonial/:pageId/:blockId"
-            element={
-              <ProtectedRoute>
-                <AdminLayout><CardTestimonialEditorPage /></AdminLayout>
               </ProtectedRoute>
             }
           />

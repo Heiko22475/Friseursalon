@@ -28,8 +28,6 @@ import './styles/editor.css';
 // ===== DATA SOURCE TYPE =====
 export type VEDataSource = 'demo' | 'live';
 
-// Converter is now in ./converters/websiteToVE.ts
-
 // ===== INNER EDITOR (braucht Context) =====
 
 const EditorInner: React.FC = () => {

@@ -7,7 +7,6 @@
 import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { VEDataSource } from '../VisualEditorPage';
-import { mergeVEPageIntoOriginal, convertVEPageToWebsitePage } from '../converters/veToWebsite';
 
 // ===== TYPES =====
 
@@ -106,23 +105,26 @@ export const VESaveProvider: React.FC<VESaveProviderProps> = ({
         websiteId,
         pagesInOriginal: original.pages?.length || 0,
         pagesInVE: effectivePages.length,
-        hasServices: !!original.services,
-        hasContact: !!original.contact,
-        hasHeader: !!original.header,
-        hasFooter: !!original.footer,
       });
 
-      // Step 2: Convert VE pages back to Website JSON pages format
+      // Step 2: Convert VE pages to website JSON page format (native VE format)
       const updatedPages = effectivePages.map((vePage: any) => {
+        // Find existing page to preserve non-VE fields (display_order, meta, etc.)
         const originalPage = original.pages?.find(
           (p: any) => p.id === vePage.id
         );
 
-        if (originalPage) {
-          return mergeVEPageIntoOriginal(vePage, originalPage);
-        }
-
-        return convertVEPageToWebsitePage(vePage);
+        // Build website page with veBody (full VE element tree)
+        return {
+          ...(originalPage || {}),
+          id: vePage.id,
+          title: vePage.name || 'Seite',
+          slug: (vePage.route || '/').replace(/^\//, '') || 'home',
+          is_home: vePage.route === '/',
+          is_published: vePage.isPublished ?? true,
+          isVisualEditor: true,
+          veBody: vePage.body,
+        };
       });
 
       // Step 3: Build the complete updated content object
@@ -219,6 +221,3 @@ export function useVESave(): VESaveContextValue {
   }
   return ctx;
 }
-
-// Merge functions are now in ../converters/veToWebsite.ts
-

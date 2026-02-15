@@ -39,6 +39,8 @@ export interface VEBaseElement {
   label?: string;
   styles?: ElementStyles;
   children?: VEElement[];
+  /** Assigned class names (references into GlobalStyles) */
+  classNames?: string[];
 }
 
 // ===== BODY =====

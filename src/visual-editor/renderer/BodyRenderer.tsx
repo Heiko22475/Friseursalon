@@ -19,7 +19,7 @@ interface BodyRendererProps {
 }
 
 export const BodyRenderer: React.FC<BodyRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const isSelected = selectedId === element.id;
 
   const combinedStyles: React.CSSProperties = {

@@ -25,7 +25,7 @@ export const SpacerRenderer: React.FC<SpacerRendererProps> = ({
   onSelect,
   onHover,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const { height } = element.content;
 
   return (

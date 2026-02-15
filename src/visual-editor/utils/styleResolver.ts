@@ -3,10 +3,12 @@
 // Löst responsive Styles auf und konvertiert zu CSSProperties
 // =====================================================
 
-import type { StyleProperties, ElementStyles, VEViewport, SizeValueOrAuto } from '../types/styles';
+import type { StyleProperties, ElementStyles, VEViewport, SizeValueOrAuto, GlobalStyles, NamedStyle, PseudoState, PseudoStateStyles } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 import { sizeValueToCSS } from './sizeValue';
 import { ALL_FONTS } from '../../data/fonts';
+
+import type { VEElement } from '../types/elements';
 
 // ===== COLOR RESOLVER (austauschbar) =====
 
@@ -31,6 +33,26 @@ export function setColorResolver(resolver: (cv: ColorValue | undefined | null) =
 
 function resolveColor(cv: ColorValue | undefined | null): string | undefined {
   return _colorResolver(cv);
+}
+
+// ===== GLOBAL STYLES REGISTRY =====
+
+/**
+ * Module-level reference to global styles, set by the EditorProvider.
+ * This allows resolveStyles() to be class-aware without changing every renderer.
+ */
+let _globalStyles: GlobalStyles = {};
+
+/**
+ * Set the current global styles for class resolution.
+ * Called by the EditorProvider whenever globalStyles change.
+ */
+export function setGlobalStyles(gs: GlobalStyles) {
+  _globalStyles = gs;
+}
+
+export function getGlobalStyles(): GlobalStyles {
+  return _globalStyles;
 }
 
 /**
@@ -198,11 +220,140 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
 }
 
 /**
- * Kombiniert: mergeStyles + stylesToCSS in einem Schritt
+ * Kombiniert: mergeStyles + stylesToCSS in einem Schritt.
+ * If an element (or classNames) is provided, class-aware resolution is used.
  */
 export function resolveStyles(
   styles: ElementStyles | undefined,
-  viewport: VEViewport
+  viewport: VEViewport,
+  element?: VEElement,
 ): React.CSSProperties {
+  if (element?.classNames && element.classNames.length > 0) {
+    return stylesToCSS(mergeStylesWithClasses(element.classNames, styles, _globalStyles, viewport));
+  }
   return stylesToCSS(mergeStyles(styles, viewport));
+}
+
+// =====================================================
+// CLASS-AWARE STYLE RESOLUTION
+// =====================================================
+
+/**
+ * Resolve a named style, following the _extends chain.
+ * Returns the merged NamedStyle with all parents applied.
+ */
+function resolveNamedStyleChain(
+  name: string,
+  globalStyles: GlobalStyles,
+  visited = new Set<string>()
+): NamedStyle {
+  if (visited.has(name)) return { desktop: {} }; // circular
+  visited.add(name);
+  const def = globalStyles[name];
+  if (!def) return { desktop: {} };
+
+  let base: NamedStyle = { desktop: {} };
+  if (def._extends) {
+    base = resolveNamedStyleChain(def._extends, globalStyles, visited);
+  }
+
+  // Merge: parent → child (child overrides parent)
+  return {
+    desktop: { ...base.desktop, ...def.desktop },
+    tablet: (base.tablet || def.tablet)
+      ? { ...(base.tablet || {}), ...(def.tablet || {}) }
+      : undefined,
+    mobile: (base.mobile || def.mobile)
+      ? { ...(base.mobile || {}), ...(def.mobile || {}) }
+      : undefined,
+    pseudoStyles: mergePseudoStyles(base.pseudoStyles, def.pseudoStyles),
+  };
+}
+
+function mergePseudoStyles(
+  parent?: Partial<Record<PseudoState, PseudoStateStyles>>,
+  child?: Partial<Record<PseudoState, PseudoStateStyles>>,
+): Partial<Record<PseudoState, PseudoStateStyles>> | undefined {
+  if (!parent && !child) return undefined;
+  const result: Partial<Record<PseudoState, PseudoStateStyles>> = {};
+  const allKeys = new Set([
+    ...Object.keys(parent || {}),
+    ...Object.keys(child || {}),
+  ]) as Set<PseudoState>;
+  for (const key of allKeys) {
+    const p = parent?.[key];
+    const c = child?.[key];
+    if (!p && !c) continue;
+    result[key] = {
+      desktop: { ...(p?.desktop || {}), ...(c?.desktop || {}) },
+      tablet: (p?.tablet || c?.tablet)
+        ? { ...(p?.tablet || {}), ...(c?.tablet || {}) }
+        : undefined,
+      mobile: (p?.mobile || c?.mobile)
+        ? { ...(p?.mobile || {}), ...(c?.mobile || {}) }
+        : undefined,
+    };
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/**
+ * Merge class styles (from classNames) + inline element styles.
+ * Classes are applied left-to-right, then inline overrides on top.
+ * Returns a computed ElementStyles that includes all sources.
+ */
+export function resolveElementStylesWithClasses(
+  classNames: string[] | undefined,
+  inlineStyles: ElementStyles | undefined,
+  globalStyles: GlobalStyles,
+): ElementStyles {
+  // Start with empty
+  let desktop: Partial<StyleProperties> = {};
+  let tablet: Partial<StyleProperties> = {};
+  let mobile: Partial<StyleProperties> = {};
+  let pseudoStyles: Partial<Record<PseudoState, PseudoStateStyles>> | undefined;
+
+  // Apply classes left-to-right
+  if (classNames) {
+    for (const cn of classNames) {
+      const resolved = resolveNamedStyleChain(cn, globalStyles);
+      desktop = { ...desktop, ...resolved.desktop };
+      if (resolved.tablet) tablet = { ...tablet, ...resolved.tablet };
+      if (resolved.mobile) mobile = { ...mobile, ...resolved.mobile };
+      if (resolved.pseudoStyles) {
+        pseudoStyles = mergePseudoStyles(pseudoStyles, resolved.pseudoStyles);
+      }
+    }
+  }
+
+  // Apply inline overrides on top
+  if (inlineStyles) {
+    desktop = { ...desktop, ...(inlineStyles.desktop || {}) };
+    if (inlineStyles.tablet) tablet = { ...tablet, ...inlineStyles.tablet };
+    if (inlineStyles.mobile) mobile = { ...mobile, ...inlineStyles.mobile };
+    if (inlineStyles.pseudoStyles) {
+      pseudoStyles = mergePseudoStyles(pseudoStyles, inlineStyles.pseudoStyles);
+    }
+  }
+
+  const result: ElementStyles = { desktop };
+  if (Object.keys(tablet).length > 0) result.tablet = tablet;
+  if (Object.keys(mobile).length > 0) result.mobile = mobile;
+  if (pseudoStyles) result.pseudoStyles = pseudoStyles;
+
+  return result;
+}
+
+/**
+ * Convenience: resolve classes + inline + viewport in one call.
+ * Returns the flattened StyleProperties for the given viewport.
+ */
+export function mergeStylesWithClasses(
+  classNames: string[] | undefined,
+  inlineStyles: ElementStyles | undefined,
+  globalStyles: GlobalStyles,
+  viewport: VEViewport,
+): Partial<StyleProperties> {
+  const resolved = resolveElementStylesWithClasses(classNames, inlineStyles, globalStyles);
+  return mergeStyles(resolved, viewport);
 }

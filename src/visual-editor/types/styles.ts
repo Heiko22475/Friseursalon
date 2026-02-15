@@ -164,6 +164,33 @@ export interface ElementStyles {
 
 export type VEViewport = 'desktop' | 'tablet' | 'mobile';
 
+// ===== NAMED STYLES (Class System) =====
+
+/**
+ * A named style class definition.
+ * Stored in `content.styles` in the v2 JSON.
+ * Supports responsive breakpoints and pseudo-states,
+ * plus single `_extends` inheritance.
+ */
+export interface NamedStyle {
+  /** Base (desktop) style properties */
+  desktop: Partial<StyleProperties>;
+  /** Tablet overrides */
+  tablet?: Partial<StyleProperties>;
+  /** Mobile overrides */
+  mobile?: Partial<StyleProperties>;
+  /** Pseudo-state overrides (hover, focus, active) */
+  pseudoStyles?: Partial<Record<PseudoState, PseudoStateStyles>>;
+  /** Single-parent class inheritance */
+  _extends?: string;
+}
+
+/**
+ * Map of class name → style definition.
+ * This is the editor-side representation of `content.styles`.
+ */
+export type GlobalStyles = Record<string, NamedStyle>;
+
 // ===== DEFAULTS =====
 
 export const DEFAULT_SIZE_VALUE: SizeValue = { value: 0, unit: 'px' };

@@ -31,7 +31,7 @@ const ListItemRenderer: React.FC<{
   onHover?: (id: string | null) => void;
 }> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
   const { state, dispatch } = useEditor();
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const isEditing = state.editingId === element.id;
 
   const handleDoubleClick = (e: React.MouseEvent) => {
@@ -91,7 +91,7 @@ export const ListRenderer: React.FC<ListRendererProps> = ({
   selectedId,
   hoveredId,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const { listType } = element.content;
   const Tag = listType === 'ordered' ? 'ol' : 'ul';
 

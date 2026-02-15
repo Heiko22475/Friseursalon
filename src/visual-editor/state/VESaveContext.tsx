@@ -6,7 +6,8 @@
 
 import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { vePagesTov2Pages } from '../converters/v2Converter';
+import { vePagesTov2Pages, globalStylesToV2 } from '../converters/v2Converter';
+import type { GlobalStyles } from '../types/styles';
 import type { VEDataSource } from '../VisualEditorPage';
 
 // ===== TYPES =====
@@ -29,10 +30,10 @@ export interface VESaveState {
 export interface VESaveContextValue extends VESaveState {
   /**
    * Save the current VE editor state back to Supabase.
-   * Receives the current pages from EditorState to merge
-   * back into the original JSON.
+   * Receives the current pages and globalStyles from EditorState
+   * to merge back into the original JSON.
    */
-  save: (pages: any[], currentPage: any) => Promise<boolean>;
+  save: (pages: any[], currentPage: any, globalStyles?: GlobalStyles) => Promise<boolean>;
 }
 
 // ===== CONTEXT =====
@@ -60,7 +61,7 @@ export const VESaveProvider: React.FC<VESaveProviderProps> = ({
   const originalContentRef = useRef<any>(originalContent);
   originalContentRef.current = originalContent;
 
-  const save = useCallback(async (pages: any[], currentPage: any): Promise<boolean> => {
+  const save = useCallback(async (pages: any[], currentPage: any, globalStyles?: GlobalStyles): Promise<boolean> => {
     // Demo mode: no persistence needed
     if (dataSource === 'demo') {
       console.log('[VE Save] Demo mode – kein Speichern in DB');
@@ -113,10 +114,11 @@ export const VESaveProvider: React.FC<VESaveProviderProps> = ({
       const updatedPages = vePagesTov2Pages(effectivePages, originalPages);
 
       // Step 3: Build the complete updated content object
-      // We preserve ALL original fields and only replace pages
+      // We preserve ALL original fields and replace pages + styles
       const updatedContent = {
         ...original,
         pages: updatedPages,
+        styles: globalStyles ? globalStylesToV2(globalStyles) : (original.styles || {}),
       };
 
       console.log('[VE Save] Speichere Content:', {

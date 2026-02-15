@@ -22,7 +22,8 @@ import { VESaveProvider } from './state/VESaveContext';
 import { VEWebsiteContextBridge } from './renderer/VEWebsiteContextBridge';
 import { demoPages } from './data/demoPage';
 import { supabase } from '../lib/supabase';
-import { convertWebsiteToVEPages } from './converters/websiteToVE';
+import { convertWebsiteToVE } from './converters/websiteToVE';
+import type { GlobalStyles } from './types/styles';
 import './styles/editor.css';
 
 // ===== DATA SOURCE TYPE =====
@@ -177,7 +178,7 @@ const EditorInner: React.FC = () => {
         flex: 1,
         minHeight: 0,
         overflow: 'hidden',
-        backgroundColor: '#13131b',
+        //backgroundColor: 'blue',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       }}
     >
@@ -202,7 +203,6 @@ const EditorInner: React.FC = () => {
           style={{
             flex: 1,
             overflow: 'auto',
-            backgroundColor: '#2a2a3a',
             padding: state.viewport === 'desktop' ? '0' : '24px',
             display: 'flex',
             justifyContent: 'center',
@@ -242,6 +242,7 @@ const VisualEditorPage: React.FC = () => {
     return (localStorage.getItem('ve-data-source') as VEDataSource) || 'demo';
   });
   const [livePages, setLivePages] = useState<VEPage[] | null>(null);
+  const [liveGlobalStyles, setLiveGlobalStyles] = useState<GlobalStyles>({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [originalContent, setOriginalContent] = useState<any>(null);
@@ -292,12 +293,13 @@ const VisualEditorPage: React.FC = () => {
         }
         setOriginalContent(data.content);
         try {
-          const pages = convertWebsiteToVEPages(data.content);
-          if (pages.length === 0) {
+          const result = convertWebsiteToVE(data.content);
+          if (result.pages.length === 0) {
             setLiveError('Keine Seiten im JSON gefunden');
             return;
           }
-          setLivePages(pages);
+          setLivePages(result.pages);
+          setLiveGlobalStyles(result.globalStyles);
         } catch (conversionError: any) {
           console.error('[VE] Fehler beim Konvertieren der Website-Daten:', conversionError);
           setLiveError(`Konvertierungsfehler: ${conversionError.message || 'Unbekannt'}`);
@@ -324,8 +326,9 @@ const VisualEditorPage: React.FC = () => {
     }
   };
 
-  // Determine which pages to use
+  // Determine which pages/styles to use
   const pages = dataSource === 'demo' ? demoPages : livePages;
+  const globalStyles = dataSource === 'demo' ? {} : liveGlobalStyles;
   const showEditor = pages && pages.length > 0;
 
   return (
@@ -433,7 +436,7 @@ const VisualEditorPage: React.FC = () => {
               customerId={selectedCustomer}
               originalContent={originalContent}
             >
-              <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages}>
+              <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages} initialGlobalStyles={globalStyles}>
                 <EditorInner />
               </EditorProvider>
             </VESaveProvider>

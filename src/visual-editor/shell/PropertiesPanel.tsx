@@ -5,10 +5,11 @@
 // =====================================================
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff, Zap } from 'lucide-react';
+import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
-import { mergeStyles } from '../utils/styleResolver';
+import { mergeStyles, mergeStylesWithClasses } from '../utils/styleResolver';
+import { ClassSelector } from '../components/ClassSelector';
 
 // Section Components
 import { LayoutSection, FlexChildSection, GridChildSection } from '../properties/LayoutSection';
@@ -146,19 +147,33 @@ export const PropertiesPanel: React.FC = () => {
     );
   }
 
-  const baseMerged = mergeStyles(selectedElement.styles, state.viewport);
+  const baseMerged = mergeStylesWithClasses(selectedElement.classNames, selectedElement.styles, state.globalStyles, state.viewport);
+
+  // When editing a class, show class styles for that viewport
+  const editingClass = state.editingClass;
+  const editingClassDef = editingClass ? state.globalStyles[editingClass] : null;
 
   // When editing a pseudo-state, show base styles merged with pseudo overrides
   const activeState = state.activeState;
-  const pseudoMerged = (() => {
+
+  // Determine which styles to show in the panel
+  const merged = (() => {
+    if (editingClassDef) {
+      // Editing a class: show the class definition styles
+      const classMerged = mergeStyles(editingClassDef, state.viewport);
+      if (!activeState) return classMerged;
+      const ps = editingClassDef.pseudoStyles?.[activeState];
+      if (!ps) return classMerged;
+      const vpStyles = ps[state.viewport] || {};
+      return { ...classMerged, ...vpStyles };
+    }
+    // Normal: element with class+inline resolved
     if (!activeState) return baseMerged;
     const ps = selectedElement.styles?.pseudoStyles?.[activeState];
     if (!ps) return baseMerged;
-    // Merge pseudo on top of base so user sees the combined effect
     const vpStyles = ps[state.viewport] || {};
     return { ...baseMerged, ...vpStyles };
   })();
-  const merged = pseudoMerged;
 
   // Check element types
   const isCards = selectedElement.type === 'Cards';
@@ -173,6 +188,26 @@ export const PropertiesPanel: React.FC = () => {
   const parentIsGrid = parentMerged.display === 'grid';
 
   const updateStyle = (key: keyof StyleProperties, value: any) => {
+    // When editing a class, redirect to class style updates
+    if (editingClass) {
+      if (activeState) {
+        dispatch({
+          type: 'UPDATE_CLASS_PSEUDO_STYLES',
+          name: editingClass,
+          pseudoState: activeState,
+          viewport: state.viewport,
+          styles: { [key]: value === '' ? undefined : value },
+        });
+      } else {
+        dispatch({
+          type: 'UPDATE_CLASS_STYLES',
+          name: editingClass,
+          viewport: state.viewport,
+          styles: { [key]: value === '' ? undefined : value },
+        });
+      }
+      return;
+    }
     if (activeState) {
       dispatch({
         type: 'UPDATE_PSEUDO_STYLES',
@@ -193,6 +228,11 @@ export const PropertiesPanel: React.FC = () => {
 
   /** Debounced variant for slider / rapid changes (fewer undo entries) */
   const updateStyleBatch = (key: keyof StyleProperties, value: any) => {
+    // When editing a class, use non-batched (class has no batch action)
+    if (editingClass) {
+      updateStyle(key, value);
+      return;
+    }
     if (activeState) {
       dispatch({
         type: 'UPDATE_PSEUDO_STYLES',
@@ -462,6 +502,45 @@ export const PropertiesPanel: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Class Selector */}
+      <ClassSelector element={selectedElement} />
+
+      {/* Class Editing Banner */}
+      {editingClass && editingClassDef && (
+        <div
+          style={{
+            padding: '8px 12px',
+            backgroundColor: '#7c5cfc15',
+            borderBottom: '1px solid #7c5cfc40',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <button
+            onClick={() => dispatch({ type: 'SET_EDITING_CLASS', name: null })}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#a78bfa',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            title="Zurück zum Element"
+          >
+            <ArrowLeft size={14} />
+          </button>
+          <span style={{ fontSize: '11px', fontWeight: 600, color: '#a78bfa', fontFamily: 'monospace' }}>
+            .{editingClass}
+          </span>
+          <span style={{ fontSize: '10px', color: '#8b7ebf', marginLeft: 'auto' }}>
+            Klasse bearbeiten
+          </span>
+        </div>
+      )}
 
       {/* Scrollable Properties */}
       <div className="ve-props-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingRight: '6px' }}>

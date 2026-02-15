@@ -26,7 +26,7 @@ export const DividerRenderer: React.FC<DividerRendererProps> = ({
   onSelect,
   onHover,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const { lineStyle, thickness, color, width } = element.content;
   const { resolveColorValue } = useVETheme();
   const resolvedColor = resolveColorValue(color);

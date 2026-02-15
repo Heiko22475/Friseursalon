@@ -37,7 +37,7 @@ export const IconRenderer: React.FC<IconRendererProps> = ({
   onSelect,
   onHover,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const { iconName, size, sizeUnit = 'px', color, strokeWidth, containerBg, containerBorderRadius } = element.content;
   const { resolveColorValue } = useVETheme();
   const resolvedColor = resolveColorValue(color);

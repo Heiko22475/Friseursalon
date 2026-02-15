@@ -34,7 +34,7 @@ export const CardsRenderer: React.FC<CardsRendererProps> = ({
   selectedId,
   hoveredId,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
 
   // Resolve responsive layout
   const layoutDesktop = element.layout.desktop;

@@ -32,7 +32,7 @@ export const NavbarRenderer: React.FC<NavbarRendererProps> = ({
   selectedId,
   hoveredId,
 }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Determine if we're below the mobile breakpoint

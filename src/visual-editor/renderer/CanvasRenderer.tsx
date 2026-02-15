@@ -8,7 +8,7 @@ import type { VEPage } from '../types/elements';
 import type { VEViewport } from '../types/styles';
 import { BodyRenderer } from './BodyRenderer';
 import { useEditor } from '../state/EditorContext';
-import { mergeStyles, stylesToCSS } from '../utils/styleResolver';
+import { mergeStylesWithClasses, resolveElementStylesWithClasses, stylesToCSS } from '../utils/styleResolver';
 import { findElementById } from '../utils/elementHelpers';
 
 interface CanvasRendererProps {
@@ -42,7 +42,7 @@ function cssObjToString(css: React.CSSProperties): string {
 
 export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   const { state } = useEditor();
-  const { activeState } = state;
+  const { activeState, globalStyles } = state;
 
   // When a pseudo-state is active, generate inline CSS that overrides
   // the selected element's styles so the canvas shows the hover/focus/active preview.
@@ -50,13 +50,16 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, 
     if (!activeState || !selectedId) return '';
 
     const el = findElementById(page.body, selectedId);
-    if (!el || !el.styles?.pseudoStyles?.[activeState]) return '';
+    if (!el) return '';
 
-    const ps = el.styles.pseudoStyles[activeState]!;
-    // Merge base styles + pseudo overlay for the current viewport
-    const baseProps = mergeStyles(el.styles, viewport);
-    const pseudoVP = ps[viewport] || {};
-    const combined = { ...baseProps, ...pseudoVP };
+    // Resolve class + inline styles, then read pseudo from that
+    const resolved = mergeStylesWithClasses(el.classNames, el.styles, globalStyles, viewport);
+    const fullStyles = resolveElementStylesWithClasses(el.classNames, el.styles, globalStyles);
+    const psDef = fullStyles.pseudoStyles?.[activeState];
+    if (!psDef) return '';
+
+    const pseudoVP = psDef[viewport] || {};
+    const combined = { ...resolved, ...pseudoVP };
     const combinedCSS = stylesToCSS(combined);
     const declarations = cssObjToString(combinedCSS);
 
@@ -69,7 +72,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, 
       .join('; ');
 
     return `[data-ve-id="${selectedId}"] { ${importantDeclarations} }`;
-  }, [activeState, selectedId, page.body, viewport]);
+  }, [activeState, selectedId, page.body, viewport, globalStyles]);
 
   return (
     <div

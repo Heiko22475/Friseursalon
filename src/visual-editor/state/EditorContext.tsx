@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { VEPage, VEElement } from '../types/elements';
-import type { VEViewport, StyleProperties, PseudoState } from '../types/styles';
+import type { VEViewport, StyleProperties, PseudoState, GlobalStyles, NamedStyle } from '../types/styles';
 import {
   findElementById,
   getBreadcrumbPath,
@@ -21,8 +21,15 @@ import {
   deepCloneWithNewIds,
   generateId,
 } from '../utils/elementHelpers';
+import { setGlobalStyles } from '../utils/styleResolver';
 
 // ===== STATE =====
+
+/** Snapshot for undo/redo: captures both page and global styles */
+interface UndoSnapshot {
+  page: VEPage;
+  globalStyles: GlobalStyles;
+}
 
 export interface EditorState {
   /** Alle Seiten */
@@ -36,15 +43,15 @@ export interface EditorState {
   /** Aktueller Viewport */
   viewport: VEViewport;
   /** Undo-Stack */
-  undoStack: VEPage[];
+  undoStack: UndoSnapshot[];
   /** Redo-Stack */
-  redoStack: VEPage[];
+  redoStack: UndoSnapshot[];
   /** Ob ungespeicherte Änderungen existieren */
   isDirty: boolean;
   /** Navigator Panel offen? */
   navigatorOpen: boolean;
   /** Aktiver Navigator Tab */
-  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets';
+  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles';
   /** Clipboard für Copy/Paste */
   clipboard: VEElement | null;
   /** ID des Elements das gerade inline editiert wird */
@@ -55,6 +62,10 @@ export interface EditorState {
   proMode: boolean;
   /** Active pseudo-state being edited (null = normal/none) */
   activeState: PseudoState | null;
+  /** Global named style classes */
+  globalStyles: GlobalStyles;
+  /** Name of class currently being edited (null = editing element inline) */
+  editingClass: string | null;
 }
 
 // ===== ACTIONS =====
@@ -84,7 +95,7 @@ export type EditorAction =
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_NAVIGATOR' }
-  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' }
+  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' }
   // Page management
   | { type: 'SWITCH_PAGE'; pageId: string }
   | { type: 'ADD_PAGE'; name: string; route: string }
@@ -95,11 +106,22 @@ export type EditorAction =
   | { type: 'TOGGLE_PRO_MODE' }
   | { type: 'SET_ACTIVE_STATE'; state: PseudoState | null }
   | { type: 'UPDATE_PSEUDO_STYLES'; id: string; pseudoState: PseudoState; viewport: VEViewport; styles: Partial<StyleProperties> }
-  | { type: 'APPLY_TO_SIBLING_CARDS'; sourceCardId: string };
+  | { type: 'APPLY_TO_SIBLING_CARDS'; sourceCardId: string }
+  // ========== CLASS MANAGEMENT ==========
+  | { type: 'CREATE_CLASS'; name: string; initialStyles?: NamedStyle }
+  | { type: 'RENAME_CLASS'; oldName: string; newName: string }
+  | { type: 'DELETE_CLASS'; name: string }
+  | { type: 'UPDATE_CLASS_STYLES'; name: string; viewport: VEViewport; styles: Partial<StyleProperties> }
+  | { type: 'UPDATE_CLASS_PSEUDO_STYLES'; name: string; pseudoState: PseudoState; viewport: VEViewport; styles: Partial<StyleProperties> }
+  | { type: 'SET_CLASS_EXTENDS'; name: string; extendsName: string | undefined }
+  | { type: 'ASSIGN_CLASS'; elementId: string; className: string }
+  | { type: 'REMOVE_CLASS'; elementId: string; className: string }
+  | { type: 'REORDER_CLASSES'; elementId: string; classNames: string[] }
+  | { type: 'SET_EDITING_CLASS'; name: string | null };
 
 // ===== INITIAL STATE =====
 
-export function createInitialState(pages: VEPage[]): EditorState {
+export function createInitialState(pages: VEPage[], globalStyles: GlobalStyles = {}): EditorState {
   const firstPage = pages[0];
   return {
     pages,
@@ -117,6 +139,8 @@ export function createInitialState(pages: VEPage[]): EditorState {
     _lastUndoPush: 0,
     proMode: typeof window !== 'undefined' && localStorage.getItem('ve-pro-mode') === 'true',
     activeState: null,
+    globalStyles,
+    editingClass: null,
   };
 }
 
@@ -125,7 +149,8 @@ export function createInitialState(pages: VEPage[]): EditorState {
 const MAX_UNDO = 50;
 
 function pushUndo(state: EditorState): EditorState {
-  const undoStack = [...state.undoStack, state.page].slice(-MAX_UNDO);
+  const snapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
+  const undoStack = [...state.undoStack, snapshot].slice(-MAX_UNDO);
   return { ...state, undoStack, redoStack: [], _lastUndoPush: Date.now() };
 }
 
@@ -442,11 +467,13 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
     case 'UNDO': {
       if (state.undoStack.length === 0) return state;
       const previous = state.undoStack[state.undoStack.length - 1];
+      const currentSnapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
       return {
         ...state,
-        page: previous,
+        page: previous.page,
+        globalStyles: previous.globalStyles,
         undoStack: state.undoStack.slice(0, -1),
-        redoStack: [...state.redoStack, state.page],
+        redoStack: [...state.redoStack, currentSnapshot],
         isDirty: true,
       };
     }
@@ -454,10 +481,12 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
     case 'REDO': {
       if (state.redoStack.length === 0) return state;
       const next = state.redoStack[state.redoStack.length - 1];
+      const currentSnapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
       return {
         ...state,
-        page: next,
-        undoStack: [...state.undoStack, state.page],
+        page: next.page,
+        globalStyles: next.globalStyles,
+        undoStack: [...state.undoStack, currentSnapshot],
         redoStack: state.redoStack.slice(0, -1),
         isDirty: true,
       };
@@ -683,6 +712,190 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
       return { ...state, pages: newPages, isDirty: true };
     }
 
+    // ========== CLASS MANAGEMENT ==========
+
+    case 'CREATE_CLASS': {
+      if (state.globalStyles[action.name]) return state; // already exists
+      const newStyle: NamedStyle = action.initialStyles || { desktop: {} };
+      return {
+        ...pushUndo(state),
+        globalStyles: { ...state.globalStyles, [action.name]: newStyle },
+        isDirty: true,
+      };
+    }
+
+    case 'RENAME_CLASS': {
+      const renOld = action.oldName;
+      const renNew = action.newName;
+      if (!state.globalStyles[renOld]) return state;
+      if (state.globalStyles[renNew]) return state; // target exists
+      const { [renOld]: classToRename, ...rest } = state.globalStyles;
+      const updatedGS = { ...rest, [renNew]: classToRename };
+      // Update all element references in current page
+      function renameClassInTree(el: VEElement): VEElement {
+        const cn = el.classNames;
+        const newCn = cn?.map(c => c === renOld ? renNew : c);
+        const changed = cn && newCn && cn.some((c, i) => c !== newCn[i]);
+        const children = el.children?.map(renameClassInTree);
+        const childrenChanged = el.children && children && el.children.some((c, i) => c !== children![i]);
+        if (!changed && !childrenChanged) return el;
+        return { ...el, ...(changed ? { classNames: newCn } : {}), ...(childrenChanged ? { children } : {}) } as VEElement;
+      }
+      // Update _extends references
+      for (const [k, v] of Object.entries(updatedGS)) {
+        if (v._extends === renOld) {
+          updatedGS[k] = { ...v, _extends: renNew };
+        }
+      }
+      const newBody = renameClassInTree(state.page.body) as any;
+      // Also update all pages
+      const newPages = state.pages.map(p => ({
+        ...p,
+        body: renameClassInTree(p.body) as any,
+      }));
+      return {
+        ...pushUndo(state),
+        globalStyles: updatedGS,
+        page: { ...state.page, body: newBody },
+        pages: newPages,
+        editingClass: state.editingClass === renOld ? renNew : state.editingClass,
+        isDirty: true,
+      };
+    }
+
+    case 'DELETE_CLASS': {
+      const delName = action.name;
+      if (!state.globalStyles[delName]) return state;
+      const { [delName]: _deleted, ...remainingGS } = state.globalStyles;
+      // Remove from all element references
+      function removeClassInTree(el: VEElement): VEElement {
+        const cn = el.classNames;
+        const newCn = cn?.filter(c => c !== delName);
+        const changed = cn && newCn && cn.length !== newCn.length;
+        const children = el.children?.map(removeClassInTree);
+        const childrenChanged = el.children && children && el.children.some((c, i) => c !== children![i]);
+        if (!changed && !childrenChanged) return el;
+        return {
+          ...el,
+          ...(changed ? { classNames: newCn!.length > 0 ? newCn : undefined } : {}),
+          ...(childrenChanged ? { children } : {}),
+        } as VEElement;
+      }
+      // Clear _extends references
+      for (const [k, v] of Object.entries(remainingGS)) {
+        if (v._extends === delName) {
+          remainingGS[k] = { ...v, _extends: undefined };
+        }
+      }
+      const newBody = removeClassInTree(state.page.body) as any;
+      const newPages = state.pages.map(p => ({
+        ...p,
+        body: removeClassInTree(p.body) as any,
+      }));
+      return {
+        ...pushUndo(state),
+        globalStyles: remainingGS,
+        page: { ...state.page, body: newBody },
+        pages: newPages,
+        editingClass: state.editingClass === delName ? null : state.editingClass,
+        isDirty: true,
+      };
+    }
+
+    case 'UPDATE_CLASS_STYLES': {
+      const cls = state.globalStyles[action.name];
+      if (!cls) return state;
+      const currentVP = cls[action.viewport] || {};
+      const updated: NamedStyle = {
+        ...cls,
+        [action.viewport]: { ...currentVP, ...action.styles },
+      };
+      return {
+        ...pushUndo(state),
+        globalStyles: { ...state.globalStyles, [action.name]: updated },
+        isDirty: true,
+      };
+    }
+
+    case 'UPDATE_CLASS_PSEUDO_STYLES': {
+      const cls = state.globalStyles[action.name];
+      if (!cls) return state;
+      const ps = cls.pseudoStyles || {};
+      const currentPseudo = ps[action.pseudoState] || { desktop: {} };
+      const currentVP = currentPseudo[action.viewport] || {};
+      const updated: NamedStyle = {
+        ...cls,
+        pseudoStyles: {
+          ...ps,
+          [action.pseudoState]: {
+            ...currentPseudo,
+            [action.viewport]: { ...currentVP, ...action.styles },
+          },
+        },
+      };
+      return {
+        ...pushUndo(state),
+        globalStyles: { ...state.globalStyles, [action.name]: updated },
+        isDirty: true,
+      };
+    }
+
+    case 'SET_CLASS_EXTENDS': {
+      const cls = state.globalStyles[action.name];
+      if (!cls) return state;
+      return {
+        ...pushUndo(state),
+        globalStyles: {
+          ...state.globalStyles,
+          [action.name]: { ...cls, _extends: action.extendsName },
+        },
+        isDirty: true,
+      };
+    }
+
+    case 'ASSIGN_CLASS': {
+      const el = findElementById(state.page.body, action.elementId);
+      if (!el) return state;
+      const current = el.classNames || [];
+      if (current.includes(action.className)) return state;
+      const updated = { ...el, classNames: [...current, action.className] } as VEElement;
+      const newBody = replaceElement(state.page.body, action.elementId, updated) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
+    case 'REMOVE_CLASS': {
+      const el = findElementById(state.page.body, action.elementId);
+      if (!el) return state;
+      const current = el.classNames || [];
+      const filtered = current.filter(c => c !== action.className);
+      const updated = { ...el, classNames: filtered.length > 0 ? filtered : undefined } as VEElement;
+      const newBody = replaceElement(state.page.body, action.elementId, updated) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
+    case 'REORDER_CLASSES': {
+      const el = findElementById(state.page.body, action.elementId);
+      if (!el) return state;
+      const updated = { ...el, classNames: action.classNames.length > 0 ? action.classNames : undefined } as VEElement;
+      const newBody = replaceElement(state.page.body, action.elementId, updated) as any;
+      return {
+        ...pushUndo(state),
+        page: { ...state.page, body: newBody },
+        isDirty: true,
+      };
+    }
+
+    case 'SET_EDITING_CLASS':
+      return { ...state, editingClass: action.name };
+
     default:
       return state;
   }
@@ -706,12 +919,18 @@ const EditorContext = createContext<EditorContextValue | null>(null);
 interface EditorProviderProps {
   initialPage?: VEPage;
   initialPages?: VEPage[];
+  initialGlobalStyles?: GlobalStyles;
   children: React.ReactNode;
 }
 
-export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, initialPages, children }) => {
+export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, initialPages, initialGlobalStyles, children }) => {
   const pages = initialPages || (initialPage ? [initialPage] : []);
-  const [state, dispatch] = useReducer(editorReducer, createInitialState(pages));
+  const [state, dispatch] = useReducer(editorReducer, createInitialState(pages, initialGlobalStyles || {}));
+
+  // Keep the module-level globalStyles reference in sync for resolveStyles()
+  React.useEffect(() => {
+    setGlobalStyles(state.globalStyles);
+  }, [state.globalStyles]);
 
   const selectedElement = state.selectedId
     ? findElementById(state.page.body, state.selectedId)

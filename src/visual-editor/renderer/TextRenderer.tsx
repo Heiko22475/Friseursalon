@@ -195,7 +195,7 @@ export const TextRenderer: React.FC<TextRendererProps> = ({ element, viewport, i
   // "first click to select" from "click on already-selected to edit").
   const justSelectedRef = useRef(false);
 
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const preset = element.textStyle || 'body';
   const defaults = presetDefaults[preset];
   const tag = presetTag[preset];

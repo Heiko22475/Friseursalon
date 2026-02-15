@@ -34,7 +34,7 @@ const defaultButtonStyles: React.CSSProperties = {
 };
 
 export const ButtonRenderer: React.FC<ButtonRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
 
   const combinedStyles: React.CSSProperties = {
     ...defaultButtonStyles,

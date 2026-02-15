@@ -18,7 +18,7 @@ interface ImageRendererProps {
 }
 
 export const ImageRenderer: React.FC<ImageRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const { src, alt } = element.content;
 
   return (

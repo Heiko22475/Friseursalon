@@ -15,6 +15,7 @@ import type {
 import type {
   ElementStyles, StyleProperties, SizeValue,
   SizeValueOrAuto, PseudoState, PseudoStateStyles,
+  GlobalStyles, NamedStyle,
 } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 
@@ -363,23 +364,28 @@ function resolveV2Styles(
 /**
  * Convert a single v2 element to VE element.
  * Recursively converts children.
+ * 
+ * Phase 2: Classes are NOT baked into inline styles.
+ * Element.styles contains only inline overrides.
+ * Element.classNames stores class references.
+ * Resolution happens at render time via resolveElementStyles().
  */
 function v2ElementToVE(
   el: V2Element,
-  allStyles: Record<string, any>,
+  _allStyles: Record<string, any>,
 ): VEElement {
-  const styles = resolveV2Styles(el.class, el.styles, allStyles);
-  const children = el.children?.map(c => v2ElementToVE(c, allStyles)) || [];
+  // Only use inline styles (no class merging)
+  const styles = resolveV2Styles(undefined, el.styles, _allStyles);
+  const children = el.children?.map(c => v2ElementToVE(c, _allStyles)) || [];
 
-  // Store visible + class info in the VE element for round-tripping
   const base: any = {
     id: el.id,
     styles,
     children,
   };
 
-  // Preserve class & visible for round-trip
-  if (el.class) base._v2class = el.class;
+  // Store class names as typed field (not _v2class hack)
+  if (el.class && el.class.length > 0) base.classNames = el.class;
   if (el.visible) base._v2visible = el.visible;
   if (el.attrs) base._v2attrs = el.attrs;
 
@@ -568,9 +574,9 @@ function veElementToV2(el: VEElement): V2Element {
     tag: '', // will be set below
   };
 
-  // Restore class, visible, attrs from round-trip data
+  // Restore class, visible, attrs from element data
   const extra = el as any;
-  if (extra._v2class) v2.class = extra._v2class;
+  if (el.classNames && el.classNames.length > 0) v2.class = el.classNames;
   if (extra._v2visible) v2.visible = extra._v2visible;
   if (extra._v2attrs) v2.attrs = extra._v2attrs;
 
@@ -668,13 +674,106 @@ function veElementToV2(el: VEElement): V2Element {
 // =====================================================
 
 /**
- * Convert v2 content JSON to VE pages.
+ * Convert v2 content.styles (Record<string, any>) to typed GlobalStyles.
+ * Each named style becomes a NamedStyle with responsive + pseudo-state support.
+ */
+function v2StylesToGlobalStyles(v2Styles: Record<string, any>): GlobalStyles {
+  const result: GlobalStyles = {};
+  for (const [name, def] of Object.entries(v2Styles)) {
+    if (!def || typeof def !== 'object') continue;
+    result[name] = v2NamedStyleToVE(def);
+  }
+  return result;
+}
+
+/**
+ * Convert a single v2 named style definition to NamedStyle.
+ * Reuses the same parse logic as resolveV2Styles() for breakpoints/pseudo-states.
+ */
+function v2NamedStyleToVE(def: Record<string, any>): NamedStyle {
+  const PSEUDO_KEYS = new Set([':hover', ':focus', ':active']);
+
+  const desktopRaw: Record<string, any> = {};
+  const tabletRaw: Record<string, any> = {};
+  const mobileRaw: Record<string, any> = {};
+  const pseudoRaw: Record<string, Record<string, any>> = {};
+  let extendsName: string | undefined;
+
+  for (const [key, val] of Object.entries(def)) {
+    if (key === '_extends') {
+      extendsName = val as string;
+    } else if (key === '@tablet' && typeof val === 'object') {
+      for (const [tKey, tVal] of Object.entries(val as Record<string, any>)) {
+        if (PSEUDO_KEYS.has(tKey)) {
+          const pName = tKey.slice(1) as PseudoState;
+          if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+          if (!pseudoRaw[pName]['@tablet']) pseudoRaw[pName]['@tablet'] = {};
+          Object.assign(pseudoRaw[pName]['@tablet'], tVal);
+        } else {
+          tabletRaw[tKey] = tVal;
+        }
+      }
+    } else if (key === '@mobile' && typeof val === 'object') {
+      for (const [mKey, mVal] of Object.entries(val as Record<string, any>)) {
+        if (PSEUDO_KEYS.has(mKey)) {
+          const pName = mKey.slice(1) as PseudoState;
+          if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+          if (!pseudoRaw[pName]['@mobile']) pseudoRaw[pName]['@mobile'] = {};
+          Object.assign(pseudoRaw[pName]['@mobile'], mVal);
+        } else {
+          mobileRaw[mKey] = mVal;
+        }
+      }
+    } else if (PSEUDO_KEYS.has(key) && typeof val === 'object') {
+      const pName = key.slice(1) as PseudoState;
+      if (!pseudoRaw[pName]) pseudoRaw[pName] = {};
+      Object.assign(pseudoRaw[pName], val);
+    } else {
+      desktopRaw[key] = val;
+    }
+  }
+
+  const ns: NamedStyle = {
+    desktop: v2PropsToVE(desktopRaw),
+  };
+  if (Object.keys(tabletRaw).length > 0) ns.tablet = v2PropsToVE(tabletRaw);
+  if (Object.keys(mobileRaw).length > 0) ns.mobile = v2PropsToVE(mobileRaw);
+  if (extendsName) ns._extends = extendsName;
+
+  // Pseudo-states
+  if (Object.keys(pseudoRaw).length > 0) {
+    const pseudoStyles: any = {};
+    for (const [pName, pDef] of Object.entries(pseudoRaw)) {
+      const pTablet = pDef['@tablet'];
+      const pMobile = pDef['@mobile'];
+      delete pDef['@tablet'];
+      delete pDef['@mobile'];
+      const ps: PseudoStateStyles = { desktop: v2PropsToVE(pDef) };
+      if (pTablet) ps.tablet = v2PropsToVE(pTablet);
+      if (pMobile) ps.mobile = v2PropsToVE(pMobile);
+      pseudoStyles[pName] = ps;
+    }
+    ns.pseudoStyles = pseudoStyles;
+  }
+
+  return ns;
+}
+
+/** Result of loading v2 content: pages + global style classes */
+export interface V2LoadResult {
+  pages: VEPage[];
+  globalStyles: GlobalStyles;
+}
+
+/**
+ * Convert v2 content JSON to VE pages + global styles.
  * This is the main entry point for loading.
  */
-export function v2ContentToVEPages(content: any): VEPage[] {
-  if (!content?.pages || !Array.isArray(content.pages)) return [];
+export function v2ContentToVEPages(content: any): V2LoadResult {
+  if (!content?.pages || !Array.isArray(content.pages)) return { pages: [], globalStyles: {} };
 
   const allStyles = content.styles || {};
+  const globalStyles = v2StylesToGlobalStyles(allStyles);
   const pages: VEPage[] = [];
 
   for (const page of content.pages as V2Page[]) {
@@ -708,7 +807,7 @@ export function v2ContentToVEPages(content: any): VEPage[] {
     }
   }
 
-  return pages;
+  return { pages, globalStyles };
 }
 
 // =====================================================
@@ -747,6 +846,63 @@ export function vePagesTov2Pages(
       ...v2Page,
     };
   });
+}
+
+// =====================================================
+// GLOBAL STYLES CONVERSION: VE → v2
+// =====================================================
+
+/**
+ * Convert a NamedStyle back to v2 format for saving to content.styles.
+ */
+function namedStyleToV2(ns: NamedStyle): Record<string, any> {
+  const v2: Record<string, any> = {};
+
+  // Desktop props
+  const desktopV2 = vePropsToV2(ns.desktop);
+  Object.assign(v2, desktopV2);
+
+  // Tablet/Mobile overrides
+  if (ns.tablet && Object.keys(ns.tablet).length > 0) {
+    v2['@tablet'] = vePropsToV2(ns.tablet);
+  }
+  if (ns.mobile && Object.keys(ns.mobile).length > 0) {
+    v2['@mobile'] = vePropsToV2(ns.mobile);
+  }
+
+  // _extends
+  if (ns._extends) {
+    v2._extends = ns._extends;
+  }
+
+  // Pseudo-states
+  if (ns.pseudoStyles) {
+    for (const [pName, pStyles] of Object.entries(ns.pseudoStyles)) {
+      const key = `:${pName}`;
+      v2[key] = vePropsToV2(pStyles.desktop);
+      if (pStyles.tablet && Object.keys(pStyles.tablet).length > 0) {
+        if (!v2['@tablet']) v2['@tablet'] = {};
+        v2['@tablet'][key] = vePropsToV2(pStyles.tablet);
+      }
+      if (pStyles.mobile && Object.keys(pStyles.mobile).length > 0) {
+        if (!v2['@mobile']) v2['@mobile'] = {};
+        v2['@mobile'][key] = vePropsToV2(pStyles.mobile);
+      }
+    }
+  }
+
+  return v2;
+}
+
+/**
+ * Convert GlobalStyles back to v2 content.styles format.
+ */
+export function globalStylesToV2(gs: GlobalStyles): Record<string, any> {
+  const v2: Record<string, any> = {};
+  for (const [name, ns] of Object.entries(gs)) {
+    v2[name] = namedStyleToV2(ns);
+  }
+  return v2;
 }
 
 // =====================================================

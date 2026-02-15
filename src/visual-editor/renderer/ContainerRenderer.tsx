@@ -25,7 +25,7 @@ const defaultContainerStyles: React.CSSProperties = {
 };
 
 export const ContainerRenderer: React.FC<ContainerRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const isSelected = selectedId === element.id;
   const isHovered = hoveredId === element.id && !isSelected;
 

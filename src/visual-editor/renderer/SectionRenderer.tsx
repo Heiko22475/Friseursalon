@@ -27,7 +27,7 @@ const defaultSectionStyles: React.CSSProperties = {
 };
 
 export const SectionRenderer: React.FC<SectionRendererProps> = ({ element, viewport, selectedId, hoveredId, onSelect, onHover }) => {
-  const resolvedStyles = resolveStyles(element.styles, viewport);
+  const resolvedStyles = resolveStyles(element.styles, viewport, element);
   const isSelected = selectedId === element.id;
   const isHovered = hoveredId === element.id && !isSelected;
 

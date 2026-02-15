@@ -7,11 +7,11 @@ export const SuperAdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen">
+    <div className="superadmin-dashboard min-h-screen">
       <AdminHeader title="Dashboard" backTo={false} />
 
-      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="superadmin-dashboard-content max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div className="superadmin-dashboard-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
           {/* Visual Editor — Featured */}
           <button

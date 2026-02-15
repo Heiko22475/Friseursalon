@@ -284,6 +284,7 @@ export const PropertiesPanel: React.FC = () => {
 
   return (
     <div
+      className="ve-properties"
       style={{
         width: '370px',
         backgroundColor: '#1e1e2e',
@@ -296,6 +297,7 @@ export const PropertiesPanel: React.FC = () => {
     >
       {/* Element Header */}
       <div
+        className="ve-properties-header"
         style={{
           padding: '12px',
           borderBottom: '1px solid #2d2d3d',
@@ -358,7 +360,7 @@ export const PropertiesPanel: React.FC = () => {
         </div>
 
         {/* Viewport indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
+        <div className="ve-properties-viewport" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
           {state.viewport === 'desktop' && <Monitor size={12} style={{ color: '#b0b7c3' }} />}
           {state.viewport === 'tablet' && <Tablet size={12} style={{ color: '#b0b7c3' }} />}
           {state.viewport === 'mobile' && <Smartphone size={12} style={{ color: '#b0b7c3' }} />}
@@ -413,7 +415,7 @@ export const PropertiesPanel: React.FC = () => {
         )}
 
         {/* Pro Mode Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+        <div className="ve-properties-promode" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
           <button
             onClick={() => dispatch({ type: 'TOGGLE_PRO_MODE' })}
             style={{
@@ -440,7 +442,7 @@ export const PropertiesPanel: React.FC = () => {
 
         {/* Pseudo-State Toggle: Normal / Hover / Focus / Active */}
         {selectedElement.type !== 'Body' && (
-          <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
+          <div className="ve-properties-pseudostates" style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
             {([null, 'hover', 'focus', 'active'] as const).map(s => {
               const isActive = activeState === s;
               const label = s === null ? 'Normal' : s === 'hover' ? 'Hover' : s === 'focus' ? 'Focus' : 'Active';

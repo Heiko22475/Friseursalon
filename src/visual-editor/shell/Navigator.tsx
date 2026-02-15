@@ -48,9 +48,10 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', flexShrink: 0 }}>
+    <div className="ve-navigator" style={{ display: 'flex', height: '100%', flexShrink: 0 }}>
       {/* Icon Bar (48px) */}
       <div
+        className="ve-navigator-iconbar"
         style={{
           width: '48px',
           backgroundColor: '#16161e',
@@ -99,6 +100,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
       {/* Flyout Panel (~240px) */}
       {state.navigatorOpen && (
         <div
+          className="ve-navigator-flyout"
           style={{
             width: '240px',
             backgroundColor: '#1e1e2e',
@@ -110,6 +112,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         >
           {/* Panel Header */}
           <div
+            className="ve-navigator-flyout-header"
             style={{
               padding: '12px 12px 8px',
               fontSize: '12px',

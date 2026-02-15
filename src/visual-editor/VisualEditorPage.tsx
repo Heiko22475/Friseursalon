@@ -172,6 +172,7 @@ const EditorInner: React.FC = () => {
 
   return (
     <div
+      className="ve-editor"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -186,7 +187,7 @@ const EditorInner: React.FC = () => {
       <TopBar />
 
       {/* Main Area: Navigator + Canvas + Properties */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="ve-main" style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Navigator (left) */}
         <Navigator onTreeContextMenu={handleTreeContextMenu} />
 
@@ -334,9 +335,10 @@ const VisualEditorPage: React.FC = () => {
   return (
     <VEErrorBoundary>
       <VEThemeProvider>
-        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div className="ve-root" style={{ width: '100vw', height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* Data Source Selector Bar */}
         <div
+          className="ve-datasource-bar"
           style={{
             backgroundColor: '#13131b',
             borderBottom: '1px solid #2d2d3d',
@@ -443,6 +445,7 @@ const VisualEditorPage: React.FC = () => {
           </VEWebsiteContextBridge>
         ) : (
           <div
+            className="ve-empty-state"
             style={{
               flex: 1,
               display: 'flex',

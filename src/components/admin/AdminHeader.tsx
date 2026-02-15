@@ -40,13 +40,14 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
 
   return (
     <header
-      className={`border-b ${sticky ? 'sticky top-0 z-30' : ''} ${className}`}
+      className={`admin-header border-b ${sticky ? 'sticky top-0 z-30' : ''} ${className}`}
       style={{
         backgroundColor: 'var(--admin-bg-surface)',
         borderColor: 'var(--admin-border)',
       }}
     >
       <div
+        className="admin-header-inner"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -57,7 +58,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         }}
       >
         {/* Left side: back + title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+        <div className="admin-header-left" style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
           {backTo !== false && (
             <button
               onClick={() => navigate(backTo)}
@@ -129,7 +130,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         </div>
 
         {/* Right side: actions + theme toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div className="admin-header-right" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {actions}
 
           {showThemeToggle && (

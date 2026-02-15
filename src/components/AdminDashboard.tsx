@@ -75,11 +75,12 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className="admin-dashboard" style={{ minHeight: '100vh' }}>
       <Dialog />
 
       {/* Header */}
       <header
+        className="admin-dashboard-header"
         style={{
           backgroundColor: 'var(--admin-bg-surface)',
           borderBottom: '1px solid var(--admin-border)',
@@ -183,7 +184,7 @@ export const AdminDashboard: React.FC = () => {
       </header>
 
       {/* Content */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
+      <main className="admin-dashboard-main" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
         <div style={{ marginBottom: '32px' }}>
           <h2 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--admin-text-heading)', marginBottom: '6px' }}>
             Dashboard
@@ -194,6 +195,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div
+          className="admin-dashboard-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',

@@ -74,6 +74,7 @@ export const TopBar: React.FC = () => {
 
   return (
     <div
+      className="ve-topbar"
       style={{
         height: '48px',
         backgroundColor: '#1e1e2e',
@@ -89,7 +90,7 @@ export const TopBar: React.FC = () => {
       }}
     >
       {/* Left: Back + Breadcrumbs */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+      <div className="ve-topbar-left" style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
         <button
           onClick={() => navigate('/admin')}
           style={{
@@ -143,7 +144,7 @@ export const TopBar: React.FC = () => {
       </div>
 
       {/* Center-Left: Page Dropdown */}
-      <div ref={dropdownRef} style={{ position: 'relative', marginRight: '12px' }}>
+      <div className="ve-topbar-pages" ref={dropdownRef} style={{ position: 'relative', marginRight: '12px' }}>
         <button
           onClick={() => setPageDropdownOpen(!pageDropdownOpen)}
           style={{
@@ -257,6 +258,7 @@ export const TopBar: React.FC = () => {
 
       {/* Center: Viewport Switch */}
       <div
+        className="ve-topbar-viewport"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -291,7 +293,7 @@ export const TopBar: React.FC = () => {
       </div>
 
       {/* Right: Undo/Redo + Save */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, justifyContent: 'flex-end' }}>
+      <div className="ve-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, justifyContent: 'flex-end' }}>
         <button
           onClick={() => dispatch({ type: 'UNDO' })}
           disabled={state.undoStack.length === 0}

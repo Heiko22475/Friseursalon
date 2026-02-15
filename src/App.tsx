@@ -35,7 +35,7 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="app-loading min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
@@ -73,7 +73,7 @@ function AppContent() {
       }
 
       return (
-          <div className="min-h-screen flex items-center justify-center bg-gray-100">
+          <div className="app-no-customer min-h-screen flex items-center justify-center bg-gray-100">
               <div className="text-center">
                   <h1 className="text-2xl font-bold text-gray-900">Webseite nicht gefunden</h1>
                   <p className="text-gray-600 mt-2">Die Domain {window.location.hostname} ist noch nicht konfiguriert.</p>

@@ -74,7 +74,7 @@ export const DynamicPage: React.FC = () => {
 
   if (loading || websiteLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="dynamic-page-loading min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
@@ -84,7 +84,7 @@ export const DynamicPage: React.FC = () => {
 
   if (!page) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="dynamic-page-404 min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
           <p className="text-gray-600">Seite nicht gefunden</p>
@@ -102,7 +102,7 @@ export const DynamicPage: React.FC = () => {
   // v2 format: render from body element tree
   if (page.body) {
     return (
-      <div className="min-h-screen">
+      <div className="dynamic-page min-h-screen">
         <V2ElementRenderer
           element={page.body}
           allStyles={allStyles}
@@ -116,7 +116,7 @@ export const DynamicPage: React.FC = () => {
 
   // Fallback: empty page
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="dynamic-page-empty min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center text-gray-500">
         <p>Diese Seite hat noch keinen Inhalt.</p>
       </div>

@@ -51,7 +51,7 @@ export interface EditorState {
   /** Navigator Panel offen? */
   navigatorOpen: boolean;
   /** Aktiver Navigator Tab */
-  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles';
+  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates';
   /** Clipboard für Copy/Paste */
   clipboard: VEElement | null;
   /** ID des Elements das gerade inline editiert wird */
@@ -95,7 +95,7 @@ export type EditorAction =
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_NAVIGATOR' }
-  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' }
+  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' }
   // Page management
   | { type: 'SWITCH_PAGE'; pageId: string }
   | { type: 'ADD_PAGE'; name: string; route: string }

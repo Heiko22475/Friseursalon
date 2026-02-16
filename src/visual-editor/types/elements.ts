@@ -135,15 +135,31 @@ export type NavbarStickyMode = 'none' | 'sticky' | 'fixed';
 /**
  * VENavbar: A compositional header/navigation element.
  * Its children are freely editable VE elements (logo images, nav links, buttons, etc.).
- * Uses viewport-specific visibility on children for desktop ↔ mobile switching.
- * Rendered as a <nav> with flex layout.
+ *
+ * Convention:
+ *  - 1st child  = Logo (always visible)
+ *  - last child = Hamburger (Container with Icon, hidden on desktop via own styles)
+ *  - children in between = Menu items (horizontal on desktop, vertical dropdown on mobile)
+ *
+ * The Hamburger is a real VE element in the tree. On desktop it has display:none
+ * from its own styles. On mobile the renderer pulls it into the top-bar on the LEFT,
+ * the logo on the RIGHT, and everything else into an animated dropdown.
+ *
+ * Clicking the Hamburger on desktop (via Navigator tree) switches the viewport
+ * to the mobileFrom target so the user can instantly test the mobile layout.
  */
 export interface VENavbar extends VEBaseElement {
   type: 'Navbar';
-  /** Breakpoint in px at which the mobile menu is used instead of desktop nav */
+  /** @deprecated Use mobileFrom instead. Kept for backward compat with v2Converter. */
   mobileBreakpoint: number;
   /** Sticky behaviour */
   stickyMode: NavbarStickyMode;
+  /**
+   * Ab welchem Viewport wird die mobile Ansicht angezeigt?
+   * - 'tablet': Tablet + Mobile zeigen Hamburger-Menü
+   * - 'mobile': Nur Mobile zeigt Hamburger-Menü (default)
+   */
+  mobileFrom: 'tablet' | 'mobile';
   /** Children: freely composable VE elements (containers, text, images, buttons) */
   children: VEElement[];
 }

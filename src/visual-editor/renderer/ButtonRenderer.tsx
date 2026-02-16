@@ -21,16 +21,9 @@ const defaultButtonStyles: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '12px 24px',
-  backgroundColor: '#2563eb',
-  color: '#ffffff',
-  border: 'none',
-  borderRadius: '6px',
-  fontSize: '16px',
-  fontWeight: 600,
   cursor: 'pointer',
   textDecoration: 'none',
-  transition: 'opacity 0.2s',
+  border: 'none',
 };
 
 export const ButtonRenderer: React.FC<ButtonRendererProps> = ({ element, viewport, isSelected, isHovered, onSelect, onHover }) => {

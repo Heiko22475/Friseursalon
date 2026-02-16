@@ -4,21 +4,24 @@
 // =====================================================
 
 import React from 'react';
-import { Plus, Layers, FileText, Image, Paintbrush } from 'lucide-react';
+import { Plus, Layers, FileText, Image, Paintbrush, LayoutTemplate } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
 import { PagesPanel } from './PagesPanel';
 import { AssetsPanel } from './AssetsPanel';
 import { StylesPanel } from './StylesPanel';
+import { TemplateGallery, createExampleTemplates } from '../components/TemplateGallery';
+import { findElementById, findParent, isContainer } from '../utils/elementHelpers';
 import type { VEElement } from '../types/elements';
 
-type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets' | 'styles';
+type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates';
 
 const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = [
   { key: 'elements', icon: <Plus size={20} />, label: 'Hinzufügen' },
   { key: 'tree', icon: <Layers size={20} />, label: 'Navigator' },
   { key: 'pages', icon: <FileText size={20} />, label: 'Seiten' },
+  { key: 'templates', icon: <LayoutTemplate size={20} />, label: 'Templates' },
   { key: 'assets', icon: <Image size={20} />, label: 'Assets' },
   { key: 'styles', icon: <Paintbrush size={20} />, label: 'Klassen' },
 ];
@@ -30,6 +33,44 @@ interface NavigatorProps {
 export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   const { state, dispatch } = useEditor();
 
+  const insertElement = (newEl: VEElement) => {
+    // Bestimme den Einfüge-Ort
+    let parentId = state.page.body.id;
+    let insertIndex: number | undefined;
+
+    if (state.selectedId) {
+      const selected = findElementById(state.page.body, state.selectedId);
+      if (selected) {
+        // Section, Navbar, Header, Footer → nur in Body
+        if (newEl.type === 'Section' || newEl.type === 'Navbar' || newEl.type === 'Header' || newEl.type === 'Footer' || newEl.type === 'WebsiteBlock') {
+          parentId = state.page.body.id;
+          // Insert above the currently selected top-level element
+          const bodyChildren = state.page.body.children || [];
+          // Find the top-level ancestor of the selection
+          const topLevelIdx = bodyChildren.findIndex(c => {
+            if (c.id === state.selectedId) return true;
+            // Check if selection is nested inside this child
+            return findElementById(c, state.selectedId!) !== null;
+          });
+          if (topLevelIdx >= 0) {
+            insertIndex = topLevelIdx;
+          }
+        }
+        // Wenn ausgewähltes Element ein Container ist → da rein
+        else if (isContainer(selected.type) && selected.type !== 'Body') {
+          parentId = selected.id;
+        }
+        // Sonst: Eltern des selektierten Elements
+        else {
+          const parent = findParent(state.page.body, selected.id);
+          if (parent) parentId = parent.id;
+        }
+      }
+    }
+
+    dispatch({ type: 'INSERT_ELEMENT', parentId, element: newEl, index: insertIndex });
+  };
+
   const renderPanel = () => {
     switch (state.navigatorTab) {
       case 'elements':
@@ -38,6 +79,13 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         return <ElementsTree onContextMenu={onTreeContextMenu} />;
       case 'pages':
         return <PagesPanel />;
+      case 'templates':
+        return (
+          <TemplateGallery
+            templates={createExampleTemplates()}
+            onSelect={(template) => insertElement(template.element)}
+          />
+        );
       case 'assets':
         return <AssetsPanel />;
       case 'styles':

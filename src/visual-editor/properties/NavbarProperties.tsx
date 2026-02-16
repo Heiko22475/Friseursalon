@@ -1,8 +1,7 @@
 // =====================================================
 // VISUAL EDITOR – NAVBAR PROPERTIES
 // Properties Panel for VENavbar elements.
-// Allows editing of sticky mode, mobile breakpoint,
-// and preset switching.
+// Allows editing of sticky mode and mobileFrom setting.
 // =====================================================
 
 import React from 'react';
@@ -20,16 +19,6 @@ const selectStyle: React.CSSProperties = {
   color: '#d1d5db',
   fontSize: '12px',
   cursor: 'pointer',
-};
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '5px 8px',
-  backgroundColor: '#2d2d3d',
-  border: '1px solid #3d3d4d',
-  borderRadius: '4px',
-  color: '#d1d5db',
-  fontSize: '12px',
 };
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
@@ -56,6 +45,11 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
     });
   };
 
+  const mobileFrom = element.mobileFrom ?? 'mobile';
+  const children = element.children || [];
+  const logoChild = children.length > 0 ? children[0] : null;
+  const hamburgerChild = children.length > 1 ? children[children.length - 1] : null;
+
   return (
     <div>
       {/* Info */}
@@ -69,8 +63,13 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
         color: '#a78bfa',
         lineHeight: 1.5,
       }}>
-        💡 Die Navbar ist ein Kompositions-Element. Füge Logo, Links und Buttons als Kinder hinzu.
-        Nutze <strong>Viewport-Sichtbarkeit</strong> an den Kind-Elementen um Desktop- und Mobile-Ansicht zu steuern.
+        💡 <strong>Aufbau:</strong> 1. Kind = Logo, letztes Kind = Hamburger, dazwischen = Menüpunkte.
+        <br />
+        Auf Desktop wird der Hamburger ausgeblendet.
+        {mobileFrom === 'tablet'
+          ? <> Ab <strong>Tablet</strong> erscheint das Hamburger-Menü.</>
+          : <> Nur auf <strong>Handy</strong> erscheint das Hamburger-Menü.</>
+        }
       </div>
 
       {/* Sticky Mode */}
@@ -86,23 +85,19 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
         </select>
       </Row>
 
-      {/* Mobile Breakpoint */}
-      <Row label="Mobile ab">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <input
-            type="number"
-            value={element.mobileBreakpoint}
-            onChange={(e) => updateNavbarProp('mobileBreakpoint', parseInt(e.target.value) || 768)}
-            min={320}
-            max={1200}
-            step={1}
-            style={{ ...inputStyle, width: '80px' }}
-          />
-          <span style={{ fontSize: '11px', color: '#b0b7c3' }}>px</span>
-        </div>
+      {/* Mobile From */}
+      <Row label="Mobil ab">
+        <select
+          value={mobileFrom}
+          onChange={(e) => updateNavbarProp('mobileFrom', e.target.value)}
+          style={selectStyle}
+        >
+          <option value="tablet">Tablet + Handy</option>
+          <option value="mobile">Nur Handy</option>
+        </select>
       </Row>
 
-      {/* Children count */}
+      {/* Children info */}
       <div style={{
         marginTop: '8px',
         padding: '6px 8px',
@@ -110,8 +105,21 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
         borderRadius: '4px',
         fontSize: '11px',
         color: '#b0b7c3',
+        lineHeight: 1.6,
       }}>
-        {element.children?.length || 0} Kind-Element(e)
+        {children.length} Kind-Element(e)
+        {logoChild && (
+          <div>
+            <span style={{ color: '#60a5fa' }}>🏷️ Logo:</span>{' '}
+            „{logoChild.label || logoChild.type}"
+          </div>
+        )}
+        {hamburgerChild && (
+          <div>
+            <span style={{ color: '#f59e0b' }}>☰ Hamburger:</span>{' '}
+            „{hamburgerChild.label || hamburgerChild.type}"
+          </div>
+        )}
       </div>
     </div>
   );

@@ -12,7 +12,7 @@
 //   • Validierung gemäß canContain()
 // =====================================================
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   ChevronRight,
   ChevronDown,
@@ -106,6 +106,37 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const isBody = element.type === 'Body';
   const isDragging = draggedId === element.id;
   const isContainerType = isContainer(element.type);
+
+  // ─── SCROLL INTO VIEW ──────────────────────────────
+  // When this node becomes selected (e.g. via canvas click),
+  // scroll the Navigator tree so this row is at ~1/3 from top.
+  useEffect(() => {
+    if (!isSelected || !rowRef.current) return;
+    const el = rowRef.current;
+
+    // Find nearest scrollable ancestor
+    let scrollParent: HTMLElement | null = el.parentElement;
+    while (scrollParent) {
+      const { overflowY } = getComputedStyle(scrollParent);
+      if (overflowY === 'auto' || overflowY === 'scroll') break;
+      scrollParent = scrollParent.parentElement;
+    }
+    if (!scrollParent) return;
+
+    const elRect = el.getBoundingClientRect();
+    const containerRect = scrollParent.getBoundingClientRect();
+
+    // Already visible? Skip.
+    if (elRect.top >= containerRect.top && elRect.bottom <= containerRect.bottom) return;
+
+    // Scroll so element sits at ~1/3 from top of the container
+    const desiredTop = containerRect.height / 3;
+    const currentOffset = elRect.top - containerRect.top;
+    scrollParent.scrollTo({
+      top: scrollParent.scrollTop + (currentOffset - desiredTop),
+      behavior: 'smooth',
+    });
+  }, [isSelected]);
 
   // Start renaming on double-click
   const handleDoubleClick = (e: React.MouseEvent) => {

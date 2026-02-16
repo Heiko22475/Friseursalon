@@ -572,18 +572,56 @@ export function createNavbar(preset: NavbarPreset = 'classic'): VEElement {
   }
 }
 
-function createNavbarClassic(): VENavbar {
-  const logoId = generateId();
-  const navLinksId = generateId();
-  const ctaId = generateId();
-  const mobileToggleId = generateId();
-  const mobileMenuId = generateId();
+/**
+ * Creates a hamburger element: a Container with a Menu Icon inside.
+ * This is the LAST child of every Navbar.
+ * On desktop, the NavbarRenderer simply excludes it from rendering.
+ * On mobile, the renderer places it LEFT in the top bar.
+ */
+function createHamburgerElement(iconColor: string): VEElement {
+  return {
+    id: generateId(),
+    type: 'Container',
+    label: '☰ Hamburger',
+    children: [
+      {
+        id: generateId(),
+        type: 'Icon',
+        label: 'Menu Icon',
+        content: {
+          iconName: 'Menu',
+          size: 24,
+          sizeUnit: 'px',
+          color: { kind: 'custom', hex: iconColor },
+          strokeWidth: 2,
+          containerBg: null,
+          containerBorderRadius: 0,
+        },
+        styles: { desktop: {} },
+      } as any,
+    ],
+    styles: {
+      desktop: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        paddingTop: { value: 8, unit: 'px' },
+        paddingBottom: { value: 8, unit: 'px' },
+        paddingLeft: { value: 8, unit: 'px' },
+        paddingRight: { value: 8, unit: 'px' },
+      },
+    },
+  } as any;
+}
 
+function createNavbarClassic(): VENavbar {
   return {
     id: generateId(),
     type: 'Navbar',
     label: 'Navbar',
     mobileBreakpoint: 768,
+    mobileFrom: 'tablet',
     stickyMode: 'sticky',
     styles: {
       desktop: {
@@ -599,9 +637,9 @@ function createNavbarClassic(): VENavbar {
       },
     },
     children: [
-      // Logo
+      // 1st child: Logo (always visible)
       {
-        id: logoId,
+        id: generateId(),
         type: 'Text',
         label: 'Logo',
         content: 'Salon Name',
@@ -613,9 +651,9 @@ function createNavbarClassic(): VENavbar {
           },
         },
       },
-      // Desktop Nav Links Container
+      // Middle: Nav Links in horizontal flex container
       {
-        id: navLinksId,
+        id: generateId(),
         type: 'Container',
         label: 'Nav-Links',
         children: [
@@ -626,15 +664,15 @@ function createNavbarClassic(): VENavbar {
         styles: {
           desktop: {
             display: 'flex',
+            flexDirection: 'row',
             alignItems: 'center',
             gap: { value: 4, unit: 'px' },
           },
-          mobile: { display: 'none' as any },
         },
       },
-      // CTA Button (desktop)
+      // CTA Button
       {
-        id: ctaId,
+        id: generateId(),
         type: 'Button',
         label: 'CTA',
         content: { text: 'Termin buchen', link: '/kontakt' },
@@ -650,68 +688,10 @@ function createNavbarClassic(): VENavbar {
             fontSize: { value: 14, unit: 'px' },
             fontWeight: 600,
           },
-          mobile: { display: 'none' as any },
         },
       },
-      // Mobile menu toggle (hidden on desktop)
-      {
-        id: mobileToggleId,
-        type: 'Button',
-        label: '☰ Menü-Toggle',
-        content: { text: '☰', link: '#mobile-menu' },
-        styles: {
-          desktop: { display: 'none' as any },
-          mobile: {
-            display: 'flex' as any,
-            backgroundColor: undefined,
-            color: { kind: 'custom', hex: '#1a1a2e' },
-            fontSize: { value: 24, unit: 'px' },
-            borderWidth: undefined,
-            paddingLeft: { value: 8, unit: 'px' },
-            paddingRight: { value: 8, unit: 'px' },
-          },
-          tablet: {
-            display: 'flex' as any,
-            backgroundColor: undefined,
-            color: { kind: 'custom', hex: '#1a1a2e' },
-            fontSize: { value: 24, unit: 'px' },
-            borderWidth: undefined,
-          },
-        },
-      },
-      // Mobile Menu Overlay (hidden on desktop, controlled via JS)
-      {
-        id: mobileMenuId,
-        type: 'Container',
-        label: 'Mobile Menü',
-        children: [
-          { id: generateId(), type: 'Button', label: 'Start', content: { text: 'Start', link: '/' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
-          { id: generateId(), type: 'Button', label: 'Leistungen', content: { text: 'Leistungen', link: '/leistungen' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
-          { id: generateId(), type: 'Button', label: 'Kontakt', content: { text: 'Kontakt', link: '/kontakt' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#374151' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderWidth: undefined } } },
-          { id: generateId(), type: 'Button', label: 'Termin buchen', content: { text: 'Termin buchen', link: '/kontakt' }, styles: { desktop: { backgroundColor: { kind: 'custom', hex: '#1a1a2e' }, color: { kind: 'custom', hex: '#ffffff' }, width: { value: 100, unit: '%' }, paddingTop: { value: 12, unit: 'px' }, paddingBottom: { value: 12, unit: 'px' }, fontSize: { value: 16, unit: 'px' }, textAlign: 'center', borderRadius: { value: 6, unit: 'px' }, marginTop: { value: 8, unit: 'px' } } } },
-        ],
-        styles: {
-          desktop: { display: 'none' as any },
-          mobile: {
-            display: 'flex' as any,
-            flexDirection: 'column',
-            width: { value: 100, unit: '%' },
-            paddingTop: { value: 12, unit: 'px' },
-            paddingBottom: { value: 12, unit: 'px' },
-            backgroundColor: { kind: 'custom', hex: '#f9fafb' },
-            gap: { value: 4, unit: 'px' },
-          },
-          tablet: {
-            display: 'flex' as any,
-            flexDirection: 'column',
-            width: { value: 100, unit: '%' },
-            paddingTop: { value: 12, unit: 'px' },
-            paddingBottom: { value: 12, unit: 'px' },
-            backgroundColor: { kind: 'custom', hex: '#f9fafb' },
-            gap: { value: 4, unit: 'px' },
-          },
-        },
-      } as any,
+      // Last child: Hamburger (hidden on desktop by renderer)
+      createHamburgerElement('#1a1a2e'),
     ],
   };
 }
@@ -722,6 +702,7 @@ function createNavbarCentered(): VENavbar {
     type: 'Navbar',
     label: 'Navbar (Zentriert)',
     mobileBreakpoint: 768,
+    mobileFrom: 'tablet',
     stickyMode: 'sticky',
     styles: {
       desktop: {
@@ -738,7 +719,7 @@ function createNavbarCentered(): VENavbar {
       },
     },
     children: [
-      // Logo centered
+      // 1st child: Logo centered (always visible)
       {
         id: generateId(),
         type: 'Text',
@@ -753,7 +734,7 @@ function createNavbarCentered(): VENavbar {
           },
         },
       },
-      // Nav Links centered
+      // Middle: Nav Links centered in horizontal flex container
       {
         id: generateId(),
         type: 'Container',
@@ -766,24 +747,14 @@ function createNavbarCentered(): VENavbar {
         styles: {
           desktop: {
             display: 'flex',
+            flexDirection: 'row',
             alignItems: 'center',
             gap: { value: 4, unit: 'px' },
           },
-          mobile: { display: 'none' as any },
         },
       } as any,
-      // Mobile toggle
-      {
-        id: generateId(),
-        type: 'Button',
-        label: '☰ Menü-Toggle',
-        content: { text: '☰', link: '#mobile-menu' },
-        styles: {
-          desktop: { display: 'none' as any },
-          tablet: { display: 'flex' as any, backgroundColor: undefined, color: { kind: 'custom', hex: '#1a1a2e' }, fontSize: { value: 24, unit: 'px' }, borderWidth: undefined },
-          mobile: { display: 'flex' as any, backgroundColor: undefined, color: { kind: 'custom', hex: '#1a1a2e' }, fontSize: { value: 24, unit: 'px' }, borderWidth: undefined },
-        },
-      },
+      // Last child: Hamburger (hidden on desktop by renderer)
+      createHamburgerElement('#1a1a2e'),
     ],
   };
 }
@@ -794,6 +765,7 @@ function createNavbarMinimal(): VENavbar {
     type: 'Navbar',
     label: 'Navbar (Minimal)',
     mobileBreakpoint: 768,
+    mobileFrom: 'tablet',
     stickyMode: 'sticky',
     styles: {
       desktop: {
@@ -809,7 +781,7 @@ function createNavbarMinimal(): VENavbar {
       },
     },
     children: [
-      // Logo
+      // 1st child: Logo (always visible)
       {
         id: generateId(),
         type: 'Text',
@@ -823,23 +795,27 @@ function createNavbarMinimal(): VENavbar {
           },
         },
       },
-      // Hamburger button (always visible)
+      // Middle: Nav Links in horizontal flex container
       {
         id: generateId(),
-        type: 'Button',
-        label: '☰ Menü',
-        content: { text: '☰', link: '#mobile-menu' },
+        type: 'Container',
+        label: 'Nav-Links',
+        children: [
+          { id: generateId(), type: 'Button', label: 'Start', content: { text: 'Start', link: '/' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#d1d5db' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Leistungen', content: { text: 'Leistungen', link: '/leistungen' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#d1d5db' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+          { id: generateId(), type: 'Button', label: 'Kontakt', content: { text: 'Kontakt', link: '/kontakt' }, styles: { desktop: { backgroundColor: undefined, color: { kind: 'custom', hex: '#d1d5db' }, paddingLeft: { value: 12, unit: 'px' }, paddingRight: { value: 12, unit: 'px' }, paddingTop: { value: 6, unit: 'px' }, paddingBottom: { value: 6, unit: 'px' }, fontSize: { value: 14, unit: 'px' }, borderWidth: undefined } } },
+        ],
         styles: {
           desktop: {
-            backgroundColor: undefined,
-            color: { kind: 'custom', hex: '#ffffff' },
-            fontSize: { value: 24, unit: 'px' },
-            borderWidth: undefined,
-            paddingLeft: { value: 8, unit: 'px' },
-            paddingRight: { value: 8, unit: 'px' },
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: { value: 4, unit: 'px' },
           },
         },
-      },
+      } as any,
+      // Last child: Hamburger (hidden on desktop by renderer)
+      createHamburgerElement('#ffffff'),
     ],
   };
 }

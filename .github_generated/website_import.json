@@ -603,7 +603,7 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-1-icon", "tag": "icon", "icon": "Paintbrush", "stroke": 1.5, "class": ["icon-sm"] },
+                      { "id": "svc-1-icon", "tag": "icon", "icon": "Paintbrush", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
                       { "id": "svc-1-title", "tag": "text", "html": "<h3>Balayage &amp; AirTouch</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
                       { "id": "svc-1-sub", "tag": "text", "html": "<p>Natürliche Farbverläufe</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
                       { "id": "svc-1-desc", "tag": "text", "html": "<p>Handgemalte Strähnchen für einen natürlichen, sonnengeküssten Look. Wir sind Spezialisten für Balayage und AirTouch-Techniken.</p>", "class": ["body-light"] }
@@ -614,7 +614,7 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-2-icon", "tag": "icon", "icon": "Scissors", "stroke": 1.5, "class": ["icon-sm"] },
+                      { "id": "svc-2-icon", "tag": "icon", "icon": "Scissors", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
                       { "id": "svc-2-title", "tag": "text", "html": "<h3>Haarschnitte</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
                       { "id": "svc-2-sub", "tag": "text", "html": "<p>Für Sie &amp; Ihn</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
                       { "id": "svc-2-desc", "tag": "text", "html": "<p>Präzise Schnitte, die deine Persönlichkeit unterstreichen. Von klassisch bis modern – für Damen, Herren und Kinder.</p>", "class": ["body-light"] }
@@ -625,7 +625,7 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-3-icon", "tag": "icon", "icon": "Palette", "stroke": 1.5, "class": ["icon-sm"] },
+                      { "id": "svc-3-icon", "tag": "icon", "icon": "Palette", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
                       { "id": "svc-3-title", "tag": "text", "html": "<h3>Colorationen</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
                       { "id": "svc-3-sub", "tag": "text", "html": "<p>Brillante Farben</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
                       { "id": "svc-3-desc", "tag": "text", "html": "<p>Von natürlichen Nuancen bis hin zu ausdrucksstarken Farben. Unsere Coloristen kreieren deinen individuellen Farbton.</p>", "class": ["body-light"] }
@@ -636,7 +636,7 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-4-icon", "tag": "icon", "icon": "Sparkles", "stroke": 1.5, "class": ["icon-sm"] },
+                      { "id": "svc-4-icon", "tag": "icon", "icon": "Sparkles", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
                       { "id": "svc-4-title", "tag": "text", "html": "<h3>Men's Wellness</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
                       { "id": "svc-4-sub", "tag": "text", "html": "<p>Entspannung pur</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
                       { "id": "svc-4-desc", "tag": "text", "html": "<p>Rasur, Bartpflege und entspannende Treatments speziell für Herren. Deine Auszeit vom Alltag.</p>", "class": ["body-light"] }

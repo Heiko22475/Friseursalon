@@ -469,6 +469,7 @@ function v2ElementToVE(
         ...base,
         type: 'Navbar' as const,
         mobileBreakpoint: 478,
+        mobileFrom: 'mobile' as const,
         stickyMode: (el.sticky === true || el.sticky === 'sticky') ? 'sticky'
           : el.sticky === 'fixed' ? 'fixed' : 'none',
       } as VENavbar;

@@ -526,7 +526,7 @@ const SectionLabel: React.FC<{ label: string }> = ({ label }) => (
 export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, proMode = false }) => {
   const sz = 13;
 
-  // Standard: block, flex, none. Pro adds: grid, inline-block
+  // Standard: block, flex, grid, none. Pro adds: inline-block
   const displayOptions: IconButtonOption<NonNullable<StyleProperties['display']>>[] = proMode
     ? [
         { value: 'block', icon: <Minus size={sz} />, title: 'Block' },
@@ -538,6 +538,7 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
     : [
         { value: 'block', icon: <Minus size={sz} />, title: 'Block' },
         { value: 'flex', icon: <Columns size={sz} />, title: 'Flex' },
+        { value: 'grid', icon: <LayoutGrid size={sz} />, title: 'Grid' },
         { value: 'none', icon: <EyeOff size={sz} />, title: 'None' },
       ];
 

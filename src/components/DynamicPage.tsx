@@ -4,13 +4,19 @@
 // Keine blocks[] mehr – alles kommt aus body.children.
 // =====================================================
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebsite, pageIsHome, pageIsPublished } from '../contexts/WebsiteContext';
 import type { Page } from '../contexts/WebsiteContext';
 import { V2ElementRenderer } from './V2ElementRenderer';
 import { EditModeToggle } from './admin/EditModeToggle';
 import { useViewport } from '../hooks/useViewport';
+import { useEditMode } from '../contexts/EditModeContext';
+import { V2EditProvider } from './frontend-editor/V2EditContext';
+import { V2SelectionOverlay } from './frontend-editor/V2SelectionOverlay';
+import { V2InlineToolbar } from './frontend-editor/V2InlineToolbar';
+import { V2StylePanel } from './frontend-editor/V2StylePanel';
+import { VEThemeProvider } from '../visual-editor/theme/VEThemeBridge';
 
 // ===== COMPONENT =====
 
@@ -20,6 +26,8 @@ export const DynamicPage: React.FC = () => {
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
   const viewport = useViewport();
+  const { isEditMode } = useEditMode();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!websiteLoading && website) {
@@ -102,15 +110,29 @@ export const DynamicPage: React.FC = () => {
   // v2 format: render from body element tree
   if (page.body) {
     return (
-      <div className="dynamic-page min-h-screen">
-        <V2ElementRenderer
-          element={page.body}
-          allStyles={allStyles}
-          themeColors={themeColors}
-          viewport={viewport}
-        />
-        <EditModeToggle />
-      </div>
+      <VEThemeProvider>
+        <V2EditProvider>
+          <div
+            ref={containerRef}
+            className={`dynamic-page min-h-screen ${isEditMode ? 'v2-edit-mode' : ''}`}
+          >
+            <V2ElementRenderer
+              element={page.body}
+              allStyles={allStyles}
+              themeColors={themeColors}
+              viewport={viewport}
+              pageId={page.id}
+            />
+            <V2SelectionOverlay
+              containerRef={containerRef}
+              pageBody={page.body}
+            />
+            <V2InlineToolbar />
+            <V2StylePanel pageId={page.id} />
+            <EditModeToggle />
+          </div>
+        </V2EditProvider>
+      </VEThemeProvider>
     );
   }
 

@@ -41,6 +41,36 @@ heiko.scheffler@gmx.de   supabase
 Dieses Passwort ist irgendwo in Supabase gespeichert.
 
 
+Namenssuche: 
+forgecms.io
+rendercms.com
+shellcms.com
+getforgecms.com
+fabriccms.com
+versioncms.com
+portablecms.com
+hostlesscms.com
+cloudlesscms.com
+octocms.com
+panthercms.com
+shadecms.com
+entrycms.com
+logiccms.com
+volcanocms.com
+raefy.com
+raefix.com
+rafixo.com
+enchantix.com
+mysticae.com
+koalacms.com
+compasscms.com
+hedgehogcms.com
+berrycms.com
+dovecms.com
+
+
+
+
 ## Ressourcen für images: 
 https://de.freepik.com/vektoren-kostenlos/frau-frisur-design_1068949.htm#fromView=search&page=1&position=1&uuid=32c7ebeb-1544-4bd9-b103-e171bfb92b0e&query=damenfrisure+svg+schnittdateien
 

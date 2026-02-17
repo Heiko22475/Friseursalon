@@ -161,7 +161,7 @@ function veLineHeightToV2(val: SizeValue | number | undefined): any {
  * Convert a flat v2 style properties object to VE StyleProperties.
  * Handles tuples → SizeValue, "#hex" → ColorValue, etc.
  */
-function v2PropsToVE(v2: Record<string, any>): Partial<StyleProperties> {
+export function v2PropsToVE(v2: Record<string, any>): Partial<StyleProperties> {
   const ve: any = {};
   for (const [key, val] of Object.entries(v2)) {
     // Skip breakpoint/pseudo overrides
@@ -187,7 +187,7 @@ function v2PropsToVE(v2: Record<string, any>): Partial<StyleProperties> {
 /**
  * Convert VE StyleProperties back to v2 flat style object.
  */
-function vePropsToV2(ve: Partial<StyleProperties>): Record<string, any> {
+export function vePropsToV2(ve: Partial<StyleProperties>): Record<string, any> {
   const v2: any = {};
   for (const [key, val] of Object.entries(ve)) {
     if (val === undefined || val === null) continue;

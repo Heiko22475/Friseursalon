@@ -13,12 +13,15 @@ import {
 } from '../visual-editor/converters/v2Converter';
 import type { Viewport } from '../hooks/useViewport';
 import * as LucideIcons from 'lucide-react';
+import { V2EditableText } from './V2EditableText';
 
 interface V2ElementRendererProps {
   element: any;
   allStyles: Record<string, any>;
   themeColors: Record<string, string>;
   viewport: Viewport;
+  /** Page ID for inline editing save path */
+  pageId?: string;
   /** Internal: whether this is the root call (renders <style> tag) */
   _isRoot?: boolean;
 }
@@ -170,6 +173,7 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
   allStyles,
   themeColors,
   viewport,
+  pageId,
   _isRoot = true,
 }) => {
   if (!element) return null;
@@ -205,6 +209,7 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
         allStyles={allStyles}
         themeColors={themeColors}
         viewport={viewport}
+        pageId={pageId}
         _isRoot={false}
       />
     ));
@@ -251,6 +256,17 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
 
     // ===== TEXT =====
     case 'text':
+      if (pageId) {
+        return (
+          <V2EditableText
+            elementId={element.id}
+            html={element.html || ''}
+            css={css}
+            htmlAttrs={htmlAttrs}
+            pageId={pageId}
+          />
+        );
+      }
       return (
         <div
           data-v2-id={element.id}

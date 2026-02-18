@@ -91,6 +91,12 @@ const FontDropdown: React.FC<{
 
   const displayName = value || 'Font wählen…';
 
+  // Resolve font entry to get the full CSS font-family with fallback
+  const fontEntry = value ? ALL_FONTS.find((f) => f.name === value) : null;
+  const buttonFontFamily = fontEntry
+    ? `"${fontEntry.name}", ${fontEntry.fallback}`
+    : value || 'inherit';
+
   return (
     <div style={{ position: 'relative' }}>
       <button
@@ -107,7 +113,7 @@ const FontDropdown: React.FC<{
           color: value ? '#d1d5db' : '#b0b7c3',
           fontSize: '12px',
           cursor: 'pointer',
-          fontFamily: value || 'inherit',
+          fontFamily: buttonFontFamily,
         }}
       >
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

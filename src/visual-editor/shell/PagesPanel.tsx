@@ -68,13 +68,19 @@ const PageItem: React.FC<PageItemProps> = ({
   const [editing, setEditing] = useState<EditingState | null>(null);
   const [showActions, setShowActions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Track which field is being edited to only focus/select on initial open
+  const editingFieldRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (editing && inputRef.current) {
+    if (editing && inputRef.current && editingFieldRef.current !== editing.field) {
+      editingFieldRef.current = editing.field;
       inputRef.current.focus();
       inputRef.current.select();
     }
-  }, [editing]);
+    if (!editing) {
+      editingFieldRef.current = null;
+    }
+  }, [editing?.field, !!editing]);
 
   const startEditing = (field: 'name' | 'route') => {
     setEditing({

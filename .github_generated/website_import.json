@@ -6,31 +6,17 @@
     "theme": {
       "colors": {
         "primary": "#2D2926",
-        "secondary": "#EFEBE3",
-        "accent": "#DED9D0",
-        "background": "#F9F7F2",
+        "secondary": "#F5F0EB",
+        "accent": "#C9A96E",
+        "background": "#FDFBF8",
         "text": "#2D2926",
         "muted": "#8C8279"
       },
       "fonts": {
-        "heading": "Montserrat",
-        "body": "Montserrat"
+        "heading": "Playfair Display",
+        "body": "Inter"
       }
     },
-    "contact": {
-      "phone": "069 123 456 78",
-      "email": "info@k1-friseure.de",
-      "address": {
-        "street": "Glauburgstraße 38",
-        "zip": "60318",
-        "city": "Frankfurt am Main"
-      }
-    },
-    "hours": [
-      { "days": "Mo – Fr", "time": "09:00 – 19:00" },
-      { "days": "Sa", "time": "09:00 – 15:00" },
-      { "days": "So", "time": "Geschlossen" }
-    ],
     "breakpoints": {
       "tablet": 992,
       "mobile": 478
@@ -38,273 +24,556 @@
   },
 
   "styles": {
+
+    "heading-display": {
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 700,
+      "fontSize": [72, "px"],
+      "lineHeight": 1.0,
+      "letterSpacing": [-1.5, "px"],
+      "color": "#ffffff",
+      "@tablet": { "fontSize": [52, "px"], "letterSpacing": [-1, "px"] },
+      "@mobile": { "fontSize": [36, "px"], "letterSpacing": [0, "px"] }
+    },
+
     "heading-xl": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 800,
-      "fontSize": [56, "px"],
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 700,
+      "fontSize": [48, "px"],
       "lineHeight": 1.1,
       "letterSpacing": [-0.5, "px"],
       "color": { "ref": "text" },
-      "@tablet": { "fontSize": [40, "px"] },
-      "@mobile": { "fontSize": [28, "px"] }
+      "@tablet": { "fontSize": [36, "px"] },
+      "@mobile": { "fontSize": [28, "px"], "letterSpacing": [0, "px"] }
     },
+
     "heading-lg": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 700,
-      "fontSize": [36, "px"],
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 600,
+      "fontSize": [32, "px"],
       "lineHeight": 1.2,
       "color": { "ref": "text" },
-      "@tablet": { "fontSize": [30, "px"] },
-      "@mobile": { "fontSize": [24, "px"] }
+      "@tablet": { "fontSize": [26, "px"] },
+      "@mobile": { "fontSize": [22, "px"] }
     },
+
     "heading-md": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 700,
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 600,
       "fontSize": [22, "px"],
       "lineHeight": 1.3,
       "color": { "ref": "text" }
     },
-    "body-text": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 400,
-      "fontSize": [16, "px"],
-      "lineHeight": 1.8,
+
+    "heading-sm": {
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 600,
+      "fontSize": [18, "px"],
+      "lineHeight": 1.4,
       "color": { "ref": "text" }
     },
-    "body-light": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 300,
-      "fontSize": [15, "px"],
+
+    "text-body": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 400,
+      "fontSize": [16, "px"],
       "lineHeight": 1.7,
-      "color": { "ref": "muted" }
+      "color": { "ref": "text" }
     },
-    "text-muted": {
-      "fontFamily": "Montserrat, sans-serif",
+
+    "text-body-lg": {
+      "fontFamily": "Inter, system-ui, sans-serif",
       "fontWeight": 400,
-      "fontSize": [14, "px"],
-      "color": { "ref": "muted" }
-    },
-    "pretitle": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 500,
-      "fontSize": [12, "px"],
+      "fontSize": [18, "px"],
+      "lineHeight": 1.7,
       "color": { "ref": "muted" },
-      "letterSpacing": [2, "px"],
-      "textTransform": "uppercase"
+      "@mobile": { "fontSize": [16, "px"] }
     },
-    "caption": {
-      "fontFamily": "Montserrat, sans-serif",
+
+    "text-small": {
+      "fontFamily": "Inter, system-ui, sans-serif",
       "fontWeight": 400,
-      "fontSize": [12, "px"],
+      "fontSize": [14, "px"],
+      "lineHeight": 1.5,
       "color": { "ref": "muted" }
     },
-    "nav-link": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 500,
-      "fontSize": [14, "px"],
-      "color": { "ref": "text" },
-      "cursor": "pointer",
-      "transition": "color 0.3s ease",
-      ":hover": {
-        "color": { "ref": "muted" }
-      }
+
+    "section-label": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 600,
+      "fontSize": [12, "px"],
+      "lineHeight": 1.2,
+      "textTransform": "uppercase",
+      "letterSpacing": [3, "px"],
+      "color": { "ref": "accent" }
     },
+
+    "hero-sub": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 300,
+      "fontSize": [19, "px"],
+      "lineHeight": 1.7,
+      "color": "#ffffff",
+      "opacity": 0.85,
+      "@tablet": { "fontSize": [17, "px"] },
+      "@mobile": { "fontSize": [15, "px"] }
+    },
+
     "btn": {
       "display": "inline-flex",
       "alignItems": "center",
       "justifyContent": "center",
-      "fontFamily": "Montserrat, sans-serif",
+      "gap": [8, "px"],
+      "fontFamily": "Inter, system-ui, sans-serif",
       "fontWeight": 500,
       "fontSize": [14, "px"],
-      "borderRadius": [4, "px"],
+      "lineHeight": 1,
+      "borderRadius": [6, "px"],
       "cursor": "pointer",
-      "transition": "all 0.2s ease",
-      ":hover": {
-        "transform": "translateY(-1px)"
-      }
+      "transition": "all 0.25s ease",
+      "textDecoration": "none",
+      "letterSpacing": [0.3, "px"]
     },
+
     "btn-primary": {
       "_extends": "btn",
       "backgroundColor": { "ref": "primary" },
-      "color": { "ref": "background" },
+      "color": "#ffffff",
       "paddingTop": [16, "px"],
       "paddingBottom": [16, "px"],
       "paddingLeft": [32, "px"],
       "paddingRight": [32, "px"],
       ":hover": {
-        "backgroundColor": "#1a1a1a",
-        "transform": "translateY(-1px)"
+        "backgroundColor": "#1a1714",
+        "transform": "translateY(-2px)",
+        "boxShadow": "0 6px 20px rgba(45,41,38,0.25)"
       }
     },
+
+    "btn-accent": {
+      "_extends": "btn",
+      "backgroundColor": { "ref": "accent" },
+      "color": "#ffffff",
+      "paddingTop": [16, "px"],
+      "paddingBottom": [16, "px"],
+      "paddingLeft": [32, "px"],
+      "paddingRight": [32, "px"],
+      ":hover": {
+        "backgroundColor": "#b8943d",
+        "transform": "translateY(-2px)",
+        "boxShadow": "0 6px 20px rgba(201,169,110,0.3)"
+      }
+    },
+
+    "btn-outline-light": {
+      "_extends": "btn",
+      "backgroundColor": "transparent",
+      "color": "#ffffff",
+      "borderWidth": [1.5, "px"],
+      "borderStyle": "solid",
+      "borderColor": "rgba(255,255,255,0.5)",
+      "paddingTop": [15, "px"],
+      "paddingBottom": [15, "px"],
+      "paddingLeft": [32, "px"],
+      "paddingRight": [32, "px"],
+      ":hover": {
+        "backgroundColor": "rgba(255,255,255,0.1)",
+        "borderColor": "#ffffff"
+      }
+    },
+
     "btn-outline": {
       "_extends": "btn",
       "backgroundColor": "transparent",
       "color": { "ref": "primary" },
-      "borderWidth": [1, "px"],
+      "borderWidth": [1.5, "px"],
       "borderStyle": "solid",
       "borderColor": { "ref": "primary" },
-      "paddingTop": [10, "px"],
-      "paddingBottom": [10, "px"],
-      "paddingLeft": [20, "px"],
-      "paddingRight": [20, "px"],
+      "paddingTop": [12, "px"],
+      "paddingBottom": [12, "px"],
+      "paddingLeft": [24, "px"],
+      "paddingRight": [24, "px"],
       ":hover": {
         "backgroundColor": { "ref": "primary" },
-        "color": { "ref": "background" },
+        "color": "#ffffff",
         "transform": "translateY(-1px)"
       }
     },
-    "section-light": {
-      "paddingTop": [100, "px"],
-      "paddingBottom": [100, "px"],
-      "paddingLeft": [64, "px"],
-      "paddingRight": [64, "px"],
-      "backgroundColor": { "ref": "background" },
-      "@tablet": {
-        "paddingLeft": [24, "px"],
-        "paddingRight": [24, "px"]
-      },
-      "@mobile": {
-        "paddingTop": [60, "px"],
-        "paddingBottom": [60, "px"],
-        "paddingLeft": [16, "px"],
-        "paddingRight": [16, "px"]
-      }
-    },
-    "section-sand": {
-      "paddingTop": [100, "px"],
-      "paddingBottom": [100, "px"],
-      "paddingLeft": [64, "px"],
-      "paddingRight": [64, "px"],
-      "backgroundColor": { "ref": "secondary" },
-      "@tablet": {
-        "paddingLeft": [24, "px"],
-        "paddingRight": [24, "px"]
-      },
-      "@mobile": {
-        "paddingTop": [60, "px"],
-        "paddingBottom": [60, "px"],
-        "paddingLeft": [16, "px"],
-        "paddingRight": [16, "px"]
-      }
-    },
-    "section-dark": {
-      "paddingTop": [80, "px"],
-      "paddingBottom": [80, "px"],
-      "paddingLeft": [64, "px"],
-      "paddingRight": [64, "px"],
-      "backgroundColor": { "ref": "primary" },
-      "@tablet": {
-        "paddingLeft": [24, "px"],
-        "paddingRight": [24, "px"]
-      },
-      "@mobile": {
-        "paddingTop": [60, "px"],
-        "paddingBottom": [60, "px"],
-        "paddingLeft": [16, "px"],
-        "paddingRight": [16, "px"]
-      }
-    },
-    "service-card": {
-      "display": "flex",
-      "flexDirection": "column",
-      "gap": [12, "px"],
-      "backgroundColor": { "ref": "background" },
-      "paddingTop": [32, "px"],
-      "paddingBottom": [32, "px"],
-      "paddingLeft": [24, "px"],
-      "paddingRight": [24, "px"],
-      "borderRadius": [4, "px"],
-      "transition": "transform 0.2s ease, box-shadow 0.2s ease",
-      ":hover": {
-        "transform": "translateY(-4px)",
-        "boxShadow": "0 8px 24px rgba(0,0,0,0.08)"
-      }
-    },
-    "price-row": {
-      "display": "flex",
-      "justifyContent": "space-between",
-      "alignItems": "baseline",
-      "paddingTop": [15, "px"],
-      "paddingBottom": [15, "px"],
-      "borderBottomWidth": [1, "px"],
-      "borderStyle": "solid",
-      "borderColor": { "ref": "accent" },
-      "transition": "background-color 0.2s ease",
-      ":hover": {
-        "backgroundColor": { "ref": "secondary" }
-      }
-    },
-    "price-label": {
-      "fontFamily": "Montserrat, sans-serif",
-      "fontWeight": 400,
-      "fontSize": [16, "px"],
-      "lineHeight": 1.4,
-      "color": { "ref": "text" }
-    },
-    "price-value": {
-      "fontWeight": 500,
-      "fontSize": [16, "px"],
-      "color": { "ref": "text" },
-      "whiteSpace": "nowrap"
-    },
-    "price-category": {
-      "fontWeight": 700,
-      "fontSize": [18, "px"],
-      "color": { "ref": "text" },
-      "textTransform": "uppercase",
+
+    "btn-ghost": {
+      "_extends": "btn",
+      "backgroundColor": "transparent",
+      "color": { "ref": "accent" },
+      "paddingTop": [12, "px"],
+      "paddingBottom": [12, "px"],
+      "paddingLeft": [4, "px"],
+      "paddingRight": [4, "px"],
       "letterSpacing": [1, "px"],
-      "marginTop": [32, "px"],
-      "marginBottom": [16, "px"]
+      "textTransform": "uppercase",
+      "fontSize": [12, "px"],
+      ":hover": { "color": { "ref": "primary" } }
     },
-    "portfolio-card": {
-      "display": "flex",
-      "flexDirection": "column",
-      "backgroundColor": { "ref": "background" },
-      "borderRadius": [4, "px"],
-      "overflow": "hidden",
-      "transition": "transform 0.2s ease, box-shadow 0.2s ease",
-      ":hover": {
-        "transform": "translateY(-4px)",
-        "boxShadow": "0 8px 24px rgba(0,0,0,0.08)"
+
+    "nav-link": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 400,
+      "fontSize": [14, "px"],
+      "color": { "ref": "text" },
+      "textDecoration": "none",
+      "letterSpacing": [0.3, "px"],
+      "transition": "color 0.2s ease",
+      ":hover": { "color": { "ref": "accent" } }
+    },
+
+    "section-default": {
+      "paddingTop": [120, "px"],
+      "paddingBottom": [120, "px"],
+      "paddingLeft": [48, "px"],
+      "paddingRight": [48, "px"],
+      "@tablet": {
+        "paddingTop": [80, "px"],
+        "paddingBottom": [80, "px"],
+        "paddingLeft": [24, "px"],
+        "paddingRight": [24, "px"]
+      },
+      "@mobile": {
+        "paddingTop": [56, "px"],
+        "paddingBottom": [56, "px"],
+        "paddingLeft": [16, "px"],
+        "paddingRight": [16, "px"]
       }
     },
-    "card-body": {
+
+    "section-hero": {
       "display": "flex",
-      "flexDirection": "column",
-      "gap": [8, "px"],
-      "paddingTop": [24, "px"],
-      "paddingBottom": [24, "px"],
-      "paddingLeft": [24, "px"],
-      "paddingRight": [24, "px"]
+      "alignItems": "center",
+      "justifyContent": "center",
+      "minHeight": [100, "vh"],
+      "position": "relative",
+      "overflow": "hidden",
+      "paddingTop": [0, "px"],
+      "paddingBottom": [0, "px"],
+      "paddingLeft": [48, "px"],
+      "paddingRight": [48, "px"],
+      "@tablet": {
+        "minHeight": [85, "vh"],
+        "paddingLeft": [24, "px"],
+        "paddingRight": [24, "px"]
+      },
+      "@mobile": {
+        "minHeight": [100, "vh"],
+        "paddingLeft": [20, "px"],
+        "paddingRight": [20, "px"]
+      }
     },
-    "footer-col": {
-      "display": "flex",
-      "flexDirection": "column",
-      "gap": [8, "px"]
-    },
-    "footer-title": {
-      "fontWeight": 700,
-      "fontSize": [16, "px"],
-      "color": { "ref": "text" },
-      "marginBottom": [4, "px"]
-    },
-    "max-width-container": {
-      "maxWidth": [1440, "px"],
+
+    "hero-bg": {
+      "position": "absolute",
+      "top": [0, "px"],
+      "left": [0, "px"],
       "width": [100, "%"],
-      "marginLeft": "auto",
-      "marginRight": "auto"
+      "height": [100, "%"],
+      "objectFit": "cover"
     },
-    "icon-sm": {
-      "width": [28, "px"],
-      "height": [28, "px"],
-      "color": { "ref": "text" }
+
+    "hero-overlay": {
+      "position": "absolute",
+      "top": [0, "px"],
+      "left": [0, "px"],
+      "width": [100, "%"],
+      "height": [100, "%"],
+      "backgroundColor": "#1a1510",
+      "opacity": 0.55
     },
-    "section-header": {
+
+    "hero-content": {
       "display": "flex",
       "flexDirection": "column",
       "alignItems": "center",
       "textAlign": "center",
-      "marginBottom": [48, "px"]
+      "position": "relative",
+      "zIndex": 2,
+      "maxWidth": [860, "px"],
+      "gap": [28, "px"]
+    },
+
+    "container-max": {
+      "width": [100, "%"],
+      "maxWidth": [1200, "px"],
+      "marginLeft": "auto",
+      "marginRight": "auto"
+    },
+
+    "container-narrow": {
+      "width": [100, "%"],
+      "maxWidth": [720, "px"],
+      "marginLeft": "auto",
+      "marginRight": "auto"
+    },
+
+    "flex-center": {
+      "display": "flex",
+      "alignItems": "center",
+      "justifyContent": "center"
+    },
+
+    "flex-col-center": {
+      "display": "flex",
+      "flexDirection": "column",
+      "alignItems": "center"
+    },
+
+    "grid-2": {
+      "display": "grid",
+      "gridTemplateColumns": "repeat(2, 1fr)",
+      "gap": [48, "px"],
+      "@tablet": { "gap": [32, "px"] },
+      "@mobile": { "gridTemplateColumns": "1fr", "gap": [32, "px"] }
+    },
+
+    "grid-3": {
+      "display": "grid",
+      "gridTemplateColumns": "repeat(3, 1fr)",
+      "gap": [32, "px"],
+      "@tablet": { "gridTemplateColumns": "repeat(2, 1fr)" },
+      "@mobile": { "gridTemplateColumns": "1fr", "gap": [24, "px"] }
+    },
+
+    "grid-4": {
+      "display": "grid",
+      "gridTemplateColumns": "repeat(4, 1fr)",
+      "gap": [24, "px"],
+      "@tablet": { "gridTemplateColumns": "repeat(2, 1fr)" },
+      "@mobile": { "gridTemplateColumns": "1fr", "gap": [20, "px"] }
+    },
+
+    "service-card": {
+      "display": "flex",
+      "flexDirection": "column",
+      "backgroundColor": "#ffffff",
+      "borderRadius": [16, "px"],
+      "overflow": "hidden",
+      "transition": "all 0.35s ease",
+      "boxShadow": "0 1px 3px rgba(0,0,0,0.04)",
+      ":hover": {
+        "transform": "translateY(-6px)",
+        "boxShadow": "0 16px 40px rgba(45,41,38,0.1)"
+      }
+    },
+
+    "service-card-body": {
+      "display": "flex",
+      "flexDirection": "column",
+      "gap": [12, "px"],
+      "paddingTop": [28, "px"],
+      "paddingBottom": [28, "px"],
+      "paddingLeft": [28, "px"],
+      "paddingRight": [28, "px"],
+      "flexGrow": 1
+    },
+
+    "service-card-img": {
+      "width": [100, "%"],
+      "height": [260, "px"],
+      "objectFit": "cover",
+      "@mobile": { "height": [220, "px"] }
+    },
+
+    "package-card": {
+      "display": "flex",
+      "flexDirection": "column",
+      "backgroundColor": "#ffffff",
+      "borderRadius": [20, "px"],
+      "overflow": "hidden",
+      "transition": "all 0.35s ease",
+      "boxShadow": "0 2px 12px rgba(0,0,0,0.04)",
+      ":hover": {
+        "transform": "translateY(-8px)",
+        "boxShadow": "0 20px 48px rgba(45,41,38,0.12)"
+      }
+    },
+
+    "package-card-body": {
+      "display": "flex",
+      "flexDirection": "column",
+      "gap": [14, "px"],
+      "paddingTop": [32, "px"],
+      "paddingBottom": [32, "px"],
+      "paddingLeft": [32, "px"],
+      "paddingRight": [32, "px"],
+      "flexGrow": 1
+    },
+
+    "package-img": {
+      "width": [100, "%"],
+      "height": [320, "px"],
+      "objectFit": "cover",
+      "@mobile": { "height": [240, "px"] }
+    },
+
+    "price-table": {
+      "display": "flex",
+      "flexDirection": "column",
+      "width": [100, "%"],
+      "maxWidth": [720, "px"],
+      "marginLeft": "auto",
+      "marginRight": "auto"
+    },
+
+    "price-category": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 600,
+      "fontSize": [11, "px"],
+      "color": { "ref": "accent" },
+      "textTransform": "uppercase",
+      "letterSpacing": [3, "px"],
+      "marginTop": [48, "px"],
+      "marginBottom": [20, "px"],
+      "paddingBottom": [12, "px"],
+      "borderBottomWidth": [2, "px"],
+      "borderStyle": "solid",
+      "borderColor": { "ref": "accent" }
+    },
+
+    "price-row": {
+      "display": "flex",
+      "justifyContent": "space-between",
+      "alignItems": "baseline",
+      "paddingTop": [16, "px"],
+      "paddingBottom": [16, "px"],
+      "borderBottomWidth": [1, "px"],
+      "borderStyle": "solid",
+      "borderColor": "#ede8e3",
+      "transition": "all 0.2s ease",
+      ":hover": {
+        "paddingLeft": [12, "px"],
+        "backgroundColor": { "ref": "secondary" },
+        "borderRadius": [8, "px"]
+      }
+    },
+
+    "price-label": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 400,
+      "fontSize": [15, "px"],
+      "lineHeight": 1.4,
+      "color": { "ref": "text" }
+    },
+
+    "price-value": {
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 600,
+      "fontSize": [16, "px"],
+      "color": { "ref": "accent" },
+      "whiteSpace": "nowrap"
+    },
+
+    "testimonial-card": {
+      "display": "flex",
+      "flexDirection": "column",
+      "gap": [20, "px"],
+      "backgroundColor": "#ffffff",
+      "borderRadius": [20, "px"],
+      "paddingTop": [36, "px"],
+      "paddingBottom": [36, "px"],
+      "paddingLeft": [36, "px"],
+      "paddingRight": [36, "px"],
+      "boxShadow": "0 1px 3px rgba(0,0,0,0.03)",
+      "transition": "all 0.3s ease",
+      ":hover": {
+        "boxShadow": "0 8px 32px rgba(0,0,0,0.06)"
+      },
+      "@mobile": {
+        "paddingTop": [28, "px"],
+        "paddingBottom": [28, "px"],
+        "paddingLeft": [24, "px"],
+        "paddingRight": [24, "px"]
+      }
+    },
+
+    "testimonial-quote": {
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 400,
+      "fontSize": [17, "px"],
+      "lineHeight": 1.7,
+      "fontStyle": "italic",
+      "color": { "ref": "text" }
+    },
+
+    "stars-row": {
+      "display": "flex",
+      "gap": [3, "px"]
+    },
+
+    "star-icon": {
+      "width": [16, "px"],
+      "height": [16, "px"],
+      "color": { "ref": "accent" }
+    },
+
+    "icon-badge": {
+      "display": "flex",
+      "alignItems": "center",
+      "justifyContent": "center",
+      "width": [52, "px"],
+      "height": [52, "px"],
+      "backgroundColor": { "ref": "secondary" },
+      "borderRadius": [14, "px"],
+      "color": { "ref": "accent" }
+    },
+
+    "highlight-number": {
+      "fontFamily": "'Playfair Display', Georgia, serif",
+      "fontWeight": 700,
+      "fontSize": [48, "px"],
+      "lineHeight": 1,
+      "color": { "ref": "accent" },
+      "@mobile": { "fontSize": [36, "px"] }
+    },
+
+    "divider-accent": {
+      "width": [48, "px"],
+      "height": [2, "px"],
+      "backgroundColor": { "ref": "accent" },
+      "borderRadius": [2, "px"]
+    },
+
+    "footer-col": {
+      "display": "flex",
+      "flexDirection": "column",
+      "gap": [12, "px"]
+    },
+
+    "footer-heading": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 600,
+      "fontSize": [13, "px"],
+      "color": "rgba(255,255,255,0.4)",
+      "textTransform": "uppercase",
+      "letterSpacing": [2, "px"],
+      "marginBottom": [8, "px"]
+    },
+
+    "footer-text": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontWeight": 400,
+      "fontSize": [14, "px"],
+      "color": "rgba(255,255,255,0.7)",
+      "lineHeight": 1.7,
+      "textDecoration": "none",
+      "transition": "color 0.2s ease",
+      ":hover": { "color": "#ffffff" }
+    },
+
+    "img-cover-rounded": {
+      "width": [100, "%"],
+      "objectFit": "cover",
+      "borderRadius": [20, "px"]
+    },
+
+    "img-circle": {
+      "borderRadius": [50, "%"],
+      "objectFit": "cover"
     }
   },
 
@@ -319,72 +588,61 @@
       "isPublished": true,
       "showInMenu": true,
       "seo": {
-        "title": "K1 Friseure | Ihr Salon für Haar & Style in Frankfurt",
-        "description": "K1 Friseure – Premium-Friseursalon in Frankfurt. Haarschnitte, Balayage, Colorationen und Wellness für Damen, Herren und Kinder."
+        "title": "K1 Friseure – Premium Friseursalon in Frankfurt",
+        "description": "K1 Friseure – Ihr Salon für Balayage, AirTouch, Colorationen und Haarschnitte in Frankfurt am Main. Jetzt Termin buchen."
       },
       "body": {
         "id": "body",
         "tag": "body",
         "styles": {
           "backgroundColor": { "ref": "background" },
-          "fontFamily": "Montserrat, sans-serif",
+          "fontFamily": "Inter, system-ui, sans-serif",
           "color": { "ref": "text" }
         },
         "children": [
+
 
           {
             "id": "navbar",
             "tag": "nav",
             "sticky": "sticky",
-            "class": ["max-width-container"],
             "styles": {
               "display": "flex",
               "justifyContent": "space-between",
               "alignItems": "center",
-              "paddingTop": [16, "px"],
-              "paddingBottom": [16, "px"],
-              "paddingLeft": [64, "px"],
-              "paddingRight": [64, "px"],
-              "backgroundColor": { "ref": "background" },
-              "borderBottomWidth": [1, "px"],
-              "borderStyle": "solid",
-              "borderColor": { "ref": "accent" },
-              "@tablet": {
-                "paddingLeft": [24, "px"],
-                "paddingRight": [24, "px"]
-              },
-              "@mobile": {
-                "paddingLeft": [16, "px"],
-                "paddingRight": [16, "px"]
-              }
+              "paddingTop": [20, "px"],
+              "paddingBottom": [20, "px"],
+              "paddingLeft": [48, "px"],
+              "paddingRight": [48, "px"],
+              "backgroundColor": "rgba(253,251,248,0.92)",
+              "backdropFilter": "blur(12px)",
+              "zIndex": 100,
+              "@tablet": { "paddingLeft": [24, "px"], "paddingRight": [24, "px"] },
+              "@mobile": { "paddingLeft": [16, "px"], "paddingRight": [16, "px"] }
             },
             "children": [
               {
                 "id": "nav-logo",
                 "tag": "text",
-                "html": "<p><strong>K1 FRISEURE</strong></p>",
+                "html": "<p><strong>K1</strong> FRISEURE</p>",
                 "styles": {
-                  "fontWeight": 700,
-                  "fontSize": [20, "px"],
+                  "fontFamily": "'Playfair Display', Georgia, serif",
+                  "fontWeight": 400,
+                  "fontSize": [22, "px"],
                   "color": { "ref": "text" },
-                  "letterSpacing": [2, "px"],
-                  "whiteSpace": "nowrap"
+                  "letterSpacing": [3, "px"]
                 }
               },
               {
                 "id": "nav-links",
                 "tag": "container",
                 "visible": { "desktop": true, "tablet": true, "mobile": false },
-                "styles": {
-                  "display": "flex",
-                  "alignItems": "center",
-                  "gap": [32, "px"]
-                },
+                "styles": { "display": "flex", "alignItems": "center", "gap": [36, "px"] },
                 "children": [
-                  { "id": "nav-ueber-uns", "tag": "link", "text": "Über uns", "href": "#ueber-uns", "class": ["nav-link"] },
-                  { "id": "nav-leistungen", "tag": "link", "text": "Leistungen", "href": "#leistungen", "class": ["nav-link"] },
-                  { "id": "nav-preisliste", "tag": "link", "text": "Preisliste", "href": "#preisliste", "class": ["nav-link"] },
-                  { "id": "nav-team", "tag": "link", "text": "Team", "href": "#team", "class": ["nav-link"] },
+                  { "id": "nl-salon", "tag": "link", "text": "Salon", "href": "#salon", "class": ["nav-link"] },
+                  { "id": "nl-leistungen", "tag": "link", "text": "Leistungen", "href": "#leistungen", "class": ["nav-link"] },
+                  { "id": "nl-preise", "tag": "link", "text": "Preise", "href": "#preise", "class": ["nav-link"] },
+                  { "id": "nl-pakete", "tag": "link", "text": "Pakete", "href": "#pakete", "class": ["nav-link"] },
                   {
                     "id": "nav-cta",
                     "tag": "button",
@@ -392,10 +650,11 @@
                     "href": "#",
                     "class": ["btn-primary"],
                     "styles": {
-                      "paddingTop": [10, "px"],
-                      "paddingBottom": [10, "px"],
-                      "paddingLeft": [24, "px"],
-                      "paddingRight": [24, "px"]
+                      "paddingTop": [11, "px"],
+                      "paddingBottom": [11, "px"],
+                      "paddingLeft": [22, "px"],
+                      "paddingRight": [22, "px"],
+                      "fontSize": [13, "px"]
                     }
                   }
                 ]
@@ -404,209 +663,247 @@
                 "id": "nav-burger",
                 "tag": "icon",
                 "icon": "Menu",
-                "stroke": 2,
+                "stroke": 1.5,
                 "visible": { "desktop": false, "tablet": false, "mobile": true },
-                "styles": {
-                  "width": [24, "px"],
-                  "height": [24, "px"],
-                  "color": { "ref": "text" },
-                  "cursor": "pointer"
-                }
+                "styles": { "width": [24, "px"], "height": [24, "px"], "color": { "ref": "text" }, "cursor": "pointer" }
               }
             ]
           },
+
 
           {
             "id": "hero",
             "tag": "section",
-            "anchorId": "hero",
-            "class": ["section-light"],
-            "styles": {
-              "display": "flex",
-              "flexDirection": "column",
-              "alignItems": "center",
-              "justifyContent": "center",
-              "textAlign": "center",
-              "minHeight": [80, "vh"],
-              "@tablet": { "minHeight": [70, "vh"] },
-              "@mobile": { "minHeight": [60, "vh"] }
-            },
+            "class": ["section-hero"],
             "children": [
               {
-                "id": "hero-headline",
-                "tag": "text",
-                "html": "<h1>Wir hören zu, analysieren<br>deinen Typ – und kreieren<br>Farbe &amp; Schnitt, die wirklich<br>zu dir passen.</h1>",
-                "class": ["heading-xl"],
-                "styles": {
-                  "maxWidth": [900, "px"],
-                  "marginBottom": [32, "px"]
-                }
-              },
-              {
-                "id": "hero-subline",
-                "tag": "text",
-                "html": "<p>Balayage · AirTouch · Colorationen · Haarschnitte<br>Ihr Premium-Friseursalon in Frankfurt</p>",
-                "class": ["body-light"],
-                "styles": {
-                  "fontSize": [18, "px"],
-                  "maxWidth": [600, "px"],
-                  "marginBottom": [40, "px"],
-                  "@tablet": { "fontSize": [16, "px"] },
-                  "@mobile": { "fontSize": [14, "px"] }
-                }
-              },
-              {
-                "id": "hero-cta",
-                "tag": "button",
-                "text": "Jetzt Termin buchen",
-                "href": "#",
-                "class": ["btn-primary"],
-                "styles": { "fontSize": [16, "px"] }
-              },
-              {
-                "id": "hero-subtext",
-                "tag": "text",
-                "html": "<p>in 2 Minuten online</p>",
-                "class": ["caption"],
-                "styles": { "marginTop": [8, "px"] }
-              }
-            ]
-          },
-
-          {
-            "id": "about",
-            "tag": "section",
-            "anchorId": "ueber-uns",
-            "class": ["section-sand"],
-            "styles": {
-              "display": "flex",
-              "flexDirection": "row",
-              "alignItems": "center",
-              "gap": [80, "px"],
-              "@tablet": {
-                "flexDirection": "column",
-                "gap": [40, "px"]
-              }
-            },
-            "children": [
-              {
-                "id": "about-image",
+                "id": "hero-bg",
                 "tag": "image",
                 "src": "",
-                "alt": "K1 Friseure Salon Interieur",
-                "styles": {
-                  "width": [50, "%"],
-                  "borderRadius": [4, "px"],
-                  "objectFit": "cover",
-                  "minHeight": [400, "px"],
-                  "@tablet": {
-                    "width": [100, "%"],
-                    "minHeight": [300, "px"]
-                  }
-                }
+                "alt": "K1 Friseure Salon",
+                "class": ["hero-bg"]
               },
               {
-                "id": "about-content",
+                "id": "hero-overlay",
                 "tag": "container",
-                "styles": {
-                  "display": "flex",
-                  "flexDirection": "column",
-                  "gap": [16, "px"],
-                  "width": [50, "%"],
-                  "@tablet": { "width": [100, "%"] }
-                },
+                "class": ["hero-overlay"]
+              },
+              {
+                "id": "hero-content",
+                "tag": "container",
+                "class": ["hero-content"],
                 "children": [
                   {
-                    "id": "about-pretitle",
+                    "id": "hero-label",
                     "tag": "text",
-                    "html": "<p>UNSERE PHILOSOPHIE</p>",
-                    "class": ["pretitle"]
+                    "html": "<p>PREMIUM FRISEURSALON IN FRANKFURT</p>",
+                    "class": ["section-label"],
+                    "styles": { "color": { "ref": "accent" } }
                   },
                   {
-                    "id": "about-headline",
+                    "id": "hero-h1",
                     "tag": "text",
-                    "html": "<h2>Deine Auszeit.<br>Dein Stil.</h2>",
-                    "class": ["heading-lg"],
-                    "styles": { "marginBottom": [8, "px"] }
+                    "html": "<h1>Farbe &amp; Schnitt, die wirklich zu dir passen.</h1>",
+                    "class": ["heading-display"]
                   },
                   {
-                    "id": "about-body",
+                    "id": "hero-sub",
                     "tag": "text",
-                    "html": "<p>Bei K1 Friseure glauben wir, dass großartiges Haar mit Zuhören beginnt. Wir nehmen uns Zeit, deinen Typ zu analysieren, deine Wünsche zu verstehen und gemeinsam den perfekten Look zu kreieren.</p><p>Unser Team vereint handwerkliche Expertise mit einem Gespür für aktuelle Trends. In unserem Salon in Frankfurt erwarten dich eine warme Atmosphäre, erstklassige Produkte und ein Ergebnis, das dich begeistert.</p>",
-                    "class": ["body-text"],
-                    "styles": { "maxWidth": [450, "px"] }
+                    "html": "<p>Wir hören zu, analysieren deinen Typ und kreieren einen Look, der deine Persönlichkeit unterstreicht — mit handwerklicher Perfektion und Leidenschaft.</p>",
+                    "class": ["hero-sub"],
+                    "styles": { "maxWidth": [580, "px"] }
                   },
                   {
-                    "id": "about-reviews",
-                    "tag": "text",
-                    "html": "<p>★★★★★ Über 1.100 zufriedene Kunden</p>",
-                    "class": ["text-muted"],
-                    "styles": { "fontWeight": 500, "marginTop": [16, "px"] }
+                    "id": "hero-btns",
+                    "tag": "container",
+                    "styles": {
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": [16, "px"],
+                      "marginTop": [8, "px"],
+                      "@mobile": { "flexDirection": "column", "width": [100, "%"] }
+                    },
+                    "children": [
+                      {
+                        "id": "hero-cta-1",
+                        "tag": "button",
+                        "text": "Jetzt Termin buchen",
+                        "href": "#",
+                        "class": ["btn-accent"],
+                        "styles": { "fontSize": [15, "px"], "paddingTop": [18, "px"], "paddingBottom": [18, "px"], "paddingLeft": [36, "px"], "paddingRight": [36, "px"], "borderRadius": [8, "px"] }
+                      },
+                      {
+                        "id": "hero-cta-2",
+                        "tag": "button",
+                        "text": "Leistungen entdecken",
+                        "href": "#leistungen",
+                        "class": ["btn-outline-light"]
+                      }
+                    ]
                   }
                 ]
               }
             ]
           },
+
+
+          {
+            "id": "trust-bar",
+            "tag": "section",
+            "styles": {
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "gap": [64, "px"],
+              "paddingTop": [48, "px"],
+              "paddingBottom": [48, "px"],
+              "paddingLeft": [48, "px"],
+              "paddingRight": [48, "px"],
+              "backgroundColor": "#ffffff",
+              "borderBottomWidth": [1, "px"],
+              "borderStyle": "solid",
+              "borderColor": "#f0ece7",
+              "@tablet": { "gap": [32, "px"] },
+              "@mobile": { "flexDirection": "column", "gap": [24, "px"], "paddingLeft": [16, "px"], "paddingRight": [16, "px"] }
+            },
+            "children": [
+              {
+                "id": "trust-1",
+                "tag": "container",
+                "styles": { "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": [4, "px"] },
+                "children": [
+                  { "id": "trust-1-num", "tag": "text", "html": "<p>1.100+</p>", "class": ["highlight-number"] },
+                  { "id": "trust-1-label", "tag": "text", "html": "<p>zufriedene Kunden</p>", "class": ["text-small"] }
+                ]
+              },
+              {
+                "id": "trust-2",
+                "tag": "container",
+                "styles": { "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": [4, "px"] },
+                "children": [
+                  { "id": "trust-2-num", "tag": "text", "html": "<p>4.9 ★</p>", "class": ["highlight-number"] },
+                  { "id": "trust-2-label", "tag": "text", "html": "<p>Google-Bewertung</p>", "class": ["text-small"] }
+                ]
+              },
+              {
+                "id": "trust-3",
+                "tag": "container",
+                "styles": { "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": [4, "px"] },
+                "children": [
+                  { "id": "trust-3-num", "tag": "text", "html": "<p>10+</p>", "class": ["highlight-number"] },
+                  { "id": "trust-3-label", "tag": "text", "html": "<p>Jahre Erfahrung</p>", "class": ["text-small"] }
+                ]
+              }
+            ]
+          },
+
+
+          {
+            "id": "about",
+            "tag": "section",
+            "anchorId": "salon",
+            "class": ["section-default"],
+            "children": [
+              {
+                "id": "about-grid",
+                "tag": "container",
+                "class": ["container-max", "grid-2"],
+                "styles": { "alignItems": "center" },
+                "children": [
+                  {
+                    "id": "about-img",
+                    "tag": "image",
+                    "src": "",
+                    "alt": "K1 Friseure Salon Interieur",
+                    "class": ["img-cover-rounded"],
+                    "styles": { "height": [540, "px"], "@mobile": { "height": [320, "px"] } }
+                  },
+                  {
+                    "id": "about-content",
+                    "tag": "container",
+                    "styles": { "display": "flex", "flexDirection": "column", "gap": [20, "px"] },
+                    "children": [
+                      { "id": "about-label", "tag": "text", "html": "<p>UNSERE PHILOSOPHIE</p>", "class": ["section-label"] },
+                      {
+                        "id": "about-divider",
+                        "tag": "container",
+                        "class": ["divider-accent"]
+                      },
+                      {
+                        "id": "about-h2",
+                        "tag": "text",
+                        "html": "<h2>Deine Auszeit. Dein Stil.</h2>",
+                        "class": ["heading-xl"],
+                        "styles": { "textAlign": "left" }
+                      },
+                      {
+                        "id": "about-p1",
+                        "tag": "text",
+                        "html": "<p>Bei K1 Friseure glauben wir, dass großartiges Haar mit Zuhören beginnt. Wir nehmen uns Zeit, deinen Typ zu analysieren, deine Wünsche zu verstehen und gemeinsam den perfekten Look zu kreieren.</p>",
+                        "class": ["text-body-lg"]
+                      },
+                      {
+                        "id": "about-p2",
+                        "tag": "text",
+                        "html": "<p>Unser Team vereint handwerkliche Expertise mit einem Gespür für aktuelle Trends — in einer Atmosphäre, in der du dich sofort wohlfühlst.</p>",
+                        "class": ["text-body-lg"]
+                      },
+                      {
+                        "id": "about-cta",
+                        "tag": "button",
+                        "text": "Mehr über uns →",
+                        "href": "#team",
+                        "class": ["btn-ghost"],
+                        "styles": { "alignSelf": "flex-start", "marginTop": [8, "px"] }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
 
           {
             "id": "services",
             "tag": "section",
             "anchorId": "leistungen",
-            "class": ["section-light"],
-            "styles": {
-              "display": "flex",
-              "flexDirection": "column",
-              "alignItems": "center"
-            },
+            "class": ["section-default"],
+            "styles": { "backgroundColor": { "ref": "secondary" } },
             "children": [
               {
-                "id": "services-header",
+                "id": "srv-header",
                 "tag": "container",
-                "class": ["section-header"],
+                "class": ["flex-col-center"],
+                "styles": { "marginBottom": [64, "px"], "textAlign": "center", "gap": [16, "px"] },
                 "children": [
-                  {
-                    "id": "services-pretitle",
-                    "tag": "text",
-                    "html": "<p>WAS WIR FÜR DICH TUN KÖNNEN</p>",
-                    "class": ["pretitle"],
-                    "styles": { "marginBottom": [8, "px"] }
-                  },
-                  {
-                    "id": "services-headline",
-                    "tag": "text",
-                    "html": "<h2>Unsere Leistungen</h2>",
-                    "class": ["heading-lg"]
-                  }
+                  { "id": "srv-label", "tag": "text", "html": "<p>UNSERE LEISTUNGEN</p>", "class": ["section-label"] },
+                  { "id": "srv-divider", "tag": "container", "class": ["divider-accent"] },
+                  { "id": "srv-title", "tag": "text", "html": "<h2>Was wir für dich tun können</h2>", "class": ["heading-xl"] },
+                  { "id": "srv-sub", "tag": "text", "html": "<p>Von natürlichen Farbverläufen bis zum perfekten Schnitt — unsere Spezialisten beherrschen jede Technik.</p>", "class": ["text-body-lg"], "styles": { "maxWidth": [560, "px"] } }
                 ]
               },
               {
-                "id": "services-grid",
+                "id": "srv-grid",
                 "tag": "container",
-                "styles": {
-                  "display": "grid",
-                  "gridTemplateColumns": "repeat(4, 1fr)",
-                  "gap": [32, "px"],
-                  "width": [100, "%"],
-                  "maxWidth": [1200, "px"],
-                  "@tablet": {
-                    "gridTemplateColumns": "repeat(2, 1fr)",
-                    "gap": [24, "px"]
-                  },
-                  "@mobile": {
-                    "gridTemplateColumns": "1fr",
-                    "gap": [16, "px"]
-                  }
-                },
+                "class": ["container-max", "grid-4"],
                 "children": [
                   {
                     "id": "svc-1",
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-1-icon", "tag": "icon", "icon": "Paintbrush", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
-                      { "id": "svc-1-title", "tag": "text", "html": "<h3>Balayage &amp; AirTouch</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
-                      { "id": "svc-1-sub", "tag": "text", "html": "<p>Natürliche Farbverläufe</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
-                      { "id": "svc-1-desc", "tag": "text", "html": "<p>Handgemalte Strähnchen für einen natürlichen, sonnengeküssten Look. Wir sind Spezialisten für Balayage und AirTouch-Techniken.</p>", "class": ["body-light"] }
+                      { "id": "svc-1-img", "tag": "image", "src": "", "alt": "Balayage & AirTouch", "class": ["service-card-img"] },
+                      {
+                        "id": "svc-1-body",
+                        "tag": "container",
+                        "class": ["service-card-body"],
+                        "children": [
+                          { "id": "svc-1-icon", "tag": "icon", "icon": "Paintbrush", "stroke": 1.5, "class": ["icon-badge"] },
+                          { "id": "svc-1-title", "tag": "text", "html": "<h3>Balayage &amp; AirTouch</h3>", "class": ["heading-md"] },
+                          { "id": "svc-1-desc", "tag": "text", "html": "<p>Handgemalte Strähnchen für einen natürlichen, sonnengeküssten Look. Wir sind Spezialisten für Balayage und AirTouch.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -614,10 +911,17 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-2-icon", "tag": "icon", "icon": "Scissors", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
-                      { "id": "svc-2-title", "tag": "text", "html": "<h3>Haarschnitte</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
-                      { "id": "svc-2-sub", "tag": "text", "html": "<p>Für Sie &amp; Ihn</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
-                      { "id": "svc-2-desc", "tag": "text", "html": "<p>Präzise Schnitte, die deine Persönlichkeit unterstreichen. Von klassisch bis modern – für Damen, Herren und Kinder.</p>", "class": ["body-light"] }
+                      { "id": "svc-2-img", "tag": "image", "src": "", "alt": "Haarschnitte", "class": ["service-card-img"] },
+                      {
+                        "id": "svc-2-body",
+                        "tag": "container",
+                        "class": ["service-card-body"],
+                        "children": [
+                          { "id": "svc-2-icon", "tag": "icon", "icon": "Scissors", "stroke": 1.5, "class": ["icon-badge"] },
+                          { "id": "svc-2-title", "tag": "text", "html": "<h3>Haarschnitte</h3>", "class": ["heading-md"] },
+                          { "id": "svc-2-desc", "tag": "text", "html": "<p>Präzise Schnitte, die deine Persönlichkeit unterstreichen — von klassisch bis modern, für Damen, Herren &amp; Kinder.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -625,10 +929,17 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-3-icon", "tag": "icon", "icon": "Palette", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
-                      { "id": "svc-3-title", "tag": "text", "html": "<h3>Colorationen</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
-                      { "id": "svc-3-sub", "tag": "text", "html": "<p>Brillante Farben</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
-                      { "id": "svc-3-desc", "tag": "text", "html": "<p>Von natürlichen Nuancen bis hin zu ausdrucksstarken Farben. Unsere Coloristen kreieren deinen individuellen Farbton.</p>", "class": ["body-light"] }
+                      { "id": "svc-3-img", "tag": "image", "src": "", "alt": "Colorationen", "class": ["service-card-img"] },
+                      {
+                        "id": "svc-3-body",
+                        "tag": "container",
+                        "class": ["service-card-body"],
+                        "children": [
+                          { "id": "svc-3-icon", "tag": "icon", "icon": "Palette", "stroke": 1.5, "class": ["icon-badge"] },
+                          { "id": "svc-3-title", "tag": "text", "html": "<h3>Colorationen</h3>", "class": ["heading-md"] },
+                          { "id": "svc-3-desc", "tag": "text", "html": "<p>Von natürlichen Nuancen bis zu ausdrucksstarken Farben — unsere Coloristen kreieren deinen individuellen Ton.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -636,10 +947,17 @@
                     "tag": "container",
                     "class": ["service-card"],
                     "children": [
-                      { "id": "svc-4-icon", "tag": "icon", "icon": "Sparkles", "stroke": 1, "styles": { "width": [40, "px"], "height": [40, "px"], "color": { "ref": "primary" }, "alignSelf": "center", "marginBottom": [8, "px"] } },
-                      { "id": "svc-4-title", "tag": "text", "html": "<h3>Men's Wellness</h3>", "class": ["heading-md"], "styles": { "fontSize": [20, "px"] } },
-                      { "id": "svc-4-sub", "tag": "text", "html": "<p>Entspannung pur</p>", "class": ["text-muted"], "styles": { "fontWeight": 500 } },
-                      { "id": "svc-4-desc", "tag": "text", "html": "<p>Rasur, Bartpflege und entspannende Treatments speziell für Herren. Deine Auszeit vom Alltag.</p>", "class": ["body-light"] }
+                      { "id": "svc-4-img", "tag": "image", "src": "", "alt": "Men's Wellness", "class": ["service-card-img"] },
+                      {
+                        "id": "svc-4-body",
+                        "tag": "container",
+                        "class": ["service-card-body"],
+                        "children": [
+                          { "id": "svc-4-icon", "tag": "icon", "icon": "Sparkles", "stroke": 1.5, "class": ["icon-badge"] },
+                          { "id": "svc-4-title", "tag": "text", "html": "<h3>Men's Wellness</h3>", "class": ["heading-md"] },
+                          { "id": "svc-4-desc", "tag": "text", "html": "<p>Rasur, Bartpflege und entspannende Treatments speziell für Herren. Deine Auszeit vom Alltag.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } }
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -647,152 +965,139 @@
             ]
           },
 
+
           {
             "id": "pricing",
             "tag": "section",
-            "anchorId": "preisliste",
-            "class": ["section-sand"],
-            "styles": {
-              "display": "flex",
-              "flexDirection": "column",
-              "alignItems": "center"
-            },
+            "anchorId": "preise",
+            "class": ["section-default"],
             "children": [
               {
                 "id": "pricing-header",
                 "tag": "container",
-                "class": ["section-header"],
+                "class": ["flex-col-center"],
+                "styles": { "marginBottom": [56, "px"], "textAlign": "center", "gap": [16, "px"] },
                 "children": [
-                  { "id": "pricing-pretitle", "tag": "text", "html": "<p>UNSERE LEISTUNGEN IM ÜBERBLICK</p>", "class": ["pretitle"], "styles": { "marginBottom": [8, "px"] } },
-                  { "id": "pricing-headline", "tag": "text", "html": "<h2>Preisliste</h2>", "class": ["heading-lg"] }
+                  { "id": "pr-label", "tag": "text", "html": "<p>TRANSPARENTE PREISE</p>", "class": ["section-label"] },
+                  { "id": "pr-divider", "tag": "container", "class": ["divider-accent"] },
+                  { "id": "pr-title", "tag": "text", "html": "<h2>Preisliste</h2>", "class": ["heading-xl"] }
                 ]
               },
               {
-                "id": "pricing-list",
+                "id": "price-table",
                 "tag": "container",
-                "styles": {
-                  "display": "flex",
-                  "flexDirection": "column",
-                  "width": [100, "%"],
-                  "maxWidth": [800, "px"]
-                },
+                "class": ["price-table"],
                 "children": [
-                  { "id": "price-cat-damen", "tag": "text", "html": "<h3>DAMEN</h3>", "class": ["price-category"] },
+                  { "id": "pc-damen", "tag": "text", "html": "<p>DAMEN</p>", "class": ["price-category"], "styles": { "marginTop": [0, "px"] } },
 
                   {
-                    "id": "price-r1", "tag": "container", "class": ["price-row"],
+                    "id": "pr-1", "tag": "container", "class": ["price-row"],
                     "children": [
-                      { "id": "price-r1-name", "tag": "text", "html": "<p>Haarschnitt – Waschen, Schneiden, Föhnen</p>", "class": ["price-label"] },
-                      { "id": "price-r1-price", "tag": "text", "html": "<p>ab 65 €</p>", "class": ["price-value"] }
+                      { "id": "pr-1-n", "tag": "text", "html": "<p>Haarschnitt — Waschen, Schneiden, Föhnen</p>", "class": ["price-label"] },
+                      { "id": "pr-1-p", "tag": "text", "html": "<p>ab 65 €</p>", "class": ["price-value"] }
                     ]
                   },
                   {
-                    "id": "price-r2", "tag": "container", "class": ["price-row"],
+                    "id": "pr-2", "tag": "container", "class": ["price-row"],
                     "children": [
-                      { "id": "price-r2-name", "tag": "text", "html": "<p>Balayage</p>", "class": ["price-label"] },
-                      { "id": "price-r2-price", "tag": "text", "html": "<p>ab 180 €</p>", "class": ["price-value"] }
+                      { "id": "pr-2-n", "tag": "text", "html": "<p>Balayage</p>", "class": ["price-label"] },
+                      { "id": "pr-2-p", "tag": "text", "html": "<p>ab 180 €</p>", "class": ["price-value"] }
                     ]
                   },
                   {
-                    "id": "price-r3", "tag": "container", "class": ["price-row"],
+                    "id": "pr-3", "tag": "container", "class": ["price-row"],
                     "children": [
-                      { "id": "price-r3-name", "tag": "text", "html": "<p>AirTouch</p>", "class": ["price-label"] },
-                      { "id": "price-r3-price", "tag": "text", "html": "<p>ab 220 €</p>", "class": ["price-value"] }
+                      { "id": "pr-3-n", "tag": "text", "html": "<p>AirTouch</p>", "class": ["price-label"] },
+                      { "id": "pr-3-p", "tag": "text", "html": "<p>ab 220 €</p>", "class": ["price-value"] }
                     ]
                   },
                   {
-                    "id": "price-r4", "tag": "container", "class": ["price-row"],
+                    "id": "pr-4", "tag": "container", "class": ["price-row"],
                     "children": [
-                      { "id": "price-r4-name", "tag": "text", "html": "<p>Coloration Ansatz</p>", "class": ["price-label"] },
-                      { "id": "price-r4-price", "tag": "text", "html": "<p>ab 75 €</p>", "class": ["price-value"] }
-                    ]
-                  },
-
-                  { "id": "price-cat-herren", "tag": "text", "html": "<h3>HERREN</h3>", "class": ["price-category"], "styles": { "marginTop": [40, "px"] } },
-
-                  {
-                    "id": "price-r5", "tag": "container", "class": ["price-row"],
-                    "children": [
-                      { "id": "price-r5-name", "tag": "text", "html": "<p>Haarschnitt – Waschen, Schneiden, Styling</p>", "class": ["price-label"] },
-                      { "id": "price-r5-price", "tag": "text", "html": "<p>ab 38 €</p>", "class": ["price-value"] }
-                    ]
-                  },
-                  {
-                    "id": "price-r6", "tag": "container", "class": ["price-row"],
-                    "children": [
-                      { "id": "price-r6-name", "tag": "text", "html": "<p>Bartpflege &amp; Rasur</p>", "class": ["price-label"] },
-                      { "id": "price-r6-price", "tag": "text", "html": "<p>ab 25 €</p>", "class": ["price-value"] }
+                      { "id": "pr-4-n", "tag": "text", "html": "<p>Coloration Ansatz</p>", "class": ["price-label"] },
+                      { "id": "pr-4-p", "tag": "text", "html": "<p>ab 75 €</p>", "class": ["price-value"] }
                     ]
                   },
 
-                  { "id": "price-cat-kinder", "tag": "text", "html": "<h3>KINDER</h3>", "class": ["price-category"], "styles": { "marginTop": [40, "px"] } },
+                  { "id": "pc-herren", "tag": "text", "html": "<p>HERREN</p>", "class": ["price-category"] },
 
                   {
-                    "id": "price-r7", "tag": "container", "class": ["price-row"],
+                    "id": "pr-5", "tag": "container", "class": ["price-row"],
                     "children": [
-                      { "id": "price-r7-name", "tag": "text", "html": "<p>Kinder Haarschnitt (bis 12 Jahre)</p>", "class": ["price-label"] },
-                      { "id": "price-r7-price", "tag": "text", "html": "<p>ab 25 €</p>", "class": ["price-value"] }
+                      { "id": "pr-5-n", "tag": "text", "html": "<p>Haarschnitt — Waschen, Schneiden, Styling</p>", "class": ["price-label"] },
+                      { "id": "pr-5-p", "tag": "text", "html": "<p>ab 38 €</p>", "class": ["price-value"] }
+                    ]
+                  },
+                  {
+                    "id": "pr-6", "tag": "container", "class": ["price-row"],
+                    "children": [
+                      { "id": "pr-6-n", "tag": "text", "html": "<p>Bartpflege &amp; Rasur</p>", "class": ["price-label"] },
+                      { "id": "pr-6-p", "tag": "text", "html": "<p>ab 25 €</p>", "class": ["price-value"] }
+                    ]
+                  },
+
+                  { "id": "pc-kinder", "tag": "text", "html": "<p>KINDER</p>", "class": ["price-category"] },
+
+                  {
+                    "id": "pr-7", "tag": "container", "class": ["price-row"],
+                    "children": [
+                      { "id": "pr-7-n", "tag": "text", "html": "<p>Kinder Haarschnitt (bis 12 Jahre)</p>", "class": ["price-label"] },
+                      { "id": "pr-7-p", "tag": "text", "html": "<p>ab 25 €</p>", "class": ["price-value"] }
                     ]
                   },
 
                   {
                     "id": "pricing-note",
                     "tag": "text",
-                    "html": "<p>Alle Preise verstehen sich als Richtwerte. Der finale Preis richtet sich nach Haarlänge und Aufwand. Inkl. Beratung, Getränke und entspannter Atmosphäre.</p>",
-                    "class": ["caption"],
-                    "styles": { "lineHeight": 1.6, "marginTop": [32, "px"] }
+                    "html": "<p>Alle Preise sind Richtwerte. Der finale Preis richtet sich nach Haarlänge und Aufwand. Inklusive Beratung, Getränke und entspannter Atmosphäre.</p>",
+                    "class": ["text-small"],
+                    "styles": { "marginTop": [40, "px"], "lineHeight": 1.7, "fontStyle": "italic" }
                   }
                 ]
               }
             ]
           },
 
+
           {
-            "id": "portfolio",
+            "id": "packages",
             "tag": "section",
             "anchorId": "pakete",
-            "class": ["section-light"],
-            "styles": {
-              "display": "flex",
-              "flexDirection": "column",
-              "alignItems": "center"
-            },
+            "class": ["section-default"],
+            "styles": { "backgroundColor": { "ref": "secondary" } },
             "children": [
               {
-                "id": "portfolio-header",
+                "id": "pkg-header",
                 "tag": "container",
-                "class": ["section-header"],
+                "class": ["flex-col-center"],
+                "styles": { "marginBottom": [64, "px"], "textAlign": "center", "gap": [16, "px"] },
                 "children": [
-                  { "id": "portfolio-pretitle", "tag": "text", "html": "<p>SIGNATURE COLORATIONS-PAKETE</p>", "class": ["pretitle"], "styles": { "marginBottom": [8, "px"] } },
-                  { "id": "portfolio-headline", "tag": "text", "html": "<h2>Unsere Pakete</h2>", "class": ["heading-lg"] }
+                  { "id": "pkg-label", "tag": "text", "html": "<p>SIGNATURE PAKETE</p>", "class": ["section-label"] },
+                  { "id": "pkg-div", "tag": "container", "class": ["divider-accent"] },
+                  { "id": "pkg-title", "tag": "text", "html": "<h2>Unsere Colorations-Pakete</h2>", "class": ["heading-xl"] },
+                  { "id": "pkg-sub", "tag": "text", "html": "<p>Komplettlösungen für dein Farberlebnis — inklusive Beratung, Technik, Pflege und Styling.</p>", "class": ["text-body-lg"], "styles": { "maxWidth": [520, "px"] } }
                 ]
               },
               {
-                "id": "portfolio-grid",
+                "id": "pkg-grid",
                 "tag": "container",
-                "styles": {
-                  "display": "grid",
-                  "gridTemplateColumns": "repeat(3, 1fr)",
-                  "gap": [40, "px"],
-                  "width": [100, "%"],
-                  "maxWidth": [1200, "px"],
-                  "@tablet": { "gridTemplateColumns": "repeat(2, 1fr)", "gap": [24, "px"] },
-                  "@mobile": { "gridTemplateColumns": "1fr", "gap": [24, "px"] }
-                },
+                "class": ["container-max", "grid-3"],
                 "children": [
                   {
                     "id": "pkg-1",
                     "tag": "container",
-                    "class": ["portfolio-card"],
+                    "class": ["package-card"],
                     "children": [
-                      { "id": "pkg-1-img", "tag": "image", "src": "", "alt": "Seasalt Balayage", "styles": { "width": [100, "%"], "height": [280, "px"], "objectFit": "cover" } },
+                      { "id": "pkg-1-img", "tag": "image", "src": "", "alt": "Seasalt Balayage", "class": ["package-img"] },
                       {
-                        "id": "pkg-1-body", "tag": "container", "class": ["card-body"],
+                        "id": "pkg-1-body",
+                        "tag": "container",
+                        "class": ["package-card-body"],
                         "children": [
-                          { "id": "pkg-1-title", "tag": "text", "html": "<h3>Seasalt Balayage</h3>", "class": ["heading-md"] },
-                          { "id": "pkg-1-price", "tag": "text", "html": "<p>ab 285 €</p>", "class": ["text-muted"], "styles": { "fontWeight": 500, "fontSize": [16, "px"] } },
-                          { "id": "pkg-1-desc", "tag": "text", "html": "<p>Beratung · Balayage-Technik · Glossing · Styling</p><p>Für einen natürlichen, sonnengeküssten Look.</p>", "class": ["body-light"], "styles": { "fontSize": [14, "px"] } },
-                          { "id": "pkg-1-btn", "tag": "button", "text": "Mehr Details", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": [12, "px"], "textAlign": "center" } }
+                          { "id": "pkg-1-price", "tag": "text", "html": "<p>ab 285 €</p>", "class": ["section-label"], "styles": { "fontSize": [13, "px"] } },
+                          { "id": "pkg-1-title", "tag": "text", "html": "<h3>Seasalt Balayage</h3>", "class": ["heading-lg"] },
+                          { "id": "pkg-1-desc", "tag": "text", "html": "<p>Beratung · Balayage-Technik · Glossing · Styling</p><p>Für einen natürlichen, sonnengeküssten Look mit weichen Übergängen.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } },
+                          { "id": "pkg-1-cta", "tag": "button", "text": "Termin vereinbaren", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": "auto" } }
                         ]
                       }
                     ]
@@ -800,16 +1105,18 @@
                   {
                     "id": "pkg-2",
                     "tag": "container",
-                    "class": ["portfolio-card"],
+                    "class": ["package-card"],
                     "children": [
-                      { "id": "pkg-2-img", "tag": "image", "src": "", "alt": "Natural Dimension", "styles": { "width": [100, "%"], "height": [280, "px"], "objectFit": "cover" } },
+                      { "id": "pkg-2-img", "tag": "image", "src": "", "alt": "Natural Dimension", "class": ["package-img"] },
                       {
-                        "id": "pkg-2-body", "tag": "container", "class": ["card-body"],
+                        "id": "pkg-2-body",
+                        "tag": "container",
+                        "class": ["package-card-body"],
                         "children": [
-                          { "id": "pkg-2-title", "tag": "text", "html": "<h3>Natural Dimension</h3>", "class": ["heading-md"] },
-                          { "id": "pkg-2-price", "tag": "text", "html": "<p>ab 320 €</p>", "class": ["text-muted"], "styles": { "fontWeight": 500, "fontSize": [16, "px"] } },
-                          { "id": "pkg-2-desc", "tag": "text", "html": "<p>Beratung · AirTouch oder Balayage · Toner · Olaplex · Styling</p><p>Mehrdimensionale Farbverläufe für maximale Natürlichkeit.</p>", "class": ["body-light"], "styles": { "fontSize": [14, "px"] } },
-                          { "id": "pkg-2-btn", "tag": "button", "text": "Mehr Details", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": [12, "px"], "textAlign": "center" } }
+                          { "id": "pkg-2-price", "tag": "text", "html": "<p>ab 320 €</p>", "class": ["section-label"], "styles": { "fontSize": [13, "px"] } },
+                          { "id": "pkg-2-title", "tag": "text", "html": "<h3>Natural Dimension</h3>", "class": ["heading-lg"] },
+                          { "id": "pkg-2-desc", "tag": "text", "html": "<p>Beratung · AirTouch oder Balayage · Toner · Olaplex · Styling</p><p>Mehrdimensionale Farbe für maximale Natürlichkeit.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } },
+                          { "id": "pkg-2-cta", "tag": "button", "text": "Termin vereinbaren", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": "auto" } }
                         ]
                       }
                     ]
@@ -817,16 +1124,18 @@
                   {
                     "id": "pkg-3",
                     "tag": "container",
-                    "class": ["portfolio-card"],
+                    "class": ["package-card"],
                     "children": [
-                      { "id": "pkg-3-img", "tag": "image", "src": "", "alt": "Soft Contrast", "styles": { "width": [100, "%"], "height": [280, "px"], "objectFit": "cover" } },
+                      { "id": "pkg-3-img", "tag": "image", "src": "", "alt": "Soft Contrast", "class": ["package-img"] },
                       {
-                        "id": "pkg-3-body", "tag": "container", "class": ["card-body"],
+                        "id": "pkg-3-body",
+                        "tag": "container",
+                        "class": ["package-card-body"],
                         "children": [
-                          { "id": "pkg-3-title", "tag": "text", "html": "<h3>Soft Contrast</h3>", "class": ["heading-md"] },
-                          { "id": "pkg-3-price", "tag": "text", "html": "<p>ab 385 €</p>", "class": ["text-muted"], "styles": { "fontWeight": 500, "fontSize": [16, "px"] } },
-                          { "id": "pkg-3-desc", "tag": "text", "html": "<p>Beratung · Kontrast-Balayage · Glossing · Olaplex · Luxus-Styling</p><p>Ausdrucksstarke Kontraste mit weichen Übergängen.</p>", "class": ["body-light"], "styles": { "fontSize": [14, "px"] } },
-                          { "id": "pkg-3-btn", "tag": "button", "text": "Mehr Details", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": [12, "px"], "textAlign": "center" } }
+                          { "id": "pkg-3-price", "tag": "text", "html": "<p>ab 385 €</p>", "class": ["section-label"], "styles": { "fontSize": [13, "px"] } },
+                          { "id": "pkg-3-title", "tag": "text", "html": "<h3>Soft Contrast</h3>", "class": ["heading-lg"] },
+                          { "id": "pkg-3-desc", "tag": "text", "html": "<p>Beratung · Kontrast-Balayage · Glossing · Olaplex · Luxus-Styling</p><p>Ausdrucksstarke Kontraste mit weichen Übergängen.</p>", "class": ["text-small"], "styles": { "lineHeight": 1.7 } },
+                          { "id": "pkg-3-cta", "tag": "button", "text": "Termin vereinbaren", "href": "#", "class": ["btn-outline"], "styles": { "marginTop": "auto" } }
                         ]
                       }
                     ]
@@ -836,122 +1145,278 @@
             ]
           },
 
+
+          {
+            "id": "testimonials",
+            "tag": "section",
+            "class": ["section-default"],
+            "children": [
+              {
+                "id": "test-header",
+                "tag": "container",
+                "class": ["flex-col-center"],
+                "styles": { "marginBottom": [64, "px"], "textAlign": "center", "gap": [16, "px"] },
+                "children": [
+                  { "id": "test-label", "tag": "text", "html": "<p>KUNDENSTIMMEN</p>", "class": ["section-label"] },
+                  { "id": "test-divider", "tag": "container", "class": ["divider-accent"] },
+                  { "id": "test-title", "tag": "text", "html": "<h2>Was unsere Kunden sagen</h2>", "class": ["heading-xl"] }
+                ]
+              },
+              {
+                "id": "test-grid",
+                "tag": "container",
+                "class": ["container-max", "grid-3"],
+                "children": [
+
+                  {
+                    "id": "rev-1",
+                    "tag": "container",
+                    "class": ["testimonial-card"],
+                    "children": [
+                      {
+                        "id": "rev-1-stars",
+                        "tag": "container",
+                        "class": ["stars-row"],
+                        "children": [
+                          { "id": "s1a", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s1b", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s1c", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s1d", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s1e", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] }
+                        ]
+                      },
+                      { "id": "rev-1-text", "tag": "text", "html": "<p>„Meine Balayage ist absolut perfekt geworden! Das Team hat sich unglaublich viel Zeit genommen und genau verstanden, was ich mir vorgestellt habe.&quot;</p>", "class": ["testimonial-quote"] },
+                      {
+                        "id": "rev-1-author",
+                        "tag": "container",
+                        "styles": { "display": "flex", "alignItems": "center", "gap": [12, "px"], "marginTop": [4, "px"] },
+                        "children": [
+                          { "id": "rev-1-avatar", "tag": "container", "styles": { "width": [40, "px"], "height": [40, "px"], "borderRadius": [50, "%"], "backgroundColor": { "ref": "secondary" }, "display": "flex", "alignItems": "center", "justifyContent": "center" }, "children": [
+                            { "id": "rev-1-initial", "tag": "text", "html": "<p>J</p>", "styles": { "fontWeight": 600, "fontSize": [14, "px"], "color": { "ref": "accent" } } }
+                          ]},
+                          {
+                            "id": "rev-1-info",
+                            "tag": "container",
+                            "children": [
+                              { "id": "rev-1-name", "tag": "text", "html": "<p><strong>Julia K.</strong></p>", "styles": { "fontSize": [14, "px"], "fontWeight": 600, "color": { "ref": "text" } } },
+                              { "id": "rev-1-via", "tag": "text", "html": "<p>via Google</p>", "class": ["text-small"], "styles": { "fontSize": [12, "px"] } }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+
+                  {
+                    "id": "rev-2",
+                    "tag": "container",
+                    "class": ["testimonial-card"],
+                    "children": [
+                      {
+                        "id": "rev-2-stars",
+                        "tag": "container",
+                        "class": ["stars-row"],
+                        "children": [
+                          { "id": "s2a", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s2b", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s2c", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s2d", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s2e", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] }
+                        ]
+                      },
+                      { "id": "rev-2-text", "tag": "text", "html": "<p>„Endlich ein Friseur, bei dem ich mich wirklich gut aufgehoben fühle. Die Beratung war ehrlich und das Ergebnis besser als erwartet!&quot;</p>", "class": ["testimonial-quote"] },
+                      {
+                        "id": "rev-2-author",
+                        "tag": "container",
+                        "styles": { "display": "flex", "alignItems": "center", "gap": [12, "px"], "marginTop": [4, "px"] },
+                        "children": [
+                          { "id": "rev-2-avatar", "tag": "container", "styles": { "width": [40, "px"], "height": [40, "px"], "borderRadius": [50, "%"], "backgroundColor": { "ref": "secondary" }, "display": "flex", "alignItems": "center", "justifyContent": "center" }, "children": [
+                            { "id": "rev-2-initial", "tag": "text", "html": "<p>M</p>", "styles": { "fontWeight": 600, "fontSize": [14, "px"], "color": { "ref": "accent" } } }
+                          ]},
+                          {
+                            "id": "rev-2-info",
+                            "tag": "container",
+                            "children": [
+                              { "id": "rev-2-name", "tag": "text", "html": "<p><strong>Maria S.</strong></p>", "styles": { "fontSize": [14, "px"], "fontWeight": 600, "color": { "ref": "text" } } },
+                              { "id": "rev-2-via", "tag": "text", "html": "<p>via Google</p>", "class": ["text-small"], "styles": { "fontSize": [12, "px"] } }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+
+                  {
+                    "id": "rev-3",
+                    "tag": "container",
+                    "class": ["testimonial-card"],
+                    "children": [
+                      {
+                        "id": "rev-3-stars",
+                        "tag": "container",
+                        "class": ["stars-row"],
+                        "children": [
+                          { "id": "s3a", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s3b", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s3c", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s3d", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] },
+                          { "id": "s3e", "tag": "icon", "icon": "Star", "stroke": 0, "class": ["star-icon"] }
+                        ]
+                      },
+                      { "id": "rev-3-text", "tag": "text", "html": "<p>„Bester Herrenhaarschnitt, den ich je hatte. Dazu Kaffee, nette Gespräche und eine super entspannte Atmosphäre. Absolute Empfehlung.&quot;</p>", "class": ["testimonial-quote"] },
+                      {
+                        "id": "rev-3-author",
+                        "tag": "container",
+                        "styles": { "display": "flex", "alignItems": "center", "gap": [12, "px"], "marginTop": [4, "px"] },
+                        "children": [
+                          { "id": "rev-3-avatar", "tag": "container", "styles": { "width": [40, "px"], "height": [40, "px"], "borderRadius": [50, "%"], "backgroundColor": { "ref": "secondary" }, "display": "flex", "alignItems": "center", "justifyContent": "center" }, "children": [
+                            { "id": "rev-3-initial", "tag": "text", "html": "<p>T</p>", "styles": { "fontWeight": 600, "fontSize": [14, "px"], "color": { "ref": "accent" } } }
+                          ]},
+                          {
+                            "id": "rev-3-info",
+                            "tag": "container",
+                            "children": [
+                              { "id": "rev-3-name", "tag": "text", "html": "<p><strong>Tim W.</strong></p>", "styles": { "fontSize": [14, "px"], "fontWeight": 600, "color": { "ref": "text" } } },
+                              { "id": "rev-3-via", "tag": "text", "html": "<p>via Google</p>", "class": ["text-small"], "styles": { "fontSize": [12, "px"] } }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+
+                ]
+              }
+            ]
+          },
+
+
           {
             "id": "cta-section",
             "tag": "section",
-            "class": ["section-dark"],
             "styles": {
               "display": "flex",
               "flexDirection": "column",
               "alignItems": "center",
+              "justifyContent": "center",
               "textAlign": "center",
-              "gap": [24, "px"]
+              "position": "relative",
+              "overflow": "hidden",
+              "paddingTop": [120, "px"],
+              "paddingBottom": [120, "px"],
+              "paddingLeft": [48, "px"],
+              "paddingRight": [48, "px"],
+              "backgroundColor": { "ref": "primary" },
+              "@tablet": { "paddingTop": [80, "px"], "paddingBottom": [80, "px"] },
+              "@mobile": { "paddingTop": [64, "px"], "paddingBottom": [64, "px"], "paddingLeft": [20, "px"], "paddingRight": [20, "px"] }
             },
             "children": [
-              { "id": "cta-headline", "tag": "text", "html": "<h2>Bereit für deinen neuen Look?</h2>", "class": ["heading-lg"], "styles": { "color": { "ref": "background" } } },
-              { "id": "cta-subline", "tag": "text", "html": "<p>Buche jetzt deinen Wunschtermin – einfach, schnell &amp; bequem online.</p>", "class": ["body-light"], "styles": { "color": { "ref": "accent" }, "maxWidth": [500, "px"] } },
               {
-                "id": "cta-btn",
-                "tag": "button",
-                "text": "Jetzt Termin buchen",
-                "href": "#",
-                "class": ["btn-primary"],
-                "styles": {
-                  "backgroundColor": { "ref": "background" },
-                  "color": { "ref": "primary" },
-                  "fontSize": [16, "px"],
-                  ":hover": {
-                    "backgroundColor": { "ref": "accent" }
-                  }
-                }
+                "id": "cta-content",
+                "tag": "container",
+                "class": ["container-narrow"],
+                "styles": { "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": [24, "px"], "position": "relative", "zIndex": 2 },
+                "children": [
+                  { "id": "cta-label", "tag": "text", "html": "<p>JETZT STARTEN</p>", "class": ["section-label"], "styles": { "color": { "ref": "accent" } } },
+                  { "id": "cta-title", "tag": "text", "html": "<h2>Bereit für deinen neuen Look?</h2>", "class": ["heading-xl"], "styles": { "color": "#ffffff" } },
+                  { "id": "cta-sub", "tag": "text", "html": "<p>Buche jetzt deinen Wunschtermin — einfach, schnell &amp; bequem online. Wir freuen uns auf dich.</p>", "class": ["text-body-lg"], "styles": { "color": "rgba(255,255,255,0.7)", "maxWidth": [480, "px"] } },
+                  { "id": "cta-btn", "tag": "button", "text": "Termin buchen →", "href": "#", "class": ["btn-accent"], "styles": { "fontSize": [16, "px"], "paddingTop": [18, "px"], "paddingBottom": [18, "px"], "paddingLeft": [40, "px"], "paddingRight": [40, "px"], "marginTop": [8, "px"] } }
+                ]
               }
             ]
           },
+
 
           {
             "id": "footer",
             "tag": "section",
             "styles": {
-              "display": "flex",
-              "flexDirection": "column",
-              "backgroundColor": { "ref": "secondary" },
-              "borderTopWidth": [1, "px"],
-              "borderStyle": "solid",
-              "borderColor": { "ref": "accent" }
+              "backgroundColor": "#1a1714",
+              "paddingTop": [80, "px"],
+              "paddingBottom": [0, "px"],
+              "paddingLeft": [48, "px"],
+              "paddingRight": [48, "px"],
+              "@mobile": { "paddingLeft": [16, "px"], "paddingRight": [16, "px"], "paddingTop": [56, "px"] }
             },
             "children": [
               {
                 "id": "footer-main",
                 "tag": "container",
-                "class": ["max-width-container"],
-                "styles": {
-                  "display": "grid",
-                  "gridTemplateColumns": "repeat(4, 1fr)",
-                  "gap": [40, "px"],
-                  "paddingTop": [60, "px"],
-                  "paddingBottom": [60, "px"],
-                  "paddingLeft": [64, "px"],
-                  "paddingRight": [64, "px"],
-                  "@tablet": {
-                    "gridTemplateColumns": "repeat(2, 1fr)",
-                    "paddingLeft": [24, "px"],
-                    "paddingRight": [24, "px"]
-                  },
-                  "@mobile": {
-                    "gridTemplateColumns": "1fr",
-                    "paddingLeft": [16, "px"],
-                    "paddingRight": [16, "px"]
-                  }
-                },
+                "class": ["container-max", "grid-4"],
+                "styles": { "paddingBottom": [56, "px"] },
                 "children": [
                   {
-                    "id": "footer-col-1",
+                    "id": "ft-col-1",
                     "tag": "container",
                     "class": ["footer-col"],
-                    "styles": { "gap": [16, "px"] },
+                    "styles": { "gap": [20, "px"] },
                     "children": [
-                      { "id": "footer-logo", "tag": "text", "html": "<p><strong>K1 FRISEURE</strong></p>", "styles": { "fontWeight": 700, "fontSize": [18, "px"], "color": { "ref": "text" }, "letterSpacing": [2, "px"] } },
-                      { "id": "footer-slogan", "tag": "text", "html": "<p>Ihr Premium-Friseursalon in Frankfurt</p>", "class": ["text-muted"] }
-                    ]
-                  },
-                  {
-                    "id": "footer-col-2",
-                    "tag": "container",
-                    "class": ["footer-col"],
-                    "children": [
-                      { "id": "footer-hours-title", "tag": "text", "html": "<p><strong>Öffnungszeiten</strong></p>", "class": ["footer-title"] },
-                      { "id": "footer-hours", "tag": "text", "html": "<p>Mo – Fr: 09:00 – 19:00<br>Sa: 09:00 – 15:00<br>So: Geschlossen</p>", "class": ["text-muted"], "styles": { "lineHeight": 1.8, "color": { "ref": "text" } } }
-                    ]
-                  },
-                  {
-                    "id": "footer-col-3",
-                    "tag": "container",
-                    "class": ["footer-col"],
-                    "children": [
-                      { "id": "footer-contact-title", "tag": "text", "html": "<p><strong>Kontakt</strong></p>", "class": ["footer-title"] },
-                      { "id": "footer-address", "tag": "text", "html": "<p>Glauburgstraße 38<br>60318 Frankfurt am Main</p>", "class": ["text-muted"], "styles": { "lineHeight": 1.8, "color": { "ref": "text" } } },
-                      { "id": "footer-phone", "tag": "text", "html": "<p>Tel: 069 123 456 78</p>", "styles": { "fontWeight": 500, "fontSize": [14, "px"], "color": { "ref": "text" } } }
-                    ]
-                  },
-                  {
-                    "id": "footer-col-4",
-                    "tag": "container",
-                    "class": ["footer-col"],
-                    "children": [
-                      { "id": "footer-map-title", "tag": "text", "html": "<p><strong>Standort</strong></p>", "class": ["footer-title"] },
+                      { "id": "ft-logo", "tag": "text", "html": "<p><strong>K1</strong> FRISEURE</p>", "styles": { "fontFamily": "'Playfair Display', Georgia, serif", "fontSize": [20, "px"], "color": "#ffffff", "letterSpacing": [3, "px"] } },
+                      { "id": "ft-desc", "tag": "text", "html": "<p>Premium Friseursalon in Frankfurt am Main. Balayage, AirTouch, Colorationen und mehr.</p>", "class": ["footer-text"] },
                       {
-                        "id": "footer-map-link",
+                        "id": "ft-social",
+                        "tag": "container",
+                        "styles": { "display": "flex", "gap": [12, "px"], "marginTop": [4, "px"] },
+                        "children": [
+                          { "id": "ft-ig", "tag": "icon", "icon": "Instagram", "stroke": 1.5, "styles": { "width": [20, "px"], "height": [20, "px"], "color": "rgba(255,255,255,0.5)", "cursor": "pointer" } },
+                          { "id": "ft-fb", "tag": "icon", "icon": "Facebook", "stroke": 1.5, "styles": { "width": [20, "px"], "height": [20, "px"], "color": "rgba(255,255,255,0.5)", "cursor": "pointer" } }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ft-col-2",
+                    "tag": "container",
+                    "class": ["footer-col"],
+                    "children": [
+                      { "id": "ft-h-nav", "tag": "text", "html": "<p>Navigation</p>", "class": ["footer-heading"] },
+                      { "id": "ft-ln-1", "tag": "link", "text": "Salon", "href": "#salon", "class": ["footer-text"] },
+                      { "id": "ft-ln-2", "tag": "link", "text": "Leistungen", "href": "#leistungen", "class": ["footer-text"] },
+                      { "id": "ft-ln-3", "tag": "link", "text": "Preise", "href": "#preise", "class": ["footer-text"] },
+                      { "id": "ft-ln-4", "tag": "link", "text": "Pakete", "href": "#pakete", "class": ["footer-text"] }
+                    ]
+                  },
+                  {
+                    "id": "ft-col-3",
+                    "tag": "container",
+                    "class": ["footer-col"],
+                    "children": [
+                      { "id": "ft-h-contact", "tag": "text", "html": "<p>Kontakt</p>", "class": ["footer-heading"] },
+                      { "id": "ft-address", "tag": "text", "html": "<p>Glauburgstraße 38<br>60318 Frankfurt am Main</p>", "class": ["footer-text"] },
+                      { "id": "ft-phone", "tag": "text", "html": "<p>069 123 456 78</p>", "class": ["footer-text"] },
+                      { "id": "ft-email", "tag": "link", "text": "info@k1-friseure.de", "href": "mailto:info@k1-friseure.de", "class": ["footer-text"] }
+                    ]
+                  },
+                  {
+                    "id": "ft-col-4",
+                    "tag": "container",
+                    "class": ["footer-col"],
+                    "children": [
+                      { "id": "ft-h-hours", "tag": "text", "html": "<p>Öffnungszeiten</p>", "class": ["footer-heading"] },
+                      { "id": "ft-hours-1", "tag": "text", "html": "<p>Mo — Fr: 09:00 — 19:00</p>", "class": ["footer-text"] },
+                      { "id": "ft-hours-2", "tag": "text", "html": "<p>Sa: 09:00 — 15:00</p>", "class": ["footer-text"] },
+                      { "id": "ft-hours-3", "tag": "text", "html": "<p>So: Geschlossen</p>", "class": ["footer-text"] },
+                      {
+                        "id": "ft-route",
                         "tag": "button",
                         "text": "Route planen →",
                         "href": "https://maps.google.com/?q=Glauburgstraße+38+Frankfurt",
                         "newTab": true,
-                        "class": ["btn-outline"],
                         "styles": {
-                          "paddingTop": [8, "px"],
-                          "paddingBottom": [8, "px"],
-                          "paddingLeft": [16, "px"],
-                          "paddingRight": [16, "px"],
-                          "fontSize": [13, "px"]
+                          "display": "inline-flex",
+                          "alignItems": "center",
+                          "gap": [4, "px"],
+                          "marginTop": [8, "px"],
+                          "fontSize": [13, "px"],
+                          "fontWeight": 500,
+                          "color": { "ref": "accent" },
+                          "backgroundColor": "transparent",
+                          "paddingTop": [0, "px"],
+                          "paddingBottom": [0, "px"],
+                          "paddingLeft": [0, "px"],
+                          "paddingRight": [0, "px"],
+                          "transition": "opacity 0.2s",
+                          ":hover": { "opacity": 0.7 }
                         }
                       }
                     ]
@@ -965,35 +1430,22 @@
                   "display": "flex",
                   "justifyContent": "space-between",
                   "alignItems": "center",
-                  "paddingTop": [16, "px"],
-                  "paddingBottom": [16, "px"],
-                  "paddingLeft": [64, "px"],
-                  "paddingRight": [64, "px"],
+                  "paddingTop": [24, "px"],
+                  "paddingBottom": [24, "px"],
                   "borderTopWidth": [1, "px"],
                   "borderStyle": "solid",
-                  "borderColor": { "ref": "accent" },
-                  "@tablet": {
-                    "paddingLeft": [24, "px"],
-                    "paddingRight": [24, "px"]
-                  },
-                  "@mobile": {
-                    "flexDirection": "column",
-                    "gap": [8, "px"],
-                    "paddingLeft": [16, "px"],
-                    "paddingRight": [16, "px"],
-                    "textAlign": "center"
-                  }
+                  "borderColor": "rgba(255,255,255,0.08)",
+                  "@mobile": { "flexDirection": "column", "gap": [12, "px"], "textAlign": "center" }
                 },
                 "children": [
-                  { "id": "footer-copyright", "tag": "text", "html": "<p>© 2026 K1 Friseure. Alle Rechte vorbehalten.</p>", "class": ["caption"] },
+                  { "id": "ft-copy", "tag": "text", "html": "<p>© 2026 K1 Friseure. Alle Rechte vorbehalten.</p>", "styles": { "fontSize": [12, "px"], "color": "rgba(255,255,255,0.35)" } },
                   {
-                    "id": "footer-legal",
+                    "id": "ft-legal",
                     "tag": "container",
                     "styles": { "display": "flex", "gap": [24, "px"] },
                     "children": [
-                      { "id": "footer-impressum", "tag": "link", "text": "Impressum", "href": "/impressum", "class": ["caption"], "styles": { "cursor": "pointer" } },
-                      { "id": "footer-datenschutz", "tag": "link", "text": "Datenschutz", "href": "/datenschutz", "class": ["caption"], "styles": { "cursor": "pointer" } },
-                      { "id": "footer-agb", "tag": "link", "text": "AGB", "href": "/agb", "class": ["caption"], "styles": { "cursor": "pointer" } }
+                      { "id": "ft-impr", "tag": "link", "text": "Impressum", "href": "/impressum", "styles": { "fontSize": [12, "px"], "color": "rgba(255,255,255,0.35)", "textDecoration": "none", "transition": "color 0.2s", ":hover": { "color": "rgba(255,255,255,0.7)" } } },
+                      { "id": "ft-dsgvo", "tag": "link", "text": "Datenschutz", "href": "/datenschutz", "styles": { "fontSize": [12, "px"], "color": "rgba(255,255,255,0.35)", "textDecoration": "none", "transition": "color 0.2s", ":hover": { "color": "rgba(255,255,255,0.7)" } } }
                     ]
                   }
                 ]

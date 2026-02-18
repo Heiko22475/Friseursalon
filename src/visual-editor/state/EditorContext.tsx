@@ -194,7 +194,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
 function editorReducerInner(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case 'SELECT_ELEMENT':
-      return { ...state, selectedId: action.id, activeState: null };
+      return { ...state, selectedId: action.id, activeState: null, editingClass: null };
 
     case 'HOVER_ELEMENT':
       return { ...state, hoveredId: action.id };
@@ -928,9 +928,9 @@ export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, ini
   const [state, dispatch] = useReducer(editorReducer, createInitialState(pages, initialGlobalStyles || {}));
 
   // Keep the module-level globalStyles reference in sync for resolveStyles()
-  React.useEffect(() => {
-    setGlobalStyles(state.globalStyles);
-  }, [state.globalStyles]);
+  // MUST be synchronous (not in useEffect) so renderers see updated classes
+  // within the same render cycle that dispatched the change.
+  setGlobalStyles(state.globalStyles);
 
   const selectedElement = state.selectedId
     ? findElementById(state.page.body, state.selectedId)

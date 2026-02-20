@@ -1,8 +1,8 @@
 /* ============================================
    Admin Theme System — CSS Custom Properties
    ============================================
-   Two themes: dark (default) and light (rose-accent).
-   Applied via .admin-theme-dark / .admin-theme-light on wrapper.
+   7 themes: dark, light, ocean, forest, sunset, lavender, nord.
+   Applied via .admin-theme-{name} on wrapper.
    Usage in Tailwind: bg-[var(--admin-bg)] etc.
    ============================================ */
 
@@ -10,6 +10,7 @@
 .admin-theme-dark {
   --admin-bg: #13131b;
   --admin-bg-surface: #1a1a2a;
+  --admin-bg-sidebar: #16161e;
   --admin-bg-card: #1e1e2e;
   --admin-bg-input: #2d2d3d;
   --admin-bg-hover: #252535;
@@ -18,6 +19,7 @@
   --admin-border-strong: #3d3d4d;
   --admin-text: #d1d5db;
   --admin-text-heading: #e5e7eb;
+  --admin-text-icon: #b0b7c3;
   --admin-text-secondary: #9ca3af;
   --admin-text-muted: #6b7280;
   --admin-text-faint: #4a4a5a;
@@ -45,6 +47,7 @@
 .admin-theme-light {
   --admin-bg: #f9fafb;
   --admin-bg-surface: #ffffff;
+  --admin-bg-sidebar: #f1f5f9;
   --admin-bg-card: #ffffff;
   --admin-bg-input: #f3f4f6;
   --admin-bg-hover: #f9fafb;
@@ -53,6 +56,7 @@
   --admin-border-strong: #d1d5db;
   --admin-text: #374151;
   --admin-text-heading: #111827;
+  --admin-text-icon: #64748b;
   --admin-text-secondary: #6b7280;
   --admin-text-muted: #9ca3af;
   --admin-text-faint: #d1d5db;
@@ -76,52 +80,231 @@
   color-scheme: light;
 }
 
+/* ── Ocean Theme (dark, deep teal/cyan under starry sea) ── */
+.admin-theme-ocean {
+  --admin-bg: #0f1729;
+  --admin-bg-surface: #131e33;
+  --admin-bg-sidebar: #0c1322;
+  --admin-bg-card: #162032;
+  --admin-bg-input: #1c2a42;
+  --admin-bg-hover: #1a2840;
+  --admin-bg-selected: rgba(6, 182, 212, 0.08);
+  --admin-border: #1e3048;
+  --admin-border-strong: #2a4060;
+  --admin-text: #cbd5e1;
+  --admin-text-heading: #e2e8f0;
+  --admin-text-icon: #94a3b8;
+  --admin-text-secondary: #7d8fa8;
+  --admin-text-muted: #4b6584;
+  --admin-text-faint: #304560;
+  --admin-accent: #06b6d4;
+  --admin-accent-hover: #0891b2;
+  --admin-accent-light: #22d3ee;
+  --admin-accent-bg: rgba(6, 182, 212, 0.12);
+  --admin-accent-text: #22d3ee;
+  --admin-danger: #f43f5e;
+  --admin-danger-hover: #e11d48;
+  --admin-danger-bg: rgba(244, 63, 94, 0.1);
+  --admin-success: #14b8a6;
+  --admin-success-bg: rgba(20, 184, 166, 0.1);
+  --admin-warning: #f59e0b;
+  --admin-warning-bg: rgba(245, 158, 11, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #131e33;
+  --admin-scrollbar-thumb: #2a4060;
+  color-scheme: dark;
+}
+
+/* ── Forest Theme (dark, deep emerald green) ── */
+.admin-theme-forest {
+  --admin-bg: #0f1a14;
+  --admin-bg-surface: #13211a;
+  --admin-bg-sidebar: #0c1610;
+  --admin-bg-card: #162a1e;
+  --admin-bg-input: #1e3828;
+  --admin-bg-hover: #1c3424;
+  --admin-bg-selected: rgba(16, 185, 129, 0.08);
+  --admin-border: #1e3828;
+  --admin-border-strong: #2a5038;
+  --admin-text: #c6d4cc;
+  --admin-text-heading: #dce8e0;
+  --admin-text-icon: #8ba898;
+  --admin-text-secondary: #789486;
+  --admin-text-muted: #4a6854;
+  --admin-text-faint: #2e4a38;
+  --admin-accent: #10b981;
+  --admin-accent-hover: #059669;
+  --admin-accent-light: #34d399;
+  --admin-accent-bg: rgba(16, 185, 129, 0.12);
+  --admin-accent-text: #34d399;
+  --admin-danger: #f43f5e;
+  --admin-danger-hover: #e11d48;
+  --admin-danger-bg: rgba(244, 63, 94, 0.1);
+  --admin-success: #22c55e;
+  --admin-success-bg: rgba(34, 197, 94, 0.1);
+  --admin-warning: #eab308;
+  --admin-warning-bg: rgba(234, 179, 8, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #13211a;
+  --admin-scrollbar-thumb: #2a5038;
+  color-scheme: dark;
+}
+
+/* ── Sunset Theme (dark, warm amber/copper on charcoal) ── */
+.admin-theme-sunset {
+  --admin-bg: #1a1412;
+  --admin-bg-surface: #221a16;
+  --admin-bg-sidebar: #161110;
+  --admin-bg-card: #2a1f1a;
+  --admin-bg-input: #382a22;
+  --admin-bg-hover: #342620;
+  --admin-bg-selected: rgba(245, 158, 11, 0.08);
+  --admin-border: #3a2c22;
+  --admin-border-strong: #504030;
+  --admin-text: #d4c5b0;
+  --admin-text-heading: #ede0cc;
+  --admin-text-icon: #b0997e;
+  --admin-text-secondary: #9a846a;
+  --admin-text-muted: #6e5840;
+  --admin-text-faint: #4a3a28;
+  --admin-accent: #f59e0b;
+  --admin-accent-hover: #d97706;
+  --admin-accent-light: #fbbf24;
+  --admin-accent-bg: rgba(245, 158, 11, 0.12);
+  --admin-accent-text: #fbbf24;
+  --admin-danger: #ef4444;
+  --admin-danger-hover: #dc2626;
+  --admin-danger-bg: rgba(239, 68, 68, 0.1);
+  --admin-success: #22c55e;
+  --admin-success-bg: rgba(34, 197, 94, 0.1);
+  --admin-warning: #fb923c;
+  --admin-warning-bg: rgba(251, 146, 60, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #221a16;
+  --admin-scrollbar-thumb: #504030;
+  color-scheme: dark;
+}
+
+/* ── Lavender Theme (light, soft purple) ── */
+.admin-theme-lavender {
+  --admin-bg: #faf8ff;
+  --admin-bg-surface: #ffffff;
+  --admin-bg-sidebar: #f3effe;
+  --admin-bg-card: #ffffff;
+  --admin-bg-input: #f0ecf9;
+  --admin-bg-hover: #f5f2fc;
+  --admin-bg-selected: rgba(124, 58, 237, 0.05);
+  --admin-border: #e4ddf0;
+  --admin-border-strong: #c8bfdb;
+  --admin-text: #4b4560;
+  --admin-text-heading: #1e1a2e;
+  --admin-text-icon: #7a6f96;
+  --admin-text-secondary: #6e6488;
+  --admin-text-muted: #a69cba;
+  --admin-text-faint: #d4cceb;
+  --admin-accent: #7c3aed;
+  --admin-accent-hover: #6d28d9;
+  --admin-accent-light: #a78bfa;
+  --admin-accent-bg: rgba(124, 58, 237, 0.06);
+  --admin-accent-text: #7c3aed;
+  --admin-danger: #dc2626;
+  --admin-danger-hover: #b91c1c;
+  --admin-danger-bg: rgba(220, 38, 38, 0.06);
+  --admin-success: #16a34a;
+  --admin-success-bg: rgba(22, 163, 74, 0.06);
+  --admin-warning: #d97706;
+  --admin-warning-bg: rgba(217, 119, 6, 0.06);
+  --admin-shadow: 0 1px 3px rgba(80, 40, 120, 0.08);
+  --admin-shadow-lg: 0 8px 24px rgba(80, 40, 120, 0.1);
+  --admin-overlay: rgba(30, 20, 50, 0.5);
+  --admin-scrollbar-track: #f0ecf9;
+  --admin-scrollbar-thumb: #c8bfdb;
+  color-scheme: light;
+}
+
+/* ── Nord Theme (dark, arctic blue-gray — Scandinavian) ── */
+.admin-theme-nord {
+  --admin-bg: #2e3440;
+  --admin-bg-surface: #3b4252;
+  --admin-bg-sidebar: #2b303b;
+  --admin-bg-card: #3b4252;
+  --admin-bg-input: #434c5e;
+  --admin-bg-hover: #404858;
+  --admin-bg-selected: rgba(136, 192, 208, 0.08);
+  --admin-border: #434c5e;
+  --admin-border-strong: #4c566a;
+  --admin-text: #d8dee9;
+  --admin-text-heading: #eceff4;
+  --admin-text-icon: #a0aec0;
+  --admin-text-secondary: #8892a4;
+  --admin-text-muted: #6a7386;
+  --admin-text-faint: #4c566a;
+  --admin-accent: #88c0d0;
+  --admin-accent-hover: #81a1c1;
+  --admin-accent-light: #8fbcbb;
+  --admin-accent-bg: rgba(136, 192, 208, 0.12);
+  --admin-accent-text: #88c0d0;
+  --admin-danger: #bf616a;
+  --admin-danger-hover: #a8505a;
+  --admin-danger-bg: rgba(191, 97, 106, 0.1);
+  --admin-success: #a3be8c;
+  --admin-success-bg: rgba(163, 190, 140, 0.1);
+  --admin-warning: #ebcb8b;
+  --admin-warning-bg: rgba(235, 203, 139, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --admin-overlay: rgba(0, 0, 0, 0.55);
+  --admin-scrollbar-track: #3b4252;
+  --admin-scrollbar-thumb: #4c566a;
+  color-scheme: dark;
+}
+
 /* ---- Global admin area styles ---- */
 .admin-theme-dark,
-.admin-theme-light {
+.admin-theme-light,
+.admin-theme-ocean,
+.admin-theme-forest,
+.admin-theme-sunset,
+.admin-theme-lavender,
+.admin-theme-nord {
   min-height: 100vh;
   background-color: var(--admin-bg);
   color: var(--admin-text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Scrollbar styling */
-.admin-theme-dark ::-webkit-scrollbar {
+/* Scrollbar styling (all themes) */
+[class^="admin-theme-"] ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-.admin-theme-dark ::-webkit-scrollbar-track {
+[class^="admin-theme-"] ::-webkit-scrollbar-track {
   background: var(--admin-scrollbar-track);
 }
-.admin-theme-dark ::-webkit-scrollbar-thumb {
+[class^="admin-theme-"] ::-webkit-scrollbar-thumb {
   background: var(--admin-scrollbar-thumb);
   border-radius: 4px;
 }
-.admin-theme-dark ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a5a;
+[class^="admin-theme-"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-border-strong);
 }
 
-/* Input focus styling */
-.admin-theme-dark input:focus,
-.admin-theme-dark textarea:focus,
-.admin-theme-dark select:focus {
+/* Input focus styling (all themes) */
+[class^="admin-theme-"] input:focus,
+[class^="admin-theme-"] textarea:focus,
+[class^="admin-theme-"] select:focus {
   border-color: var(--admin-accent) !important;
   outline: none;
   box-shadow: 0 0 0 2px var(--admin-accent-bg);
 }
 
-.admin-theme-light input:focus,
-.admin-theme-light textarea:focus,
-.admin-theme-light select:focus {
-  border-color: var(--admin-accent) !important;
-  outline: none;
-  box-shadow: 0 0 0 2px var(--admin-accent-bg);
-}
-
-/* Selection color */
-.admin-theme-dark ::selection {
-  background: rgba(59, 130, 246, 0.3);
-}
-.admin-theme-light ::selection {
-  background: rgba(225, 29, 72, 0.2);
+/* Selection color (all themes) */
+[class^="admin-theme-"] ::selection {
+  background: var(--admin-accent-bg);
 }

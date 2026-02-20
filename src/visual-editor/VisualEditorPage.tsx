@@ -25,6 +25,8 @@ import { supabase } from '../lib/supabase';
 import { convertWebsiteToVE } from './converters/websiteToVE';
 import type { GlobalStyles } from './types/styles';
 import type { FontTokenMap, TypographyTokenMap } from './types/typographyTokens';
+import { VEMediaDialogProvider } from './state/VEMediaDialogContext';
+import { VEMediaDialog } from './components/VEMediaDialog';
 import './styles/editor.css';
 
 // ===== DATA SOURCE TYPE =====
@@ -347,8 +349,8 @@ const VisualEditorPage: React.FC = () => {
         <div
           className="ve-datasource-bar"
           style={{
-            backgroundColor: '#13131b',
-            borderBottom: '1px solid #2d2d3d',
+            backgroundColor: 'var(--admin-bg)',
+            borderBottom: '1px solid var(--admin-border)',
             padding: '8px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -366,7 +368,7 @@ const VisualEditorPage: React.FC = () => {
             style={{
               padding: '4px 12px',
               borderRadius: '6px',
-              border: `1px solid ${dataSource === 'demo' ? '#7c5cfc' : '#3d3d4d'}`,
+              border: `1px solid ${dataSource === 'demo' ? '#7c5cfc' : 'var(--admin-border-strong)'}`,
               backgroundColor: dataSource === 'demo' ? '#7c5cfc22' : 'transparent',
               color: dataSource === 'demo' ? '#a78bfa' : '#888',
               fontSize: '12px',
@@ -384,7 +386,7 @@ const VisualEditorPage: React.FC = () => {
             style={{
               padding: '4px 12px',
               borderRadius: '6px',
-              border: `1px solid ${dataSource === 'live' ? '#22c55e' : '#3d3d4d'}`,
+              border: `1px solid ${dataSource === 'live' ? '#22c55e' : 'var(--admin-border-strong)'}`,
               backgroundColor: dataSource === 'live' ? '#22c55e18' : 'transparent',
               color: dataSource === 'live' ? '#4ade80' : '#888',
               fontSize: '12px',
@@ -406,8 +408,8 @@ const VisualEditorPage: React.FC = () => {
                 style={{
                   padding: '4px 8px',
                   borderRadius: '6px',
-                  border: '1px solid #3d3d4d',
-                  backgroundColor: '#1e1e2e',
+                  border: '1px solid var(--admin-border-strong)',
+                  backgroundColor: 'var(--admin-bg-card)',
                   color: '#ccc',
                   fontSize: '12px',
                   cursor: 'pointer',
@@ -446,7 +448,10 @@ const VisualEditorPage: React.FC = () => {
               originalContent={originalContent}
             >
               <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages} initialGlobalStyles={globalStyles} initialFontTokens={fontTokens} initialTypographyTokens={typographyTokens}>
-                <EditorInner />
+                <VEMediaDialogProvider>
+                  <EditorInner />
+                  <VEMediaDialog />
+                </VEMediaDialogProvider>
               </EditorProvider>
             </VESaveProvider>
           </VEWebsiteContextBridge>
@@ -460,7 +465,7 @@ const VisualEditorPage: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               height: 'calc(100vh - 48px)',
-              backgroundColor: '#13131b',
+              backgroundColor: 'var(--admin-bg)',
               color: '#888',
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             }}
@@ -490,8 +495,8 @@ const VisualEditorPage: React.FC = () => {
                     marginTop: '16px',
                     padding: '8px 20px',
                     borderRadius: '8px',
-                    border: '1px solid #3d3d4d',
-                    backgroundColor: '#1e1e2e',
+                    border: '1px solid var(--admin-border-strong)',
+                    backgroundColor: 'var(--admin-bg-card)',
                     color: '#aaa',
                     cursor: 'pointer',
                     fontSize: '13px',

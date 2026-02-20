@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon } from 'lucide-react';
-import { useAdminTheme } from '../../contexts/AdminThemeContext';
+import { ArrowLeft, Palette, Check } from 'lucide-react';
+import { useAdminTheme, ADMIN_THEMES } from '../../contexts/AdminThemeContext';
+import type { AdminTheme } from '../../contexts/AdminThemeContext';
 
 interface AdminHeaderProps {
   /** Page title */
@@ -36,7 +37,23 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   className = '',
 }) => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useAdminTheme();
+  const { theme, setTheme } = useAdminTheme();
+  const [themeOpen, setThemeOpen] = useState(false);
+  const themeRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!themeOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (themeRef.current && !themeRef.current.contains(e.target as Node)) {
+        setThemeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [themeOpen]);
+
+  const currentThemeInfo = ADMIN_THEMES.find(t => t.id === theme) || ADMIN_THEMES[0];
 
   return (
     <header
@@ -134,33 +151,135 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           {actions}
 
           {showThemeToggle && (
-            <button
-              onClick={toggleTheme}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                border: '1px solid var(--admin-border)',
-                backgroundColor: 'transparent',
-                color: 'var(--admin-text-muted)',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)';
-                e.currentTarget.style.color = 'var(--admin-text)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--admin-text-muted)';
-              }}
-              title={theme === 'dark' ? 'Zum hellen Design wechseln' : 'Zum dunklen Design wechseln'}
-            >
-              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
+            <div ref={themeRef} style={{ position: 'relative' }}>
+              {/* Trigger Button — shows current theme swatches */}
+              <button
+                onClick={() => setThemeOpen(o => !o)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  height: '32px',
+                  padding: '0 10px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--admin-border)',
+                  backgroundColor: themeOpen ? 'var(--admin-bg-input)' : 'transparent',
+                  color: 'var(--admin-text-muted)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)';
+                  e.currentTarget.style.color = 'var(--admin-text)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!themeOpen) e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--admin-text-muted)';
+                }}
+                title="Design-Thema wählen"
+              >
+                <Palette size={14} />
+                {/* Mini swatches of current theme */}
+                <span style={{ display: 'flex', gap: '2px' }}>
+                  {currentThemeInfo.swatches.map((c, i) => (
+                    <span key={i} style={{
+                      display: 'inline-block',
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: c,
+                      border: '1px solid var(--admin-border-strong)',
+                    }} />
+                  ))}
+                </span>
+              </button>
+
+              {/* Dropdown */}
+              {themeOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    right: 0,
+                    width: '220px',
+                    backgroundColor: 'var(--admin-bg-surface)',
+                    border: '1px solid var(--admin-border-strong)',
+                    borderRadius: '10px',
+                    padding: '6px',
+                    boxShadow: 'var(--admin-shadow-lg)',
+                    zIndex: 100,
+                  }}
+                >
+                  <div style={{
+                    padding: '4px 10px 8px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    color: 'var(--admin-text-muted)',
+                  }}>
+                    Design-Thema
+                  </div>
+                  {ADMIN_THEMES.map(t => {
+                    const isActive = t.id === theme;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => { setTheme(t.id as AdminTheme); setThemeOpen(false); }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          width: '100%',
+                          padding: '7px 10px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: isActive ? 'var(--admin-accent-bg)' : 'transparent',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.12s',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isActive) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        {/* Swatch trio */}
+                        <span style={{
+                          display: 'flex',
+                          borderRadius: '6px',
+                          overflow: 'hidden',
+                          border: `1.5px solid ${isActive ? 'var(--admin-accent)' : 'var(--admin-border-strong)'}`,
+                          flexShrink: 0,
+                        }}>
+                          {t.swatches.map((c, i) => (
+                            <span key={i} style={{
+                              display: 'block',
+                              width: '16px',
+                              height: '20px',
+                              backgroundColor: c,
+                            }} />
+                          ))}
+                        </span>
+                        {/* Label */}
+                        <span style={{
+                          fontSize: '12px',
+                          fontWeight: isActive ? 600 : 400,
+                          color: isActive ? 'var(--admin-accent-text)' : 'var(--admin-text)',
+                          flex: 1,
+                          textAlign: 'left',
+                        }}>
+                          {t.label}
+                        </span>
+                        {/* Check mark */}
+                        {isActive && <Check size={14} style={{ color: 'var(--admin-accent)', flexShrink: 0 }} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

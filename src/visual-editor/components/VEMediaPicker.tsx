@@ -1,20 +1,18 @@
 // =====================================================
 // VISUAL EDITOR – MEDIA PICKER
-// Wrapper um MediaLibrary für Image-URL-Auswahl
+// Wrapper für Image-URL-Auswahl in Properties-Panel
 //
 // Features:
 //   • Thumbnail-Vorschau mit Overlay-Buttons
-//   • Klick → MediaLibrary-Modal im Select-Modus
+//   • Klick → öffnet zentralen VEMediaDialog
 //   • Einzelbild-Auswahl (singleSelect)
 //   • Entfernen-Button
 //   • Dark-Theme passend zum Visual Editor
 // =====================================================
 
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ImagePlus, Replace, Trash2, X } from 'lucide-react';
-import { MediaLibrary } from '../../components/admin/MediaLibrary';
-import type { MediaFile } from '../../components/admin/MediaLibrary';
+import React from 'react';
+import { ImagePlus, Replace, Trash2 } from 'lucide-react';
+import { useMediaDialog } from '../state/VEMediaDialogContext';
 
 // ===== TYPES =====
 
@@ -27,13 +25,12 @@ interface VEMediaPickerProps {
 // ===== COMPONENT =====
 
 export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, label }) => {
-  const [open, setOpen] = useState(false);
+  const { openMediaDialog } = useMediaDialog();
 
-  const handleSelect = (files: MediaFile[]) => {
-    if (files.length > 0) {
-      onChange(files[0].file_url);
-    }
-    setOpen(false);
+  const handleOpen = () => {
+    openMediaDialog((url) => {
+      onChange(url);
+    });
   };
 
   const handleRemove = (e: React.MouseEvent) => {
@@ -51,12 +48,12 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
             position: 'relative',
             height: '100px',
             borderRadius: '6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             overflow: 'hidden',
             cursor: 'pointer',
           }}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           {/* Thumbnail */}
           <img
@@ -90,7 +87,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
           >
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); setOpen(true); }}
+              onClick={(e) => { e.stopPropagation(); handleOpen(); }}
               title="Bild ändern"
               style={{
                 display: 'flex',
@@ -136,7 +133,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
         /* No Image → Placeholder button */
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           style={{
             width: '100%',
             height: '80px',
@@ -145,11 +142,11 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
             alignItems: 'center',
             justifyContent: 'center',
             gap: '6px',
-            backgroundColor: '#2d2d3d',
-            border: '2px dashed #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '2px dashed var(--admin-border-strong)',
             borderRadius: '6px',
             cursor: 'pointer',
-            color: '#9ca3af',
+            color: 'var(--admin-text-secondary)',
             fontSize: '11px',
             transition: 'all 0.15s',
           }}
@@ -158,8 +155,8 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
             e.currentTarget.style.color = '#3b82f6';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#3d3d4d';
-            e.currentTarget.style.color = '#9ca3af';
+            e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
+            e.currentTarget.style.color = 'var(--admin-text-secondary)';
           }}
         >
           <ImagePlus size={20} />
@@ -172,88 +169,12 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
         <div style={{
           marginTop: '4px',
           fontSize: '10px',
-          color: '#9ca3af',
+          color: 'var(--admin-text-secondary)',
           wordBreak: 'break-all',
           lineHeight: '1.4',
         }}>
           {value}
         </div>
-      )}
-
-      {/* MediaLibrary Modal (portal) */}
-      {open && createPortal(
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setOpen(false);
-          }}
-        >
-          {/* Modal Container */}
-          <div
-            style={{
-              width: '90vw',
-              maxWidth: '1200px',
-              height: '80vh',
-              backgroundColor: '#f9fafb',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '0 24px 48px rgba(0,0,0,0.4)',
-            }}
-          >
-            {/* Modal Header */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '12px 16px',
-              borderBottom: '1px solid #e5e7eb',
-              backgroundColor: '#fff',
-            }}>
-              <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#111827' }}>
-                Mediathek – Bild auswählen
-              </h3>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '28px',
-                  height: '28px',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  borderRadius: '4px',
-                  color: '#9ca3af',
-                  cursor: 'pointer',
-                }}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* MediaLibrary Content */}
-            <div style={{ flex: 1, overflow: 'auto' }}>
-              <MediaLibrary
-                mode="select"
-                singleSelect={true}
-                onSelect={handleSelect}
-                onCancel={() => setOpen(false)}
-              />
-            </div>
-          </div>
-        </div>,
-        document.body
       )}
     </>
   );

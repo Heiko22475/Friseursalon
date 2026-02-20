@@ -67,7 +67,7 @@ function IconToggle({
         border: 'none',
         borderRadius: '3px',
         cursor: 'pointer',
-        color: active ? '#fff' : '#b0b7c3',
+        color: active ? '#fff' : 'var(--admin-text-icon)',
         transition: 'all 0.1s',
       }}
     >
@@ -120,10 +120,10 @@ const FontDropdown: React.FC<{
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '5px 8px',
-          backgroundColor: '#2d2d3d',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg-input)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: value ? '#d1d5db' : '#b0b7c3',
+          color: value ? 'var(--admin-text)' : 'var(--admin-text-icon)',
           fontSize: '12px',
           cursor: 'pointer',
           fontFamily: buttonFontFamily,
@@ -144,8 +144,8 @@ const FontDropdown: React.FC<{
             right: 0,
             zIndex: 100,
             marginTop: '4px',
-            backgroundColor: '#1e1e2e',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-card)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '6px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
             maxHeight: '280px',
@@ -165,10 +165,10 @@ const FontDropdown: React.FC<{
               style={{
                 width: '100%',
                 padding: '5px 8px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-input)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '4px',
-                color: '#d1d5db',
+                color: 'var(--admin-text)',
                 fontSize: '12px',
                 outline: 'none',
               }}
@@ -182,7 +182,7 @@ const FontDropdown: React.FC<{
               <div>
                 <div style={{
                   fontSize: '10px',
-                  color: '#b0b7c3',
+                  color: 'var(--admin-text-icon)',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -199,7 +199,7 @@ const FontDropdown: React.FC<{
                       backgroundColor: value === themeHeadingFont.name ? '#2d2d4d' : 'transparent',
                       border: 'none',
                       cursor: 'pointer',
-                      color: '#d1d5db',
+                      color: 'var(--admin-text)',
                       fontSize: '13px',
                       textAlign: 'left',
                       fontFamily: `"${themeHeadingFont.name}", ${themeHeadingFont.fallback}`,
@@ -208,7 +208,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeHeadingFont.name}</span>
-                    <span style={{ fontSize: '10px', color: '#b0b7c3' }}>Heading</span>
+                    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Heading</span>
                   </button>
                 )}
                 {themeBodyFont && themeBodyFont.id !== themeHeadingFont?.id && (
@@ -220,7 +220,7 @@ const FontDropdown: React.FC<{
                       backgroundColor: value === themeBodyFont.name ? '#2d2d4d' : 'transparent',
                       border: 'none',
                       cursor: 'pointer',
-                      color: '#d1d5db',
+                      color: 'var(--admin-text)',
                       fontSize: '13px',
                       textAlign: 'left',
                       fontFamily: `"${themeBodyFont.name}", ${themeBodyFont.fallback}`,
@@ -229,7 +229,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeBodyFont.name}</span>
-                    <span style={{ fontSize: '10px', color: '#b0b7c3' }}>Body</span>
+                    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Body</span>
                   </button>
                 )}
               </div>
@@ -240,7 +240,7 @@ const FontDropdown: React.FC<{
               <div key={cat}>
                 <div style={{
                   fontSize: '10px',
-                  color: '#b0b7c3',
+                  color: 'var(--admin-text-icon)',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -258,12 +258,12 @@ const FontDropdown: React.FC<{
                       backgroundColor: value === font.name ? '#2d2d4d' : 'transparent',
                       border: 'none',
                       cursor: 'pointer',
-                      color: '#d1d5db',
+                      color: 'var(--admin-text)',
                       fontSize: '13px',
                       textAlign: 'left',
                       fontFamily: `"${font.name}", ${font.fallback}`,
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = value === font.name ? '#2d2d4d' : 'transparent')}
                   >
                     {font.name}
@@ -294,7 +294,7 @@ const FontDropdown: React.FC<{
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '52px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '52px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -344,9 +344,9 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
                 width: '100%',
                 padding: '6px 28px 6px 8px',
                 borderRadius: '4px',
-                border: tokenKey ? '1px solid #a78bfa40' : '1px solid #2d2d3d',
-                backgroundColor: tokenKey ? '#7c5cfc10' : '#16161e',
-                color: tokenKey ? '#c4b5fd' : '#d1d5db',
+                border: tokenKey ? '1px solid #a78bfa40' : '1px solid var(--admin-border)',
+                backgroundColor: tokenKey ? '#7c5cfc10' : 'var(--admin-bg-sidebar)',
+                color: tokenKey ? '#c4b5fd' : 'var(--admin-text)',
                 fontSize: '12px',
                 cursor: 'pointer',
                 appearance: 'none' as const,
@@ -363,11 +363,11 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
             </select>
             <ChevronDown
               size={12}
-              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280', pointerEvents: 'none' }}
+              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }}
             />
           </div>
           {tokenKey && tokenLabel && (
-            <div style={{ marginTop: '4px', fontSize: '10px', color: '#6b7280' }}>
+            <div style={{ marginTop: '4px', fontSize: '10px', color: 'var(--admin-text-muted)' }}>
               Verknüpft: {tokenLabel} – Font/Größe/Gewicht werden vom Token gesteuert
             </div>
           )}
@@ -390,7 +390,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
           <span style={{ fontSize: '11px', color: '#c4b5fd', fontWeight: 600 }}>
             {tokenLabel}
           </span>
-          <span style={{ fontSize: '10px', color: '#6b7280', marginLeft: 'auto' }}>
+          <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)', marginLeft: 'auto' }}>
             Token
           </span>
         </div>
@@ -407,9 +407,9 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
             width: '100%',
             padding: '8px 10px',
             borderRadius: '6px',
-            border: '1px solid #2d2d3d',
-            backgroundColor: hasAnyOverride ? '#2563eb10' : '#16161e',
-            color: hasAnyOverride ? '#60a5fa' : '#b0b7c3',
+            border: '1px solid var(--admin-border)',
+            backgroundColor: hasAnyOverride ? '#2563eb10' : 'var(--admin-bg-sidebar)',
+            color: hasAnyOverride ? '#60a5fa' : 'var(--admin-text-icon)',
             fontSize: '11px',
             fontWeight: 600,
             cursor: 'pointer',
@@ -436,9 +436,9 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
               padding: '6px 10px',
               marginBottom: '10px',
               borderRadius: '6px',
-              border: '1px solid #2d2d3d',
-              backgroundColor: '#16161e',
-              color: '#6b7280',
+              border: '1px solid var(--admin-border)',
+              backgroundColor: 'var(--admin-bg-sidebar)',
+              color: 'var(--admin-text-muted)',
               fontSize: '10px',
               cursor: 'pointer',
             }}
@@ -462,7 +462,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
         {/* Weight */}
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>
+          <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>
             Gewicht{isInherited('fontWeight') && <TokenHint>Token</TokenHint>}
           </label>
           <select
@@ -471,10 +471,10 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
             style={{
               width: '100%',
               padding: '5px 6px',
-              backgroundColor: isInherited('fontWeight') ? '#2d2d3d' : '#2d2d3d',
-              border: isInherited('fontWeight') ? '1px solid #7c5cfc30' : '1px solid #3d3d4d',
+              backgroundColor: isInherited('fontWeight') ? 'var(--admin-border)' : 'var(--admin-border)',
+              border: isInherited('fontWeight') ? '1px solid #7c5cfc30' : '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: isInherited('fontWeight') ? '#a78bfa' : '#d1d5db',
+              color: isInherited('fontWeight') ? '#a78bfa' : 'var(--admin-text)',
               fontSize: '12px',
             }}
           >
@@ -530,7 +530,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
 
       {/* Text Align */}
       <Row label="Align">
-        <div style={{ display: 'flex', gap: '2px', backgroundColor: '#1a1a2a', borderRadius: '4px', padding: '2px' }}>
+        <div style={{ display: 'flex', gap: '2px', backgroundColor: 'var(--admin-bg-surface)', borderRadius: '4px', padding: '2px' }}>
           {[
             { value: 'left' as const, icon: <AlignLeft size={sz} />, title: 'Links' },
             { value: 'center' as const, icon: <AlignCenter size={sz} />, title: 'Mitte' },
@@ -551,7 +551,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
                 border: 'none',
                 borderRadius: '3px',
                 cursor: 'pointer',
-                color: styles.textAlign === opt.value ? '#fff' : '#b0b7c3',
+                color: styles.textAlign === opt.value ? '#fff' : 'var(--admin-text-icon)',
               }}
             >
               {opt.icon}
@@ -562,7 +562,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
 
       {/* Decoration toggles */}
       <Row label="Stil">
-        <div style={{ display: 'flex', gap: '2px', backgroundColor: '#1a1a2a', borderRadius: '4px', padding: '2px' }}>
+        <div style={{ display: 'flex', gap: '2px', backgroundColor: 'var(--admin-bg-surface)', borderRadius: '4px', padding: '2px' }}>
           <IconToggle
             icon={<Italic size={sz} />}
             active={styles.fontStyle === 'italic'}

@@ -293,7 +293,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           borderLeft: isSelected ? '2px solid #3b82f6' : '2px solid transparent',
           borderTop: isDropInside ? '1px dashed #3b82f640' : '1px solid transparent',
           borderBottom: isDropInside ? '1px dashed #3b82f640' : '1px solid transparent',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
           fontSize: '13px',
           userSelect: 'none',
           transition: 'background-color 0.1s',
@@ -320,7 +320,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           <span style={{
             display: 'flex',
             alignItems: 'center',
-            color: '#9ca3af',
+            color: 'var(--admin-text-secondary)',
             flexShrink: 0,
             cursor: 'grab',
           }}>
@@ -340,7 +340,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             flexShrink: 0,
           }}
         >
@@ -350,7 +350,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         </span>
 
         {/* Icon */}
-        <span style={{ color: isSelected ? '#60a5fa' : '#b0b7c3', flexShrink: 0, display: 'flex' }}>
+        <span style={{ color: isSelected ? '#60a5fa' : 'var(--admin-text-icon)', flexShrink: 0, display: 'flex' }}>
           {typeIcons[element.type]}
         </span>
 
@@ -371,10 +371,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               flex: 1,
               minWidth: 0,
               padding: '0 4px',
-              backgroundColor: '#2d2d3d',
+              backgroundColor: 'var(--admin-bg-input)',
               border: '1px solid #3b82f6',
               borderRadius: '3px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
               outline: 'none',
               height: '20px',
@@ -387,7 +387,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               fontWeight: isSelected ? 600 : 400,
-              color: isSelected ? '#60a5fa' : '#d1d5db',
+              color: isSelected ? '#60a5fa' : 'var(--admin-text)',
               flex: 1,
             }}
           >

@@ -47,7 +47,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, ha
   const open = isOpen ?? false;
 
   return (
-    <div style={{ borderBottom: '1px solid #2d2d3d' }}>
+    <div style={{ borderBottom: '1px solid var(--admin-border)' }}>
       <button
         onClick={onToggle}
         style={{
@@ -59,7 +59,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, ha
           backgroundColor: 'transparent',
           border: 'none',
           cursor: 'pointer',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
           fontSize: '12px',
           fontWeight: 600,
           textTransform: 'uppercase',
@@ -101,8 +101,8 @@ const TYPE_COLORS: Record<string, string> = {
   Header: '#14b8a6',
   Footer: '#f97316',
   WebsiteBlock: '#0ea5e9',
-  Divider: '#9ca3af',
-  Spacer: '#6b7280',
+  Divider: 'var(--admin-text-secondary)',
+  Spacer: 'var(--admin-text-muted)',
   Icon: '#a78bfa',
   List: '#22d3ee',
   ListItem: '#67e8f9',
@@ -129,13 +129,13 @@ export const PropertiesPanel: React.FC = () => {
       <div
         style={{
           width: '370px',
-          backgroundColor: '#1e1e2e',
-          borderLeft: '1px solid #2d2d3d',
+          backgroundColor: 'var(--admin-bg-card)',
+          borderLeft: '1px solid var(--admin-border)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#b0b7c3',
+          color: 'var(--admin-text-icon)',
           fontSize: '13px',
           flexShrink: 0,
           gap: '8px',
@@ -261,7 +261,7 @@ export const PropertiesPanel: React.FC = () => {
   /** Elements whose size is derived from content, not from width/height styles */
   const isIntrinsicSize = ['Icon', 'Divider', 'Spacer'].includes(selectedElement.type);
   const isIcon = selectedElement.type === 'Icon';
-  const typeColor = TYPE_COLORS[selectedElement.type] || '#b0b7c3';
+  const typeColor = TYPE_COLORS[selectedElement.type] || 'var(--admin-text-icon)';
 
   // Check which sections have values
   const hasLayoutValues = !!(merged.display || merged.flexDirection || merged.justifyContent || merged.alignItems);
@@ -287,8 +287,8 @@ export const PropertiesPanel: React.FC = () => {
       className="ve-properties"
       style={{
         width: '370px',
-        backgroundColor: '#1e1e2e',
-        borderLeft: '1px solid #2d2d3d',
+        backgroundColor: 'var(--admin-bg-card)',
+        borderLeft: '1px solid var(--admin-border)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -300,7 +300,7 @@ export const PropertiesPanel: React.FC = () => {
         className="ve-properties-header"
         style={{
           padding: '12px',
-          borderBottom: '1px solid #2d2d3d',
+          borderBottom: '1px solid var(--admin-border)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -319,7 +319,7 @@ export const PropertiesPanel: React.FC = () => {
             }}>
               {selectedElement.type}
             </span>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#d1d5db' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--admin-text)' }}>
               {selectedElement.label || ''}
             </span>
           </div>
@@ -332,7 +332,7 @@ export const PropertiesPanel: React.FC = () => {
                 padding: '4px',
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: selectedElement.type === 'Body' ? '#3d3d4d' : '#b0b7c3',
+                color: selectedElement.type === 'Body' ? 'var(--admin-border-strong)' : 'var(--admin-text-icon)',
                 cursor: selectedElement.type === 'Body' ? 'default' : 'pointer',
                 borderRadius: '4px',
                 display: 'flex',
@@ -348,7 +348,7 @@ export const PropertiesPanel: React.FC = () => {
                 padding: '4px',
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: selectedElement.type === 'Body' ? '#3d3d4d' : '#ef4444',
+                color: selectedElement.type === 'Body' ? 'var(--admin-border-strong)' : '#ef4444',
                 cursor: selectedElement.type === 'Body' ? 'default' : 'pointer',
                 borderRadius: '4px',
                 display: 'flex',
@@ -361,14 +361,14 @@ export const PropertiesPanel: React.FC = () => {
 
         {/* Viewport indicator */}
         <div className="ve-properties-viewport" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
-          {state.viewport === 'desktop' && <Monitor size={12} style={{ color: '#b0b7c3' }} />}
-          {state.viewport === 'tablet' && <Tablet size={12} style={{ color: '#b0b7c3' }} />}
-          {state.viewport === 'mobile' && <Smartphone size={12} style={{ color: '#b0b7c3' }} />}
-          <span style={{ fontSize: '11px', color: '#b0b7c3' }}>
+          {state.viewport === 'desktop' && <Monitor size={12} style={{ color: 'var(--admin-text-icon)' }} />}
+          {state.viewport === 'tablet' && <Tablet size={12} style={{ color: 'var(--admin-text-icon)' }} />}
+          {state.viewport === 'mobile' && <Smartphone size={12} style={{ color: 'var(--admin-text-icon)' }} />}
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>
             {state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'} Styles
           </span>
           {state.viewport !== 'desktop' && (
-            <span style={{ fontSize: '10px', color: '#9ca3af', marginLeft: '4px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginLeft: '4px' }}>
               (erbt von Desktop)
             </span>
           )}
@@ -424,10 +424,10 @@ export const PropertiesPanel: React.FC = () => {
               gap: '6px',
               padding: '4px 8px',
               backgroundColor: proMode ? '#f59e0b20' : '#3d3d4d40',
-              border: `1px solid ${proMode ? '#f59e0b50' : '#3d3d4d'}`,
+              border: `1px solid ${proMode ? '#f59e0b50' : 'var(--admin-border-strong)'}`,
               borderRadius: '4px',
               cursor: 'pointer',
-              color: proMode ? '#fbbf24' : '#6b7280',
+              color: proMode ? '#fbbf24' : 'var(--admin-text-muted)',
               fontSize: '11px',
               fontWeight: 600,
               width: '100%',
@@ -460,9 +460,9 @@ export const PropertiesPanel: React.FC = () => {
                     fontSize: '10px',
                     fontWeight: 600,
                     borderRadius: '4px',
-                    border: `1px solid ${isActive ? stateColor + '80' : '#2d2d3d'}`,
+                    border: `1px solid ${isActive ? stateColor + '80' : 'var(--admin-border)'}`,
                     backgroundColor: isActive ? stateColor + '20' : 'transparent',
-                    color: isActive ? stateColor : '#6b7280',
+                    color: isActive ? stateColor : 'var(--admin-text-muted)',
                     cursor: 'pointer',
                     transition: 'all 0.15s',
                     position: 'relative',

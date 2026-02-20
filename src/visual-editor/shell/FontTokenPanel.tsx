@@ -53,17 +53,17 @@ const FontFamilyDropdown: React.FC<{
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '6px 8px',
-          backgroundColor: '#16161e',
-          border: '1px solid #2d2d3d',
+          backgroundColor: 'var(--admin-bg-sidebar)',
+          border: '1px solid var(--admin-border)',
           borderRadius: '4px',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
           fontSize: '12px',
           cursor: 'pointer',
           fontFamily: currentFont ? `"${currentFont.name}", ${currentFont.fallback}` : 'inherit',
         }}
       >
         <span>{currentFont?.name || value || 'Font wählen…'}</span>
-        <ChevronDown size={12} style={{ color: '#6b7280', flexShrink: 0 }} />
+        <ChevronDown size={12} style={{ color: 'var(--admin-text-muted)', flexShrink: 0 }} />
       </button>
 
       {open && (
@@ -74,7 +74,7 @@ const FontFamilyDropdown: React.FC<{
             left: 0,
             right: 0,
             marginTop: '2px',
-            backgroundColor: '#1e1e2e',
+            backgroundColor: 'var(--admin-bg-card)',
             border: '1px solid #3d3d5d',
             borderRadius: '6px',
             maxHeight: '220px',
@@ -83,9 +83,9 @@ const FontFamilyDropdown: React.FC<{
             boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
           }}
         >
-          <div style={{ padding: '6px', borderBottom: '1px solid #2d2d3d' }}>
+          <div style={{ padding: '6px', borderBottom: '1px solid var(--admin-border)' }}>
             <div style={{ position: 'relative' }}>
-              <Search size={11} style={{ position: 'absolute', left: '6px', top: '6px', color: '#6b7280' }} />
+              <Search size={11} style={{ position: 'absolute', left: '6px', top: '6px', color: 'var(--admin-text-muted)' }} />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -95,9 +95,9 @@ const FontFamilyDropdown: React.FC<{
                   width: '100%',
                   padding: '4px 6px 4px 22px',
                   borderRadius: '3px',
-                  border: '1px solid #2d2d3d',
-                  backgroundColor: '#16161e',
-                  color: '#d1d5db',
+                  border: '1px solid var(--admin-border)',
+                  backgroundColor: 'var(--admin-bg-sidebar)',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                   outline: 'none',
                 }}
@@ -120,21 +120,21 @@ const FontFamilyDropdown: React.FC<{
                 background: font.id === value ? '#3b82f620' : 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: font.id === value ? '#60a5fa' : '#d1d5db',
+                color: font.id === value ? '#60a5fa' : 'var(--admin-text)',
                 fontSize: '12px',
                 fontFamily: `"${font.name}", ${font.fallback}`,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = font.id === value ? '#3b82f620' : 'transparent')}
             >
               {font.name}
-              <span style={{ marginLeft: '6px', fontSize: '10px', color: '#6b7280', fontFamily: 'system-ui' }}>
+              <span style={{ marginLeft: '6px', fontSize: '10px', color: 'var(--admin-text-muted)', fontFamily: 'system-ui' }}>
                 {font.category}
               </span>
             </button>
           ))}
           {filtered.length === 0 && (
-            <div style={{ padding: '12px', textAlign: 'center', color: '#6b7280', fontSize: '11px' }}>
+            <div style={{ padding: '12px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '11px' }}>
               Keine Treffer
             </div>
           )}
@@ -262,7 +262,7 @@ const FontTokenEditor: React.FC<{
 
       {/* Usage info */}
       {usageCount > 0 && (
-        <div style={{ fontSize: '10px', color: '#6b7280' }}>
+        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
           Wird von {usageCount} Typo-Token{usageCount !== 1 ? 's' : ''} verwendet
         </div>
       )}
@@ -300,7 +300,7 @@ export const FontTokenPanel: React.FC = () => {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px 8px' }}>
-        <span style={{ fontSize: '11px', fontWeight: 600, color: '#b0b7c3', flex: 1 }}>
+        <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--admin-text-icon)', flex: 1 }}>
           Font Tokens ({tokenKeys.length})
         </span>
         <button
@@ -323,7 +323,7 @@ export const FontTokenPanel: React.FC = () => {
       {/* Token List */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px' }}>
         {tokenKeys.length === 0 && (
-          <div style={{ padding: '20px 12px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+          <div style={{ padding: '20px 12px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '12px' }}>
             Keine Font Tokens definiert.
             <br />
             Klicke + um einen zu erstellen.
@@ -344,7 +344,7 @@ export const FontTokenPanel: React.FC = () => {
                 margin: '0 4px 2px',
                 borderRadius: '6px',
                 border: isExpanded ? '1px solid #3b82f640' : '1px solid transparent',
-                backgroundColor: isExpanded ? '#16161e' : 'transparent',
+                backgroundColor: isExpanded ? 'var(--admin-bg-sidebar)' : 'transparent',
                 transition: 'all 0.15s',
               }}
             >
@@ -360,7 +360,7 @@ export const FontTokenPanel: React.FC = () => {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '12px',
                   textAlign: 'left',
                   borderRadius: '6px',
@@ -378,29 +378,29 @@ export const FontTokenPanel: React.FC = () => {
                     width: '28px',
                     height: '28px',
                     borderRadius: '6px',
-                    backgroundColor: '#2d2d3d',
+                    backgroundColor: 'var(--admin-bg-input)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '16px',
                     fontWeight: 700,
                     fontFamily: font ? `"${font.name}", ${font.fallback}` : 'inherit',
-                    color: '#b0b7c3',
+                    color: 'var(--admin-text-icon)',
                     flexShrink: 0,
                   }}
                 >
                   Aa
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#d1d5db', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--admin-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {token.label}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#6b7280', fontFamily: font ? `"${font.name}", ${font.fallback}` : 'inherit' }}>
+                  <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)', fontFamily: font ? `"${font.name}", ${font.fallback}` : 'inherit' }}>
                     {font?.name || token.fontFamily}
                   </div>
                 </div>
                 {isStd && <Star size={12} fill="#fbbf24" style={{ color: '#fbbf24', flexShrink: 0 }} />}
-                <span style={{ fontSize: '10px', color: usageCount > 0 ? '#4ade80' : '#6b7280', flexShrink: 0 }}>
+                <span style={{ fontSize: '10px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
                   {usageCount}
                 </span>
               </button>
@@ -441,9 +441,9 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '5px 8px',
   borderRadius: '4px',
-  border: '1px solid #2d2d3d',
-  backgroundColor: '#16161e',
-  color: '#d1d5db',
+  border: '1px solid var(--admin-border)',
+  backgroundColor: 'var(--admin-bg-sidebar)',
+  color: 'var(--admin-text)',
   fontSize: '12px',
   outline: 'none',
 };

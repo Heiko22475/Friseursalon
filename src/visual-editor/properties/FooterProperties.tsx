@@ -33,10 +33,10 @@ import {
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '5px 8px',
-  backgroundColor: '#2d2d3d',
-  border: '1px solid #3d3d4d',
+  backgroundColor: 'var(--admin-bg-input)',
+  border: '1px solid var(--admin-border-strong)',
   borderRadius: '4px',
-  color: '#d1d5db',
+  color: 'var(--admin-text)',
   fontSize: '12px',
 };
 
@@ -47,17 +47,17 @@ const selectStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: '11px',
-  color: '#b0b7c3',
+  color: 'var(--admin-text-icon)',
   marginBottom: '4px',
   display: 'block',
 };
 
 const btnStyle: React.CSSProperties = {
   padding: '4px 8px',
-  backgroundColor: '#2d2d3d',
-  border: '1px solid #3d3d4d',
+  backgroundColor: 'var(--admin-bg-input)',
+  border: '1px solid var(--admin-border-strong)',
   borderRadius: '4px',
-  color: '#d1d5db',
+  color: 'var(--admin-text)',
   fontSize: '11px',
   cursor: 'pointer',
 };
@@ -66,7 +66,7 @@ const btnStyle: React.CSSProperties = {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '70px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -75,7 +75,7 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 const Toggle: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({ label, checked, onChange }) => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-    <span style={{ fontSize: '11px', color: '#b0b7c3' }}>{label}</span>
+    <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</span>
     <button
       onClick={() => onChange(!checked)}
       style={{
@@ -83,7 +83,7 @@ const Toggle: React.FC<{ label: string; checked: boolean; onChange: (v: boolean)
         height: '18px',
         borderRadius: '9px',
         border: 'none',
-        backgroundColor: checked ? '#3b82f6' : '#3d3d4d',
+        backgroundColor: checked ? '#3b82f6' : 'var(--admin-border-strong)',
         cursor: 'pointer',
         position: 'relative',
         transition: 'background-color 0.2s',
@@ -108,7 +108,7 @@ const Toggle: React.FC<{ label: string; checked: boolean; onChange: (v: boolean)
 const Collapsible: React.FC<{ title: string; children: React.ReactNode; defaultOpen?: boolean }> = ({ title, children, defaultOpen = false }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ marginBottom: '8px', border: '1px solid #3d3d4d', borderRadius: '4px' }}>
+    <div style={{ marginBottom: '8px', border: '1px solid var(--admin-border-strong)', borderRadius: '4px' }}>
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -117,9 +117,9 @@ const Collapsible: React.FC<{ title: string; children: React.ReactNode; defaultO
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '6px 8px',
-          backgroundColor: '#2d2d3d',
+          backgroundColor: 'var(--admin-bg-input)',
           border: 'none',
-          color: '#b0b7c3',
+          color: 'var(--admin-text-icon)',
           fontSize: '11px',
           fontWeight: 600,
           cursor: 'pointer',
@@ -283,7 +283,7 @@ export const FooterProperties: React.FC<FooterPropertiesProps> = ({ element }) =
                 ...config,
                 style: { ...config.style, backgroundColor: { kind: 'custom', hex: e.target.value } }
               })}
-              style={{ width: '28px', height: '28px', border: '1px solid #3d3d4d', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
+              style={{ width: '28px', height: '28px', border: '1px solid var(--admin-border-strong)', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
             />
             <input
               type="text"
@@ -306,7 +306,7 @@ export const FooterProperties: React.FC<FooterPropertiesProps> = ({ element }) =
                 ...config,
                 style: { ...config.style, textColor: { kind: 'custom', hex: e.target.value } }
               })}
-              style={{ width: '28px', height: '28px', border: '1px solid #3d3d4d', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
+              style={{ width: '28px', height: '28px', border: '1px solid var(--admin-border-strong)', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
             />
             <input
               type="text"
@@ -467,17 +467,17 @@ const ColumnItem: React.FC<{
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div style={{ border: '1px solid #3d3d4d', borderRadius: '4px', marginBottom: '4px' }}>
+    <div style={{ border: '1px solid var(--admin-border-strong)', borderRadius: '4px', marginBottom: '4px' }}>
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '4px 8px',
-          backgroundColor: '#2d2d3d',
+          backgroundColor: 'var(--admin-bg-input)',
           cursor: 'pointer',
           fontSize: '11px',
-          color: '#b0b7c3',
+          color: 'var(--admin-text-icon)',
         }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -536,12 +536,12 @@ const ColumnItem: React.FC<{
               <Toggle label="Adresse" checked={(column as FooterContactColumn).showAddress} onChange={(v) => onUpdate({ ...column, showAddress: v } as FooterContactColumn)} />
               <Toggle label="Telefon" checked={(column as FooterContactColumn).showPhone} onChange={(v) => onUpdate({ ...column, showPhone: v } as FooterContactColumn)} />
               <Toggle label="E-Mail" checked={(column as FooterContactColumn).showEmail} onChange={(v) => onUpdate({ ...column, showEmail: v } as FooterContactColumn)} />
-              <p style={{ fontSize: '10px', color: '#b0b7c3' }}>Daten aus Kontakt-Einstellungen.</p>
+              <p style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Daten aus Kontakt-Einstellungen.</p>
             </>
           )}
 
           {column.type === 'hours' && (
-            <p style={{ fontSize: '10px', color: '#b0b7c3' }}>Zeiten aus Kontakt-Einstellungen.</p>
+            <p style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Zeiten aus Kontakt-Einstellungen.</p>
           )}
         </div>
       )}

@@ -41,16 +41,16 @@
 }
 
 .ve-canvas-scroll::-webkit-scrollbar-track {
-  background: #1e1e2e;
+  background: var(--admin-scrollbar-track);
 }
 
 .ve-canvas-scroll::-webkit-scrollbar-thumb {
-  background: #3d3d4d;
+  background: var(--admin-scrollbar-thumb);
   border-radius: 4px;
 }
 
 .ve-canvas-scroll::-webkit-scrollbar-thumb:hover {
-  background: #4d4d5d;
+  background: var(--admin-text-muted);
 }
 
 /* Hover-Effekt: JS-basiert via onMouseEnter → ve-hovered Klasse
@@ -98,7 +98,7 @@
 }
 
 .ve-props-scroll::-webkit-scrollbar-thumb {
-  background: #3d3d4d;
+  background: var(--admin-scrollbar-thumb);
   border-radius: 3px;
 }
 
@@ -112,17 +112,17 @@
 }
 
 .ve-nav-scroll::-webkit-scrollbar-thumb {
-  background: #3d3d4d;
+  background: var(--admin-scrollbar-thumb);
   border-radius: 3px;
 }
 
 /* Inputs innerhalb des Visual Editors */
 .ve-input {
   padding: 4px 6px;
-  background-color: #2d2d3d;
-  border: 1px solid #3d3d4d;
+  background-color: var(--admin-bg-input);
+  border: 1px solid var(--admin-border-strong);
   border-radius: 4px;
-  color: #d1d5db;
+  color: var(--admin-text);
   font-size: 12px;
   outline: none;
   transition: border-color 0.15s;
@@ -133,7 +133,7 @@
 }
 
 .ve-input::placeholder {
-  color: #6b7280;
+  color: var(--admin-text-muted);
 }
 
 /* ===== DRAG & DROP STYLES ===== */

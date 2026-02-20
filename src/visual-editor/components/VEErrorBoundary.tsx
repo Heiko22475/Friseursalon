@@ -1,6 +1,6 @@
 // =====================================================
-// VISUAL EDITOR – ERROR BOUNDARY
-// Fängt Rendering-Fehler und zeigt Fallback-UI
+// VISUAL EDITOR â€“ ERROR BOUNDARY
+// FÃ¤ngt Rendering-Fehler und zeigt Fallback-UI
 // =====================================================
 
 import React from 'react';
@@ -48,18 +48,18 @@ export class VEErrorBoundary extends React.Component<Props, State> {
             justifyContent: 'center',
             minHeight: '200px',
             padding: '40px',
-            backgroundColor: '#1e1e2e',
-            color: '#d1d5db',
+            backgroundColor: 'var(--admin-bg-card)',
+            color: 'var(--admin-text)',
             gap: '16px',
             borderRadius: '8px',
             border: '1px solid #ef444440',
           }}
         >
-          <span style={{ fontSize: '32px' }}>⚠️</span>
+          <span style={{ fontSize: '32px' }}>âš ï¸</span>
           <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#ef4444' }}>
             Ein Fehler ist aufgetreten
           </h3>
-          <p style={{ margin: 0, fontSize: '13px', color: '#b0b7c3', textAlign: 'center', maxWidth: '400px' }}>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--admin-text-icon)', textAlign: 'center', maxWidth: '400px' }}>
             {this.state.error?.message || 'Unbekannter Fehler im Visual Editor.'}
           </p>
           <button

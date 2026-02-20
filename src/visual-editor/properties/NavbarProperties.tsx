@@ -13,17 +13,17 @@ import { useEditor } from '../state/EditorContext';
 const selectStyle: React.CSSProperties = {
   width: '100%',
   padding: '5px 8px',
-  backgroundColor: '#2d2d3d',
-  border: '1px solid #3d3d4d',
+  backgroundColor: 'var(--admin-bg-input)',
+  border: '1px solid var(--admin-border-strong)',
   borderRadius: '4px',
-  color: '#d1d5db',
+  color: 'var(--admin-text)',
   fontSize: '12px',
   cursor: 'pointer',
 };
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '90px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '90px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -101,10 +101,10 @@ export const NavbarProperties: React.FC<NavbarPropertiesProps> = ({ element }) =
       <div style={{
         marginTop: '8px',
         padding: '6px 8px',
-        backgroundColor: '#2d2d3d',
+        backgroundColor: 'var(--admin-bg-input)',
         borderRadius: '4px',
         fontSize: '11px',
-        color: '#b0b7c3',
+        color: 'var(--admin-text-icon)',
         lineHeight: 1.6,
       }}>
         {children.length} Kind-Element(e)

@@ -17,7 +17,7 @@ interface EffectsSectionProps {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -136,18 +136,18 @@ const ShadowEditor: React.FC<{
   const sliderInputStyle: React.CSSProperties = {
     width: '46px',
     padding: '2px 4px',
-    backgroundColor: '#2d2d3d',
-    border: '1px solid #3d3d4d',
+    backgroundColor: 'var(--admin-bg-input)',
+    border: '1px solid var(--admin-border-strong)',
     borderRadius: '3px',
-    color: '#d1d5db',
+    color: 'var(--admin-text)',
     fontSize: '10px',
     textAlign: 'right',
   };
 
   return (
     <div style={{
-      backgroundColor: '#1a1a2a',
-      border: '1px solid #3d3d4d',
+      backgroundColor: 'var(--admin-bg-surface)',
+      border: '1px solid var(--admin-border-strong)',
       borderRadius: '6px',
       marginBottom: '6px',
       overflow: 'hidden',
@@ -161,7 +161,7 @@ const ShadowEditor: React.FC<{
           padding: '6px 8px',
           cursor: 'pointer',
           fontSize: '11px',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
         }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -175,7 +175,7 @@ const ShadowEditor: React.FC<{
           height: '14px',
           borderRadius: '3px',
           backgroundColor: shadow.color,
-          border: '1px solid #3d3d4d',
+          border: '1px solid var(--admin-border-strong)',
           flexShrink: 0,
         }} />
         <button
@@ -199,7 +199,7 @@ const ShadowEditor: React.FC<{
           {/* X / Y */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: '#b0b7c3', display: 'block', marginBottom: '2px' }}>X</label>
+              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>X</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-50} max={50} value={shadow.offsetX}
@@ -213,7 +213,7 @@ const ShadowEditor: React.FC<{
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: '#b0b7c3', display: 'block', marginBottom: '2px' }}>Y</label>
+              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Y</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-50} max={50} value={shadow.offsetY}
@@ -231,7 +231,7 @@ const ShadowEditor: React.FC<{
           {/* Blur / Spread */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: '#b0b7c3', display: 'block', marginBottom: '2px' }}>Blur</label>
+              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Blur</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={0} max={100} value={shadow.blur}
@@ -245,7 +245,7 @@ const ShadowEditor: React.FC<{
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: '#b0b7c3', display: 'block', marginBottom: '2px' }}>Spread</label>
+              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Spread</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-30} max={50} value={shadow.spread}
@@ -262,7 +262,7 @@ const ShadowEditor: React.FC<{
 
           {/* Color */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-            <label style={{ fontSize: '9px', color: '#b0b7c3', width: '32px' }}>Farbe</label>
+            <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', width: '32px' }}>Farbe</label>
             <input
               type="color"
               value={shadow.color.startsWith('#') ? shadow.color : '#000000'}
@@ -276,10 +276,10 @@ const ShadowEditor: React.FC<{
               style={{
                 flex: 1,
                 padding: '3px 6px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-input)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '3px',
-                color: '#d1d5db',
+                color: 'var(--admin-text)',
                 fontSize: '10px',
                 fontFamily: 'monospace',
               }}
@@ -287,7 +287,7 @@ const ShadowEditor: React.FC<{
           </div>
 
           {/* Inset toggle */}
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '10px', color: '#b0b7c3' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '10px', color: 'var(--admin-text-icon)' }}>
             <input
               type="checkbox"
               checked={shadow.inset}
@@ -340,7 +340,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
   return (
     <div>
       {/* Opacity */}
-      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '6px' }}>
         Opacity
       </label>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
@@ -370,20 +370,20 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             style={{
               width: '42px',
               padding: '3px 4px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '3px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '11px',
               textAlign: 'right',
             }}
           />
-          <span style={{ fontSize: '10px', color: '#b0b7c3' }}>%</span>
+          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>%</span>
         </div>
       </div>
 
       {/* Box Shadow */}
-      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '6px' }}>
         Schatten
       </label>
 
@@ -395,10 +395,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             onClick={() => onChange('boxShadow', preset.value || undefined)}
             style={{
               padding: '3px 8px',
-              backgroundColor: currentPreset?.label === preset.label ? '#3b82f6' : '#2d2d3d',
-              border: '1px solid ' + (currentPreset?.label === preset.label ? '#3b82f6' : '#3d3d4d'),
+              backgroundColor: currentPreset?.label === preset.label ? '#3b82f6' : 'var(--admin-border)',
+              border: '1px solid ' + (currentPreset?.label === preset.label ? '#3b82f6' : 'var(--admin-border-strong)'),
               borderRadius: '3px',
-              color: currentPreset?.label === preset.label ? '#fff' : '#b0b7c3',
+              color: currentPreset?.label === preset.label ? '#fff' : 'var(--admin-text-icon)',
               fontSize: '10px',
               cursor: 'pointer',
               fontWeight: 500,
@@ -417,10 +417,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             width: '100%',
             padding: '5px 8px',
             marginBottom: '8px',
-            backgroundColor: showBuilder ? '#3b82f615' : '#2d2d3d',
-            border: `1px solid ${showBuilder ? '#3b82f650' : '#3d3d4d'}`,
+            backgroundColor: showBuilder ? '#3b82f615' : 'var(--admin-border)',
+            border: `1px solid ${showBuilder ? '#3b82f650' : 'var(--admin-border-strong)'}`,
             borderRadius: '4px',
-            color: showBuilder ? '#60a5fa' : '#b0b7c3',
+            color: showBuilder ? '#60a5fa' : 'var(--admin-text-icon)',
             fontSize: '10px',
             fontWeight: 500,
             cursor: 'pointer',
@@ -451,10 +451,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             style={{
               width: '100%',
               padding: '5px 8px',
-              backgroundColor: '#2d2d3d',
-              border: '1px dashed #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px dashed var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               fontSize: '10px',
               cursor: 'pointer',
               display: 'flex',
@@ -478,10 +478,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
           style={{
             width: '100%',
             padding: '5px 8px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '11px',
             fontFamily: 'monospace',
             marginBottom: '12px',
@@ -492,7 +492,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
       {/* Overflow (Pro only) */}
       {proMode && (
         <>
-          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '6px' }}>
             Overflow
           </label>
           <Row label="Alle">
@@ -504,10 +504,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
                   style={{
                     flex: 1,
                     padding: '3px 4px',
-                    backgroundColor: styles.overflow === val ? '#3b82f6' : '#2d2d3d',
-                    border: '1px solid ' + (styles.overflow === val ? '#3b82f6' : '#3d3d4d'),
+                    backgroundColor: styles.overflow === val ? '#3b82f6' : 'var(--admin-border)',
+                    border: '1px solid ' + (styles.overflow === val ? '#3b82f6' : 'var(--admin-border-strong)'),
                     borderRadius: '3px',
-                    color: styles.overflow === val ? '#fff' : '#b0b7c3',
+                    color: styles.overflow === val ? '#fff' : 'var(--admin-text-icon)',
                     fontSize: '10px',
                     cursor: 'pointer',
                     fontWeight: 500,
@@ -527,10 +527,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
                 style={{
                   width: '100%',
                   padding: '4px 6px',
-                  backgroundColor: '#2d2d3d',
-                  border: '1px solid #3d3d4d',
+                  backgroundColor: 'var(--admin-bg-input)',
+                  border: '1px solid var(--admin-border-strong)',
                   borderRadius: '4px',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                 }}
               >
@@ -548,10 +548,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
                 style={{
                   width: '100%',
                   padding: '4px 6px',
-                  backgroundColor: '#2d2d3d',
-                  border: '1px solid #3d3d4d',
+                  backgroundColor: 'var(--admin-bg-input)',
+                  border: '1px solid var(--admin-border-strong)',
                   borderRadius: '4px',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                 }}
               >
@@ -575,10 +575,10 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             style={{
               width: '100%',
               padding: '4px 6px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
             }}
           >

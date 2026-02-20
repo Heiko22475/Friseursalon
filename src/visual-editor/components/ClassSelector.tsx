@@ -116,7 +116,7 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
   };
 
   return (
-    <div ref={containerRef} style={{ padding: '8px 12px', borderBottom: '1px solid #2d2d3d' }}>
+    <div ref={containerRef} style={{ padding: '8px 12px', borderBottom: '1px solid var(--admin-border)' }}>
       <div
         style={{
           display: 'flex',
@@ -168,9 +168,9 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
                   fontSize: '11px',
                   fontFamily: 'monospace',
                   cursor: 'pointer',
-                  backgroundColor: isActive ? '#7c5cfc33' : '#2d2d3d',
+                  backgroundColor: isActive ? '#7c5cfc33' : 'var(--admin-border)',
                   border: `1px solid ${isActive ? '#7c5cfc' : exists ? '#3d3d5d' : '#f8717133'}`,
-                  color: isActive ? '#a78bfa' : exists ? '#d1d5db' : '#f87171',
+                  color: isActive ? '#a78bfa' : exists ? 'var(--admin-text)' : '#f87171',
                   transition: 'all 0.15s',
                 }}
                 title={isActive ? 'Klasse bearbeiten (aktiv)' : exists ? `Klasse "${cn}" bearbeiten` : `Klasse "${cn}" nicht definiert`}
@@ -218,8 +218,8 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
               padding: '4px 8px',
               borderRadius: '4px',
               border: '1px solid #3d3d5d',
-              backgroundColor: '#16161e',
-              color: '#d1d5db',
+              backgroundColor: 'var(--admin-bg-sidebar)',
+              color: 'var(--admin-text)',
               fontSize: '12px',
               fontFamily: 'monospace',
               outline: 'none',
@@ -233,7 +233,7 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
                 left: 0,
                 right: 0,
                 marginTop: '2px',
-                backgroundColor: '#1e1e2e',
+                backgroundColor: 'var(--admin-bg-card)',
                 border: '1px solid #3d3d5d',
                 borderRadius: '6px',
                 maxHeight: '160px',
@@ -254,11 +254,11 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    color: '#d1d5db',
+                    color: 'var(--admin-text)',
                     fontSize: '12px',
                     fontFamily: 'monospace',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <span style={{ color: '#888' }}>.</span>{cn}
@@ -277,9 +277,9 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
                     cursor: 'pointer',
                     color: '#4ade80',
                     fontSize: '12px',
-                    borderTop: filtered.length > 0 ? '1px solid #2d2d3d' : 'none',
+                    borderTop: filtered.length > 0 ? '1px solid var(--admin-border)' : 'none',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   + Neue Klasse „{inputValue.trim().replace(/\s+/g, '-').toLowerCase()}" erstellen

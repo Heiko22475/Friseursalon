@@ -44,7 +44,7 @@ export const TemplateGallery: React.FC<{
         flexDirection: 'column',
         gap: '24px',
         padding: '16px',
-        backgroundColor: '#13131b',
+        backgroundColor: 'var(--admin-bg)',
         borderRadius: '8px',
         maxHeight: '600px',
         overflowY: 'auto',
@@ -57,7 +57,7 @@ export const TemplateGallery: React.FC<{
             style={{
               fontSize: '12px',
               fontWeight: 600,
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               marginBottom: '12px',

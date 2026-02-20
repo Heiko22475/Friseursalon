@@ -19,7 +19,7 @@ interface ContentSectionProps {
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -27,10 +27,10 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '5px 8px',
-  backgroundColor: '#2d2d3d',
-  border: '1px solid #3d3d4d',
+  backgroundColor: 'var(--admin-bg-input)',
+  border: '1px solid var(--admin-border-strong)',
   borderRadius: '4px',
-  color: '#d1d5db',
+  color: 'var(--admin-text)',
   fontSize: '12px',
 };
 
@@ -77,7 +77,7 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
       </Row>
 
       {/* Text Content */}
-      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>
         Inhalt
       </label>
       <VERichTextEditor
@@ -91,7 +91,7 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
         }
         placeholder="Text eingeben…"
       />
-      <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px' }}>
+      <div style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginTop: '4px' }}>
         💡 Doppelklick auf Canvas für Inline-Editing
       </div>
     </div>
@@ -108,7 +108,7 @@ const ImageContent: React.FC<{ element: VEImage }> = ({ element }) => {
   return (
     <div>
       {/* Media Picker */}
-      <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>
         Bild
       </label>
       <VEMediaPicker
@@ -200,8 +200,8 @@ const ButtonContent: React.FC<{ element: VEButton }> = ({ element }) => {
             }
             style={{ accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '12px', color: '#b0b7c3' }}>Neuer Tab</span>
-          <ExternalLink size={12} style={{ color: '#b0b7c3' }} />
+          <span style={{ fontSize: '12px', color: 'var(--admin-text-icon)' }}>Neuer Tab</span>
+          <ExternalLink size={12} style={{ color: 'var(--admin-text-icon)' }} />
         </label>
       </Row>
     </div>
@@ -266,7 +266,7 @@ const DividerContent: React.FC<{ element: VEDivider }> = ({ element }) => {
       <VEColorPicker
         label="Farbe"
         value={color}
-        onChange={(cv) => update('color', cv || { kind: 'custom', hex: '#d1d5db' })}
+        onChange={(cv) => update('color', cv || { kind: 'custom', hex: 'var(--admin-text)' })}
         allowNoColor={false}
       />
       <Row label="Breite">
@@ -306,7 +306,7 @@ const SpacerContent: React.FC<{ element: VESpacer }> = ({ element }) => {
             }
             style={{ flex: 1, accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '40px', textAlign: 'right' }}>{height}px</span>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', minWidth: '40px', textAlign: 'right' }}>{height}px</span>
         </div>
       </Row>
       {/* Quick presets */}
@@ -323,11 +323,11 @@ const SpacerContent: React.FC<{ element: VESpacer }> = ({ element }) => {
             }
             style={{
               padding: '2px 6px',
-              backgroundColor: height === h ? '#3b82f620' : '#2d2d3d',
-              border: `1px solid ${height === h ? '#3b82f6' : '#3d3d4d'}`,
+              backgroundColor: height === h ? '#3b82f620' : 'var(--admin-border)',
+              border: `1px solid ${height === h ? '#3b82f6' : 'var(--admin-border-strong)'}`,
               borderRadius: '3px',
               fontSize: '10px',
-              color: height === h ? '#3b82f6' : '#b0b7c3',
+              color: height === h ? '#3b82f6' : 'var(--admin-text-icon)',
               cursor: 'pointer',
             }}
           >
@@ -394,10 +394,10 @@ const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
             style={{
               width: '48px',
               padding: '3px 4px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '11px',
               textAlign: 'right',
               outline: 'none',
@@ -409,10 +409,10 @@ const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
             style={{
               width: '46px',
               padding: '3px 2px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '11px',
               cursor: 'pointer',
               outline: 'none',
@@ -428,7 +428,7 @@ const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
       <VEColorPicker
         label="Farbe"
         value={color}
-        onChange={(cv) => update('color', cv || { kind: 'custom', hex: '#6b7280' })}
+        onChange={(cv) => update('color', cv || { kind: 'custom', hex: 'var(--admin-text-muted)' })}
         allowNoColor={false}
       />
 
@@ -443,12 +443,12 @@ const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
             onChange={(e) => update('strokeWidth', parseFloat(e.target.value))}
             style={{ flex: 1, accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '24px', textAlign: 'right' }}>{strokeWidth}</span>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', minWidth: '24px', textAlign: 'right' }}>{strokeWidth}</span>
         </div>
       </Row>
 
       {/* ── Container ─────────────── */}
-      <div style={{ borderTop: '1px solid #3d3d4d', marginTop: '10px', paddingTop: '10px' }}>
+      <div style={{ borderTop: '1px solid var(--admin-border-strong)', marginTop: '10px', paddingTop: '10px' }}>
         <div style={{ fontSize: '11px', color: '#8b92a0', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Container</div>
 
         <VEColorPicker
@@ -468,7 +468,7 @@ const IconContent: React.FC<{ element: VEIcon }> = ({ element }) => {
               onChange={(e) => update('containerBorderRadius', parseInt(e.target.value))}
               style={{ flex: 1, accentColor: '#3b82f6' }}
             />
-            <span style={{ fontSize: '11px', color: '#b0b7c3', minWidth: '32px', textAlign: 'right' }}>{containerBorderRadius}px</span>
+            <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', minWidth: '32px', textAlign: 'right' }}>{containerBorderRadius}px</span>
           </div>
         </Row>
       </div>

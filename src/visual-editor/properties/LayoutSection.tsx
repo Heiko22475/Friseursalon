@@ -55,7 +55,7 @@ function IconButtonGroup<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div style={{ display: 'flex', gap: '2px', backgroundColor: '#1a1a2a', borderRadius: '4px', padding: '2px' }}>
+    <div style={{ display: 'flex', gap: '2px', backgroundColor: 'var(--admin-bg-surface)', borderRadius: '4px', padding: '2px' }}>
       {options.map((opt) => (
         <button
           key={opt.value}
@@ -71,7 +71,7 @@ function IconButtonGroup<T extends string>({
             border: 'none',
             borderRadius: '3px',
             cursor: 'pointer',
-            color: value === opt.value ? '#fff' : '#b0b7c3',
+            color: value === opt.value ? '#fff' : 'var(--admin-text-icon)',
             transition: 'all 0.1s',
           }}
         >
@@ -89,7 +89,7 @@ const Row: React.FC<{
   children: React.ReactNode;
 }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '72px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '72px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -152,17 +152,17 @@ const GridTrackEditor: React.FC<{
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '4px 8px',
-    backgroundColor: '#2d2d3d',
-    border: '1px solid #3d3d4d',
+    backgroundColor: 'var(--admin-bg-input)',
+    border: '1px solid var(--admin-border-strong)',
     borderRadius: '4px',
-    color: '#d1d5db',
+    color: 'var(--admin-text)',
     fontSize: '12px',
   };
 
   return (
     <div style={{ marginBottom: '10px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-        <label style={{ fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+        <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
         <div style={{ display: 'flex', gap: '2px' }}>
           <button
             onClick={() => setShowRaw(!showRaw)}
@@ -170,9 +170,9 @@ const GridTrackEditor: React.FC<{
             style={{
               padding: '2px 6px',
               backgroundColor: showRaw ? '#3b82f620' : 'transparent',
-              border: '1px solid #3d3d4d',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '3px',
-              color: showRaw ? '#3b82f6' : '#b0b7c3',
+              color: showRaw ? '#3b82f6' : 'var(--admin-text-icon)',
               fontSize: '9px',
               cursor: 'pointer',
               fontFamily: 'monospace',
@@ -187,9 +187,9 @@ const GridTrackEditor: React.FC<{
               style={{
                 padding: '2px 4px',
                 backgroundColor: 'transparent',
-                border: '1px solid #3d3d4d',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '3px',
-                color: '#b0b7c3',
+                color: 'var(--admin-text-icon)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -215,7 +215,7 @@ const GridTrackEditor: React.FC<{
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {tracks.length === 0 && (
             <div
-              style={{ fontSize: '11px', color: '#9ca3af', padding: '4px 0', cursor: 'pointer' }}
+              style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', padding: '4px 0', cursor: 'pointer' }}
               onClick={addTrack}
             >
               + Track hinzufügen
@@ -234,10 +234,10 @@ const GridTrackEditor: React.FC<{
                   style={{
                     width: '52px',
                     padding: '3px 6px',
-                    backgroundColor: '#2d2d3d',
-                    border: '1px solid #3d3d4d',
+                    backgroundColor: 'var(--admin-bg-input)',
+                    border: '1px solid var(--admin-border-strong)',
                     borderRadius: '3px',
-                    color: '#d1d5db',
+                    color: 'var(--admin-text)',
                     fontSize: '11px',
                   }}
                 />
@@ -259,10 +259,10 @@ const GridTrackEditor: React.FC<{
                 style={{
                   flex: 1,
                   padding: '3px 4px',
-                  backgroundColor: '#2d2d3d',
-                  border: '1px solid #3d3d4d',
+                  backgroundColor: 'var(--admin-bg-input)',
+                  border: '1px solid var(--admin-border-strong)',
                   borderRadius: '3px',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                 }}
               >
@@ -290,7 +290,7 @@ const GridTrackEditor: React.FC<{
                   padding: '2px',
                   backgroundColor: 'transparent',
                   border: 'none',
-                  color: '#b0b7c3',
+                  color: 'var(--admin-text-icon)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexShrink: 0,
@@ -320,10 +320,10 @@ const GridTrackEditor: React.FC<{
               title={preset.css}
               style={{
                 padding: '2px 7px',
-                backgroundColor: value === preset.css ? '#3b82f6' : '#2d2d3d',
-                border: '1px solid ' + (value === preset.css ? '#3b82f6' : '#3d3d4d'),
+                backgroundColor: value === preset.css ? '#3b82f6' : 'var(--admin-border)',
+                border: '1px solid ' + (value === preset.css ? '#3b82f6' : 'var(--admin-border-strong)'),
                 borderRadius: '3px',
-                color: value === preset.css ? '#fff' : '#b0b7c3',
+                color: value === preset.css ? '#fff' : 'var(--admin-text-icon)',
                 fontSize: '10px',
                 cursor: 'pointer',
                 fontWeight: 500,
@@ -363,13 +363,13 @@ const GridPreview: React.FC<{
   return (
     <div style={{ marginBottom: '10px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <label style={{ fontSize: '10px', color: '#b0b7c3' }}>Schnellauswahl</label>
+        <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Schnellauswahl</label>
         {(hoverCol > 0 && hoverRow > 0) ? (
           <span style={{ fontSize: '10px', color: '#3b82f6', fontWeight: 600 }}>
             {hoverCol} × {hoverRow}
           </span>
         ) : currentCols > 0 && currentRows > 0 ? (
-          <span style={{ fontSize: '10px', color: '#b0b7c3' }}>
+          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>
             {currentCols} × {currentRows}
           </span>
         ) : null}
@@ -381,7 +381,7 @@ const GridPreview: React.FC<{
           gridTemplateRows: `repeat(${maxRows}, 1fr)`,
           gap: '3px',
           padding: '6px',
-          backgroundColor: '#1a1a2a',
+          backgroundColor: 'var(--admin-bg-surface)',
           borderRadius: '6px',
           aspectRatio: `${maxCols} / ${maxRows * 0.7}`,
         }}
@@ -405,7 +405,7 @@ const GridPreview: React.FC<{
                     ? '1.5px solid #3b82f6'
                     : isInCurrent
                     ? '1.5px solid #3b82f680'
-                    : '1px solid #3d3d4d',
+                    : '1px solid var(--admin-border-strong)',
                   backgroundColor: isInHover
                     ? '#3b82f625'
                     : isInCurrent
@@ -437,7 +437,7 @@ const GridQuickPresets: React.FC<{
 }> = ({ columns, rows, onApply }) => {
   return (
     <div style={{ marginBottom: '10px' }}>
-      <label style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>
         Responsive Vorlagen
       </label>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -453,11 +453,11 @@ const GridQuickPresets: React.FC<{
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '5px 8px',
-                backgroundColor: isActive ? '#3b82f615' : '#2d2d3d',
-                border: `1px solid ${isActive ? '#3b82f650' : '#3d3d4d'}`,
+                backgroundColor: isActive ? '#3b82f615' : 'var(--admin-border)',
+                border: `1px solid ${isActive ? '#3b82f650' : 'var(--admin-border-strong)'}`,
                 borderRadius: '4px',
                 cursor: 'pointer',
-                color: isActive ? '#93bbfc' : '#b0b7c3',
+                color: isActive ? '#93bbfc' : 'var(--admin-text-icon)',
                 fontSize: '11px',
                 fontWeight: 500,
                 textAlign: 'left',
@@ -509,13 +509,13 @@ const GridQuickPresets: React.FC<{
 const SectionLabel: React.FC<{ label: string }> = ({ label }) => (
   <div style={{
     fontSize: '10px',
-    color: '#b0b7c3',
+    color: 'var(--admin-text-icon)',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
     marginTop: '10px',
     marginBottom: '6px',
     paddingTop: '6px',
-    borderTop: '1px solid #2d2d3d',
+    borderTop: '1px solid var(--admin-border)',
   }}>
     {label}
   </div>
@@ -744,10 +744,10 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
               style={{
                 width: '100%',
                 padding: '4px 6px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-input)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '4px',
-                color: '#d1d5db',
+                color: 'var(--admin-text)',
                 fontSize: '11px',
               }}
             >
@@ -763,7 +763,7 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
           {/* Auto Columns / Rows */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Auto Cols</label>
+              <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Cols</label>
               <input
                 type="text"
                 value={styles.gridAutoColumns || ''}
@@ -772,16 +772,16 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
                 style={{
                   width: '100%',
                   padding: '3px 6px',
-                  backgroundColor: '#2d2d3d',
-                  border: '1px solid #3d3d4d',
+                  backgroundColor: 'var(--admin-bg-input)',
+                  border: '1px solid var(--admin-border-strong)',
                   borderRadius: '3px',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                 }}
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Auto Rows</label>
+              <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Rows</label>
               <input
                 type="text"
                 value={styles.gridAutoRows || ''}
@@ -790,10 +790,10 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
                 style={{
                   width: '100%',
                   padding: '3px 6px',
-                  backgroundColor: '#2d2d3d',
-                  border: '1px solid #3d3d4d',
+                  backgroundColor: 'var(--admin-bg-input)',
+                  border: '1px solid var(--admin-border-strong)',
                   borderRadius: '3px',
-                  color: '#d1d5db',
+                  color: 'var(--admin-text)',
                   fontSize: '11px',
                 }}
               />
@@ -818,7 +818,7 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
       {/* Flex Grow / Shrink / Basis */}
       <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Grow</label>
+          <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Grow</label>
           <input
             type="number"
             value={styles.flexGrow ?? ''}
@@ -829,16 +829,16 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
             style={{
               width: '100%',
               padding: '4px 6px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
             }}
           />
         </div>
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Shrink</label>
+          <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Shrink</label>
           <input
             type="number"
             value={styles.flexShrink ?? ''}
@@ -849,10 +849,10 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
             style={{
               width: '100%',
               padding: '4px 6px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
             }}
           />
@@ -881,10 +881,10 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
           style={{
             width: '72px',
             padding: '4px 6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '12px',
           }}
         />
@@ -919,10 +919,10 @@ export const GridChildSection: React.FC<GridChildSectionProps> = ({ styles, onCh
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '4px 6px',
-    backgroundColor: '#2d2d3d',
-    border: '1px solid #3d3d4d',
+    backgroundColor: 'var(--admin-bg-input)',
+    border: '1px solid var(--admin-border-strong)',
     borderRadius: '4px',
-    color: '#d1d5db',
+    color: 'var(--admin-text)',
     fontSize: '12px',
     fontFamily: 'monospace',
   };
@@ -953,10 +953,10 @@ export const GridChildSection: React.FC<GridChildSectionProps> = ({ styles, onCh
             onClick={() => onChange('gridColumn', preset.css)}
             style={{
               padding: '2px 6px',
-              backgroundColor: styles.gridColumn === preset.css ? '#3b82f6' : '#2d2d3d',
-              border: '1px solid ' + (styles.gridColumn === preset.css ? '#3b82f6' : '#3d3d4d'),
+              backgroundColor: styles.gridColumn === preset.css ? '#3b82f6' : 'var(--admin-border)',
+              border: '1px solid ' + (styles.gridColumn === preset.css ? '#3b82f6' : 'var(--admin-border-strong)'),
               borderRadius: '3px',
-              color: styles.gridColumn === preset.css ? '#fff' : '#b0b7c3',
+              color: styles.gridColumn === preset.css ? '#fff' : 'var(--admin-text-icon)',
               fontSize: '9px',
               cursor: 'pointer',
               fontWeight: 500,

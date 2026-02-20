@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import * as LucideIcons from 'lucide-react';
 import { Search, X } from 'lucide-react';
+import { useAdminTheme } from '../../contexts/AdminThemeContext';
 
 // ===== ICON REGISTRY =====
 
@@ -44,6 +45,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const { theme } = useAdminTheme();
 
   // Filter icons
   const filtered = useMemo(() => {
@@ -98,11 +100,11 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
     <div style={{ marginBottom: '8px' }}>
       {/* Label row with current icon preview */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <label style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 500 }}>Icon</label>
+        <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 500 }}>Icon</label>
         {CurrentIcon && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <CurrentIcon size={14} color="#d1d5db" strokeWidth={2} />
-            <span style={{ fontSize: '11px', color: '#9ca3af' }}>{value}</span>
+            <span style={{ fontSize: '11px', color: 'var(--admin-text-secondary)' }}>{value}</span>
           </div>
         )}
       </div>
@@ -113,10 +115,10 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
         style={{
           width: '100%',
           padding: '6px 8px 6px 28px',
-          backgroundColor: '#2d2d3d',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg-input)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
           fontSize: '12px',
           fontFamily: 'inherit',
           textAlign: 'left',
@@ -125,13 +127,13 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
           boxSizing: 'border-box',
         }}
       >
-        <Search size={12} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280', pointerEvents: 'none' }} />
+        <Search size={12} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
         {value || 'Icon wählen…'}
       </button>
 
       {/* Popup – centered modal via portal */}
       {isOpen && createPortal(
-        <>
+        <div className={`admin-theme-${theme}`} style={{ display: 'contents' }}>
           {/* Backdrop */}
           <div
             style={{
@@ -154,8 +156,8 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
               height: POPUP_HEIGHT,
               maxWidth: 'calc(100vw - 40px)',
               maxHeight: 'calc(100vh - 40px)',
-              backgroundColor: '#1a1a2a',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-surface)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '12px',
               boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
               zIndex: 10000,
@@ -168,7 +170,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
             <div
               style={{
                 padding: '16px 20px',
-                borderBottom: '1px solid #2d2d3d',
+                borderBottom: '1px solid var(--admin-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -178,7 +180,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
             >
               {/* Left: Search field */}
               <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
-                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280', pointerEvents: 'none' }} />
+                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
                 <input
                   ref={searchRef}
                   type="text"
@@ -189,10 +191,10 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
                     width: '100%',
                     height: '36px',
                     padding: '0 36px 0 36px',
-                    backgroundColor: '#2d2d3d',
+                    backgroundColor: 'var(--admin-bg-input)',
                     border: '1px solid #3b82f6',
                     borderRadius: '6px',
-                    color: '#d1d5db',
+                    color: 'var(--admin-text)',
                     fontSize: '14px',
                     fontFamily: 'inherit',
                     outline: 'none',
@@ -204,7 +206,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
                     onClick={() => { setSearchTerm(''); searchRef.current?.focus(); }}
                     style={{
                       position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer',
+                      background: 'none', border: 'none', color: 'var(--admin-text-muted)', cursor: 'pointer',
                       padding: '2px', display: 'flex',
                     }}
                   >
@@ -217,11 +219,11 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                 {CurrentIcon ? (
                   <>
-                    <span style={{ fontSize: '14px', color: '#b0b7c3', fontWeight: 500 }}>{value}</span>
+                    <span style={{ fontSize: '14px', color: 'var(--admin-text-icon)', fontWeight: 500 }}>{value}</span>
                     <CurrentIcon size={50} color="#d1d5db" strokeWidth={1.5} />
                   </>
                 ) : (
-                  <span style={{ fontSize: '13px', color: '#6b7280', fontStyle: 'italic' }}>Kein Icon gewählt</span>
+                  <span style={{ fontSize: '13px', color: 'var(--admin-text-muted)', fontStyle: 'italic' }}>Kein Icon gewählt</span>
                 )}
               </div>
             </div>
@@ -237,7 +239,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
               className="ve-props-scroll"
             >
               {filtered.length === 0 ? (
-                <div style={{ padding: '32px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
+                <div style={{ padding: '32px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '14px' }}>
                   Kein Icon gefunden
                 </div>
               ) : (
@@ -263,11 +265,11 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
                         border: `1px solid ${value === name ? '#3b82f6' : 'transparent'}`,
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        color: value === name ? '#3b82f6' : '#b0b7c3',
+                        color: value === name ? '#3b82f6' : 'var(--admin-text-icon)',
                         transition: 'background-color 0.1s',
                       }}
                       onMouseEnter={(e) => {
-                        if (value !== name) e.currentTarget.style.backgroundColor = '#2d2d3d';
+                        if (value !== name) e.currentTarget.style.backgroundColor = 'var(--admin-border)';
                       }}
                       onMouseLeave={(e) => {
                         if (value !== name) e.currentTarget.style.backgroundColor = 'transparent';
@@ -296,15 +298,15 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
             <div style={{
               padding: '8px 20px',
               fontSize: '11px',
-              color: '#6b7280',
+              color: 'var(--admin-text-muted)',
               textAlign: 'right',
-              borderTop: '1px solid #2d2d3d',
+              borderTop: '1px solid var(--admin-border)',
               flexShrink: 0,
             }}>
               {filtered.length} von {ALL_ICONS.length} Icons
             </div>
           </div>
-        </>,
+        </div>,
         document.body
       )}
     </div>

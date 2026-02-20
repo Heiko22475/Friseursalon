@@ -9,6 +9,7 @@ import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import type { ColorValue } from '../../types/theme';
 import { useVETheme } from '../theme/VEThemeBridge';
+import { useAdminTheme } from '../../contexts/AdminThemeContext';
 
 interface VEColorPickerProps {
   label: string;
@@ -28,6 +29,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
   const triggerRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const { resolveColorValue, getThemeSwatches, hasTheme } = useVETheme();
+  const { theme } = useAdminTheme();
 
   const displayColor = value ? resolveColorValue(value) : 'transparent';
   const swatches = hasTheme ? getThemeSwatches() : [];
@@ -69,15 +71,15 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
   // Neutrals
   const neutrals = [
     { hex: '#ffffff', label: 'Weiß' },
-    { hex: '#f3f4f6', label: 'Hellgrau' },
-    { hex: '#b0b7c3', label: 'Grau' },
+    { hex: 'var(--admin-bg-input)', label: 'Hellgrau' },
+    { hex: 'var(--admin-text-icon)', label: 'Grau' },
     { hex: '#374151', label: 'Dunkelgrau' },
     { hex: '#000000', label: 'Schwarz' },
   ];
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#b0b7c3' }}>
+      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: 'var(--admin-text-icon)' }}>
         {label}
       </label>
 
@@ -91,8 +93,8 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
           alignItems: 'center',
           gap: '6px',
           padding: '4px 6px',
-          backgroundColor: '#2d2d3d',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg-input)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
           cursor: 'pointer',
           minHeight: '28px',
@@ -118,7 +120,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
         <span
           style={{
             fontSize: '12px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -135,6 +137,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
       {/* Popup via Portal */}
       {open &&
         createPortal(
+          <PortalThemeWrapper theme={theme}>
           <div
             ref={popupRef}
             style={{
@@ -142,12 +145,12 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
               ...getPosition(),
               zIndex: 10000,
               width: '240px',
-              backgroundColor: '#1e1e2e',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-card)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '8px',
               boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
               padding: '12px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
             }}
           >
@@ -159,10 +162,10 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
                   width: '100%',
                   padding: '6px 8px',
                   marginBottom: '8px',
-                  backgroundColor: !value ? '#2563eb22' : '#2d2d3d',
-                  border: !value ? '1px solid #3b82f6' : '1px solid #3d3d4d',
+                  backgroundColor: !value ? '#2563eb22' : 'var(--admin-border)',
+                  border: !value ? '1px solid #3b82f6' : '1px solid var(--admin-border-strong)',
                   borderRadius: '4px',
-                  color: '#b0b7c3',
+                  color: 'var(--admin-text-icon)',
                   cursor: 'pointer',
                   fontSize: '11px',
                   display: 'flex',
@@ -177,7 +180,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
             {/* Theme Colors */}
             {swatches.length > 0 && (
               <div style={{ marginBottom: '10px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                   Theme-Farben
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -209,7 +212,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Neutral Colors */}
             <div style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Neutral
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
@@ -240,7 +243,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Custom Color */}
             <div>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Eigene Farbe
               </div>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -275,19 +278,25 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
                   style={{
                     flex: 1,
                     padding: '4px 6px',
-                    backgroundColor: '#2d2d3d',
-                    border: '1px solid #3d3d4d',
+                    backgroundColor: 'var(--admin-bg-input)',
+                    border: '1px solid var(--admin-border-strong)',
                     borderRadius: '4px',
-                    color: '#d1d5db',
+                    color: 'var(--admin-text)',
                     fontSize: '12px',
                     fontFamily: 'monospace',
                   }}
                 />
               </div>
             </div>
-          </div>,
+          </div>
+          </PortalThemeWrapper>,
           document.body
         )}
     </div>
   );
 };
+
+/** Wrapper that carries the admin theme class into portals */
+const PortalThemeWrapper: React.FC<{ theme: string; children: React.ReactNode }> = ({ theme, children }) => (
+  <div className={`admin-theme-${theme}`} style={{ display: 'contents' }}>{children}</div>
+);

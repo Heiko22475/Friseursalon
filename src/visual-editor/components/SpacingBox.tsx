@@ -163,8 +163,8 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
     <div
       ref={dropdownRef}
       style={{
-        backgroundColor: '#1a1a2a',
-        border: '1px solid #3d3d4d',
+        backgroundColor: 'var(--admin-bg-surface)',
+        border: '1px solid var(--admin-border-strong)',
         borderRadius: '6px',
         padding: '10px',
         marginTop: '4px',
@@ -174,7 +174,7 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
       {/* Header */}
       <div style={{
         fontSize: '10px',
-        color: '#9ca3af',
+        color: 'var(--admin-text-secondary)',
         marginBottom: '8px',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
@@ -203,10 +203,10 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
           style={{
             width: '52px',
             padding: '4px 6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '12px',
             textAlign: 'center',
             outline: 'none',
@@ -219,10 +219,10 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
           style={{
             width: '54px',
             padding: '4px 4px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '11px',
             cursor: 'pointer',
             outline: 'none',
@@ -246,10 +246,10 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: autoActive ? '#3b82f6' : '#2d2d3d',
-              border: `1px solid ${autoActive ? '#3b82f6' : '#3d3d4d'}`,
+              backgroundColor: autoActive ? '#3b82f6' : 'var(--admin-border)',
+              border: `1px solid ${autoActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
               borderRadius: '4px',
-              color: autoActive ? '#fff' : '#b0b7c3',
+              color: autoActive ? '#fff' : 'var(--admin-text-icon)',
               fontSize: '11px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -276,10 +276,10 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
                 onClick={() => setNumeric(val)}
                 style={{
                   padding: '4px 2px',
-                  backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
-                  border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
+                  backgroundColor: isActive ? '#3b82f6' : 'var(--admin-border)',
+                  border: `1px solid ${isActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                   borderRadius: '3px',
-                  color: isActive ? '#fff' : '#b0b7c3',
+                  color: isActive ? '#fff' : 'var(--admin-text-icon)',
                   fontSize: '11px',
                   cursor: 'pointer',
                   fontWeight: isActive ? 600 : 400,
@@ -329,7 +329,7 @@ const ClickableValue: React.FC<ClickableValueProps> = ({ value, position, active
         cursor: 'pointer',
         fontSize: '10px',
         fontWeight: active ? 700 : 400,
-        color: active ? '#3b82f6' : hasValue ? '#d1d5db' : '#9ca3af',
+        color: active ? '#3b82f6' : hasValue ? 'var(--admin-text)' : 'var(--admin-text-secondary)',
         minWidth: '20px',
         textAlign: 'center',
         padding: '2px 4px',
@@ -442,8 +442,8 @@ export const SpacingBox: React.FC<SpacingBoxProps> = ({ styles, onChange }) => {
           {/* Center content indicator */}
           <div style={{
             width: '100%', height: '20px',
-            backgroundColor: '#1e1e2e', borderRadius: '2px',
-            border: '1px dashed #3d3d4d',
+            backgroundColor: 'var(--admin-bg-card)', borderRadius: '2px',
+            border: '1px dashed var(--admin-border-strong)',
           }} />
         </div>
       </div>

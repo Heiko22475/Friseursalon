@@ -132,8 +132,8 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
     <div
       ref={dropdownRef}
       style={{
-        backgroundColor: '#1a1a2a',
-        border: '1px solid #3d3d4d',
+        backgroundColor: 'var(--admin-bg-surface)',
+        border: '1px solid var(--admin-border-strong)',
         borderRadius: '6px',
         padding: '10px',
         marginTop: '4px',
@@ -143,7 +143,7 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
       {/* Header */}
       <div style={{
         fontSize: '10px',
-        color: '#b0b7c3',
+        color: 'var(--admin-text-icon)',
         marginBottom: '8px',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
@@ -171,10 +171,10 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
           style={{
             width: '52px',
             padding: '4px 6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '12px',
             textAlign: 'center',
             outline: 'none',
@@ -186,10 +186,10 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
           style={{
             width: '54px',
             padding: '4px 4px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '11px',
             cursor: 'pointer',
             outline: 'none',
@@ -213,10 +213,10 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: autoActive ? '#3b82f6' : '#2d2d3d',
-              border: `1px solid ${autoActive ? '#3b82f6' : '#3d3d4d'}`,
+              backgroundColor: autoActive ? '#3b82f6' : 'var(--admin-border)',
+              border: `1px solid ${autoActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
               borderRadius: '4px',
-              color: autoActive ? '#fff' : '#b0b7c3',
+              color: autoActive ? '#fff' : 'var(--admin-text-icon)',
               fontSize: '11px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -243,10 +243,10 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
                 onClick={() => setNumeric(val)}
                 style={{
                   padding: '4px 2px',
-                  backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
-                  border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
+                  backgroundColor: isActive ? '#3b82f6' : 'var(--admin-border)',
+                  border: `1px solid ${isActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                   borderRadius: '3px',
-                  color: isActive ? '#fff' : '#b0b7c3',
+                  color: isActive ? '#fff' : 'var(--admin-text-icon)',
                   fontSize: '11px',
                   cursor: 'pointer',
                   fontWeight: isActive ? 600 : 400,
@@ -285,15 +285,15 @@ const ClickableSizeValue: React.FC<{
         cursor: 'pointer',
         padding: '6px 8px',
         borderRadius: '4px',
-        backgroundColor: active ? '#3b82f620' : '#2d2d3d',
-        border: `1px solid ${active ? '#3b82f6' : '#3d3d4d'}`,
+        backgroundColor: active ? '#3b82f620' : 'var(--admin-border)',
+        border: `1px solid ${active ? '#3b82f6' : 'var(--admin-border-strong)'}`,
         transition: 'all 0.15s',
         userSelect: 'none',
       }}
     >
       <span style={{
         fontSize: '9px',
-        color: '#b0b7c3',
+        color: 'var(--admin-text-icon)',
         textTransform: 'uppercase',
         letterSpacing: '0.04em',
         fontWeight: 500,
@@ -303,7 +303,7 @@ const ClickableSizeValue: React.FC<{
       <span style={{
         fontSize: '12px',
         fontWeight: active ? 700 : 500,
-        color: active ? '#3b82f6' : hasValue ? '#d1d5db' : '#9ca3af',
+        color: active ? '#3b82f6' : hasValue ? 'var(--admin-text)' : 'var(--admin-text-secondary)',
       }}>
         {display}
       </span>
@@ -315,7 +315,7 @@ const ClickableSizeValue: React.FC<{
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -402,10 +402,10 @@ export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange, proM
                     onClick={() => onChange('aspectRatio', preset.value || undefined)}
                     style={{
                       padding: '3px 6px',
-                      backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
-                      border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
+                      backgroundColor: isActive ? '#3b82f6' : 'var(--admin-border)',
+                      border: `1px solid ${isActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                       borderRadius: '3px',
-                      color: isActive ? '#fff' : '#b0b7c3',
+                      color: isActive ? '#fff' : 'var(--admin-text-icon)',
                       fontSize: '10px',
                       cursor: 'pointer',
                       fontWeight: 500,

@@ -112,8 +112,8 @@ const SliderRow: React.FC<{
 }> = ({ label, icon, value, min, max, step, defaultValue, unit, unitOptions, currentUnit, onUnitChange, onChange }) => (
   <div style={{ marginBottom: '8px' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-      {icon && <span style={{ color: '#b0b7c3', display: 'flex' }}>{icon}</span>}
-      <span style={{ fontSize: '10px', color: '#b0b7c3', flex: 1, fontWeight: 500 }}>{label}</span>
+      {icon && <span style={{ color: 'var(--admin-text-icon)', display: 'flex' }}>{icon}</span>}
+      <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', flex: 1, fontWeight: 500 }}>{label}</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
         <input
           type="number"
@@ -125,10 +125,10 @@ const SliderRow: React.FC<{
           style={{
             width: '52px',
             padding: '3px 4px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '3px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '11px',
             textAlign: 'right',
           }}
@@ -139,10 +139,10 @@ const SliderRow: React.FC<{
             onChange={(e) => onUnitChange(e.target.value)}
             style={{
               padding: '3px 2px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '3px',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               fontSize: '10px',
               cursor: 'pointer',
             }}
@@ -150,7 +150,7 @@ const SliderRow: React.FC<{
             {unitOptions.map(u => <option key={u} value={u}>{u}</option>)}
           </select>
         ) : unit ? (
-          <span style={{ fontSize: '10px', color: '#b0b7c3' }}>{unit}</span>
+          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>{unit}</span>
         ) : null}
         {value !== defaultValue && (
           <button
@@ -160,7 +160,7 @@ const SliderRow: React.FC<{
               padding: '2px 4px',
               backgroundColor: 'transparent',
               border: 'none',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               fontSize: '9px',
               cursor: 'pointer',
             }}
@@ -200,7 +200,7 @@ const OriginGrid: React.FC<{
   onChange: (v: string | undefined) => void;
 }> = ({ value, onChange }) => (
   <div style={{ marginBottom: '8px' }}>
-    <span style={{ fontSize: '10px', color: '#b0b7c3', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
       Transform Origin
     </span>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px', width: '84px' }}>
@@ -217,8 +217,8 @@ const OriginGrid: React.FC<{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: isActive ? '#3b82f6' : '#2d2d3d',
-              border: `1px solid ${isActive ? '#3b82f6' : '#3d3d4d'}`,
+              backgroundColor: isActive ? '#3b82f6' : 'var(--admin-border)',
+              border: `1px solid ${isActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
               borderRadius: '3px',
               cursor: 'pointer',
               padding: 0,
@@ -228,7 +228,7 @@ const OriginGrid: React.FC<{
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: isActive ? '#fff' : '#b0b7c3',
+              backgroundColor: isActive ? '#fff' : 'var(--admin-text-icon)',
             }} />
           </button>
         );

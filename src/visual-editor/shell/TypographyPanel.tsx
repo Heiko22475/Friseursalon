@@ -21,7 +21,7 @@ export const TypographyPanel: React.FC = () => {
           display: 'flex',
           gap: '2px',
           padding: '8px 8px 0',
-          borderBottom: '1px solid #2d2d3d',
+          borderBottom: '1px solid var(--admin-border)',
         }}
       >
         {([
@@ -42,7 +42,7 @@ export const TypographyPanel: React.FC = () => {
                 border: 'none',
                 borderBottom: isActive ? '2px solid #60a5fa' : '2px solid transparent',
                 backgroundColor: isActive ? '#2563eb15' : 'transparent',
-                color: isActive ? '#60a5fa' : '#6b7280',
+                color: isActive ? '#60a5fa' : 'var(--admin-text-muted)',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
               }}

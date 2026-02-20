@@ -82,6 +82,21 @@ Highly configurable card component supporting:
 - **Edit Mode Toggle**: Floating button (bottom-right) for admins
 - **Block-Level Editing**: Update specific fields within blocks
 
+### 6. Admin UI Theming (Light/Dark)
+- **AdminThemeContext** (`src/contexts/AdminThemeContext.tsx`): Central theme state
+- **CSS Variables** (`src/styles/admin-theme.css`): Full custom property system
+  - `.admin-theme-dark` / `.admin-theme-light` classes on wrapper div
+  - Variables: `--admin-bg`, `--admin-bg-surface`, `--admin-bg-sidebar`, `--admin-bg-card`, `--admin-bg-input`, `--admin-border`, `--admin-border-strong`, `--admin-text`, `--admin-text-heading`, `--admin-text-icon`, `--admin-text-secondary`, `--admin-text-muted`, `--admin-accent`, etc.
+- **AdminLayout** wraps ALL admin routes (including Visual Editor) with `AdminThemeProvider` + theme class
+- **Theme Toggle**: Button in `AdminHeader` via `useAdminTheme().toggleTheme`
+- **VE Editor**: All shell/panel colors use `var(--admin-*)` CSS variables — canvas content colors (renderers) are independent
+
+### 7. Media Dialog System (Visual Editor)
+- **VEMediaDialogContext** (`src/visual-editor/state/VEMediaDialogContext.tsx`): Centralized dialog state
+- **VEMediaDialog** (`src/visual-editor/components/VEMediaDialog.tsx`): Full-width panel next to icon bar
+- **3 Entry Points**: Canvas image placeholder click, Properties panel image picker, Navigator Assets tab
+- Uses `MediaLibrary` component in select mode with theme-aware styling
+
 ---
 
 ## Database Schema
@@ -228,9 +243,11 @@ When blocks support inline editing:
 - Icon styling (size, color, background, alignment)
 - Font system with viewport-specific sizes
 - Stock photo management
+- Typography Token System (font + typography tokens with hierarchical resolution)
+- Unified Admin Light/Dark Theming (all admin pages + VE editor)
+- Media Dialog in Visual Editor (centralized portal-based picker)
 
 ### 🚧 Planned Features
-- Media picker as popup (createPortal)
 - FAQ system (admin + superadmin)
 - Contact form with spam protection
 - Google Analytics integration
@@ -344,6 +361,7 @@ npm run format
 
 ## Notes for AI Assistants
 
+- **Always ask clarifying questions** when requirements are ambiguous or when multiple valid approaches exist. Do not assume — ask the user before making significant design decisions.
 - **Always read existing types** before creating new interfaces
 - **Check for existing utilities** before writing helper functions
 - **Maintain consistency** with established patterns (ColorValue, ResponsiveValue, etc.)
@@ -359,6 +377,12 @@ npm run format
 - **Divider/Spacer**: Content-specific settings (height, thickness, style) go in `content`; spacing/position via `styles`.
 - **ProMode gating**: Advanced properties (Grid, Position, Transform, Flex/Grid-Child, Min/Max, Aspect Ratio, Gradient, Shadow Builder, Overflow, Cursor) must be wrapped in `proMode` conditionals.
 - **New elements checklist**: 1) Type in `elements.ts`, 2) Factory in `elementHelpers.ts`, 3) Renderer in `renderer/`, 4) Switch case in `ElementRenderer.tsx`, 5) Icon in `ElementsTree.tsx`, 6) Entry in `AddElementPanel.tsx`, 7) Content editor in `ContentSection.tsx`, 8) Color in `TYPE_COLORS` in `PropertiesPanel.tsx`.
+
+### VE Theming Rules
+- **NEVER hardcode hex colors** for VE shell/panel/chrome UI. Always use `var(--admin-*)` CSS variables from `admin-theme.css`.
+- **Common variable mapping**: `var(--admin-bg)` for main bg, `var(--admin-bg-sidebar)` for icon bar, `var(--admin-bg-card)` for panels, `var(--admin-bg-input)` for input backgrounds, `var(--admin-border)` for borders, `var(--admin-border-strong)` for strong borders, `var(--admin-text)` for primary text, `var(--admin-text-icon)` for icon/secondary text, `var(--admin-text-muted)` for muted text.
+- **Canvas renderer colors** (placeholder borders, empty-state text on the actual website preview) are independent of admin theme and MAY use hardcoded hex values.
+- **Functional accent colors** (selection blue `#3b82f6`, hover blue `#60a5fa`, error red, success green) may remain hardcoded as they are interaction indicators, not theme colors.
 
 ---
 

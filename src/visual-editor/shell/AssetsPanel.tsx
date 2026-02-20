@@ -110,7 +110,7 @@ export const AssetsPanel: React.FC = () => {
               borderRadius: '4px',
               border: 'none',
               backgroundColor: activeTab === tab ? '#2563eb33' : 'transparent',
-              color: activeTab === tab ? '#60a5fa' : '#b0b7c3',
+              color: activeTab === tab ? '#60a5fa' : 'var(--admin-text-icon)',
               fontSize: '11px',
               fontWeight: activeTab === tab ? 600 : 400,
               cursor: 'pointer',
@@ -134,12 +134,12 @@ export const AssetsPanel: React.FC = () => {
             alignItems: 'center',
             gap: '6px',
             padding: '5px 8px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
           }}
         >
-          <Search size={12} style={{ color: '#b0b7c3', flexShrink: 0 }} />
+          <Search size={12} style={{ color: 'var(--admin-text-icon)', flexShrink: 0 }} />
           <input
             type="text"
             value={search}
@@ -149,7 +149,7 @@ export const AssetsPanel: React.FC = () => {
               flex: 1,
               backgroundColor: 'transparent',
               border: 'none',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '12px',
               outline: 'none',
             }}
@@ -167,11 +167,11 @@ export const AssetsPanel: React.FC = () => {
         className="ve-canvas-scroll"
       >
         {loading ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
+          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--admin-text-icon)', fontSize: '12px' }}>
             Laden...
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#b0b7c3', fontSize: '12px' }}>
+          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--admin-text-icon)', fontSize: '12px' }}>
             {search ? 'Keine Ergebnisse.' : activeTab === 'user' ? 'Keine Medien vorhanden.' : 'Keine Stock Fotos.'}
           </div>
         ) : (
@@ -193,8 +193,8 @@ export const AssetsPanel: React.FC = () => {
                   overflow: 'hidden',
                   cursor: 'grab',
                   position: 'relative',
-                  border: '1px solid #3d3d4d',
-                  backgroundColor: '#2d2d3d',
+                  border: '1px solid var(--admin-border-strong)',
+                  backgroundColor: 'var(--admin-bg-input)',
                 }}
                 title={item.url.split('/').pop()}
               >
@@ -218,7 +218,7 @@ export const AssetsPanel: React.FC = () => {
                       left: '2px',
                       fontSize: '8px',
                       backgroundColor: 'rgba(0,0,0,0.7)',
-                      color: '#d1d5db',
+                      color: 'var(--admin-text)',
                       padding: '1px 4px',
                       borderRadius: '2px',
                       maxWidth: 'calc(100% - 4px)',
@@ -240,7 +240,7 @@ export const AssetsPanel: React.FC = () => {
       <div
         style={{
           padding: '8px',
-          borderTop: '1px solid #2d2d3d',
+          borderTop: '1px solid var(--admin-border)',
           display: 'flex',
           justifyContent: 'center',
         }}
@@ -254,7 +254,7 @@ export const AssetsPanel: React.FC = () => {
             alignItems: 'center',
             gap: '4px',
             fontSize: '11px',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             textDecoration: 'none',
           }}
         >

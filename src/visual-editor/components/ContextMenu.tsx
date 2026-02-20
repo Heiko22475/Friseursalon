@@ -1,14 +1,14 @@
 // =====================================================
-// VISUAL EDITOR – CONTEXT MENU
-// Rechtsklick-Menü auf Canvas-Elemente
+// VISUAL EDITOR â€“ CONTEXT MENU
+// Rechtsklick-MenÃ¼ auf Canvas-Elemente
 //
 // Aktionen:
-//   • Auswählen / Eltern auswählen
-//   • Kopieren / Einfügen / Duplizieren
-//   • Verschieben (hoch / runter)
-//   • In Container einwickeln
-//   • Element löschen
-//   • Styles zurücksetzen
+//   â€¢ AuswÃ¤hlen / Eltern auswÃ¤hlen
+//   â€¢ Kopieren / EinfÃ¼gen / Duplizieren
+//   â€¢ Verschieben (hoch / runter)
+//   â€¢ In Container einwickeln
+//   â€¢ Element lÃ¶schen
+//   â€¢ Styles zurÃ¼cksetzen
 // =====================================================
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -29,6 +29,7 @@ import {
   CopyCheck,
 } from 'lucide-react';
 import type { VEElement } from '../types/elements';
+import { useAdminTheme } from '../../contexts/AdminThemeContext';
 
 // ===== TYPES =====
 
@@ -48,11 +49,11 @@ export interface ContextMenuData {
   canWrap: boolean;
   /** clipboard hat Inhalt */
   hasClipboard: boolean;
-  /** Kann in dieses Element eingefügt werden (Container) */
+  /** Kann in dieses Element eingefÃ¼gt werden (Container) */
   canPasteInto: boolean;
   /** This element is inside a card that is a direct child of a Cards element */
   isCardInCards: boolean;
-  /** The ID of the card container (direct child of Cards) – set when isCardInCards is true */
+  /** The ID of the card container (direct child of Cards) â€“ set when isCardInCards is true */
   cardContainerId?: string;
 }
 
@@ -104,7 +105,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
         border: 'none',
         borderRadius: '4px',
         cursor: disabled ? 'default' : 'pointer',
-        color: disabled ? '#9ca3af' : danger ? '#ef4444' : '#d1d5db',
+        color: disabled ? 'var(--admin-text-secondary)' : danger ? '#ef4444' : 'var(--admin-text)',
         fontSize: '12px',
         fontFamily: 'inherit',
         textAlign: 'left',
@@ -112,7 +113,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
         transition: 'background-color 0.1s',
       }}
       onMouseEnter={(e) => {
-        if (!disabled) (e.currentTarget.style.backgroundColor = '#2d2d3d');
+        if (!disabled) (e.currentTarget.style.backgroundColor = 'var(--admin-border)');
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.backgroundColor = 'transparent';
@@ -124,7 +125,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
         width: '16px',
         justifyContent: 'center',
         flexShrink: 0,
-        color: disabled ? '#9ca3af' : danger ? '#ef4444' : '#b0b7c3',
+        color: disabled ? 'var(--admin-text-secondary)' : danger ? '#ef4444' : 'var(--admin-text-icon)',
       }}>
         {icon}
       </span>
@@ -132,7 +133,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
       {shortcut && (
         <span style={{
           fontSize: '10px',
-          color: '#9ca3af',
+          color: 'var(--admin-text-secondary)',
           fontFamily: 'monospace',
           letterSpacing: '0.02em',
         }}>
@@ -146,7 +147,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
 const Divider: React.FC = () => (
   <div style={{
     height: '1px',
-    backgroundColor: '#2d2d3d',
+    backgroundColor: 'var(--admin-bg-input)',
     margin: '4px 8px',
   }} />
 );
@@ -162,6 +163,7 @@ interface ContextMenuProps {
 export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClose }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [adjustedPos, setAdjustedPos] = useState(data.position);
+  const { theme } = useAdminTheme();
 
   const fire = useCallback((type: ContextMenuAction['type']) => {
     onAction({ type, elementId: data.element.id });
@@ -216,6 +218,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
   const isBody = data.element.type === 'Body';
 
   return createPortal(
+    <div className={`admin-theme-${theme}`} style={{ display: 'contents' }}>
     <div
       ref={menuRef}
       style={{
@@ -224,8 +227,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         left: adjustedPos.x,
         zIndex: 10000,
         minWidth: '220px',
-        backgroundColor: '#1a1a2a',
-        border: '1px solid #3d3d4d',
+        backgroundColor: 'var(--admin-bg-surface)',
+        border: '1px solid var(--admin-border-strong)',
         borderRadius: '8px',
         padding: '4px',
         boxShadow: '0 12px 40px rgba(0,0,0,0.45), 0 4px 12px rgba(0,0,0,0.25)',
@@ -240,11 +243,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        color: '#9ca3af',
-        borderBottom: '1px solid #2d2d3d',
+        color: 'var(--admin-text-secondary)',
+        borderBottom: '1px solid var(--admin-border)',
         marginBottom: '4px',
       }}>
-        {data.element.type}{data.element.label ? ` – ${data.element.label}` : ''}
+        {data.element.type}{data.element.label ? ` â€“ ${data.element.label}` : ''}
       </div>
 
       {/* Select Parent */}
@@ -271,7 +274,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         onClick={() => fire('copy')}
       />
       <MenuItem
-        label="Einfügen"
+        label="EinfÃ¼gen"
         icon={<Clipboard size={14} />}
         shortcut="Ctrl+V"
         disabled={!data.hasClipboard || (!isContainer && !data.canPasteInto)}
@@ -318,7 +321,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
       />
       {isContainer && data.element.type !== 'Body' && (
         <MenuItem
-          label="Container auflösen"
+          label="Container auflÃ¶sen"
           icon={<ExternalLink size={14} />}
           onClick={() => fire('unwrap')}
         />
@@ -328,7 +331,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
 
       {/* Styles Reset */}
       <MenuItem
-        label="Styles zurücksetzen"
+        label="Styles zurÃ¼cksetzen"
         icon={<RotateCcw size={14} />}
         onClick={() => fire('reset-styles')}
       />
@@ -360,13 +363,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
 
       {/* Delete */}
       <MenuItem
-        label="Löschen"
+        label="LÃ¶schen"
         icon={<Trash2 size={14} />}
         shortcut="Del"
         danger
         disabled={!data.canDelete}
         onClick={() => fire('delete')}
       />
+    </div>
     </div>,
     document.body
   );

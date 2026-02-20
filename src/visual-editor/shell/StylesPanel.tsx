@@ -97,7 +97,7 @@ export const StylesPanel: React.FC = () => {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px' }}>
       {/* Header + Add */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px 8px' }}>
-        <span style={{ fontSize: '11px', fontWeight: 600, color: '#b0b7c3', flex: 1 }}>
+        <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--admin-text-icon)', flex: 1 }}>
           Klassen ({classNames.length})
         </span>
         <button
@@ -121,7 +121,7 @@ export const StylesPanel: React.FC = () => {
       {classNames.length > 5 && (
         <div style={{ padding: '0 12px 8px' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={12} style={{ position: 'absolute', left: '8px', top: '6px', color: '#6b7280' }} />
+            <Search size={12} style={{ position: 'absolute', left: '8px', top: '6px', color: 'var(--admin-text-muted)' }} />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -130,9 +130,9 @@ export const StylesPanel: React.FC = () => {
                 width: '100%',
                 padding: '4px 8px 4px 26px',
                 borderRadius: '4px',
-                border: '1px solid #2d2d3d',
-                backgroundColor: '#16161e',
-                color: '#d1d5db',
+                border: '1px solid var(--admin-border)',
+                backgroundColor: 'var(--admin-bg-sidebar)',
+                color: 'var(--admin-text)',
                 fontSize: '12px',
                 outline: 'none',
               }}
@@ -159,8 +159,8 @@ export const StylesPanel: React.FC = () => {
               padding: '5px 8px',
               borderRadius: '4px',
               border: '1px solid #3b82f6',
-              backgroundColor: '#16161e',
-              color: '#d1d5db',
+              backgroundColor: 'var(--admin-bg-sidebar)',
+              color: 'var(--admin-text)',
               fontSize: '12px',
               fontFamily: 'monospace',
               outline: 'none',
@@ -172,7 +172,7 @@ export const StylesPanel: React.FC = () => {
       {/* Class List */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px' }}>
         {filtered.length === 0 && !creating && (
-          <div style={{ padding: '20px 12px', textAlign: 'center', color: '#6b7280', fontSize: '12px' }}>
+          <div style={{ padding: '20px 12px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '12px' }}>
             {classNames.length === 0
               ? 'Keine Klassen definiert.\nKlicke + um eine zu erstellen.'
               : 'Keine Treffer.'}
@@ -203,8 +203,8 @@ export const StylesPanel: React.FC = () => {
                       padding: '4px 8px',
                       borderRadius: '4px',
                       border: '1px solid #f59e0b',
-                      backgroundColor: '#16161e',
-                      color: '#d1d5db',
+                      backgroundColor: 'var(--admin-bg-sidebar)',
+                      color: 'var(--admin-text)',
                       fontSize: '12px',
                       fontFamily: 'monospace',
                       outline: 'none',
@@ -228,7 +228,7 @@ export const StylesPanel: React.FC = () => {
                     border: 'none',
                     borderLeft: isActive ? '2px solid #7c5cfc' : '2px solid transparent',
                     cursor: 'pointer',
-                    color: isActive ? '#a78bfa' : '#d1d5db',
+                    color: isActive ? '#a78bfa' : 'var(--admin-text)',
                     fontSize: '12px',
                     fontFamily: 'monospace',
                     textAlign: 'left',
@@ -245,7 +245,7 @@ export const StylesPanel: React.FC = () => {
                   <span style={{ color: '#888' }}>.</span>
                   <span style={{ flex: 1 }}>{cn}</span>
                   {hasExtends && (
-                    <span style={{ fontSize: '9px', color: '#6b7280', fontFamily: 'sans-serif' }}>
+                    <span style={{ fontSize: '9px', color: 'var(--admin-text-muted)', fontFamily: 'sans-serif' }}>
                       ← {def._extends}
                     </span>
                   )}
@@ -256,7 +256,7 @@ export const StylesPanel: React.FC = () => {
                   )}
                   <span style={{
                     fontSize: '10px',
-                    color: usage > 0 ? '#4ade80' : '#6b7280',
+                    color: usage > 0 ? '#4ade80' : 'var(--admin-text-muted)',
                     fontFamily: 'sans-serif',
                     minWidth: '16px',
                     textAlign: 'right',
@@ -272,7 +272,7 @@ export const StylesPanel: React.FC = () => {
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
-                      color: '#6b7280',
+                      color: 'var(--admin-text-muted)',
                       padding: '0',
                       display: 'flex',
                     }}
@@ -293,7 +293,7 @@ export const StylesPanel: React.FC = () => {
             position: 'fixed',
             left: contextMenu.x,
             top: contextMenu.y,
-            backgroundColor: '#1e1e2e',
+            backgroundColor: 'var(--admin-bg-card)',
             border: '1px solid #3d3d5d',
             borderRadius: '6px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
@@ -308,7 +308,7 @@ export const StylesPanel: React.FC = () => {
               setContextMenu(null);
             }}
             style={contextMenuItemStyle}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <Pencil size={12} /> Bearbeiten
@@ -320,7 +320,7 @@ export const StylesPanel: React.FC = () => {
               setContextMenu(null);
             }}
             style={contextMenuItemStyle}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <Pencil size={12} /> Umbenennen
@@ -328,16 +328,16 @@ export const StylesPanel: React.FC = () => {
           <button
             onClick={() => handleDuplicate(contextMenu.name)}
             style={contextMenuItemStyle}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <Copy size={12} /> Duplizieren
           </button>
-          <div style={{ height: '1px', backgroundColor: '#2d2d3d', margin: '2px 0' }} />
+          <div style={{ height: '1px', backgroundColor: 'var(--admin-bg-input)', margin: '2px 0' }} />
           <button
             onClick={() => handleDelete(contextMenu.name)}
             style={{ ...contextMenuItemStyle, color: '#f87171' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2d2d3d')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <Trash2 size={12} /> Löschen
@@ -357,7 +357,7 @@ const contextMenuItemStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
-  color: '#d1d5db',
+  color: 'var(--admin-text)',
   fontSize: '12px',
   textAlign: 'left',
 };

@@ -1,5 +1,5 @@
 // =====================================================
-// VISUAL EDITOR – NAVIGATOR
+// VISUAL EDITOR Ã¢â‚¬â€œ NAVIGATOR
 // Linke Seite: Icon-Bar (48px) + Flyout Panel (~240px)
 // =====================================================
 
@@ -9,17 +9,17 @@ import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
 import { PagesPanel } from './PagesPanel';
-import { AssetsPanel } from './AssetsPanel';
 import { StylesPanel } from './StylesPanel';
 import { TypographyPanel } from './TypographyPanel';
 import { TemplateGallery, createExampleTemplates } from '../components/TemplateGallery';
 import { findElementById, findParent, isContainer } from '../utils/elementHelpers';
 import type { VEElement } from '../types/elements';
+import { useMediaDialog } from '../state/VEMediaDialogContext';
 
 type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' | 'typography';
 
 const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = [
-  { key: 'elements', icon: <Plus size={20} />, label: 'Hinzufügen' },
+  { key: 'elements', icon: <Plus size={20} />, label: 'HinzufÃƒÂ¼gen' },
   { key: 'tree', icon: <Layers size={20} />, label: 'Navigator' },
   { key: 'pages', icon: <FileText size={20} />, label: 'Seiten' },
   { key: 'templates', icon: <LayoutTemplate size={20} />, label: 'Templates' },
@@ -35,6 +35,7 @@ interface NavigatorProps {
 export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   const { state, dispatch } = useEditor();
   const prevSelectedId = useRef(state.selectedId);
+  const { openMediaDialog } = useMediaDialog();
 
   // Auto-close typography panel when user selects an element in the canvas
   useEffect(() => {
@@ -50,14 +51,14 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   }, [state.selectedId]);
 
   const insertElement = (newEl: VEElement) => {
-    // Bestimme den Einfüge-Ort
+    // Bestimme den EinfÃƒÂ¼ge-Ort
     let parentId = state.page.body.id;
     let insertIndex: number | undefined;
 
     if (state.selectedId) {
       const selected = findElementById(state.page.body, state.selectedId);
       if (selected) {
-        // Section, Navbar, Header, Footer → nur in Body
+        // Section, Navbar, Header, Footer Ã¢â€ â€™ nur in Body
         if (newEl.type === 'Section' || newEl.type === 'Navbar' || newEl.type === 'Header' || newEl.type === 'Footer' || newEl.type === 'WebsiteBlock') {
           parentId = state.page.body.id;
           // Insert above the currently selected top-level element
@@ -72,7 +73,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
             insertIndex = topLevelIdx;
           }
         }
-        // Wenn ausgewähltes Element ein Container ist → da rein
+        // Wenn ausgewÃƒÂ¤hltes Element ein Container ist Ã¢â€ â€™ da rein
         else if (isContainer(selected.type) && selected.type !== 'Body') {
           parentId = selected.id;
         }
@@ -85,6 +86,23 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
     }
 
     dispatch({ type: 'INSERT_ELEMENT', parentId, element: newEl, index: insertIndex });
+  };
+
+  /** Ãƒâ€“ffnet den Mediathek-Dialog. Wenn ein VEImage selektiert ist, wird dessen src aktualisiert. */
+  const handleAssetsClick = () => {
+    const selectedEl = state.selectedId ? findElementById(state.page.body, state.selectedId) : null;
+
+    openMediaDialog((url) => {
+      if (selectedEl?.type === 'Image') {
+        dispatch({
+          type: 'UPDATE_CONTENT',
+          id: selectedEl.id,
+          updates: { content: { ...(selectedEl as any).content, src: url } },
+        });
+      }
+      // Wenn kein Image selektiert ist, wird die URL ignoriert
+      // (der Dialog wurde zum Browsen geÃƒÂ¶ffnet)
+    });
   };
 
   const renderPanel = () => {
@@ -102,8 +120,6 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
             onSelect={(template) => insertElement(template.element)}
           />
         );
-      case 'assets':
-        return <AssetsPanel />;
       case 'styles':
         return <StylesPanel />;
       case 'typography':
@@ -120,8 +136,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         className="ve-navigator-iconbar"
         style={{
           width: '48px',
-          backgroundColor: '#16161e',
-          borderRight: '1px solid #2d2d3d',
+          backgroundColor: 'var(--admin-bg-sidebar)',
+          borderRight: '1px solid var(--admin-border)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -136,6 +152,11 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
             <button
               key={item.key}
               onClick={() => {
+                // Assets-Tab ÃƒÂ¶ffnet den zentralen Mediathek-Dialog statt eines Flyouts
+                if (item.key === 'assets') {
+                  handleAssetsClick();
+                  return;
+                }
                 if (state.navigatorTab === item.key && state.navigatorOpen) {
                   dispatch({ type: 'TOGGLE_NAVIGATOR' });
                 } else {
@@ -153,7 +174,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: isActive ? '#2563eb33' : 'transparent',
-                color: isActive ? '#60a5fa' : '#b0b7c3',
+                color: isActive ? 'var(--admin-accent-light)' : 'var(--admin-text-icon)',
                 transition: 'all 0.15s',
               }}
             >
@@ -169,8 +190,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
           className="ve-navigator-flyout"
           style={{
             width: state.navigatorTab === 'typography' ? '360px' : '240px',
-            backgroundColor: '#1e1e2e',
-            borderRight: '1px solid #2d2d3d',
+            backgroundColor: 'var(--admin-bg-card)',
+            borderRight: '1px solid var(--admin-border)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -186,8 +207,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#b0b7c3',
-              borderBottom: '1px solid #2d2d3d',
+              color: 'var(--admin-text-icon)',
+              borderBottom: '1px solid var(--admin-border)',
             }}
           >
             {navItems.find(n => n.key === state.navigatorTab)?.label}

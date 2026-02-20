@@ -30,7 +30,7 @@ const POSITION_OPTIONS: { value: PositionType; label: string; icon: string; desc
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: '#b0b7c3' }}>{label}</label>
+    <label style={{ width: '60px', flexShrink: 0, fontSize: '11px', color: 'var(--admin-text-icon)' }}>{label}</label>
     <div style={{ flex: 1 }}>{children}</div>
   </div>
 );
@@ -44,7 +44,7 @@ const InsetVisual: React.FC<{
 }> = ({ styles, onChange, posType }) => {
   // For sticky, typically only top is used. Show all but highlight the common ones.
   const activeColor = '#3b82f6';
-  const inactiveColor = '#3d3d4d';
+  const inactiveColor = 'var(--admin-border-strong)';
 
   const hasTop = styles.top !== undefined;
   const hasRight = styles.right !== undefined;
@@ -60,9 +60,9 @@ const InsetVisual: React.FC<{
           position: 'relative',
           width: '100%',
           height: '120px',
-          backgroundColor: '#13131b',
+          backgroundColor: 'var(--admin-bg)',
           borderRadius: '8px',
-          border: '1px solid #2d2d3d',
+          border: '1px solid var(--admin-border)',
           marginBottom: '10px',
           display: 'flex',
           alignItems: 'center',
@@ -131,7 +131,7 @@ const InsetVisual: React.FC<{
           style={{
             width: '48px',
             height: '48px',
-            backgroundColor: '#2d2d3d',
+            backgroundColor: 'var(--admin-bg-input)',
             border: `2px solid ${activeColor}40`,
             borderRadius: '6px',
             display: 'flex',
@@ -139,7 +139,7 @@ const InsetVisual: React.FC<{
             justifyContent: 'center',
           }}
         >
-          <span style={{ fontSize: '9px', color: '#b0b7c3', fontWeight: 600, textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '9px', color: 'var(--admin-text-icon)', fontWeight: 600, textTransform: 'uppercase' }}>
             {posType.slice(0, 3)}
           </span>
         </div>
@@ -149,7 +149,7 @@ const InsetVisual: React.FC<{
           style={{
             position: 'absolute',
             inset: '12px',
-            border: '1px dashed #3d3d4d',
+            border: '1px dashed var(--admin-border-strong)',
             borderRadius: '4px',
             pointerEvents: 'none',
           }}
@@ -229,10 +229,10 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
           gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '2px',
           marginBottom: '10px',
-          backgroundColor: '#13131b',
+          backgroundColor: 'var(--admin-bg)',
           padding: '3px',
           borderRadius: '6px',
-          border: '1px solid #2d2d3d',
+          border: '1px solid var(--admin-border)',
         }}
       >
         {POSITION_OPTIONS.map((opt) => {
@@ -272,7 +272,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
                 style={{
                   fontSize: '9px',
                   fontWeight: isActive ? 600 : 400,
-                  color: isActive ? '#ffffff' : '#b0b7c3',
+                  color: isActive ? '#ffffff' : 'var(--admin-text-icon)',
                   lineHeight: 1,
                 }}
               >
@@ -290,11 +290,11 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
             padding: '6px 8px',
             backgroundColor: '#1a1a2e',
             borderRadius: '4px',
-            border: '1px solid #2d2d3d',
+            border: '1px solid var(--admin-border)',
             marginBottom: '10px',
           }}
         >
-          <span style={{ fontSize: '10px', color: '#b0b7c3', lineHeight: 1.4 }}>
+          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', lineHeight: 1.4 }}>
             {POSITION_OPTIONS.find((o) => o.value === currentPosition)?.description}
           </span>
         </div>
@@ -319,10 +319,10 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
               style={{
                 width: '100%',
                 padding: '4px 8px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-input)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '4px',
-                color: '#d1d5db',
+                color: 'var(--admin-text)',
                 fontSize: '12px',
               }}
             />
@@ -330,7 +330,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
 
           {/* Quick inset presets */}
           <div style={{ marginTop: '4px' }}>
-            <label style={{ fontSize: '10px', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>
+            <label style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', display: 'block', marginBottom: '4px' }}>
               Schnell-Presets
             </label>
             <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
@@ -410,10 +410,10 @@ const PresetButton: React.FC<{
     title={title}
     style={{
       padding: '3px 8px',
-      backgroundColor: '#2d2d3d',
-      border: `1px solid ${danger ? '#ef444440' : '#3d3d4d'}`,
+      backgroundColor: 'var(--admin-bg-input)',
+      border: `1px solid ${danger ? '#ef444440' : 'var(--admin-border-strong)'}`,
       borderRadius: '3px',
-      color: danger ? '#f87171' : '#b0b7c3',
+      color: danger ? '#f87171' : 'var(--admin-text-icon)',
       fontSize: '10px',
       cursor: 'pointer',
       fontWeight: 500,

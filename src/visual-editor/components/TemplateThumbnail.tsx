@@ -78,8 +78,8 @@ export const TemplateThumbnail: React.FC<TemplateThumbnailProps> = ({
         position: 'relative',
         cursor: onClick ? 'pointer' : 'default',
         borderRadius: '6px',
-        border: `2px solid ${isSelected ? '#3b82f6' : '#2d2d3d'}`,
-        backgroundColor: '#16161e',
+        border: `2px solid ${isSelected ? '#3b82f6' : 'var(--admin-border)'}`,
+        backgroundColor: 'var(--admin-bg-sidebar)',
         transition: 'all 0.15s',
         display: 'flex',
         flexDirection: 'column',
@@ -87,13 +87,13 @@ export const TemplateThumbnail: React.FC<TemplateThumbnailProps> = ({
       onMouseEnter={(e) => {
         if (onClick) {
           e.currentTarget.style.borderColor = isSelected ? '#3b82f6' : '#4d4d5d';
-          e.currentTarget.style.backgroundColor = '#1e1e2e';
+          e.currentTarget.style.backgroundColor = 'var(--admin-bg-card)';
         }
       }}
       onMouseLeave={(e) => {
         if (onClick) {
-          e.currentTarget.style.borderColor = isSelected ? '#3b82f6' : '#2d2d3d';
-          e.currentTarget.style.backgroundColor = '#16161e';
+          e.currentTarget.style.borderColor = isSelected ? '#3b82f6' : 'var(--admin-border)';
+          e.currentTarget.style.backgroundColor = 'var(--admin-bg-sidebar)';
         }
       }}
       ref={containerRef}

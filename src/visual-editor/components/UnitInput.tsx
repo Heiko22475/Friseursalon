@@ -88,7 +88,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
   if (compact) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <span style={{ fontSize: '10px', color: '#9ca3af', textAlign: 'center' }}>{label}</span>
+        <span style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', textAlign: 'center' }}>{label}</span>
         <div style={{ display: 'flex', position: 'relative' }}>
           <input
             ref={inputRef}
@@ -102,11 +102,11 @@ export const UnitInput: React.FC<UnitInputProps> = ({
             style={{
               width: '48px',
               padding: '5px 4px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-input)',
+              border: '1px solid var(--admin-border-strong)',
               borderRight: 'none',
               borderRadius: '4px 0 0 4px',
-              color: '#d1d5db',
+              color: 'var(--admin-text)',
               fontSize: '11px',
               textAlign: 'center',
               outline: 'none',
@@ -118,9 +118,9 @@ export const UnitInput: React.FC<UnitInputProps> = ({
             style={{
               padding: '5px 4px',
               backgroundColor: '#252535',
-              border: '1px solid #3d3d4d',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '0 4px 4px 0',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               fontSize: '10px',
               cursor: 'pointer',
               minWidth: '26px',
@@ -136,8 +136,8 @@ export const UnitInput: React.FC<UnitInputProps> = ({
                 top: '100%',
                 right: 0,
                 zIndex: 100,
-                backgroundColor: '#1e1e2e',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-card)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '4px',
                 marginTop: '2px',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
@@ -154,7 +154,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
                     padding: '4px 8px',
                     backgroundColor: u === currentUnit ? '#2563eb22' : 'transparent',
                     border: 'none',
-                    color: u === currentUnit ? '#60a5fa' : '#d1d5db',
+                    color: u === currentUnit ? '#60a5fa' : 'var(--admin-text)',
                     fontSize: '11px',
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -173,7 +173,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
   // Standard layout (inline)
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: '#b0b7c3' }}>
+      <label style={{ width: '80px', flexShrink: 0, fontSize: '12px', color: 'var(--admin-text-icon)' }}>
         {label}
       </label>
       <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
@@ -189,11 +189,11 @@ export const UnitInput: React.FC<UnitInputProps> = ({
           style={{
             flex: 1,
             padding: '6px 6px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRight: 'none',
             borderRadius: '4px 0 0 4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '12px',
             outline: 'none',
             MozAppearance: 'textfield',
@@ -204,9 +204,9 @@ export const UnitInput: React.FC<UnitInputProps> = ({
           style={{
             padding: '6px 8px',
             backgroundColor: '#252535',
-            border: '1px solid #3d3d4d',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '0 4px 4px 0',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             fontSize: '11px',
             cursor: 'pointer',
             minWidth: '36px',
@@ -222,8 +222,8 @@ export const UnitInput: React.FC<UnitInputProps> = ({
               top: '100%',
               right: 0,
               zIndex: 100,
-              backgroundColor: '#1e1e2e',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-card)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '4px',
               marginTop: '2px',
               boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
@@ -240,7 +240,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
                   padding: '4px 10px',
                   backgroundColor: u === currentUnit ? '#2563eb22' : 'transparent',
                   border: 'none',
-                  color: u === currentUnit ? '#60a5fa' : '#d1d5db',
+                  color: u === currentUnit ? '#60a5fa' : 'var(--admin-text)',
                   fontSize: '12px',
                   cursor: 'pointer',
                   textAlign: 'left',

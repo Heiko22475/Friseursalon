@@ -128,8 +128,8 @@ const CardTemplatePicker: React.FC<{
     >
       <div
         style={{
-          backgroundColor: '#1e1e2e',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg-card)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '12px',
           padding: '24px',
           width: '560px',
@@ -141,10 +141,10 @@ const CardTemplatePicker: React.FC<{
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#d1d5db' }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--admin-text)' }}>
               Karten-Vorlage wählen
             </h3>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#b0b7c3' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--admin-text-icon)' }}>
               {loading ? 'Lade Vorlagen aus der Datenbank…' : `${templates.length} Vorlage${templates.length !== 1 ? 'n' : ''} verfügbar`}
             </p>
           </div>
@@ -154,7 +154,7 @@ const CardTemplatePicker: React.FC<{
               padding: '6px',
               backgroundColor: 'transparent',
               border: 'none',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               cursor: 'pointer',
               borderRadius: '4px',
               display: 'flex',
@@ -166,7 +166,7 @@ const CardTemplatePicker: React.FC<{
 
         {/* Loading state */}
         {loading && (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#b0b7c3', fontSize: '13px' }}>
+          <div style={{ padding: '32px', textAlign: 'center', color: 'var(--admin-text-icon)', fontSize: '13px' }}>
             Lade Vorlagen…
           </div>
         )}
@@ -182,36 +182,36 @@ const CardTemplatePicker: React.FC<{
                 flexDirection: 'column',
                 gap: '8px',
                 padding: '16px',
-                backgroundColor: '#2d2d3d',
-                border: '1px solid #3d3d4d',
+                backgroundColor: 'var(--admin-bg-input)',
+                border: '1px solid var(--admin-border-strong)',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#3d3d4d';
+                e.currentTarget.style.backgroundColor = 'var(--admin-border-strong)';
                 e.currentTarget.style.borderColor = '#6366f1';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#2d2d3d';
-                e.currentTarget.style.borderColor = '#3d3d4d';
+                e.currentTarget.style.backgroundColor = 'var(--admin-border)';
+                e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
               }}
             >
               {/* Category badge */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ color: '#6366f1' }}>{categoryIcons[tpl.category] || categoryIcons.general}</span>
-                <span style={{ fontSize: '10px', color: '#b0b7c3', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                   {categoryLabels[tpl.category] || tpl.category}
                 </span>
               </div>
               {/* Template name */}
-              <span style={{ fontSize: '14px', fontWeight: 600, color: '#d1d5db' }}>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--admin-text)' }}>
                 {tpl.name}
               </span>
               {/* Description */}
               {tpl.description && (
-                <span style={{ fontSize: '11px', color: '#b0b7c3', lineHeight: 1.4 }}>
+                <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', lineHeight: 1.4 }}>
                   {tpl.description}
                 </span>
               )}
@@ -222,10 +222,10 @@ const CardTemplatePicker: React.FC<{
                     key={i}
                     style={{
                       padding: '1px 6px',
-                      backgroundColor: '#1e1e2e',
+                      backgroundColor: 'var(--admin-bg-card)',
                       borderRadius: '3px',
                       fontSize: '10px',
-                      color: '#b0b7c3',
+                      color: 'var(--admin-text-icon)',
                     }}
                   >
                     {el.label}
@@ -318,7 +318,7 @@ export const AddElementPanel: React.FC = () => {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#b0b7c3',
+              color: 'var(--admin-text-icon)',
               padding: '4px 8px',
               marginBottom: '4px',
             }}
@@ -344,24 +344,24 @@ export const AddElementPanel: React.FC = () => {
                     alignItems: 'center',
                     gap: '4px',
                     padding: '10px 4px',
-                    backgroundColor: '#2d2d3d',
-                    border: '1px solid #3d3d4d',
+                    backgroundColor: 'var(--admin-bg-input)',
+                    border: '1px solid var(--admin-border-strong)',
                     borderRadius: '6px',
-                    color: '#d1d5db',
+                    color: 'var(--admin-text)',
                     cursor: 'pointer',
                     fontSize: '11px',
                     transition: 'all 0.15s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#3d3d4d';
+                    e.currentTarget.style.backgroundColor = 'var(--admin-border-strong)';
                     e.currentTarget.style.borderColor = '#4d4d5d';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#2d2d3d';
-                    e.currentTarget.style.borderColor = '#3d3d4d';
+                    e.currentTarget.style.backgroundColor = 'var(--admin-border)';
+                    e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
                   }}
                 >
-                  <span style={{ color: '#b0b7c3' }}>{el.icon}</span>
+                  <span style={{ color: 'var(--admin-text-icon)' }}>{el.icon}</span>
                   {el.label}
                 </button>
               ))}

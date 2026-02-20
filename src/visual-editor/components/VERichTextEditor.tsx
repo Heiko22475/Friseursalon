@@ -54,12 +54,12 @@ const ToolbarButton: React.FC<{
       border: 'none',
       borderRadius: '3px',
       cursor: disabled ? 'default' : 'pointer',
-      color: active ? '#fff' : disabled ? '#9ca3af' : '#b0b7c3',
+      color: active ? '#fff' : disabled ? 'var(--admin-text-secondary)' : 'var(--admin-text-icon)',
       transition: 'all 0.1s',
       opacity: disabled ? 0.5 : 1,
     }}
     onMouseEnter={(e) => {
-      if (!active && !disabled) e.currentTarget.style.backgroundColor = '#2d2d3d';
+      if (!active && !disabled) e.currentTarget.style.backgroundColor = 'var(--admin-border)';
     }}
     onMouseLeave={(e) => {
       if (!active) e.currentTarget.style.backgroundColor = 'transparent';
@@ -86,13 +86,13 @@ const LinkDialog: React.FC<{
       right: 0,
       zIndex: 200,
       marginTop: '4px',
-      backgroundColor: '#1e1e2e',
-      border: '1px solid #3d3d4d',
+      backgroundColor: 'var(--admin-bg-card)',
+      border: '1px solid var(--admin-border-strong)',
       borderRadius: '6px',
       padding: '8px',
       boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
-      <div style={{ fontSize: '10px', color: '#9ca3af', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Link URL
       </div>
       <div style={{ display: 'flex', gap: '4px' }}>
@@ -109,10 +109,10 @@ const LinkDialog: React.FC<{
           style={{
             flex: 1,
             padding: '5px 8px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#d1d5db',
+            color: 'var(--admin-text)',
             fontSize: '12px',
             outline: 'none',
           }}
@@ -138,10 +138,10 @@ const LinkDialog: React.FC<{
           onClick={onCancel}
           style={{
             padding: '5px 8px',
-            backgroundColor: '#2d2d3d',
-            border: '1px solid #3d3d4d',
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border-strong)',
             borderRadius: '4px',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             fontSize: '11px',
             cursor: 'pointer',
           }}
@@ -235,9 +235,9 @@ export const VERichTextEditor: React.FC<VERichTextEditorProps> = ({ value, onCha
         alignItems: 'center',
         gap: '1px',
         padding: '3px 4px',
-        backgroundColor: '#1a1a2a',
+        backgroundColor: 'var(--admin-bg-surface)',
         borderRadius: '4px 4px 0 0',
-        border: '1px solid #3d3d4d',
+        border: '1px solid var(--admin-border-strong)',
         borderBottom: 'none',
       }}>
         <ToolbarButton
@@ -260,7 +260,7 @@ export const VERichTextEditor: React.FC<VERichTextEditorProps> = ({ value, onCha
         />
 
         {/* Separator */}
-        <div style={{ width: '1px', height: '16px', backgroundColor: '#3d3d4d', margin: '0 4px' }} />
+        <div style={{ width: '1px', height: '16px', backgroundColor: 'var(--admin-border-strong)', margin: '0 4px' }} />
 
         <ToolbarButton
           icon={<LinkIcon size={13} />}
@@ -288,8 +288,8 @@ export const VERichTextEditor: React.FC<VERichTextEditorProps> = ({ value, onCha
 
       {/* Editor Area */}
       <div style={{
-        backgroundColor: '#2d2d3d',
-        border: '1px solid #3d3d4d',
+        backgroundColor: 'var(--admin-bg-input)',
+        border: '1px solid var(--admin-border-strong)',
         borderRadius: '0 0 4px 4px',
       }}>
         <EditorContent editor={editor} />
@@ -302,7 +302,7 @@ export const VERichTextEditor: React.FC<VERichTextEditorProps> = ({ value, onCha
           bottom: '10px',
           left: '10px',
           fontSize: '12px',
-          color: '#9ca3af',
+          color: 'var(--admin-text-secondary)',
           pointerEvents: 'none',
         }}>
           {placeholder}

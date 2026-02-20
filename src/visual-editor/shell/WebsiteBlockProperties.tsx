@@ -19,7 +19,7 @@ const Accordion: React.FC<{
 }> = ({ title, icon, defaultOpen = false, children }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ borderBottom: '1px solid #2d2d3d' }}>
+    <div style={{ borderBottom: '1px solid var(--admin-border)' }}>
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -30,7 +30,7 @@ const Accordion: React.FC<{
           padding: '8px 12px',
           backgroundColor: 'transparent',
           border: 'none',
-          color: '#d1d5db',
+          color: 'var(--admin-text)',
           fontSize: '12px',
           fontWeight: 600,
           cursor: 'pointer',
@@ -53,7 +53,7 @@ const Accordion: React.FC<{
 // ===== FIELD COMPONENTS =====
 
 const FieldLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <label style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
+  <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
     {children}
   </label>
 );
@@ -76,10 +76,10 @@ const TextInput: React.FC<{
         style={{
           width: '100%',
           padding: '6px 8px',
-          backgroundColor: '#13131b',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#e5e7eb',
+          color: 'var(--admin-text-heading)',
           fontSize: '12px',
           resize: 'vertical',
           fontFamily: 'inherit',
@@ -94,10 +94,10 @@ const TextInput: React.FC<{
         style={{
           width: '100%',
           padding: '6px 8px',
-          backgroundColor: '#13131b',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#e5e7eb',
+          color: 'var(--admin-text-heading)',
           fontSize: '12px',
         }}
       />
@@ -127,14 +127,14 @@ const NumberInput: React.FC<{
         style={{
           width: '100%',
           padding: '6px 8px',
-          backgroundColor: '#13131b',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#e5e7eb',
+          color: 'var(--admin-text-heading)',
           fontSize: '12px',
         }}
       />
-      {suffix && <span style={{ fontSize: '11px', color: '#b0b7c3', flexShrink: 0 }}>{suffix}</span>}
+      {suffix && <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', flexShrink: 0 }}>{suffix}</span>}
     </div>
   </div>
 );
@@ -155,7 +155,7 @@ const ColorInput: React.FC<{
           width: '28px',
           height: '28px',
           padding: 0,
-          border: '1px solid #3d3d4d',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
           cursor: 'pointer',
           backgroundColor: 'transparent',
@@ -169,10 +169,10 @@ const ColorInput: React.FC<{
         style={{
           flex: 1,
           padding: '6px 8px',
-          backgroundColor: '#13131b',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#e5e7eb',
+          color: 'var(--admin-text-heading)',
           fontSize: '12px',
         }}
       />
@@ -194,10 +194,10 @@ const SelectInput: React.FC<{
       style={{
         width: '100%',
         padding: '6px 8px',
-        backgroundColor: '#13131b',
-        border: '1px solid #3d3d4d',
+        backgroundColor: 'var(--admin-bg)',
+        border: '1px solid var(--admin-border-strong)',
         borderRadius: '4px',
-        color: '#e5e7eb',
+        color: 'var(--admin-text-heading)',
         fontSize: '12px',
         cursor: 'pointer',
       }}
@@ -287,7 +287,7 @@ const HeroBlockEditor: React.FC<{
             onChange={(e) => updateField('overlay.enabled', e.target.checked)}
             style={{ accentColor: '#3b82f6' }}
           />
-          <span style={{ fontSize: '12px', color: '#d1d5db' }}>Overlay aktiviert</span>
+          <span style={{ fontSize: '12px', color: 'var(--admin-text)' }}>Overlay aktiviert</span>
         </div>
         {config?.overlay?.enabled && (
           <>
@@ -314,13 +314,13 @@ const HeroBlockEditor: React.FC<{
             style={{
               padding: '8px',
               marginBottom: '8px',
-              backgroundColor: '#13131b',
+              backgroundColor: 'var(--admin-bg)',
               borderRadius: '6px',
-              border: '1px solid #2d2d3d',
+              border: '1px solid var(--admin-border)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>Text {idx + 1}</span>
+              <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 600 }}>Text {idx + 1}</span>
               <button
                 onClick={() => {
                   const newTexts = texts.filter((_: any, i: number) => i !== idx);
@@ -386,13 +386,13 @@ const HeroBlockEditor: React.FC<{
             style={{
               padding: '8px',
               marginBottom: '8px',
-              backgroundColor: '#13131b',
+              backgroundColor: 'var(--admin-bg)',
               borderRadius: '6px',
-              border: '1px solid #2d2d3d',
+              border: '1px solid var(--admin-border)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>Button {idx + 1}</span>
+              <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 600 }}>Button {idx + 1}</span>
             </div>
             <TextInput
               label="Text"
@@ -519,13 +519,13 @@ const GenericCardBlockEditor: React.FC<{
             style={{
               padding: '8px',
               marginBottom: '8px',
-              backgroundColor: '#13131b',
+              backgroundColor: 'var(--admin-bg)',
               borderRadius: '6px',
-              border: '1px solid #2d2d3d',
+              border: '1px solid var(--admin-border)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', color: '#b0b7c3', fontWeight: 600 }}>
+              <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 600 }}>
                 Karte {idx + 1}: {card.title || '(kein Titel)'}
               </span>
               <button
@@ -620,10 +620,10 @@ const FallbackBlockEditor: React.FC<{
         style={{
           width: '100%',
           padding: '8px',
-          backgroundColor: '#13131b',
-          border: '1px solid #3d3d4d',
+          backgroundColor: 'var(--admin-bg)',
+          border: '1px solid var(--admin-border-strong)',
           borderRadius: '4px',
-          color: '#e5e7eb',
+          color: 'var(--admin-text-heading)',
           fontSize: '11px',
           fontFamily: 'monospace',
           resize: 'vertical',
@@ -690,7 +690,7 @@ export const WebsiteBlockProperties: React.FC<WebsiteBlockPropertiesProps> = ({ 
       <div
         style={{
           padding: '10px 12px',
-          borderBottom: '1px solid #2d2d3d',
+          borderBottom: '1px solid var(--admin-border)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
@@ -699,7 +699,7 @@ export const WebsiteBlockProperties: React.FC<WebsiteBlockPropertiesProps> = ({ 
         <span style={{ fontSize: '14px' }}>
           {blockTypeLabels[element.blockType]?.split(' ')[0] || '📦'}
         </span>
-        <span style={{ fontSize: '12px', color: '#d1d5db', fontWeight: 600 }}>
+        <span style={{ fontSize: '12px', color: 'var(--admin-text)', fontWeight: 600 }}>
           {blockTypeLabels[element.blockType]?.split(' ').slice(1).join(' ') || element.blockType}
         </span>
       </div>

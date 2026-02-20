@@ -77,8 +77,8 @@ export const TopBar: React.FC = () => {
       className="ve-topbar"
       style={{
         height: '48px',
-        backgroundColor: '#1e1e2e',
-        borderBottom: '1px solid #2d2d3d',
+        backgroundColor: 'var(--admin-bg-card)',
+        borderBottom: '1px solid var(--admin-border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -96,7 +96,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -119,13 +119,13 @@ export const TopBar: React.FC = () => {
         >
           {breadcrumbs.map((el, i) => (
             <React.Fragment key={el.id}>
-              {i > 0 && <span style={{ color: '#9ca3af', margin: '0 2px' }}>/</span>}
+              {i > 0 && <span style={{ color: 'var(--admin-text-secondary)', margin: '0 2px' }}>/</span>}
               <button
                 onClick={() => dispatch({ type: 'SELECT_ELEMENT', id: el.id })}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: i === breadcrumbs.length - 1 ? '#60a5fa' : '#b0b7c3',
+                  color: i === breadcrumbs.length - 1 ? '#60a5fa' : 'var(--admin-text-icon)',
                   cursor: 'pointer',
                   padding: '2px 4px',
                   borderRadius: '3px',
@@ -138,7 +138,7 @@ export const TopBar: React.FC = () => {
             </React.Fragment>
           ))}
           {breadcrumbs.length === 0 && (
-            <span style={{ color: '#b0b7c3' }}>{state.page.name}</span>
+            <span style={{ color: 'var(--admin-text-icon)' }}>{state.page.name}</span>
           )}
         </div>
       </div>
@@ -153,8 +153,8 @@ export const TopBar: React.FC = () => {
             gap: '6px',
             padding: '4px 10px',
             borderRadius: '6px',
-            border: '1px solid #3d3d4d',
-            backgroundColor: pageDropdownOpen ? '#2d2d3d' : 'transparent',
+            border: '1px solid var(--admin-border-strong)',
+            backgroundColor: pageDropdownOpen ? 'var(--admin-border)' : 'transparent',
             color: '#e0e0e0',
             fontSize: '13px',
             cursor: 'pointer',
@@ -163,11 +163,11 @@ export const TopBar: React.FC = () => {
           }}
           title="Seite wechseln"
         >
-          <FileText size={14} style={{ color: '#b0b7c3' }} />
+          <FileText size={14} style={{ color: 'var(--admin-text-icon)' }} />
           <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {state.page.name}
           </span>
-          <ChevronDown size={12} style={{ color: '#b0b7c3' }} />
+          <ChevronDown size={12} style={{ color: 'var(--admin-text-icon)' }} />
         </button>
 
         {pageDropdownOpen && (
@@ -177,8 +177,8 @@ export const TopBar: React.FC = () => {
               top: '100%',
               left: '0',
               marginTop: '4px',
-              backgroundColor: '#1e1e2e',
-              border: '1px solid #3d3d4d',
+              backgroundColor: 'var(--admin-bg-card)',
+              border: '1px solid var(--admin-border-strong)',
               borderRadius: '8px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
               minWidth: '200px',
@@ -215,9 +215,9 @@ export const TopBar: React.FC = () => {
                   }}
                 >
                   {isHome ? (
-                    <Home size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3', flexShrink: 0 }} />
+                    <Home size={14} style={{ color: isActive ? '#60a5fa' : 'var(--admin-text-icon)', flexShrink: 0 }} />
                   ) : (
-                    <FileText size={14} style={{ color: isActive ? '#60a5fa' : '#b0b7c3', flexShrink: 0 }} />
+                    <FileText size={14} style={{ color: isActive ? '#60a5fa' : 'var(--admin-text-icon)', flexShrink: 0 }} />
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
@@ -230,7 +230,7 @@ export const TopBar: React.FC = () => {
                     </div>
                     <div style={{
                       fontSize: '10px',
-                      color: '#b0b7c3',
+                      color: 'var(--admin-text-icon)',
                       fontFamily: 'monospace',
                     }}>
                       {p.route}
@@ -263,7 +263,7 @@ export const TopBar: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '2px',
-          backgroundColor: '#2d2d3d',
+          backgroundColor: 'var(--admin-bg-input)',
           borderRadius: '6px',
           padding: '2px',
         }}
@@ -283,7 +283,7 @@ export const TopBar: React.FC = () => {
               border: 'none',
               cursor: 'pointer',
               backgroundColor: state.viewport === vp.key ? '#3b82f6' : 'transparent',
-              color: state.viewport === vp.key ? '#ffffff' : '#b0b7c3',
+              color: state.viewport === vp.key ? '#ffffff' : 'var(--admin-text-icon)',
               transition: 'all 0.15s',
             }}
           >
@@ -300,7 +300,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: state.undoStack.length > 0 ? '#b0b7c3' : '#9ca3af',
+            color: state.undoStack.length > 0 ? 'var(--admin-text-icon)' : 'var(--admin-text-secondary)',
             cursor: state.undoStack.length > 0 ? 'pointer' : 'default',
             padding: '4px',
             borderRadius: '4px',
@@ -317,7 +317,7 @@ export const TopBar: React.FC = () => {
           style={{
             background: 'none',
             border: 'none',
-            color: state.redoStack.length > 0 ? '#b0b7c3' : '#9ca3af',
+            color: state.redoStack.length > 0 ? 'var(--admin-text-icon)' : 'var(--admin-text-secondary)',
             cursor: state.redoStack.length > 0 ? 'pointer' : 'default',
             padding: '4px',
             borderRadius: '4px',
@@ -329,7 +329,7 @@ export const TopBar: React.FC = () => {
           <Redo2 size={16} />
         </button>
 
-        <div style={{ width: '1px', height: '20px', backgroundColor: '#3d3d4d', margin: '0 4px' }} />
+        <div style={{ width: '1px', height: '20px', backgroundColor: 'var(--admin-border-strong)', margin: '0 4px' }} />
 
         <button
           onClick={() => setImportDialogOpen(true)}
@@ -339,9 +339,9 @@ export const TopBar: React.FC = () => {
             gap: '6px',
             padding: '6px 10px',
             borderRadius: '6px',
-            border: '1px solid #3d3d4d',
+            border: '1px solid var(--admin-border-strong)',
             backgroundColor: 'transparent',
-            color: '#b0b7c3',
+            color: 'var(--admin-text-icon)',
             cursor: 'pointer',
             fontSize: '12px',
             fontWeight: 500,
@@ -371,8 +371,8 @@ export const TopBar: React.FC = () => {
               ? '#dc2626'
               : state.isDirty
               ? '#3b82f6'
-              : '#2d2d3d',
-            color: isSaving || state.isDirty || saveStatus !== 'idle' ? '#ffffff' : '#b0b7c3',
+              : 'var(--admin-border)',
+            color: isSaving || state.isDirty || saveStatus !== 'idle' ? '#ffffff' : 'var(--admin-text-icon)',
             cursor: isSaving ? 'wait' : state.isDirty ? 'pointer' : 'default',
             fontSize: '13px',
             fontWeight: 500,

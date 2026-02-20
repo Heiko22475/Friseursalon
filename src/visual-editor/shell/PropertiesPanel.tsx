@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
-import { mergeStyles, mergeStylesWithClasses } from '../utils/styleResolver';
+import { mergeStyles, mergeStylesWithClasses, resolveTypographyToken } from '../utils/styleResolver';
 import { ClassSelector } from '../components/ClassSelector';
 
 // Section Components
@@ -632,7 +632,29 @@ export const PropertiesPanel: React.FC = () => {
         {/* Typography (only for text-like elements or containers that can have text) */}
         {(isTextLike || isContainer) && !isHeaderFooter && !isWebsiteBlock && (
           <AccordionSection title="Typografie" isOpen={openSection === 'typography'} onToggle={() => toggleSection('typography')} hasValues={hasTypoValues}>
-            <TypographySection styles={merged} onChange={updateStyle} />
+            <TypographySection
+              styles={merged}
+              onChange={updateStyle}
+              tokenStyles={(() => {
+                if (!editingClass || !editingClassDef?._typo) return undefined;
+                const token = state.typographyTokens[editingClassDef._typo];
+                if (!token) return undefined;
+                return resolveTypographyToken(token, state.fontTokens, state.viewport);
+              })()}
+              tokenLabel={(() => {
+                if (!editingClass || !editingClassDef?._typo) return undefined;
+                return state.typographyTokens[editingClassDef._typo]?.label;
+              })()}
+              tokenKey={editingClass && editingClassDef?._typo ? editingClassDef._typo : undefined}
+              typographyTokens={editingClass ? state.typographyTokens : undefined}
+              onTypoTokenChange={editingClass ? (key) => {
+                dispatch({
+                  type: 'SET_CLASS_TYPO',
+                  className: editingClass,
+                  typoKey: key,
+                });
+              } : undefined}
+            />
           </AccordionSection>
         )}
 

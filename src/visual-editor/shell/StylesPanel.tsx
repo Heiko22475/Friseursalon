@@ -249,6 +249,11 @@ export const StylesPanel: React.FC = () => {
                       ← {def._extends}
                     </span>
                   )}
+                  {def._typo && (
+                    <span style={{ fontSize: '9px', color: '#a78bfa', fontFamily: 'sans-serif', fontWeight: 600 }} title={`Typo Token: ${def._typo}`}>
+                      T
+                    </span>
+                  )}
                   <span style={{
                     fontSize: '10px',
                     color: usage > 0 ? '#4ade80' : '#6b7280',

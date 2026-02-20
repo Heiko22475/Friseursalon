@@ -183,6 +183,8 @@ export interface NamedStyle {
   pseudoStyles?: Partial<Record<PseudoState, PseudoStateStyles>>;
   /** Single-parent class inheritance */
   _extends?: string;
+  /** Reference to a TypographyToken key (Level 2 → Level 3 link) */
+  _typo?: string;
 }
 
 /**

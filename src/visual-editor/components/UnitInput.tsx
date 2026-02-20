@@ -25,7 +25,7 @@ interface UnitInputProps {
   compact?: boolean;
 }
 
-const DEFAULT_UNITS: SizeUnit[] = ['px', '%', 'em', 'rem', 'vw', 'vh'];
+const DEFAULT_UNITS: SizeUnit[] = ['rem', 'px', '%', 'em', 'vw', 'vh'];
 
 export const UnitInput: React.FC<UnitInputProps> = ({
   label,
@@ -101,7 +101,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
             step={step}
             style={{
               width: '48px',
-              padding: '3px 4px',
+              padding: '5px 4px',
               backgroundColor: '#2d2d3d',
               border: '1px solid #3d3d4d',
               borderRight: 'none',
@@ -116,7 +116,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
           <button
             onClick={() => setShowUnitDropdown(!showUnitDropdown)}
             style={{
-              padding: '3px 4px',
+              padding: '5px 4px',
               backgroundColor: '#252535',
               border: '1px solid #3d3d4d',
               borderRadius: '0 4px 4px 0',
@@ -188,7 +188,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
           step={step}
           style={{
             flex: 1,
-            padding: '4px 6px',
+            padding: '6px 6px',
             backgroundColor: '#2d2d3d',
             border: '1px solid #3d3d4d',
             borderRight: 'none',
@@ -202,7 +202,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
         <button
           onClick={() => setShowUnitDropdown(!showUnitDropdown)}
           style={{
-            padding: '4px 8px',
+            padding: '6px 8px',
             backgroundColor: '#252535',
             border: '1px solid #3d3d4d',
             borderRadius: '0 4px 4px 0',

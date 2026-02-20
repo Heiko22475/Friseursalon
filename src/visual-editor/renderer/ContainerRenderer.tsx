@@ -20,7 +20,9 @@ interface ContainerRendererProps {
 
 const defaultContainerStyles: React.CSSProperties = {
   display: 'flex',
-  flexDirection: 'column',
+  // NOTE: Do NOT set flexDirection here. CSS defaults to 'row' when display:flex.
+  // Imported elements (nav-links, hero-cta-row, price-row etc.) rely on this default.
+  // VE-created containers already set flexDirection:'column' in their element.styles.
   position: 'relative',
 };
 

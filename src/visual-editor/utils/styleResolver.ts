@@ -3,12 +3,13 @@
 // Löst responsive Styles auf und konvertiert zu CSSProperties
 // =====================================================
 
-import type { StyleProperties, ElementStyles, VEViewport, SizeValueOrAuto, GlobalStyles, NamedStyle, PseudoState, PseudoStateStyles } from '../types/styles';
+import type { StyleProperties, ElementStyles, VEViewport, SizeValueOrAuto, GlobalStyles, NamedStyle, PseudoState, PseudoStateStyles, SizeValue } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
 import { sizeValueToCSS } from './sizeValue';
 import { ALL_FONTS } from '../../data/fonts';
 
 import type { VEElement } from '../types/elements';
+import type { FontTokenMap, TypographyTokenMap, TypographyToken, ResponsiveStringValue } from '../types/typographyTokens';
 
 // ===== COLOR RESOLVER (austauschbar) =====
 
@@ -53,6 +54,119 @@ export function setGlobalStyles(gs: GlobalStyles) {
 
 export function getGlobalStyles(): GlobalStyles {
   return _globalStyles;
+}
+
+// ===== TYPOGRAPHY TOKEN REGISTRIES =====
+
+let _fontTokens: FontTokenMap = {};
+let _typographyTokens: TypographyTokenMap = {};
+
+export function setFontTokens(ft: FontTokenMap) {
+  _fontTokens = ft;
+}
+
+export function getFontTokens(): FontTokenMap {
+  return _fontTokens;
+}
+
+export function setTypographyTokens(tt: TypographyTokenMap) {
+  _typographyTokens = tt;
+}
+
+export function getTypographyTokens(): TypographyTokenMap {
+  return _typographyTokens;
+}
+
+// ===== TYPOGRAPHY TOKEN RESOLUTION =====
+
+/**
+ * Parse a CSS string value (e.g. '1.5rem', '24px', '1.1') into a SizeValue.
+ * Falls back to a plain number (for lineHeight like '1.5') or px.
+ */
+function parseCssStringToSizeValue(val: string): SizeValue | number | undefined {
+  if (!val || val === '0') return undefined;
+  const match = val.match(/^(-?[\d.]+)(px|%|em|rem|vw|vh)?$/);
+  if (match) {
+    const num = parseFloat(match[1]);
+    const unit = match[2] as SizeValue['unit'] | undefined;
+    if (!unit) return num; // pure number (lineHeight)
+    return { value: num, unit };
+  }
+  return undefined;
+}
+
+/**
+ * Get the responsive value for a given viewport from a ResponsiveStringValue.
+ */
+function getResponsiveString(rsv: ResponsiveStringValue, viewport: VEViewport): string {
+  if (viewport === 'mobile' && rsv.mobile) return rsv.mobile;
+  if (viewport === 'tablet' && rsv.tablet) return rsv.tablet;
+  return rsv.desktop;
+}
+
+/**
+ * Resolve a TypographyToken into StyleProperties for a given viewport.
+ * Level 1 (FontToken fontFamily) + Level 2 (TypographyToken properties).
+ */
+export function resolveTypographyToken(
+  token: TypographyToken,
+  fontTokens: FontTokenMap,
+  viewport: VEViewport,
+  pseudo?: 'hover',
+): Partial<StyleProperties> {
+  // Level 1: fontFamily from the FontToken → resolve ID to font NAME
+  const ftEntry = fontTokens[token.fontToken];
+  const fontId = ftEntry?.fontFamily ?? token.fontToken;
+  // Convert font ID (e.g. 'playfair-display') to font name (e.g. 'Playfair Display')
+  // so that stylesToCSS can match it against ALL_FONTS by name.
+  const fontObj = ALL_FONTS.find(f => f.id === fontId);
+  const fontFamily = fontObj?.name ?? fontId;
+
+  const base: Partial<StyleProperties> = {
+    fontFamily,
+    fontWeight: token.fontWeight,
+    textTransform: token.textTransform,
+  };
+
+  // fontSize
+  const fs = parseCssStringToSizeValue(getResponsiveString(token.fontSize, viewport));
+  if (fs !== undefined) {
+    base.fontSize = typeof fs === 'number' ? { value: fs, unit: 'rem' } : fs;
+  }
+
+  // lineHeight
+  const lh = parseCssStringToSizeValue(getResponsiveString(token.lineHeight, viewport));
+  if (lh !== undefined) {
+    base.lineHeight = lh;
+  }
+
+  // letterSpacing
+  if (token.letterSpacing && token.letterSpacing !== '0') {
+    const ls = parseCssStringToSizeValue(token.letterSpacing);
+    if (ls !== undefined) {
+      base.letterSpacing = typeof ls === 'number' ? { value: ls, unit: 'em' } : ls;
+    }
+  }
+
+  // color
+  if (token.color) {
+    base.color = token.color;
+  }
+
+  // Hover overlay
+  if (pseudo === 'hover' && token.hover) {
+    if (token.hover.color) base.color = token.hover.color;
+    if (token.hover.textDecoration) base.textDecoration = token.hover.textDecoration;
+    if (token.hover.fontWeight) base.fontWeight = token.hover.fontWeight;
+    if (token.hover.letterSpacing) {
+      const hls = parseCssStringToSizeValue(token.hover.letterSpacing);
+      if (hls !== undefined) {
+        base.letterSpacing = typeof hls === 'number' ? { value: hls, unit: 'em' } : hls;
+      }
+    }
+  }
+
+  return base;
 }
 
 /**
@@ -135,7 +249,9 @@ export function stylesToCSS(props: Partial<StyleProperties>): React.CSSPropertie
   // Typography
   if (props.fontFamily) {
     // Look up the font in our library to get the correct fallback
-    const fontEntry = ALL_FONTS.find(f => f.name === props.fontFamily);
+    // Try matching by name first, then by ID as fallback
+    const fontEntry = ALL_FONTS.find(f => f.name === props.fontFamily)
+                   || ALL_FONTS.find(f => f.id === props.fontFamily);
     if (fontEntry) {
       css.fontFamily = `"${fontEntry.name}", ${fontEntry.fallback}`;
     } else {
@@ -239,8 +355,13 @@ export function resolveStyles(
 // =====================================================
 
 /**
- * Resolve a named style, following the _extends chain.
- * Returns the merged NamedStyle with all parents applied.
+ * Resolve a named style, following the _extends chain and _typo token layer.
+ * Returns the merged NamedStyle with all parents + typography token applied.
+ *
+ * Resolution order (low → high priority):
+ *  1. Typography Token base (from _typo)
+ *  2. Parent class (from _extends, recursive)
+ *  3. This class's own properties
  */
 function resolveNamedStyleChain(
   name: string,
@@ -252,12 +373,48 @@ function resolveNamedStyleChain(
   const def = globalStyles[name];
   if (!def) return { desktop: {} };
 
+  // Start with typography token as the lowest-priority base
   let base: NamedStyle = { desktop: {} };
-  if (def._extends) {
-    base = resolveNamedStyleChain(def._extends, globalStyles, visited);
+
+  if (def._typo) {
+    const token = _typographyTokens[def._typo];
+    if (token) {
+      const tokenDesktop = resolveTypographyToken(token, _fontTokens, 'desktop');
+      const tokenTablet = resolveTypographyToken(token, _fontTokens, 'tablet');
+      const tokenMobile = resolveTypographyToken(token, _fontTokens, 'mobile');
+
+      base = {
+        desktop: tokenDesktop,
+        tablet: tokenTablet,
+        mobile: tokenMobile,
+      };
+
+      // Token hover → pseudoStyles.hover base
+      if (token.hover) {
+        const tokenHoverDesktop = resolveTypographyToken(token, _fontTokens, 'desktop', 'hover');
+        base.pseudoStyles = {
+          hover: { desktop: tokenHoverDesktop },
+        };
+      }
+    }
   }
 
-  // Merge: parent → child (child overrides parent)
+  // Apply _extends parent on top of token base
+  if (def._extends) {
+    const parentResolved = resolveNamedStyleChain(def._extends, globalStyles, visited);
+    base = {
+      desktop: { ...base.desktop, ...parentResolved.desktop },
+      tablet: (base.tablet || parentResolved.tablet)
+        ? { ...(base.tablet || {}), ...(parentResolved.tablet || {}) }
+        : undefined,
+      mobile: (base.mobile || parentResolved.mobile)
+        ? { ...(base.mobile || {}), ...(parentResolved.mobile || {}) }
+        : undefined,
+      pseudoStyles: mergePseudoStyles(base.pseudoStyles, parentResolved.pseudoStyles),
+    };
+  }
+
+  // Apply this class's own properties on top (highest priority before inline)
   return {
     desktop: { ...base.desktop, ...def.desktop },
     tablet: (base.tablet || def.tablet)

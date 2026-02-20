@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { VEPage, VEElement } from '../types/elements';
 import type { VEViewport, StyleProperties, PseudoState, GlobalStyles, NamedStyle } from '../types/styles';
+import type { FontTokenMap, TypographyTokenMap, FontToken, TypographyToken } from '../types/typographyTokens';
 import {
   findElementById,
   getBreadcrumbPath,
@@ -21,14 +22,16 @@ import {
   deepCloneWithNewIds,
   generateId,
 } from '../utils/elementHelpers';
-import { setGlobalStyles } from '../utils/styleResolver';
+import { setGlobalStyles, setFontTokens, setTypographyTokens } from '../utils/styleResolver';
 
 // ===== STATE =====
 
-/** Snapshot for undo/redo: captures both page and global styles */
+/** Snapshot for undo/redo: captures page, global styles, and typography tokens */
 interface UndoSnapshot {
   page: VEPage;
   globalStyles: GlobalStyles;
+  fontTokens: FontTokenMap;
+  typographyTokens: TypographyTokenMap;
 }
 
 export interface EditorState {
@@ -51,7 +54,7 @@ export interface EditorState {
   /** Navigator Panel offen? */
   navigatorOpen: boolean;
   /** Aktiver Navigator Tab */
-  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates';
+  navigatorTab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' | 'typography';
   /** Clipboard für Copy/Paste */
   clipboard: VEElement | null;
   /** ID des Elements das gerade inline editiert wird */
@@ -64,6 +67,10 @@ export interface EditorState {
   activeState: PseudoState | null;
   /** Global named style classes */
   globalStyles: GlobalStyles;
+  /** Font tokens (Level 1) */
+  fontTokens: FontTokenMap;
+  /** Typography tokens (Level 2) */
+  typographyTokens: TypographyTokenMap;
   /** Name of class currently being edited (null = editing element inline) */
   editingClass: string | null;
 }
@@ -95,7 +102,7 @@ export type EditorAction =
   | { type: 'REDO' }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_NAVIGATOR' }
-  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' }
+  | { type: 'SET_NAVIGATOR_TAB'; tab: 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' | 'typography' }
   // Page management
   | { type: 'SWITCH_PAGE'; pageId: string }
   | { type: 'ADD_PAGE'; name: string; route: string }
@@ -117,11 +124,25 @@ export type EditorAction =
   | { type: 'ASSIGN_CLASS'; elementId: string; className: string }
   | { type: 'REMOVE_CLASS'; elementId: string; className: string }
   | { type: 'REORDER_CLASSES'; elementId: string; classNames: string[] }
-  | { type: 'SET_EDITING_CLASS'; name: string | null };
+  | { type: 'SET_EDITING_CLASS'; name: string | null }
+  // ========== TYPOGRAPHY TOKEN MANAGEMENT ==========
+  | { type: 'SET_FONT_TOKEN'; key: string; token: FontToken }
+  | { type: 'SET_STANDARD_FONT_TOKEN'; key: string }
+  | { type: 'DELETE_FONT_TOKEN'; key: string; replaceWith: string }
+  | { type: 'SET_TYPOGRAPHY_TOKEN'; key: string; token: TypographyToken }
+  | { type: 'SET_STANDARD_TYPOGRAPHY_TOKEN'; key: string }
+  | { type: 'DELETE_TYPOGRAPHY_TOKEN'; key: string; replaceWith: string }
+  | { type: 'RENAME_TYPOGRAPHY_TOKEN'; oldKey: string; newKey: string }
+  | { type: 'SET_CLASS_TYPO'; className: string; typoKey: string | undefined };
 
 // ===== INITIAL STATE =====
 
-export function createInitialState(pages: VEPage[], globalStyles: GlobalStyles = {}): EditorState {
+export function createInitialState(
+  pages: VEPage[],
+  globalStyles: GlobalStyles = {},
+  fontTokens: FontTokenMap = {},
+  typographyTokens: TypographyTokenMap = {},
+): EditorState {
   const firstPage = pages[0];
   return {
     pages,
@@ -140,6 +161,8 @@ export function createInitialState(pages: VEPage[], globalStyles: GlobalStyles =
     proMode: typeof window !== 'undefined' && localStorage.getItem('ve-pro-mode') === 'true',
     activeState: null,
     globalStyles,
+    fontTokens,
+    typographyTokens,
     editingClass: null,
   };
 }
@@ -149,7 +172,12 @@ export function createInitialState(pages: VEPage[], globalStyles: GlobalStyles =
 const MAX_UNDO = 50;
 
 function pushUndo(state: EditorState): EditorState {
-  const snapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
+  const snapshot: UndoSnapshot = {
+    page: state.page,
+    globalStyles: state.globalStyles,
+    fontTokens: state.fontTokens,
+    typographyTokens: state.typographyTokens,
+  };
   const undoStack = [...state.undoStack, snapshot].slice(-MAX_UNDO);
   return { ...state, undoStack, redoStack: [], _lastUndoPush: Date.now() };
 }
@@ -467,11 +495,18 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
     case 'UNDO': {
       if (state.undoStack.length === 0) return state;
       const previous = state.undoStack[state.undoStack.length - 1];
-      const currentSnapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
+      const currentSnapshot: UndoSnapshot = {
+        page: state.page,
+        globalStyles: state.globalStyles,
+        fontTokens: state.fontTokens,
+        typographyTokens: state.typographyTokens,
+      };
       return {
         ...state,
         page: previous.page,
         globalStyles: previous.globalStyles,
+        fontTokens: previous.fontTokens,
+        typographyTokens: previous.typographyTokens,
         undoStack: state.undoStack.slice(0, -1),
         redoStack: [...state.redoStack, currentSnapshot],
         isDirty: true,
@@ -481,11 +516,18 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
     case 'REDO': {
       if (state.redoStack.length === 0) return state;
       const next = state.redoStack[state.redoStack.length - 1];
-      const currentSnapshot: UndoSnapshot = { page: state.page, globalStyles: state.globalStyles };
+      const currentSnapshot: UndoSnapshot = {
+        page: state.page,
+        globalStyles: state.globalStyles,
+        fontTokens: state.fontTokens,
+        typographyTokens: state.typographyTokens,
+      };
       return {
         ...state,
         page: next.page,
         globalStyles: next.globalStyles,
+        fontTokens: next.fontTokens,
+        typographyTokens: next.typographyTokens,
         undoStack: [...state.undoStack, currentSnapshot],
         redoStack: state.redoStack.slice(0, -1),
         isDirty: true,
@@ -896,6 +938,116 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
     case 'SET_EDITING_CLASS':
       return { ...state, editingClass: action.name };
 
+    // ========== TYPOGRAPHY TOKEN MANAGEMENT ==========
+
+    case 'SET_FONT_TOKEN': {
+      return {
+        ...pushUndo(state),
+        fontTokens: { ...state.fontTokens, [action.key]: action.token },
+        isDirty: true,
+      };
+    }
+
+    case 'SET_STANDARD_FONT_TOKEN': {
+      // Clear standard from all, set on the target
+      const updatedFT: FontTokenMap = {};
+      for (const [k, v] of Object.entries(state.fontTokens)) {
+        updatedFT[k] = { ...v, standard: k === action.key };
+      }
+      return {
+        ...pushUndo(state),
+        fontTokens: updatedFT,
+        isDirty: true,
+      };
+    }
+
+    case 'DELETE_FONT_TOKEN': {
+      const { [action.key]: _deleted, ...remainingFT } = state.fontTokens;
+      // Replace all TypographyToken references to the deleted FontToken
+      const updatedTT: TypographyTokenMap = {};
+      for (const [k, v] of Object.entries(state.typographyTokens)) {
+        updatedTT[k] = v.fontToken === action.key
+          ? { ...v, fontToken: action.replaceWith }
+          : v;
+      }
+      return {
+        ...pushUndo(state),
+        fontTokens: remainingFT,
+        typographyTokens: updatedTT,
+        isDirty: true,
+      };
+    }
+
+    case 'SET_TYPOGRAPHY_TOKEN': {
+      return {
+        ...pushUndo(state),
+        typographyTokens: { ...state.typographyTokens, [action.key]: action.token },
+        isDirty: true,
+      };
+    }
+
+    case 'SET_STANDARD_TYPOGRAPHY_TOKEN': {
+      const updatedTT2: TypographyTokenMap = {};
+      for (const [k, v] of Object.entries(state.typographyTokens)) {
+        updatedTT2[k] = { ...v, standard: k === action.key };
+      }
+      return {
+        ...pushUndo(state),
+        typographyTokens: updatedTT2,
+        isDirty: true,
+      };
+    }
+
+    case 'DELETE_TYPOGRAPHY_TOKEN': {
+      const { [action.key]: _deletedTT, ...remainingTT } = state.typographyTokens;
+      // Replace all _typo references in globalStyles
+      const updatedGS: GlobalStyles = {};
+      for (const [k, v] of Object.entries(state.globalStyles)) {
+        updatedGS[k] = v._typo === action.key
+          ? { ...v, _typo: action.replaceWith }
+          : v;
+      }
+      return {
+        ...pushUndo(state),
+        typographyTokens: remainingTT,
+        globalStyles: updatedGS,
+        isDirty: true,
+      };
+    }
+
+    case 'RENAME_TYPOGRAPHY_TOKEN': {
+      const { oldKey, newKey } = action;
+      if (!state.typographyTokens[oldKey] || state.typographyTokens[newKey]) return state;
+      const { [oldKey]: tokenToRename, ...restTT } = state.typographyTokens;
+      const renamedTT = { ...restTT, [newKey]: tokenToRename };
+      // Update all _typo references in globalStyles
+      const renamedGS: GlobalStyles = {};
+      for (const [k, v] of Object.entries(state.globalStyles)) {
+        renamedGS[k] = v._typo === oldKey
+          ? { ...v, _typo: newKey }
+          : v;
+      }
+      return {
+        ...pushUndo(state),
+        typographyTokens: renamedTT,
+        globalStyles: renamedGS,
+        isDirty: true,
+      };
+    }
+
+    case 'SET_CLASS_TYPO': {
+      const cls = state.globalStyles[action.className];
+      if (!cls) return state;
+      return {
+        ...pushUndo(state),
+        globalStyles: {
+          ...state.globalStyles,
+          [action.className]: { ...cls, _typo: action.typoKey },
+        },
+        isDirty: true,
+      };
+    }
+
     default:
       return state;
   }
@@ -920,17 +1072,31 @@ interface EditorProviderProps {
   initialPage?: VEPage;
   initialPages?: VEPage[];
   initialGlobalStyles?: GlobalStyles;
+  initialFontTokens?: FontTokenMap;
+  initialTypographyTokens?: TypographyTokenMap;
   children: React.ReactNode;
 }
 
-export const EditorProvider: React.FC<EditorProviderProps> = ({ initialPage, initialPages, initialGlobalStyles, children }) => {
+export const EditorProvider: React.FC<EditorProviderProps> = ({
+  initialPage,
+  initialPages,
+  initialGlobalStyles,
+  initialFontTokens,
+  initialTypographyTokens,
+  children,
+}) => {
   const pages = initialPages || (initialPage ? [initialPage] : []);
-  const [state, dispatch] = useReducer(editorReducer, createInitialState(pages, initialGlobalStyles || {}));
+  const [state, dispatch] = useReducer(
+    editorReducer,
+    createInitialState(pages, initialGlobalStyles || {}, initialFontTokens || {}, initialTypographyTokens || {}),
+  );
 
   // Keep the module-level globalStyles reference in sync for resolveStyles()
   // MUST be synchronous (not in useEffect) so renderers see updated classes
   // within the same render cycle that dispatched the change.
   setGlobalStyles(state.globalStyles);
+  setFontTokens(state.fontTokens);
+  setTypographyTokens(state.typographyTokens);
 
   const selectedElement = state.selectedId
     ? findElementById(state.page.body, state.selectedId)

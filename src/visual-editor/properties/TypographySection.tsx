@@ -15,6 +15,7 @@ import {
   Type,
   Italic,
   ChevronDown,
+  Pencil,
 } from 'lucide-react';
 import type { StyleProperties, SizeValue } from '../types/styles';
 import { ALL_FONTS, FONT_CATEGORY_LABELS, getFontById } from '../../data/fonts';
@@ -25,6 +26,18 @@ import { UnitInput } from '../components/UnitInput';
 interface TypographySectionProps {
   styles: Partial<StyleProperties>;
   onChange: (key: keyof StyleProperties, value: any) => void;
+  /** Resolved token styles (from _typo) — shown as inherited placeholders */
+  tokenStyles?: Partial<StyleProperties>;
+  /** Label of the attached Typography Token */
+  tokenLabel?: string;
+  /** Key of the current _typo token (for display) */
+  tokenKey?: string;
+  /** All available typography tokens for selection */
+  typographyTokens?: Record<string, { label: string; fontSize: { desktop: string }; fontWeight: number; standard?: boolean }>;
+  /** Callback to change the _typo token on the class */
+  onTypoTokenChange?: (key: string | undefined) => void;
+  /** Whether the user has any per-element typography overrides */
+  hasOverrides?: boolean;
 }
 
 // ===== ICON TOGGLE GROUP =====
@@ -288,34 +301,180 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 // ===== COMPONENT =====
 
-export const TypographySection: React.FC<TypographySectionProps> = ({ styles, onChange }) => {
+/** Small label showing that a value is inherited from a token */
+const TokenHint: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span style={{ fontSize: '9px', color: '#a78bfa', marginLeft: '4px', fontStyle: 'italic', whiteSpace: 'nowrap' }}>← {children}</span>
+);
+
+export const TypographySection: React.FC<TypographySectionProps> = ({
+  styles, onChange, tokenStyles, tokenLabel, tokenKey, typographyTokens, onTypoTokenChange, hasOverrides,
+}) => {
   const sz = 13;
+  const hasToken = !!(tokenStyles && tokenLabel);
+  const [showOverrides, setShowOverrides] = useState(hasOverrides ?? false);
+
+  // Helper: get effective value (own or token-inherited)
+  const eff = <K extends keyof StyleProperties>(key: K): StyleProperties[K] | undefined =>
+    styles[key] !== undefined ? styles[key] : tokenStyles?.[key];
+
+  // Helper: is this field inherited from the token?
+  const isInherited = (key: keyof StyleProperties) =>
+    hasToken && styles[key] === undefined && tokenStyles?.[key] !== undefined;
+
+  // Check if there are actual per-element style overrides
+  const typoKeys: (keyof StyleProperties)[] = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'textAlign', 'textDecoration', 'textTransform', 'fontStyle', 'color'];
+  const hasAnyOverride = typoKeys.some(k => styles[k] !== undefined);
 
   return (
     <div>
+      {/* Token Selector (always visible if tokens are available) */}
+      {typographyTokens && onTypoTokenChange && Object.keys(typographyTokens).length > 0 && (
+        <div style={{ marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <Type size={12} style={{ color: '#a78bfa' }} />
+            <span style={{ fontSize: '10px', fontWeight: 600, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Typo Token
+            </span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={tokenKey || ''}
+              onChange={(e) => onTypoTokenChange(e.target.value || undefined)}
+              style={{
+                width: '100%',
+                padding: '6px 28px 6px 8px',
+                borderRadius: '4px',
+                border: tokenKey ? '1px solid #a78bfa40' : '1px solid #2d2d3d',
+                backgroundColor: tokenKey ? '#7c5cfc10' : '#16161e',
+                color: tokenKey ? '#c4b5fd' : '#d1d5db',
+                fontSize: '12px',
+                cursor: 'pointer',
+                appearance: 'none' as const,
+                outline: 'none',
+              }}
+            >
+              <option value="">– Kein Typo Token –</option>
+              {Object.entries(typographyTokens).map(([key, t]) => (
+                <option key={key} value={key}>
+                  {t.label} ({t.fontSize.desktop}, {t.fontWeight})
+                  {t.standard ? ' ★' : ''}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={12}
+              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280', pointerEvents: 'none' }}
+            />
+          </div>
+          {tokenKey && tokenLabel && (
+            <div style={{ marginTop: '4px', fontSize: '10px', color: '#6b7280' }}>
+              Verknüpft: {tokenLabel} – Font/Größe/Gewicht werden vom Token gesteuert
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Token Banner (when token is active via class and no picker available) */}
+      {hasToken && !(typographyTokens && onTypoTokenChange) && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 8px',
+          marginBottom: '10px',
+          borderRadius: '4px',
+          backgroundColor: '#7c5cfc10',
+          border: '1px solid #7c5cfc30',
+        }}>
+          <Type size={12} style={{ color: '#a78bfa', flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', color: '#c4b5fd', fontWeight: 600 }}>
+            {tokenLabel}
+          </span>
+          <span style={{ fontSize: '10px', color: '#6b7280', marginLeft: 'auto' }}>
+            Token
+          </span>
+        </div>
+      )}
+
+      {/* "Typografie anpassen" toggle button */}
+      {!showOverrides ? (
+        <button
+          onClick={() => setShowOverrides(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            width: '100%',
+            padding: '8px 10px',
+            borderRadius: '6px',
+            border: '1px solid #2d2d3d',
+            backgroundColor: hasAnyOverride ? '#2563eb10' : '#16161e',
+            color: hasAnyOverride ? '#60a5fa' : '#b0b7c3',
+            fontSize: '11px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+          }}
+        >
+          <Pencil size={12} />
+          Typografie anpassen
+          {hasAnyOverride && (
+            <span style={{ marginLeft: 'auto', fontSize: '9px', color: '#60a5fa', fontWeight: 400 }}>
+              (Anpassungen vorhanden)
+            </span>
+          )}
+        </button>
+      ) : (
+        <>
+          <button
+            onClick={() => setShowOverrides(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              width: '100%',
+              padding: '6px 10px',
+              marginBottom: '10px',
+              borderRadius: '6px',
+              border: '1px solid #2d2d3d',
+              backgroundColor: '#16161e',
+              color: '#6b7280',
+              fontSize: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            <ChevronDown size={10} style={{ transform: 'rotate(180deg)' }} />
+            Anpassungen ausblenden
+          </button>
+
       {/* Font Family */}
       <Row label="Font">
-        <FontDropdown
-          value={styles.fontFamily}
-          onChange={(v) => onChange('fontFamily', v || undefined)}
-        />
+        <div>
+          <FontDropdown
+            value={styles.fontFamily || (tokenStyles?.fontFamily as string | undefined)}
+            onChange={(v) => onChange('fontFamily', v || undefined)}
+          />
+          {isInherited('fontFamily') && <TokenHint>Token</TokenHint>}
+        </div>
       </Row>
 
       {/* Weight + Size in one row */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
         {/* Weight */}
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>Gewicht</label>
+          <label style={{ fontSize: '11px', color: '#b0b7c3', display: 'block', marginBottom: '3px' }}>
+            Gewicht{isInherited('fontWeight') && <TokenHint>Token</TokenHint>}
+          </label>
           <select
-            value={styles.fontWeight ?? ''}
+            value={styles.fontWeight ?? (hasToken ? (tokenStyles?.fontWeight ?? '') : '')}
             onChange={(e) => onChange('fontWeight', e.target.value ? Number(e.target.value) : undefined)}
             style={{
               width: '100%',
               padding: '5px 6px',
-              backgroundColor: '#2d2d3d',
-              border: '1px solid #3d3d4d',
+              backgroundColor: isInherited('fontWeight') ? '#2d2d3d' : '#2d2d3d',
+              border: isInherited('fontWeight') ? '1px solid #7c5cfc30' : '1px solid #3d3d4d',
               borderRadius: '4px',
-              color: '#d1d5db',
+              color: isInherited('fontWeight') ? '#a78bfa' : '#d1d5db',
               fontSize: '12px',
             }}
           >
@@ -336,7 +495,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
             value={styles.fontSize}
             onChange={(v) => onChange('fontSize', v)}
             compact
-            units={['px', 'rem', 'em', '%']}
+            units={['rem', 'px', 'em', '%']}
             placeholder="16"
             min={1}
           />
@@ -351,7 +510,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
             value={typeof styles.lineHeight === 'object' ? styles.lineHeight as SizeValue : undefined}
             onChange={(v) => onChange('lineHeight', v)}
             compact
-            units={['px', 'em', '%']}
+            units={['rem', 'px', 'em', '%']}
             placeholder="1.5"
             step={0.1}
           />
@@ -362,7 +521,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
             value={styles.letterSpacing}
             onChange={(v) => onChange('letterSpacing', v)}
             compact
-            units={['px', 'em']}
+            units={['rem', 'px', 'em']}
             placeholder="0"
             step={0.5}
           />
@@ -433,10 +592,12 @@ export const TypographySection: React.FC<TypographySectionProps> = ({ styles, on
 
       {/* Color */}
       <VEColorPicker
-        label="Farbe"
-        value={styles.color}
+        label={isInherited('color') ? 'Farbe ← Token' : 'Farbe'}
+        value={eff('color')}
         onChange={(v) => onChange('color', v)}
       />
+        </>
+      )}
     </div>
   );
 };

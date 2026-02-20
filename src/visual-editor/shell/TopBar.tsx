@@ -25,7 +25,7 @@ export const TopBar: React.FC = () => {
     if (!state.isDirty && !isSaving) return;
 
     setSaveStatus('idle');
-    const success = await save(state.pages, state.page, state.globalStyles);
+    const success = await save(state.pages, state.page, state.globalStyles, state.fontTokens, state.typographyTokens);
     if (success) {
       dispatch({ type: 'MARK_SAVED' });
       setSaveStatus('success');

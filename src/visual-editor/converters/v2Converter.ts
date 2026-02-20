@@ -18,6 +18,7 @@ import type {
   GlobalStyles, NamedStyle,
 } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
+import type { FontTokenMap, TypographyTokenMap } from '../types/typographyTokens';
 
 // =====================================================
 // V2 JSON TYPES (what's stored in the DB)
@@ -703,6 +704,8 @@ function v2NamedStyleToVE(def: Record<string, any>): NamedStyle {
   for (const [key, val] of Object.entries(def)) {
     if (key === '_extends') {
       extendsName = val as string;
+    } else if (key === '_typo') {
+      // Handled after loop
     } else if (key === '@tablet' && typeof val === 'object') {
       for (const [tKey, tVal] of Object.entries(val as Record<string, any>)) {
         if (PSEUDO_KEYS.has(tKey)) {
@@ -740,6 +743,7 @@ function v2NamedStyleToVE(def: Record<string, any>): NamedStyle {
   if (Object.keys(tabletRaw).length > 0) ns.tablet = v2PropsToVE(tabletRaw);
   if (Object.keys(mobileRaw).length > 0) ns.mobile = v2PropsToVE(mobileRaw);
   if (extendsName) ns._extends = extendsName;
+  if (typeof def._typo === 'string') ns._typo = def._typo;
 
   // Pseudo-states
   if (Object.keys(pseudoRaw).length > 0) {
@@ -760,10 +764,12 @@ function v2NamedStyleToVE(def: Record<string, any>): NamedStyle {
   return ns;
 }
 
-/** Result of loading v2 content: pages + global style classes */
+/** Result of loading v2 content: pages + global style classes + typography tokens */
 export interface V2LoadResult {
   pages: VEPage[];
   globalStyles: GlobalStyles;
+  fontTokens: FontTokenMap;
+  typographyTokens: TypographyTokenMap;
 }
 
 /**
@@ -771,10 +777,12 @@ export interface V2LoadResult {
  * This is the main entry point for loading.
  */
 export function v2ContentToVEPages(content: any): V2LoadResult {
-  if (!content?.pages || !Array.isArray(content.pages)) return { pages: [], globalStyles: {} };
+  if (!content?.pages || !Array.isArray(content.pages)) return { pages: [], globalStyles: {}, fontTokens: {}, typographyTokens: {} };
 
   const allStyles = content.styles || {};
   const globalStyles = v2StylesToGlobalStyles(allStyles);
+  const fontTokens: FontTokenMap = content.fontTokens || {};
+  const typographyTokens: TypographyTokenMap = content.typographyTokens || {};
   const pages: VEPage[] = [];
 
   for (const page of content.pages as V2Page[]) {
@@ -808,7 +816,7 @@ export function v2ContentToVEPages(content: any): V2LoadResult {
     }
   }
 
-  return { pages, globalStyles };
+  return { pages, globalStyles, fontTokens, typographyTokens };
 }
 
 // =====================================================
@@ -874,6 +882,11 @@ function namedStyleToV2(ns: NamedStyle): Record<string, any> {
   // _extends
   if (ns._extends) {
     v2._extends = ns._extends;
+  }
+
+  // _typo
+  if (ns._typo) {
+    v2._typo = ns._typo;
   }
 
   // Pseudo-states

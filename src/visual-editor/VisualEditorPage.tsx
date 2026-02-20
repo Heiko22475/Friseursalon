@@ -24,6 +24,7 @@ import { demoPages } from './data/demoPage';
 import { supabase } from '../lib/supabase';
 import { convertWebsiteToVE } from './converters/websiteToVE';
 import type { GlobalStyles } from './types/styles';
+import type { FontTokenMap, TypographyTokenMap } from './types/typographyTokens';
 import './styles/editor.css';
 
 // ===== DATA SOURCE TYPE =====
@@ -244,6 +245,8 @@ const VisualEditorPage: React.FC = () => {
   });
   const [livePages, setLivePages] = useState<VEPage[] | null>(null);
   const [liveGlobalStyles, setLiveGlobalStyles] = useState<GlobalStyles>({});
+  const [liveFontTokens, setLiveFontTokens] = useState<FontTokenMap>({});
+  const [liveTypographyTokens, setLiveTypographyTokens] = useState<TypographyTokenMap>({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [originalContent, setOriginalContent] = useState<any>(null);
@@ -301,6 +304,8 @@ const VisualEditorPage: React.FC = () => {
           }
           setLivePages(result.pages);
           setLiveGlobalStyles(result.globalStyles);
+          setLiveFontTokens(result.fontTokens);
+          setLiveTypographyTokens(result.typographyTokens);
         } catch (conversionError: any) {
           console.error('[VE] Fehler beim Konvertieren der Website-Daten:', conversionError);
           setLiveError(`Konvertierungsfehler: ${conversionError.message || 'Unbekannt'}`);
@@ -330,6 +335,8 @@ const VisualEditorPage: React.FC = () => {
   // Determine which pages/styles to use
   const pages = dataSource === 'demo' ? demoPages : livePages;
   const globalStyles = dataSource === 'demo' ? {} : liveGlobalStyles;
+  const fontTokens = dataSource === 'demo' ? {} : liveFontTokens;
+  const typographyTokens = dataSource === 'demo' ? {} : liveTypographyTokens;
   const showEditor = pages && pages.length > 0;
 
   return (
@@ -438,7 +445,7 @@ const VisualEditorPage: React.FC = () => {
               customerId={selectedCustomer}
               originalContent={originalContent}
             >
-              <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages} initialGlobalStyles={globalStyles}>
+              <EditorProvider key={`${dataSource}-${selectedCustomer}`} initialPages={pages} initialGlobalStyles={globalStyles} initialFontTokens={fontTokens} initialTypographyTokens={typographyTokens}>
                 <EditorInner />
               </EditorProvider>
             </VESaveProvider>

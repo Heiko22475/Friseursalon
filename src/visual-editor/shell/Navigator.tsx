@@ -3,19 +3,20 @@
 // Linke Seite: Icon-Bar (48px) + Flyout Panel (~240px)
 // =====================================================
 
-import React from 'react';
-import { Plus, Layers, FileText, Image, Paintbrush, LayoutTemplate } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { Plus, Layers, FileText, Image, Paintbrush, LayoutTemplate, Type } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import { ElementsTree } from './ElementsTree';
 import { AddElementPanel } from './AddElementPanel';
 import { PagesPanel } from './PagesPanel';
 import { AssetsPanel } from './AssetsPanel';
 import { StylesPanel } from './StylesPanel';
+import { TypographyPanel } from './TypographyPanel';
 import { TemplateGallery, createExampleTemplates } from '../components/TemplateGallery';
 import { findElementById, findParent, isContainer } from '../utils/elementHelpers';
 import type { VEElement } from '../types/elements';
 
-type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates';
+type NavigatorTab = 'elements' | 'tree' | 'pages' | 'assets' | 'styles' | 'templates' | 'typography';
 
 const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = [
   { key: 'elements', icon: <Plus size={20} />, label: 'Hinzufügen' },
@@ -24,6 +25,7 @@ const navItems: { key: NavigatorTab; icon: React.ReactNode; label: string }[] = 
   { key: 'templates', icon: <LayoutTemplate size={20} />, label: 'Templates' },
   { key: 'assets', icon: <Image size={20} />, label: 'Assets' },
   { key: 'styles', icon: <Paintbrush size={20} />, label: 'Klassen' },
+  { key: 'typography', icon: <Type size={20} />, label: 'Typografie' },
 ];
 
 interface NavigatorProps {
@@ -32,6 +34,20 @@ interface NavigatorProps {
 
 export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   const { state, dispatch } = useEditor();
+  const prevSelectedId = useRef(state.selectedId);
+
+  // Auto-close typography panel when user selects an element in the canvas
+  useEffect(() => {
+    if (
+      state.navigatorTab === 'typography' &&
+      state.navigatorOpen &&
+      state.selectedId !== null &&
+      state.selectedId !== prevSelectedId.current
+    ) {
+      dispatch({ type: 'SET_NAVIGATOR_TAB', tab: 'tree' });
+    }
+    prevSelectedId.current = state.selectedId;
+  }, [state.selectedId]);
 
   const insertElement = (newEl: VEElement) => {
     // Bestimme den Einfüge-Ort
@@ -90,6 +106,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         return <AssetsPanel />;
       case 'styles':
         return <StylesPanel />;
+      case 'typography':
+        return <TypographyPanel />;
       default:
         return null;
     }
@@ -145,17 +163,18 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
         })}
       </div>
 
-      {/* Flyout Panel (~240px) */}
+      {/* Flyout Panel (~240px, wider for typography) */}
       {state.navigatorOpen && (
         <div
           className="ve-navigator-flyout"
           style={{
-            width: '240px',
+            width: state.navigatorTab === 'typography' ? '360px' : '240px',
             backgroundColor: '#1e1e2e',
             borderRight: '1px solid #2d2d3d',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
+            transition: 'width 0.15s ease',
           }}
         >
           {/* Panel Header */}

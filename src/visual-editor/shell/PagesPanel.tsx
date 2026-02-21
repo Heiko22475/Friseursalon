@@ -394,7 +394,15 @@ const AddPageDialog: React.FC<AddPageDialogProps> = ({ onAdd, onCancel }) => {
     const trimName = name.trim();
     const trimRoute = route.trim() || '/' + slugify(trimName);
     if (!trimName) return;
-    onAdd(trimName, trimRoute.startsWith('/') ? trimRoute : '/' + trimRoute);
+    const finalRoute = trimRoute.startsWith('/') ? trimRoute : '/' + trimRoute;
+    // Check reserved slugs
+    const slug = finalRoute.replace(/^\/+/, '').toLowerCase().split('/')[0];
+    const RESERVED = ['admin', 'superadmin', 'login', 'api', 'auth', 'callback'];
+    if (RESERVED.includes(slug)) {
+      alert(`"${slug}" ist ein reservierter Systemname und kann nicht als Seitenroute verwendet werden.`);
+      return;
+    }
+    onAdd(trimName, finalRoute);
   };
 
   return (

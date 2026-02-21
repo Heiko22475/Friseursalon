@@ -17,6 +17,11 @@ import { V2SelectionOverlay } from './frontend-editor/V2SelectionOverlay';
 import { V2InlineToolbar } from './frontend-editor/V2InlineToolbar';
 import { V2StylePanel } from './frontend-editor/V2StylePanel';
 import { VEThemeProvider } from '../visual-editor/theme/VEThemeBridge';
+import {
+  updateSEOHead,
+  setLocalBusinessStructuredData,
+  clearSEOHead,
+} from '../utils/seoHead';
 
 // ===== COMPONENT =====
 
@@ -66,17 +71,68 @@ export const DynamicPage: React.FC = () => {
 
   const updateMeta = (p: Page) => {
     const siteName = websiteRecord?.site_name || website?.general?.name || '';
-    const seoTitle = p.seo?.title || p.seo_title;
-    document.title = seoTitle || (p.title + (siteName ? ` – ${siteName}` : ''));
+    const seoTitle = p.seo?.title || p.seo_title || p.title;
+    const seoDescription = p.seo?.description || p.meta_description || '';
+    const domain = websiteRecord?.domain_name || window.location.hostname;
+    const baseUrl = `${window.location.protocol}//${domain}`;
+    const pageUrl = pageIsHome(p) ? baseUrl : `${baseUrl}/${p.slug}`;
 
-    const metaDesc = p.seo?.description || p.meta_description;
-    if (metaDesc) {
-      const metaEl = document.querySelector('meta[name="description"]');
-      if (metaEl) {
-        metaEl.setAttribute('content', metaDesc);
+    // === Full SEO head tags ===
+    updateSEOHead({
+      title: seoTitle,
+      description: seoDescription || undefined,
+      siteName: siteName,
+      canonicalUrl: pageUrl,
+      locale: 'de_DE',
+      type: 'website',
+      // image: could be extracted from hero block if available
+    });
+
+    // === JSON-LD Structured Data for the business (on home page) ===
+    if (pageIsHome(p) && website) {
+      const contact = website.contact;
+      const general = website.general;
+      const socialUrls: string[] = [];
+
+      if (contact?.instagram_url) socialUrls.push(contact.instagram_url);
+      if (contact?.facebook_url) socialUrls.push(contact.facebook_url);
+      if (contact?.tiktok_url) socialUrls.push(contact.tiktok_url);
+      if (contact?.youtube_url) socialUrls.push(contact.youtube_url);
+      if (contact?.linkedin_url) socialUrls.push(contact.linkedin_url);
+
+      // Convert business_hours to schema.org format
+      const dayNames = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+      const schemaOpeningHours: string[] = [];
+      if (website.business_hours) {
+        for (const bh of website.business_hours) {
+          if (bh.is_open && bh.open_time && bh.close_time) {
+            const day = dayNames[bh.day_of_week] || '';
+            schemaOpeningHours.push(`${day} ${bh.open_time}-${bh.close_time}`);
+          }
+        }
       }
+
+      setLocalBusinessStructuredData({
+        name: general?.full_name || general?.name || siteName,
+        description: general?.description || seoDescription || undefined,
+        url: baseUrl,
+        phone: contact?.phone || undefined,
+        email: contact?.email || undefined,
+        street: contact?.street || undefined,
+        postalCode: contact?.postal_code || undefined,
+        city: contact?.city || undefined,
+        country: contact?.country || 'DE',
+        priceRange: '€€',
+        openingHours: schemaOpeningHours.length ? schemaOpeningHours : undefined,
+        sameAs: socialUrls.length ? socialUrls : undefined,
+      });
     }
   };
+
+  // Cleanup SEO tags when leaving public pages
+  useEffect(() => {
+    return () => clearSEOHead();
+  }, []);
 
   // ===== LOADING STATE =====
 

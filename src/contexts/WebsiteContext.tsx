@@ -231,6 +231,7 @@ export interface WebsiteRecord {
   content: Website;
   created_at: string;
   updated_at: string;
+  last_build_at?: string | null;
 }
 
 // =====================================================
@@ -308,6 +309,13 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
       if (fetchError) throw fetchError;
       
       setWebsiteRecord(data);
+
+      // Check if a deploy is needed (works for any visitor — public or admin)
+      if (data) {
+        import('../utils/deployHook').then(m =>
+          m.checkAndTriggerDeploy(data.id, data.updated_at, data.last_build_at ?? null)
+        ).catch(() => {});
+      }
     } catch (err: any) {
       console.error('Error loading website:', err);
       setError(err.message || 'Failed to load website');
@@ -364,6 +372,11 @@ export const WebsiteProvider: React.FC<WebsiteProviderProps> = ({ customerId, ch
 
   const addPage = async (page: Omit<Page, 'id'>): Promise<string> => {
     if (!websiteRecord) throw new Error('No website loaded');
+    // Validate slug against reserved system routes
+    const { isReservedSlug, getReservedSlugError } = await import('../utils/reservedSlugs');
+    if (isReservedSlug(page.slug)) {
+      throw new Error(getReservedSlugError(page.slug));
+    }
     const newId = crypto.randomUUID();
     const newPage: Page = { ...page, id: newId };
     await updatePages([...websiteRecord.content.pages, newPage]);

@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Admin and editor areas should not be indexed
+Disallow: /admin
+Disallow: /admin/
+Disallow: /superadmin
+Disallow: /superadmin/
+Disallow: /login
+
+# Sitemap (dynamically generated per domain)
+# Sitemap: https://YOURDOMAIN/sitemap.xml

@@ -49,6 +49,13 @@ export const PageManagerNew: React.FC = () => {
         return;
       }
 
+      // Check reserved slugs
+      const { isReservedSlug, getReservedSlugError } = await import('../../utils/reservedSlugs');
+      if (isReservedSlug(editForm.slug)) {
+        setMessage(getReservedSlugError(editForm.slug));
+        return;
+      }
+
       if (editingId) {
         // Update existing page
         const updatedPages = pages.map(p => 

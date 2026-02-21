@@ -4,7 +4,7 @@
 // Phase 2: Voll integrierte Sections mit Theme-Support
 // =====================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Trash2, Copy, Monitor, Tablet, Smartphone, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { useEditor } from '../state/EditorContext';
 import type { StyleProperties } from '../types/styles';
@@ -119,10 +119,8 @@ export const PropertiesPanel: React.FC = () => {
     setOpenSection(prev => prev === key ? null : key);
   };
 
-  // Reset open section when element changes
-  useEffect(() => {
-    setOpenSection(null);
-  }, [state.selectedId]);
+  // Keep the last opened section when switching elements
+  // (removed reset to null — user stays in the same section)
 
   if (!selectedElement) {
     return (
@@ -636,23 +634,75 @@ export const PropertiesPanel: React.FC = () => {
               styles={merged}
               onChange={updateStyle}
               tokenStyles={(() => {
-                if (!editingClass || !editingClassDef?._typo) return undefined;
-                const token = state.typographyTokens[editingClassDef._typo];
-                if (!token) return undefined;
-                return resolveTypographyToken(token, state.fontTokens, state.viewport);
+                // When editing a class, use class _typo
+                if (editingClass && editingClassDef?._typo) {
+                  const token = state.typographyTokens[editingClassDef._typo];
+                  if (token) return resolveTypographyToken(token, state.fontTokens, state.viewport);
+                }
+                // When editing element directly, find _typo from element's classes
+                if (!editingClass && selectedElement.classNames) {
+                  for (const cn of selectedElement.classNames) {
+                    const def = state.globalStyles[cn];
+                    if (def?._typo) {
+                      const token = state.typographyTokens[def._typo];
+                      if (token) return resolveTypographyToken(token, state.fontTokens, state.viewport);
+                    }
+                  }
+                }
+                return undefined;
               })()}
               tokenLabel={(() => {
-                if (!editingClass || !editingClassDef?._typo) return undefined;
-                return state.typographyTokens[editingClassDef._typo]?.label;
+                if (editingClass && editingClassDef?._typo) return state.typographyTokens[editingClassDef._typo]?.label;
+                if (!editingClass && selectedElement.classNames) {
+                  for (const cn of selectedElement.classNames) {
+                    const def = state.globalStyles[cn];
+                    if (def?._typo) return state.typographyTokens[def._typo]?.label;
+                  }
+                }
+                return undefined;
               })()}
-              tokenKey={editingClass && editingClassDef?._typo ? editingClassDef._typo : undefined}
-              typographyTokens={editingClass ? state.typographyTokens : undefined}
-              onTypoTokenChange={editingClass ? (key) => {
-                dispatch({
-                  type: 'SET_CLASS_TYPO',
-                  className: editingClass,
-                  typoKey: key,
-                });
+              tokenKey={(() => {
+                if (editingClass && editingClassDef?._typo) return editingClassDef._typo;
+                if (!editingClass && selectedElement.classNames) {
+                  for (const cn of selectedElement.classNames) {
+                    const def = state.globalStyles[cn];
+                    if (def?._typo) return def._typo;
+                  }
+                }
+                return undefined;
+              })()}
+              typographyTokens={Object.keys(state.typographyTokens).length > 0 ? state.typographyTokens : undefined}
+              onTypoTokenChange={Object.keys(state.typographyTokens).length > 0 ? (key) => {
+                if (editingClass) {
+                  // Editing a class: set _typo directly on the class
+                  dispatch({
+                    type: 'SET_CLASS_TYPO',
+                    className: editingClass,
+                    typoKey: key,
+                  });
+                } else {
+                  // Editing element directly: find or create a class to attach _typo to
+                  const elClasses = selectedElement.classNames || [];
+                  // Find an existing class that already has _typo
+                  let targetClass = elClasses.find(cn => state.globalStyles[cn]?._typo);
+                  if (!targetClass && elClasses.length > 0) {
+                    // Use the first class
+                    targetClass = elClasses[0];
+                  }
+                  if (targetClass) {
+                    dispatch({
+                      type: 'SET_CLASS_TYPO',
+                      className: targetClass,
+                      typoKey: key,
+                    });
+                  } else {
+                    // No class on element: auto-create one
+                    const autoName = `${selectedElement.type.toLowerCase()}-typo-${selectedElement.id.slice(-4)}`;
+                    dispatch({ type: 'CREATE_CLASS', name: autoName });
+                    dispatch({ type: 'ASSIGN_CLASS', elementId: selectedElement.id, className: autoName });
+                    dispatch({ type: 'SET_CLASS_TYPO', className: autoName, typoKey: key });
+                  }
+                }
               } : undefined}
             />
           </AccordionSection>

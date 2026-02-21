@@ -162,6 +162,8 @@ export const DynamicPage: React.FC = () => {
   // Get theme colors from settings for color ref resolution
   const themeColors = website?.settings?.theme?.colors || {};
   const allStyles = website?.styles || {};
+  const fontTokens = website?.fontTokens || {};
+  const typographyTokens = website?.typographyTokens || {};
 
   // v2 format: render from body element tree
   if (page.body) {
@@ -176,6 +178,8 @@ export const DynamicPage: React.FC = () => {
               element={page.body}
               allStyles={allStyles}
               themeColors={themeColors}
+              fontTokens={fontTokens}
+              typographyTokens={typographyTokens}
               viewport={viewport}
               pageId={page.id}
             />

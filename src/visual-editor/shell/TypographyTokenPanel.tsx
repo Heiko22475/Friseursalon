@@ -4,9 +4,10 @@
 // CRUD operations: Create, Edit, Delete, Set Standard
 // =====================================================
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Plus, Trash2, Star, ChevronDown, ChevronRight, Type } from 'lucide-react';
+import { findElementById } from '../utils/elementHelpers';
 import { useEditor } from '../state/EditorContext';
 import { VEColorPicker } from '../components/VEColorPicker';
 import { ALL_FONTS } from '../../data/fonts';
@@ -686,6 +687,32 @@ export const TypographyTokenPanel: React.FC = () => {
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [hoverRect, setHoverRect] = useState<{ top: number; right: number; height: number } | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Scroll expanded token into view
+  useEffect(() => {
+    if (expandedKey && rowRefs.current[expandedKey]) {
+      // small delay to let the DOM expand
+      requestAnimationFrame(() => {
+        rowRefs.current[expandedKey]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    }
+  }, [expandedKey]);
+
+  // Determine which typo tokens the selected element uses (via its classes)
+  const activeTypoKeys = useMemo(() => {
+    const keys = new Set<string>();
+    if (!state.selectedId) return keys;
+    const el = findElementById(state.page.body, state.selectedId);
+    if (!el?.classNames) return keys;
+    for (const cn of el.classNames) {
+      const classDef = globalStyles[cn];
+      if (classDef?._typo && typographyTokens[classDef._typo]) {
+        keys.add(classDef._typo);
+      }
+    }
+    return keys;
+  }, [state.selectedId, state.page.body, globalStyles, typographyTokens]);
 
   const handleMouseEnterRow = useCallback((key: string, e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -780,16 +807,19 @@ export const TypographyTokenPanel: React.FC = () => {
           const fontObj = fontToken ? ALL_FONTS.find((f) => f.id === fontToken.fontFamily) : null;
           const usageCount = usageCounts[key] || 0;
 
+          const isActiveForSelection = activeTypoKeys.has(key);
+
           return (
             <div
               key={key}
+              ref={(el) => { rowRefs.current[key] = el; }}
               onMouseEnter={(e) => !isExpanded && handleMouseEnterRow(key, e)}
               onMouseLeave={handleMouseLeaveRow}
               style={{
                 margin: '0 4px 2px',
                 borderRadius: '6px',
-                border: isExpanded ? '1px solid #3b82f640' : '1px solid transparent',
-                backgroundColor: isExpanded ? 'var(--admin-bg-sidebar)' : 'transparent',
+                border: isExpanded ? '1px solid #3b82f640' : isActiveForSelection ? '1px solid #4ade8060' : '1px solid transparent',
+                backgroundColor: isExpanded ? 'var(--admin-bg-sidebar)' : isActiveForSelection ? '#4ade8010' : 'transparent',
                 transition: 'all 0.15s',
               }}
             >
@@ -846,6 +876,11 @@ export const TypographyTokenPanel: React.FC = () => {
                   </div>
                 </div>
                 {isStd && <Star size={12} fill="#fbbf24" style={{ color: '#fbbf24', flexShrink: 0 }} />}
+                {isActiveForSelection && (
+                  <span style={{ fontSize: '11px', color: '#4ade80', fontWeight: 600, flexShrink: 0, fontFamily: 'sans-serif' }} title="Wird vom selektierten Element verwendet">
+                    ●
+                  </span>
+                )}
                 <span style={{ fontSize: '11px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
                   {usageCount}
                 </span>

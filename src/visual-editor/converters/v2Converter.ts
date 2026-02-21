@@ -18,7 +18,8 @@ import type {
   GlobalStyles, NamedStyle,
 } from '../types/styles';
 import type { ColorValue } from '../../types/theme';
-import type { FontTokenMap, TypographyTokenMap } from '../types/typographyTokens';
+import type { FontTokenMap, TypographyTokenMap, ResponsiveStringValue } from '../types/typographyTokens';
+import { ALL_FONTS } from '../../data/fonts';
 
 // =====================================================
 // V2 JSON TYPES (what's stored in the DB)
@@ -216,6 +217,9 @@ export function vePropsToV2(ve: Partial<StyleProperties>): Record<string, any> {
 function resolveNamedStyle(
   name: string,
   allStyles: Record<string, any>,
+  fontTokens?: FontTokenMap,
+  typographyTokens?: TypographyTokenMap,
+  viewport?: 'desktop' | 'tablet' | 'mobile',
   visited = new Set<string>(),
 ): Record<string, any> {
   if (visited.has(name)) return {}; // prevent circular
@@ -223,16 +227,105 @@ function resolveNamedStyle(
   const def = allStyles[name];
   if (!def) return {};
 
+  // Start with typography token base (lowest priority)
   let resolved: Record<string, any> = {};
-  if (def._extends) {
-    resolved = resolveNamedStyle(def._extends, allStyles, visited);
+  if (def._typo && typographyTokens && fontTokens) {
+    const typoBase = resolveTypoTokenToV2(def._typo, fontTokens, typographyTokens, viewport || 'desktop');
+    Object.assign(resolved, typoBase);
   }
-  // Merge own props (overwrite parent)
+
+  // Apply _extends parent on top (middle priority)
+  if (def._extends) {
+    const parent = resolveNamedStyle(def._extends, allStyles, fontTokens, typographyTokens, viewport, visited);
+    Object.assign(resolved, parent);
+  }
+
+  // Merge own props (highest priority, overwrite parent)
   for (const [key, val] of Object.entries(def)) {
-    if (key === '_extends') continue;
+    if (key === '_extends' || key === '_typo') continue;
     resolved[key] = val;
   }
   return resolved;
+}
+
+/**
+ * Resolve a typography token key into v2-format style properties for a given viewport.
+ * Used by the frontend renderer to apply font/typo settings from tokens.
+ */
+function resolveTypoTokenToV2(
+  typoKey: string,
+  fontTokens: FontTokenMap,
+  typographyTokens: TypographyTokenMap,
+  viewport: 'desktop' | 'tablet' | 'mobile',
+): Record<string, any> {
+  const token = typographyTokens[typoKey];
+  if (!token) return {};
+
+  const result: Record<string, any> = {};
+
+  // Font family from FontToken
+  const ftEntry = fontTokens[token.fontToken];
+  const fontId = ftEntry?.fontFamily ?? token.fontToken;
+  const fontObj = ALL_FONTS.find(f => f.id === fontId);
+  result.fontFamily = fontObj ? `"${fontObj.name}", ${fontObj.fallback}` : fontId;
+
+  // Font weight
+  if (token.fontWeight) result.fontWeight = token.fontWeight;
+
+  // Text transform
+  if (token.textTransform) result.textTransform = token.textTransform;
+
+  // Responsive fontSize
+  const fsStr = getTokenResponsiveValue(token.fontSize, viewport);
+  if (fsStr) {
+    const parsed = parseCssStringLite(fsStr);
+    if (parsed) result.fontSize = parsed;
+  }
+
+  // Responsive lineHeight
+  const lhStr = getTokenResponsiveValue(token.lineHeight, viewport);
+  if (lhStr) {
+    const parsedLh = parseCssStringLite(lhStr);
+    if (parsedLh) {
+      result.lineHeight = typeof parsedLh === 'number' ? parsedLh : parsedLh;
+    }
+  }
+
+  // Letter spacing
+  if (token.letterSpacing && token.letterSpacing !== '0') {
+    const parsedLs = parseCssStringLite(token.letterSpacing);
+    if (parsedLs) result.letterSpacing = parsedLs;
+  }
+
+  // Color
+  if (token.color) {
+    if (typeof token.color === 'object' && 'kind' in token.color) {
+      if (token.color.kind === 'custom') result.color = token.color.hex;
+      else if (token.color.kind === 'tokenRef') result.color = { ref: token.color.ref };
+    }
+  }
+
+  return result;
+}
+
+/** Get responsive value for a viewport from a ResponsiveStringValue */
+function getTokenResponsiveValue(rsv: ResponsiveStringValue, viewport: string): string {
+  if (viewport === 'mobile' && rsv.mobile) return rsv.mobile;
+  if (viewport === 'tablet' && rsv.tablet) return rsv.tablet;
+  return rsv.desktop;
+}
+
+/** Parse CSS string like '1.5rem', '24px', '1.1' into v2 tuple [value, unit] or plain number */
+function parseCssStringLite(val: string): [number, string] | number | undefined {
+  if (!val || val === '0') return undefined;
+  const match = val.match(/^(-?[\d.]+)(px|%|em|rem|vw|vh)?$/);
+  if (match) {
+    const num = parseFloat(match[1]);
+    const unit = match[2];
+    if (!unit) return num;
+    return [num, unit];
+  }
+  return undefined;
 }
 
 /**
@@ -954,6 +1047,28 @@ function v2ValueToCSS(key: string, val: any, themeColors?: Record<string, string
     return undefined;
   }
 
+  // backgroundImage: wrap raw URL in url()
+  if (key === 'backgroundImage') {
+    if (typeof val === 'string') {
+      if (val.startsWith('url(') || val.startsWith('linear-gradient') || val.startsWith('radial-gradient')) return val;
+      return `url(${val})`;
+    }
+    return undefined;
+  }
+
+  // fontFamily: resolve from ALL_FONTS catalog for proper fallback
+  if (key === 'fontFamily') {
+    if (typeof val === 'string') {
+      // If already quoted or has fallback, pass through
+      if (val.includes(',') || val.startsWith('"')) return val;
+      // Look up in font catalog by ID or name
+      const fontEntry = ALL_FONTS.find(f => f.name === val) || ALL_FONTS.find(f => f.id === val);
+      if (fontEntry) return `"${fontEntry.name}", ${fontEntry.fallback}`;
+      return val;
+    }
+    return undefined;
+  }
+
   // Everything else: pass as-is
   if (typeof val === 'string') return val;
   if (typeof val === 'number') return `${val}`;
@@ -972,13 +1087,33 @@ export function v2StylesToCSS(
   const css: Record<string, any> = {};
 
   for (const [key, val] of Object.entries(v2Styles)) {
-    // Skip breakpoint/pseudo overrides
-    if (key.startsWith('@') || key.startsWith(':') || key === '_extends') continue;
+    // Skip breakpoint/pseudo/internal overrides
+    if (key.startsWith('@') || key.startsWith(':') || key === '_extends' || key === '_typo') continue;
     if (key === 'transition') {
       css.transition = val;
       continue;
     }
     if (key === 'transitions') continue; // skip structured transitions
+
+    // Background gradient → compile to CSS backgroundImage
+    if (key === 'backgroundGradient') {
+      if (val && typeof val === 'object' && val.stops) {
+        const stopFn = (s: any) => {
+          const c = typeof s.color === 'string' ? s.color
+            : (s.color && typeof s.color === 'object' && 'ref' in s.color)
+              ? (themeColors?.[s.color.ref] || s.color.hex || '#000')
+            : (s.color?.hex || '#000');
+          return `${c} ${s.position}%`;
+        };
+        const stops = val.stops.map(stopFn).join(', ');
+        if (val.type === 'linear') {
+          css.backgroundImage = `linear-gradient(${val.angle ?? 180}deg, ${stops})`;
+        } else {
+          css.backgroundImage = `radial-gradient(circle, ${stops})`;
+        }
+      }
+      continue;
+    }
 
     const resolved = v2ValueToCSS(key, val, themeColors);
     if (resolved !== undefined) {
@@ -1003,7 +1138,7 @@ export function resolveV2ResponsiveStyles(
   // Start with base (desktop) styles
   const base: Record<string, any> = {};
   for (const [key, val] of Object.entries(v2Styles)) {
-    if (!key.startsWith('@') && !key.startsWith(':') && key !== '_extends') {
+    if (!key.startsWith('@') && !key.startsWith(':') && key !== '_extends' && key !== '_typo') {
       base[key] = val;
     }
   }
@@ -1030,13 +1165,15 @@ export function resolveV2ElementStyles(
   allStyles: Record<string, any>,
   viewport: 'desktop' | 'tablet' | 'mobile',
   themeColors?: Record<string, string>,
+  fontTokens?: FontTokenMap,
+  typographyTokens?: TypographyTokenMap,
 ): React.CSSProperties {
   // Merge from classes
   let merged: Record<string, any> = {};
 
   if (classes) {
     for (const cls of classes) {
-      const resolved = resolveNamedStyle(cls, allStyles);
+      const resolved = resolveNamedStyle(cls, allStyles, fontTokens, typographyTokens, viewport);
       for (const [key, val] of Object.entries(resolved)) {
         merged[key] = val;
       }

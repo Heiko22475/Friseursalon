@@ -8,6 +8,7 @@ import type { VEPage } from '../types/elements';
 import type { VEViewport } from '../types/styles';
 import { BodyRenderer } from './BodyRenderer';
 import { useEditor } from '../state/EditorContext';
+import { useVETheme } from '../theme/VEThemeBridge';
 import { mergeStylesWithClasses, resolveElementStylesWithClasses, stylesToCSS } from '../utils/styleResolver';
 import { findElementById } from '../utils/elementHelpers';
 
@@ -43,6 +44,25 @@ function cssObjToString(css: React.CSSProperties): string {
 export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, selectedId, hoveredId, onSelect, onHover }) => {
   const { state } = useEditor();
   const { activeState, globalStyles } = state;
+  const { semanticTokens, resolveColorValue } = useVETheme();
+
+  // Resolve the website's own body text color from its theme to break
+  // the admin-theme `color: var(--admin-text)` inheritance.
+  const canvasTextColor = useMemo(() => {
+    if (semanticTokens?.body_text) {
+      const resolved = resolveColorValue(semanticTokens.body_text as any);
+      if (resolved && resolved !== 'transparent') return resolved;
+    }
+    return '#000000'; // safe fallback — black on white canvas
+  }, [semanticTokens, resolveColorValue]);
+
+  const canvasBgColor = useMemo(() => {
+    if (semanticTokens?.page_bg) {
+      const resolved = resolveColorValue(semanticTokens.page_bg as any);
+      if (resolved && resolved !== 'transparent') return resolved;
+    }
+    return '#ffffff';
+  }, [semanticTokens, resolveColorValue]);
 
   // When a pseudo-state is active, generate inline CSS that overrides
   // the selected element's styles so the canvas shows the hover/focus/active preview.
@@ -81,7 +101,8 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({ page, viewport, 
         width: viewportWidths[viewport],
         maxWidth: '100%',
         margin: '0 auto',
-        backgroundColor: '#ffffff',
+        backgroundColor: canvasBgColor,
+        color: canvasTextColor,
         minHeight: '100%',
         transition: 'width 0.3s ease',
         position: 'relative',

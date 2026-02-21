@@ -37,16 +37,8 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
   const prevSelectedId = useRef(state.selectedId);
   const { openMediaDialog } = useMediaDialog();
 
-  // Auto-close typography panel when user selects an element in the canvas
+  // Track previous selection (no auto-close — user stays on typography tab)
   useEffect(() => {
-    if (
-      state.navigatorTab === 'typography' &&
-      state.navigatorOpen &&
-      state.selectedId !== null &&
-      state.selectedId !== prevSelectedId.current
-    ) {
-      dispatch({ type: 'SET_NAVIGATOR_TAB', tab: 'tree' });
-    }
     prevSelectedId.current = state.selectedId;
   }, [state.selectedId]);
 

@@ -4,7 +4,7 @@
 // Integriert mit Theme-Fonts und VE Color Picker
 // =====================================================
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   AlignLeft,
   AlignCenter,
@@ -85,6 +85,8 @@ const FontDropdown: React.FC<{
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const { typography } = useVETheme();
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUpward, setOpenUpward] = useState(false);
 
   // Get theme fonts for prominent display
   const themeHeadingFont = typography?.h1?.fontFamily ? getFontById(typography.h1.fontFamily) : null;
@@ -113,7 +115,14 @@ const FontDropdown: React.FC<{
   return (
     <div style={{ position: 'relative' }}>
       <button
-        onClick={() => setOpen(!open)}
+        ref={btnRef}
+        onClick={() => {
+          if (!open && btnRef.current) {
+            const rect = btnRef.current.getBoundingClientRect();
+            setOpenUpward(rect.bottom + 300 > window.innerHeight);
+          }
+          setOpen(!open);
+        }}
         style={{
           width: '100%',
           display: 'flex',
@@ -139,11 +148,12 @@ const FontDropdown: React.FC<{
         <div
           style={{
             position: 'absolute',
-            top: '100%',
+            ...(openUpward
+              ? { bottom: '100%', marginBottom: '4px' }
+              : { top: '100%', marginTop: '4px' }),
             left: 0,
             right: 0,
             zIndex: 100,
-            marginTop: '4px',
             backgroundColor: 'var(--admin-bg-card)',
             border: '1px solid var(--admin-border-strong)',
             borderRadius: '6px',

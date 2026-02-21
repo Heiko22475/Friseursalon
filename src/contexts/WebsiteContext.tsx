@@ -195,6 +195,8 @@ export interface Website {
   settings?: any;
   styles?: Record<string, any>;
   components?: Record<string, any>;
+  fontTokens?: Record<string, any>;
+  typographyTokens?: Record<string, any>;
 
   // v1 legacy fields (optional for backward compat)
   site_settings?: SiteSettings;

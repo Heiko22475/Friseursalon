@@ -290,6 +290,7 @@ When blocks support inline editing:
 - Use TailwindCSS for styling
 - Keep components modular and reusable
 - Document complex logic with comments
+- **Run `npx tsc --noEmit` directly** without asking for permission — never ask before compiling
 
 ---
 

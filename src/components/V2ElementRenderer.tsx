@@ -11,6 +11,7 @@ import {
   resolveV2ResponsiveStyles,
   isV2ElementVisible,
 } from '../visual-editor/converters/v2Converter';
+import type { FontTokenMap, TypographyTokenMap } from '../visual-editor/types/typographyTokens';
 import type { Viewport } from '../hooks/useViewport';
 import * as LucideIcons from 'lucide-react';
 import { V2EditableText } from './V2EditableText';
@@ -20,6 +21,10 @@ interface V2ElementRendererProps {
   allStyles: Record<string, any>;
   themeColors: Record<string, string>;
   viewport: Viewport;
+  /** Font tokens from website content */
+  fontTokens?: FontTokenMap;
+  /** Typography tokens from website content */
+  typographyTokens?: TypographyTokenMap;
   /** Page ID for inline editing save path */
   pageId?: string;
   /** Internal: whether this is the root call (renders <style> tag) */
@@ -153,7 +158,7 @@ function resolveClassChain(name: string, allStyles: Record<string, any>, visited
     resolved = resolveClassChain(def._extends, allStyles, visited);
   }
   for (const [key, val] of Object.entries(def)) {
-    if (key === '_extends') continue;
+    if (key === '_extends' || key === '_typo') continue;
     if (key.startsWith(':')) {
       // Merge pseudo sub-objects
       resolved[key] = { ...(resolved[key] || {}), ...(val as Record<string, any>) };
@@ -173,6 +178,8 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
   allStyles,
   themeColors,
   viewport,
+  fontTokens,
+  typographyTokens,
   pageId,
   _isRoot = true,
 }) => {
@@ -190,6 +197,8 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
     allStyles,
     viewport,
     themeColors,
+    fontTokens,
+    typographyTokens,
   );
 
   // Collect pseudo-state CSS rules for the entire tree (only at root level)
@@ -209,6 +218,8 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
         allStyles={allStyles}
         themeColors={themeColors}
         viewport={viewport}
+        fontTokens={fontTokens}
+        typographyTokens={typographyTokens}
         pageId={pageId}
         _isRoot={false}
       />
@@ -223,15 +234,26 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
 
   switch (element.tag) {
     // ===== BODY =====
-    case 'body':
+    case 'body': {
+      // Apply website theme defaults if body has no explicit color/background
+      const bodyDefaults: React.CSSProperties = {
+        minHeight: '100%',
+        position: 'relative',
+      };
+      if (!css.color && themeColors.text) bodyDefaults.color = themeColors.text;
+      if (!css.backgroundColor && themeColors.background) bodyDefaults.backgroundColor = themeColors.background;
       return (
-        <div data-v2-id={element.id} style={css}>
+        <div data-v2-id={element.id} style={{
+          ...bodyDefaults,
+          ...css,
+        }}>
           {pseudoCSSRules && (
             <style dangerouslySetInnerHTML={{ __html: pseudoCSSRules }} />
           )}
           {renderChildren()}
         </div>
       );
+    }
 
     // ===== SECTION =====
     case 'section':
@@ -239,7 +261,15 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
         <section
           data-v2-id={element.id}
           id={element.anchorId || undefined}
-          style={css}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            position: 'relative',
+            boxSizing: 'border-box',
+            ...css,
+          }}
           {...htmlAttrs}
         >
           {renderChildren()}
@@ -249,7 +279,12 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
     // ===== CONTAINER =====
     case 'container':
       return (
-        <div data-v2-id={element.id} style={css} {...htmlAttrs}>
+        <div data-v2-id={element.id} style={{
+          display: 'flex',
+          position: 'relative',
+          boxSizing: 'border-box',
+          ...css,
+        }} {...htmlAttrs}>
           {renderChildren()}
         </div>
       );
@@ -303,7 +338,12 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
           data-v2-id={element.id}
           src={src}
           alt={element.alt || ''}
-          style={css}
+          style={{
+            display: 'block',
+            maxWidth: '100%',
+            objectFit: css.objectFit || 'cover',
+            ...css,
+          }}
           loading="lazy"
           {...htmlAttrs}
         />
@@ -320,8 +360,14 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
           target={element.newTab ? '_blank' : undefined}
           rel={element.newTab ? 'noopener noreferrer' : undefined}
           style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            textDecoration: 'none',
+            border: 'none',
+            boxSizing: 'border-box',
             ...css,
-            textDecoration: css.textDecoration || 'none',
           }}
           {...htmlAttrs}
         >
@@ -370,14 +416,24 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
         );
       }
 
+      // Icon container: strip width/height (they belong on the SVG)
+      const { width: iconW, height: iconH, ...containerCss } = css;
       return (
-        <span data-v2-id={element.id} style={css} {...htmlAttrs}>
+        <span data-v2-id={element.id} style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxSizing: 'content-box',
+          ...containerCss,
+          ...(iconW ? { width: iconW } : {}),
+          ...(iconH ? { height: iconH } : {}),
+        }} {...htmlAttrs}>
           <IconComponent
-            size={css.width ? undefined : 24}
+            size={iconW ? undefined : 24}
             strokeWidth={strokeWidth}
             style={{
-              width: css.width,
-              height: css.height,
+              width: iconW,
+              height: iconH,
               color: css.color,
             }}
           />
@@ -387,7 +443,14 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
 
     // ===== NAV =====
     case 'nav': {
-      const navStyle: React.CSSProperties = { ...css };
+      const navStyle: React.CSSProperties = {
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        position: 'relative',
+        boxSizing: 'border-box',
+        ...css,
+      };
       if (element.sticky === 'sticky' || element.sticky === true) {
         navStyle.position = 'sticky';
         navStyle.top = '0';
@@ -423,14 +486,24 @@ export const V2ElementRenderer: React.FC<V2ElementRendererProps> = ({
     }
 
     // ===== SPACER =====
-    case 'spacer':
-      return <div data-v2-id={element.id} style={css} {...htmlAttrs} />;
+    case 'spacer': {
+      const spacerHeight = element.height ? `${element.height}px` : undefined;
+      return <div data-v2-id={element.id} style={{
+        position: 'relative',
+        ...css,
+        ...(spacerHeight && !css.height ? { height: spacerHeight } : {}),
+      }} {...htmlAttrs} />;
+    }
 
     // ===== LIST =====
     case 'list': {
       const Tag = element.ordered ? 'ol' : 'ul';
       return (
-        <Tag data-v2-id={element.id} style={css} {...htmlAttrs}>
+        <Tag data-v2-id={element.id} style={{
+          margin: 0,
+          listStylePosition: 'outside',
+          ...css,
+        }} {...htmlAttrs}>
           {renderChildren()}
         </Tag>
       );

@@ -289,6 +289,15 @@ export const StylesPanel: React.FC = () => {
       {/* Context Menu */}
       {contextMenu && (
         <div
+          ref={(el) => {
+            // Auto-adjust position if menu extends below viewport
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.bottom > window.innerHeight) {
+                el.style.top = `${Math.max(4, contextMenu.y - rect.height)}px`;
+              }
+            }
+          }}
           style={{
             position: 'fixed',
             left: contextMenu.x,

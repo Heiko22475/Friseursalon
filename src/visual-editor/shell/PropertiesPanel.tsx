@@ -311,7 +311,7 @@ export const PropertiesPanel: React.FC = () => {
               backgroundColor: typeColor + '20',
               border: `1px solid ${typeColor}40`,
               borderRadius: '4px',
-              fontSize: '10px',
+              fontSize: '11px',
               fontWeight: 600,
               color: typeColor,
               textTransform: 'uppercase',
@@ -368,7 +368,7 @@ export const PropertiesPanel: React.FC = () => {
             {state.viewport === 'desktop' ? 'Desktop' : state.viewport === 'tablet' ? 'Tablet' : 'Mobile'} Styles
           </span>
           {state.viewport !== 'desktop' && (
-            <span style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginLeft: '4px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', marginLeft: '4px' }}>
               (erbt von Desktop)
             </span>
           )}
@@ -457,7 +457,7 @@ export const PropertiesPanel: React.FC = () => {
                   style={{
                     flex: 1,
                     padding: '4px 6px',
-                    fontSize: '10px',
+                    fontSize: '11px',
                     fontWeight: 600,
                     borderRadius: '4px',
                     border: `1px solid ${isActive ? stateColor + '80' : 'var(--admin-border)'}`,
@@ -491,7 +491,7 @@ export const PropertiesPanel: React.FC = () => {
           <div style={{
             marginTop: '6px',
             padding: '4px 8px',
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 600,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
@@ -538,7 +538,7 @@ export const PropertiesPanel: React.FC = () => {
           <span style={{ fontSize: '11px', fontWeight: 600, color: '#a78bfa', fontFamily: 'monospace' }}>
             .{editingClass}
           </span>
-          <span style={{ fontSize: '10px', color: '#8b7ebf', marginLeft: 'auto' }}>
+          <span style={{ fontSize: '11px', color: '#8b7ebf', marginLeft: 'auto' }}>
             Klasse bearbeiten
           </span>
         </div>

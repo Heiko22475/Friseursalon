@@ -88,7 +88,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
   if (compact) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <span style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', textAlign: 'center' }}>{label}</span>
+        <span style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', textAlign: 'center' }}>{label}</span>
         <div style={{ display: 'flex', position: 'relative' }}>
           <input
             ref={inputRef}
@@ -121,7 +121,7 @@ export const UnitInput: React.FC<UnitInputProps> = ({
               border: '1px solid var(--admin-border-strong)',
               borderRadius: '0 4px 4px 0',
               color: 'var(--admin-text-icon)',
-              fontSize: '10px',
+              fontSize: '11px',
               cursor: 'pointer',
               minWidth: '26px',
             }}

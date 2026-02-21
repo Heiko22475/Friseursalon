@@ -192,6 +192,9 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
                     }} />
                   ))}
                 </span>
+                <span style={{ fontSize: '11px', fontWeight: 500, color: 'inherit', whiteSpace: 'nowrap' }}>
+                  {currentThemeInfo.label}
+                </span>
               </button>
 
               {/* Dropdown */}

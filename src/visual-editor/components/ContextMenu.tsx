@@ -132,7 +132,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ label, icon, shortcut, danger, disa
       <span style={{ flex: 1 }}>{label}</span>
       {shortcut && (
         <span style={{
-          fontSize: '10px',
+          fontSize: '11px',
           color: 'var(--admin-text-secondary)',
           fontFamily: 'monospace',
           letterSpacing: '0.02em',
@@ -239,7 +239,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
       {/* Header: Element info */}
       <div style={{
         padding: '6px 12px 4px',
-        fontSize: '10px',
+        fontSize: '11px',
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.05em',

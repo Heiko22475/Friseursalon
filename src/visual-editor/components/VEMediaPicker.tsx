@@ -168,7 +168,7 @@ export const VEMediaPicker: React.FC<VEMediaPickerProps> = ({ value, onChange, l
       {value && (
         <div style={{
           marginTop: '4px',
-          fontSize: '10px',
+          fontSize: '11px',
           color: 'var(--admin-text-secondary)',
           wordBreak: 'break-all',
           lineHeight: '1.4',

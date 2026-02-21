@@ -181,7 +181,7 @@ const FontDropdown: React.FC<{
             {(themeHeadingFont || themeBodyFont) && !search && (
               <div>
                 <div style={{
-                  fontSize: '10px',
+                  fontSize: '11px',
                   color: 'var(--admin-text-icon)',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
@@ -208,7 +208,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeHeadingFont.name}</span>
-                    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Heading</span>
+                    <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>Heading</span>
                   </button>
                 )}
                 {themeBodyFont && themeBodyFont.id !== themeHeadingFont?.id && (
@@ -229,7 +229,7 @@ const FontDropdown: React.FC<{
                     }}
                   >
                     <span>{themeBodyFont.name}</span>
-                    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Body</span>
+                    <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>Body</span>
                   </button>
                 )}
               </div>
@@ -239,7 +239,7 @@ const FontDropdown: React.FC<{
             {[...grouped.entries()].map(([cat, fonts]) => (
               <div key={cat}>
                 <div style={{
-                  fontSize: '10px',
+                  fontSize: '11px',
                   color: 'var(--admin-text-icon)',
                   padding: '4px 10px',
                   textTransform: 'uppercase',
@@ -303,7 +303,7 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, ch
 
 /** Small label showing that a value is inherited from a token */
 const TokenHint: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <span style={{ fontSize: '9px', color: '#a78bfa', marginLeft: '4px', fontStyle: 'italic', whiteSpace: 'nowrap' }}>← {children}</span>
+  <span style={{ fontSize: '11px', color: '#a78bfa', marginLeft: '4px', fontStyle: 'italic', whiteSpace: 'nowrap' }}>← {children}</span>
 );
 
 export const TypographySection: React.FC<TypographySectionProps> = ({
@@ -332,7 +332,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
         <div style={{ marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
             <Type size={12} style={{ color: '#a78bfa' }} />
-            <span style={{ fontSize: '10px', fontWeight: 600, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Typo Token
             </span>
           </div>
@@ -367,7 +367,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
             />
           </div>
           {tokenKey && tokenLabel && (
-            <div style={{ marginTop: '4px', fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+            <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--admin-text-muted)' }}>
               Verknüpft: {tokenLabel} – Font/Größe/Gewicht werden vom Token gesteuert
             </div>
           )}
@@ -390,7 +390,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
           <span style={{ fontSize: '11px', color: '#c4b5fd', fontWeight: 600 }}>
             {tokenLabel}
           </span>
-          <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)', marginLeft: 'auto' }}>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)', marginLeft: 'auto' }}>
             Token
           </span>
         </div>
@@ -419,7 +419,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
           <Pencil size={12} />
           Typografie anpassen
           {hasAnyOverride && (
-            <span style={{ marginLeft: 'auto', fontSize: '9px', color: '#60a5fa', fontWeight: 400 }}>
+            <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#60a5fa', fontWeight: 400 }}>
               (Anpassungen vorhanden)
             </span>
           )}
@@ -439,7 +439,7 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
               border: '1px solid var(--admin-border)',
               backgroundColor: 'var(--admin-bg-sidebar)',
               color: 'var(--admin-text-muted)',
-              fontSize: '10px',
+              fontSize: '11px',
               cursor: 'pointer',
             }}
           >

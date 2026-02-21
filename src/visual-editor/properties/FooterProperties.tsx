@@ -445,12 +445,12 @@ const ColumnsEditor: React.FC<{
             <button
               key={type}
               onClick={() => addColumn(type)}
-              style={{ ...btnStyle, display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}
+              style={{ ...btnStyle, display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px' }}
             >
               {columnTypeIcons[type]} {columnTypeLabels[type]}
             </button>
           ))}
-          <button onClick={() => setShowAddMenu(false)} style={{ ...btnStyle, color: '#ef4444', fontSize: '10px' }}>✕</button>
+          <button onClick={() => setShowAddMenu(false)} style={{ ...btnStyle, color: '#ef4444', fontSize: '11px' }}>✕</button>
         </div>
       )}
     </div>
@@ -536,12 +536,12 @@ const ColumnItem: React.FC<{
               <Toggle label="Adresse" checked={(column as FooterContactColumn).showAddress} onChange={(v) => onUpdate({ ...column, showAddress: v } as FooterContactColumn)} />
               <Toggle label="Telefon" checked={(column as FooterContactColumn).showPhone} onChange={(v) => onUpdate({ ...column, showPhone: v } as FooterContactColumn)} />
               <Toggle label="E-Mail" checked={(column as FooterContactColumn).showEmail} onChange={(v) => onUpdate({ ...column, showEmail: v } as FooterContactColumn)} />
-              <p style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Daten aus Kontakt-Einstellungen.</p>
+              <p style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>Daten aus Kontakt-Einstellungen.</p>
             </>
           )}
 
           {column.type === 'hours' && (
-            <p style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Zeiten aus Kontakt-Einstellungen.</p>
+            <p style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>Zeiten aus Kontakt-Einstellungen.</p>
           )}
         </div>
       )}
@@ -583,7 +583,7 @@ const ColumnLinksEditor: React.FC<{
           </button>
         </div>
       ))}
-      <button onClick={addLink} style={{ ...btnStyle, color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}>
+      <button onClick={addLink} style={{ ...btnStyle, color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px' }}>
         <Plus size={10} /> Link
       </button>
     </div>

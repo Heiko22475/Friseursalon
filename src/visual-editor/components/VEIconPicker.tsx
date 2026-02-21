@@ -277,7 +277,7 @@ export const VEIconPicker: React.FC<VEIconPickerProps> = ({ value, onChange }) =
                     >
                       <Component size={30} strokeWidth={1.75} />
                       <span style={{
-                        fontSize: '10px',
+                        fontSize: '11px',
                         lineHeight: '13px',
                         maxWidth: '100%',
                         overflow: 'hidden',

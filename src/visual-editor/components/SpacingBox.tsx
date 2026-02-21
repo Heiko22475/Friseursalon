@@ -1,5 +1,5 @@
 // =====================================================
-// VISUAL EDITOR – SPACING BOX
+// VISUAL EDITOR – SPACING BOX (v2)
 // Interaktive Box-Model-Visualisierung (Webflow-Style)
 //
 //        ┌─── Margin ────────────┐
@@ -12,12 +12,14 @@
 //        │       [mb]            │
 //        └───────────────────────┘
 //
-// Klick auf Wert → öffnet Dropdown direkt darunter:
-//   Zeile 1: Slider (Mitte=0) + Number-Input + Unit-Dropdown
-//   Zeile 2: [auto]-Button (nur Margin) + Preset-Werte
+// Features:
+//  • Full-border click areas (entire strip is clickable)
+//  • Drag-to-resize (0.5:1 ratio → 1px mouse = 2px spacing)
+//  • Shift key → changes BOTH opposite sides simultaneously
+//  • Syncs with SpacingDropdown slider below
 // =====================================================
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { SizeValue, SizeValueOrAuto, StyleProperties } from '../types/styles';
 
 // ===== TYPES =====
@@ -41,6 +43,10 @@ function isMarginProp(prop: SpacingProperty): boolean {
 
 function isSideProp(prop: SpacingProperty): boolean {
   return prop.endsWith('Left') || prop.endsWith('Right');
+}
+
+function isVerticalProp(prop: SpacingProperty): boolean {
+  return prop.endsWith('Top') || prop.endsWith('Bottom');
 }
 
 function getNumericValue(val: SizeValueOrAuto | SizeValue | undefined): number {
@@ -77,7 +83,21 @@ function getPropertyLabel(prop: SpacingProperty): string {
   return map[prop];
 }
 
-// ===== PRESET VALUES =====
+function getOppositeProperty(prop: SpacingProperty): SpacingProperty {
+  const map: Record<SpacingProperty, SpacingProperty> = {
+    marginTop: 'marginBottom',
+    marginBottom: 'marginTop',
+    marginLeft: 'marginRight',
+    marginRight: 'marginLeft',
+    paddingTop: 'paddingBottom',
+    paddingBottom: 'paddingTop',
+    paddingLeft: 'paddingRight',
+    paddingRight: 'paddingLeft',
+  };
+  return map[prop];
+}
+
+// ===== CONSTANTS =====
 
 const PRESETS_HORIZONTAL = [
   [0, 5, 10, 15],
@@ -91,22 +111,40 @@ const PRESETS_VERTICAL = [
 
 const ALL_UNITS: SizeUnit[] = ['px', '%', 'vw', 'vh', 'rem'];
 
-// ===== SPACING DROPDOWN =====
+/** 1px mouse movement = 2px spacing change (0.5:1 ratio) */
+const DRAG_MULTIPLIER = 2;
+
+// Dimensions for box-model strips
+const MARGIN_STRIP_H = 24;
+const MARGIN_STRIP_W = 32;
+const PADDING_STRIP_H = 20;
+const PADDING_STRIP_W = 28;
+
+// Box-model area tint colors
+const MARGIN_TINT       = 'rgba(76, 175, 80, 0.06)';
+const MARGIN_TINT_HOVER = 'rgba(76, 175, 80, 0.16)';
+const PADDING_TINT       = 'rgba(100, 120, 200, 0.06)';
+const PADDING_TINT_HOVER = 'rgba(100, 120, 200, 0.16)';
+const ACTIVE_TINT        = 'rgba(59, 130, 246, 0.18)';
+
+// ===== SPACING DROPDOWN (with Shift key support) =====
 
 interface SpacingDropdownProps {
   property: SpacingProperty;
   value: SizeValueOrAuto | SizeValue | undefined;
   onChange: (val: SizeValueOrAuto | SizeValue | undefined) => void;
-  onClose: () => void;
+  /** Called additionally when Shift is held — applies the same value to the opposite side */
+  onOppositeChange?: (val: SizeValueOrAuto | SizeValue | undefined) => void;
+  shiftRef: React.MutableRefObject<boolean>;
 }
 
 const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
   property,
   value,
   onChange,
-  onClose,
+  onOppositeChange,
+  shiftRef,
 }) => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const margin = isMarginProp(property);
   const side = isSideProp(property);
   const presets = side ? PRESETS_HORIZONTAL : PRESETS_VERTICAL;
@@ -115,22 +153,19 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
   const currentUnit = getUnit(value);
   const autoActive = isAutoVal(value);
 
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        onClose();
+  /** Fire onChange + optionally onOppositeChange when Shift is held */
+  const fireChange = useCallback(
+    (val: SizeValueOrAuto | SizeValue | undefined, forceShift?: boolean) => {
+      onChange(val);
+      if ((forceShift || shiftRef.current) && onOppositeChange) {
+        onOppositeChange(val);
       }
-    };
-    const timer = setTimeout(() => document.addEventListener('mousedown', handler), 10);
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('mousedown', handler);
-    };
-  }, [onClose]);
+    },
+    [onChange, onOppositeChange, shiftRef],
+  );
 
-  const setNumeric = (num: number, unit?: SizeUnit) => {
-    onChange({ value: num, unit: unit ?? currentUnit });
+  const setNumeric = (num: number, unit?: SizeUnit, isShift?: boolean) => {
+    fireChange({ value: num, unit: unit ?? currentUnit }, isShift);
   };
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,20 +183,21 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
   };
 
   const handleUnitChange = (unit: SizeUnit) => {
-    onChange({ value: autoActive ? 0 : numericVal, unit });
+    fireChange({ value: autoActive ? 0 : numericVal, unit });
   };
 
-  const handleAutoClick = () => {
-    onChange(autoActive ? { value: 0, unit: currentUnit } : 'auto');
+  const handleAutoClick = (e: React.MouseEvent) => {
+    const newVal: SizeValueOrAuto | undefined = autoActive
+      ? { value: 0, unit: currentUnit }
+      : 'auto';
+    fireChange(newVal, e.shiftKey);
   };
 
-  // Slider range: margin allows negatives, padding min=0
   const sliderMin = margin ? -200 : 0;
   const sliderMax = 200;
 
   return (
     <div
-      ref={dropdownRef}
       style={{
         backgroundColor: 'var(--admin-bg-surface)',
         border: '1px solid var(--admin-border-strong)',
@@ -173,7 +209,7 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
     >
       {/* Header */}
       <div style={{
-        fontSize: '10px',
+        fontSize: '11px',
         color: 'var(--admin-text-secondary)',
         marginBottom: '8px',
         textTransform: 'uppercase',
@@ -236,7 +272,6 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
 
       {/* Row 2: Auto Button + Preset Values */}
       <div style={{ display: 'flex', gap: '6px', alignItems: 'stretch' }}>
-        {/* Auto Button (nur Margin) */}
         {margin && (
           <button
             onClick={handleAutoClick}
@@ -261,19 +296,13 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
           </button>
         )}
 
-        {/* Preset Grid */}
-        <div style={{
-          flex: 1,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '3px',
-        }}>
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '3px' }}>
           {presets.flat().map((val, i) => {
             const isActive = numericVal === val && !autoActive;
             return (
               <button
                 key={`${val}-${i}`}
-                onClick={() => setNumeric(val)}
+                onClick={(e) => setNumeric(val, undefined, e.shiftKey)}
                 style={{
                   padding: '4px 2px',
                   backgroundColor: isActive ? '#3b82f6' : 'var(--admin-border)',
@@ -292,56 +321,86 @@ const SpacingDropdown: React.FC<SpacingDropdownProps> = ({
           })}
         </div>
       </div>
+
+      {/* Shift-Tipp */}
+      <div style={{
+        marginTop: '8px',
+        fontSize: '10px',
+        color: 'var(--admin-text-muted)',
+        textAlign: 'center',
+        opacity: 0.7,
+      }}>
+        ⇧ Shift = beide Seiten gleichzeitig
+      </div>
     </div>
   );
 };
 
-// ===== CLICKABLE VALUE (inside the box model) =====
+// ===== BORDER AREA (full-width/height clickable + draggable strip) =====
 
-interface ClickableValueProps {
+interface BorderAreaProps {
+  property: SpacingProperty;
   value: SizeValueOrAuto | SizeValue | undefined;
   position: 'top' | 'right' | 'bottom' | 'left';
-  active: boolean;
-  onClick: () => void;
+  isActive: boolean;
+  isDragging: boolean;
+  isMargin: boolean;
+  onMouseDown: (prop: SpacingProperty, e: React.MouseEvent) => void;
+  posStyle: React.CSSProperties;
 }
 
-const ClickableValue: React.FC<ClickableValueProps> = ({ value, position, active, onClick }) => {
+const BorderArea: React.FC<BorderAreaProps> = ({
+  property,
+  value,
+  position,
+  isActive,
+  isDragging,
+  isMargin,
+  onMouseDown,
+  posStyle,
+}) => {
+  const [hovered, setHovered] = useState(false);
   const display = getDisplayText(value);
   const hasValue = value !== undefined && value !== null;
+  const isVert = position === 'top' || position === 'bottom';
 
-  const posStyle: React.CSSProperties = {
-    position: 'absolute',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-    ...(position === 'top' && { top: '2px', left: '50%', transform: 'translateX(-50%)' }),
-    ...(position === 'bottom' && { bottom: '2px', left: '50%', transform: 'translateX(-50%)' }),
-    ...(position === 'left' && { left: '4px', top: '50%', transform: 'translateY(-50%)' }),
-    ...(position === 'right' && { right: '4px', top: '50%', transform: 'translateY(-50%)' }),
-  };
+  let bg: string;
+  if (isActive || isDragging) bg = ACTIVE_TINT;
+  else if (hovered) bg = isMargin ? MARGIN_TINT_HOVER : PADDING_TINT_HOVER;
+  else bg = isMargin ? MARGIN_TINT : PADDING_TINT;
 
   return (
     <div
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onMouseDown={(e) => onMouseDown(property, e)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        ...posStyle,
-        cursor: 'pointer',
-        fontSize: '10px',
-        fontWeight: active ? 700 : 400,
-        color: active ? '#3b82f6' : hasValue ? 'var(--admin-text)' : 'var(--admin-text-secondary)',
-        minWidth: '20px',
-        textAlign: 'center',
-        padding: '2px 4px',
-        borderRadius: '3px',
-        backgroundColor: active ? '#3b82f620' : 'transparent',
-        border: active ? '1px solid #3b82f650' : '1px solid transparent',
-        transition: 'all 0.15s',
+        position: 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: isVert ? 'ns-resize' : 'ew-resize',
+        backgroundColor: bg,
+        transition: 'background-color 0.1s',
         userSelect: 'none',
+        zIndex: 2,
+        ...posStyle,
       }}
-      title={isAutoVal(value) ? 'auto' : value && value !== 'auto' ? `${value.value}${value.unit}` : '–'}
     >
-      {display}
+      <span
+        style={{
+          fontSize: '11px',
+          fontWeight: isActive ? 700 : 400,
+          color: isActive
+            ? '#3b82f6'
+            : hasValue
+              ? 'var(--admin-text)'
+              : 'var(--admin-text-muted)',
+          pointerEvents: 'none',
+        }}
+      >
+        {display}
+      </span>
     </div>
   );
 };
@@ -350,111 +409,307 @@ const ClickableValue: React.FC<ClickableValueProps> = ({ value, position, active
 
 export const SpacingBox: React.FC<SpacingBoxProps> = ({ styles, onChange }) => {
   const [activeProperty, setActiveProperty] = useState<SpacingProperty | null>(null);
+  const [dragging, setDragging] = useState<SpacingProperty | null>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const shiftRef = useRef(false);
 
-  const getMarginVal = (prop: 'marginTop' | 'marginRight' | 'marginBottom' | 'marginLeft'): SizeValueOrAuto | undefined => {
-    const v = styles[prop];
-    if (v === 'auto') return 'auto';
-    if (typeof v === 'object' && v !== null) return v as SizeValue;
-    return undefined;
-  };
+  // Track Shift key globally
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') shiftRef.current = true;
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') shiftRef.current = false;
+    };
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
 
-  const getPaddingVal = (prop: 'paddingTop' | 'paddingRight' | 'paddingBottom' | 'paddingLeft'): SizeValue | undefined => {
-    return styles[prop] as SizeValue | undefined;
-  };
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!activeProperty) return;
+    const handler = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
+        setActiveProperty(null);
+      }
+    };
+    const timer = setTimeout(() => document.addEventListener('mousedown', handler), 10);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handler);
+    };
+  }, [activeProperty]);
 
-  const handleValueClick = (prop: SpacingProperty) => {
-    setActiveProperty(activeProperty === prop ? null : prop);
-  };
+  // ── Value getters ──
 
-  const handleDropdownChange = (val: SizeValueOrAuto | SizeValue | undefined) => {
-    if (activeProperty) {
-      onChange(activeProperty, val);
-    }
-  };
+  const getVal = useCallback(
+    (prop: SpacingProperty): SizeValueOrAuto | SizeValue | undefined => {
+      const v = styles[prop];
+      if (v === 'auto') return 'auto';
+      if (typeof v === 'object' && v !== null) return v as SizeValue;
+      return undefined;
+    },
+    [styles],
+  );
 
-  const getActiveValue = (): SizeValueOrAuto | SizeValue | undefined => {
-    if (!activeProperty) return undefined;
-    if (isMarginProp(activeProperty)) return getMarginVal(activeProperty as any);
-    return getPaddingVal(activeProperty as any);
+  // ── Drag + click handler ──
+
+  const handleMouseDown = useCallback(
+    (prop: SpacingProperty, e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const val = getVal(prop);
+      const startValue = getNumericValue(val);
+      const unit = getUnit(val);
+      let didDrag = false;
+
+      const prevCursor = document.body.style.cursor;
+      const prevSelect = document.body.style.userSelect;
+
+      const onMouseMove = (moveE: MouseEvent) => {
+        const dx = moveE.clientX - startX;
+        const dy = moveE.clientY - startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Start dragging after 3px threshold
+        if (!didDrag && dist > 3) {
+          didDrag = true;
+          setDragging(prop);
+          setActiveProperty(prop);
+          document.body.style.cursor = isVerticalProp(prop) ? 'ns-resize' : 'ew-resize';
+          document.body.style.userSelect = 'none';
+        }
+
+        if (didDrag) {
+          const vertical = isVerticalProp(prop);
+          let pixelDelta: number;
+
+          if (vertical) {
+            // top: mouse-up = increase | bottom: mouse-down = increase
+            pixelDelta = prop.endsWith('Top')
+              ? startY - moveE.clientY
+              : moveE.clientY - startY;
+          } else {
+            // left: mouse-left = increase | right: mouse-right = increase
+            pixelDelta = prop.endsWith('Left')
+              ? startX - moveE.clientX
+              : moveE.clientX - startX;
+          }
+
+          const newValue = Math.round(startValue + pixelDelta * DRAG_MULTIPLIER);
+          // Padding min is 0, margin has no limits
+          const clamped = isMarginProp(prop) ? newValue : Math.max(0, newValue);
+
+          onChange(prop, { value: clamped, unit });
+
+          // Shift = change opposite side simultaneously
+          if (moveE.shiftKey) {
+            const oppProp = getOppositeProperty(prop);
+            const oppUnit = getUnit(getVal(oppProp));
+            const oppClamped = isMarginProp(oppProp) ? newValue : Math.max(0, newValue);
+            onChange(oppProp, { value: oppClamped, unit: oppUnit });
+          }
+        }
+      };
+
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = prevCursor;
+        document.body.style.userSelect = prevSelect;
+
+        if (!didDrag) {
+          // Was a click → toggle dropdown
+          setActiveProperty((prev) => (prev === prop ? null : prop));
+        }
+
+        // Small delay so click handler doesn't fire after drag
+        setTimeout(() => setDragging(null), 50);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    },
+    [getVal, onChange],
+  );
+
+  // ── Dropdown change handlers ──
+
+  const handleDropdownChange = useCallback(
+    (val: SizeValueOrAuto | SizeValue | undefined) => {
+      if (activeProperty) onChange(activeProperty, val);
+    },
+    [activeProperty, onChange],
+  );
+
+  const handleOppositeChange = useCallback(
+    (val: SizeValueOrAuto | SizeValue | undefined) => {
+      if (activeProperty) onChange(getOppositeProperty(activeProperty), val);
+    },
+    [activeProperty, onChange],
+  );
+
+  // ── Helper to render 4 border areas ──
+
+  const renderBorderAreas = (
+    props: [SpacingProperty, SpacingProperty, SpacingProperty, SpacingProperty],
+    isMargin: boolean,
+    stripH: number,
+    stripW: number,
+  ) => {
+    const [top, right, bottom, left] = props;
+
+    return (
+      <>
+        {/* Top strip — full width */}
+        <BorderArea
+          property={top}
+          value={getVal(top)}
+          position="top"
+          isActive={activeProperty === top}
+          isDragging={dragging === top}
+          isMargin={isMargin}
+          onMouseDown={handleMouseDown}
+          posStyle={{ top: 0, left: 0, right: 0, height: stripH }}
+        />
+        {/* Bottom strip — full width */}
+        <BorderArea
+          property={bottom}
+          value={getVal(bottom)}
+          position="bottom"
+          isActive={activeProperty === bottom}
+          isDragging={dragging === bottom}
+          isMargin={isMargin}
+          onMouseDown={handleMouseDown}
+          posStyle={{ bottom: 0, left: 0, right: 0, height: stripH }}
+        />
+        {/* Left strip — between top/bottom */}
+        <BorderArea
+          property={left}
+          value={getVal(left)}
+          position="left"
+          isActive={activeProperty === left}
+          isDragging={dragging === left}
+          isMargin={isMargin}
+          onMouseDown={handleMouseDown}
+          posStyle={{ top: stripH, bottom: stripH, left: 0, width: stripW }}
+        />
+        {/* Right strip — between top/bottom */}
+        <BorderArea
+          property={right}
+          value={getVal(right)}
+          position="right"
+          isActive={activeProperty === right}
+          isDragging={dragging === right}
+          isMargin={isMargin}
+          onMouseDown={handleMouseDown}
+          posStyle={{ top: stripH, bottom: stripH, right: 0, width: stripW }}
+        />
+      </>
+    );
   };
 
   return (
-    <div style={{ padding: '4px 0' }}>
-      {/* Box Model Visualization */}
+    <div ref={boxRef} style={{ padding: '4px 0' }}>
+      {/* ── BOX MODEL VISUALIZATION ── */}
       <div
         style={{
           position: 'relative',
-          backgroundColor: '#2a3a2a',
-          border: '1px solid #3a4a3a',
+          backgroundColor: 'var(--admin-bg-card)',
+          border: '1px solid var(--admin-border)',
           borderRadius: '6px',
-          padding: '18px 24px',
-          minHeight: '110px',
+          overflow: 'hidden',
         }}
       >
-        {/* Margin label */}
-        <span style={{
-          position: 'absolute', top: '2px', left: '6px',
-          fontSize: '9px', color: '#5a6a5a',
-          textTransform: 'uppercase', letterSpacing: '0.05em',
-        }}>
+        {/* "Margin" label */}
+        <span
+          style={{
+            position: 'absolute',
+            top: '3px',
+            left: '6px',
+            fontSize: '9px',
+            color: 'var(--admin-text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            pointerEvents: 'none',
+            zIndex: 3,
+          }}
+        >
           Margin
         </span>
 
-        {/* Margin clickable values */}
-        <ClickableValue value={getMarginVal('marginTop')} position="top"
-          active={activeProperty === 'marginTop'} onClick={() => handleValueClick('marginTop')} />
-        <ClickableValue value={getMarginVal('marginRight')} position="right"
-          active={activeProperty === 'marginRight'} onClick={() => handleValueClick('marginRight')} />
-        <ClickableValue value={getMarginVal('marginBottom')} position="bottom"
-          active={activeProperty === 'marginBottom'} onClick={() => handleValueClick('marginBottom')} />
-        <ClickableValue value={getMarginVal('marginLeft')} position="left"
-          active={activeProperty === 'marginLeft'} onClick={() => handleValueClick('marginLeft')} />
+        {/* Margin border areas */}
+        {renderBorderAreas(
+          ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'],
+          true,
+          MARGIN_STRIP_H,
+          MARGIN_STRIP_W,
+        )}
 
-        {/* Padding Box */}
+        {/* ── Padding box (inner) ── */}
         <div
           style={{
             position: 'relative',
-            backgroundColor: '#2a2a3a',
-            border: '1px solid #3a3a4a',
+            margin: `${MARGIN_STRIP_H}px ${MARGIN_STRIP_W}px`,
+            backgroundColor: 'var(--admin-bg-input)',
+            border: '1px solid var(--admin-border)',
             borderRadius: '4px',
-            padding: '18px 24px',
-            minHeight: '40px',
+            overflow: 'hidden',
           }}
         >
-          <span style={{
-            position: 'absolute', top: '2px', left: '6px',
-            fontSize: '9px', color: '#5a5a6a',
-            textTransform: 'uppercase', letterSpacing: '0.05em',
-          }}>
+          {/* "Padding" label */}
+          <span
+            style={{
+              position: 'absolute',
+              top: '2px',
+              left: '6px',
+              fontSize: '9px',
+              color: 'var(--admin-text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
             Padding
           </span>
 
-          {/* Padding clickable values */}
-          <ClickableValue value={getPaddingVal('paddingTop')} position="top"
-            active={activeProperty === 'paddingTop'} onClick={() => handleValueClick('paddingTop')} />
-          <ClickableValue value={getPaddingVal('paddingRight')} position="right"
-            active={activeProperty === 'paddingRight'} onClick={() => handleValueClick('paddingRight')} />
-          <ClickableValue value={getPaddingVal('paddingBottom')} position="bottom"
-            active={activeProperty === 'paddingBottom'} onClick={() => handleValueClick('paddingBottom')} />
-          <ClickableValue value={getPaddingVal('paddingLeft')} position="left"
-            active={activeProperty === 'paddingLeft'} onClick={() => handleValueClick('paddingLeft')} />
+          {/* Padding border areas */}
+          {renderBorderAreas(
+            ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'],
+            false,
+            PADDING_STRIP_H,
+            PADDING_STRIP_W,
+          )}
 
-          {/* Center content indicator */}
-          <div style={{
-            width: '100%', height: '20px',
-            backgroundColor: 'var(--admin-bg-card)', borderRadius: '2px',
-            border: '1px dashed var(--admin-border-strong)',
-          }} />
+          {/* Content indicator (center) */}
+          <div
+            style={{
+              margin: `${PADDING_STRIP_H}px ${PADDING_STRIP_W}px`,
+              height: '20px',
+              backgroundColor: 'var(--admin-bg)',
+              borderRadius: '2px',
+              border: '1px dashed var(--admin-border-strong)',
+            }}
+          />
         </div>
       </div>
 
-      {/* Dropdown panel (appears below the box model) */}
+      {/* ── DROPDOWN (appears below box model) ── */}
       {activeProperty && (
         <SpacingDropdown
           property={activeProperty}
-          value={getActiveValue()}
+          value={getVal(activeProperty)}
           onChange={handleDropdownChange}
-          onClose={() => setActiveProperty(null)}
+          onOppositeChange={handleOppositeChange}
+          shiftRef={shiftRef}
         />
       )}
     </div>

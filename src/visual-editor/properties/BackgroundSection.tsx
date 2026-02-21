@@ -181,7 +181,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                   border: '1px dashed var(--admin-border-strong)',
                   borderRadius: '3px',
                   color: 'var(--admin-text-icon)',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -233,7 +233,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                       border: `1px solid ${gradient.type === t ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                       borderRadius: '3px',
                       color: gradient.type === t ? '#fff' : 'var(--admin-text-icon)',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       cursor: 'pointer',
                       fontWeight: 500,
                       textTransform: 'capitalize',
@@ -247,7 +247,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
               {/* Angle (linear only) */}
               {gradient.type === 'linear' && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', width: '36px' }}>Winkel</label>
+                  <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', width: '36px' }}>Winkel</label>
                   <input
                     type="range"
                     min={0}
@@ -269,11 +269,11 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                       border: '1px solid var(--admin-border-strong)',
                       borderRadius: '3px',
                       color: 'var(--admin-text)',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       textAlign: 'right',
                     }}
                   />
-                  <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>°</span>
+                  <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>°</span>
                 </div>
               )}
 
@@ -290,7 +290,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                         border: `1px solid ${gradient.angle === a ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                         borderRadius: '3px',
                         color: gradient.angle === a ? '#fff' : 'var(--admin-text-icon)',
-                        fontSize: '9px',
+                        fontSize: '11px',
                         cursor: 'pointer',
                       }}
                     >
@@ -301,7 +301,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
               )}
 
               {/* Color Stops */}
-              <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>Farbstufen</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>Farbstufen</label>
               {gradient.stops.map((stop, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
                   <input
@@ -321,7 +321,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                       border: '1px solid var(--admin-border-strong)',
                       borderRadius: '3px',
                       color: 'var(--admin-text)',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       fontFamily: 'monospace',
                     }}
                   />
@@ -338,11 +338,11 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                       border: '1px solid var(--admin-border-strong)',
                       borderRadius: '3px',
                       color: 'var(--admin-text)',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       textAlign: 'right',
                     }}
                   />
-                  <span style={{ fontSize: '9px', color: 'var(--admin-text-icon)' }}>%</span>
+                  <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>%</span>
                   {gradient.stops.length > 2 && (
                     <button
                       onClick={() => removeStop(i)}
@@ -369,7 +369,7 @@ export const BackgroundSection: React.FC<BackgroundSectionProps> = ({ styles, on
                   border: '1px dashed var(--admin-border-strong)',
                   borderRadius: '3px',
                   color: 'var(--admin-text-icon)',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',

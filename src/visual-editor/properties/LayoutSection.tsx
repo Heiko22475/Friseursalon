@@ -173,7 +173,7 @@ const GridTrackEditor: React.FC<{
               border: '1px solid var(--admin-border-strong)',
               borderRadius: '3px',
               color: showRaw ? '#3b82f6' : 'var(--admin-text-icon)',
-              fontSize: '9px',
+              fontSize: '11px',
               cursor: 'pointer',
               fontFamily: 'monospace',
             }}
@@ -324,7 +324,7 @@ const GridTrackEditor: React.FC<{
                 border: '1px solid ' + (value === preset.css ? '#3b82f6' : 'var(--admin-border-strong)'),
                 borderRadius: '3px',
                 color: value === preset.css ? '#fff' : 'var(--admin-text-icon)',
-                fontSize: '10px',
+                fontSize: '11px',
                 cursor: 'pointer',
                 fontWeight: 500,
               }}
@@ -363,13 +363,13 @@ const GridPreview: React.FC<{
   return (
     <div style={{ marginBottom: '10px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>Schnellauswahl</label>
+        <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>Schnellauswahl</label>
         {(hoverCol > 0 && hoverRow > 0) ? (
-          <span style={{ fontSize: '10px', color: '#3b82f6', fontWeight: 600 }}>
+          <span style={{ fontSize: '11px', color: '#3b82f6', fontWeight: 600 }}>
             {hoverCol} × {hoverRow}
           </span>
         ) : currentCols > 0 && currentRows > 0 ? (
-          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>
             {currentCols} × {currentRows}
           </span>
         ) : null}
@@ -437,7 +437,7 @@ const GridQuickPresets: React.FC<{
 }> = ({ columns, rows, onApply }) => {
   return (
     <div style={{ marginBottom: '10px' }}>
-      <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>
+      <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px' }}>
         Responsive Vorlagen
       </label>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -508,7 +508,7 @@ const GridQuickPresets: React.FC<{
 
 const SectionLabel: React.FC<{ label: string }> = ({ label }) => (
   <div style={{
-    fontSize: '10px',
+    fontSize: '11px',
     color: 'var(--admin-text-icon)',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
@@ -594,8 +594,8 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
           <Row label="Wrap">
             <IconButtonGroup
               options={[
-                { value: 'nowrap', icon: <span style={{ fontSize: '10px' }}>—</span>, title: 'No Wrap' },
-                { value: 'wrap', icon: <span style={{ fontSize: '10px' }}>↩</span>, title: 'Wrap' },
+                { value: 'nowrap', icon: <span style={{ fontSize: '11px' }}>—</span>, title: 'No Wrap' },
+                { value: 'wrap', icon: <span style={{ fontSize: '11px' }}>↩</span>, title: 'Wrap' },
               ]}
               value={styles.flexWrap as 'nowrap' | 'wrap' | undefined}
               onChange={(v) => onChange('flexWrap', v)}
@@ -763,7 +763,7 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
           {/* Auto Columns / Rows */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Cols</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Cols</label>
               <input
                 type="text"
                 value={styles.gridAutoColumns || ''}
@@ -781,7 +781,7 @@ export const LayoutSection: React.FC<LayoutSectionProps> = ({ styles, onChange, 
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Rows</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Auto Rows</label>
               <input
                 type="text"
                 value={styles.gridAutoRows || ''}
@@ -818,7 +818,7 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
       {/* Flex Grow / Shrink / Basis */}
       <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Grow</label>
+          <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Grow</label>
           <input
             type="number"
             value={styles.flexGrow ?? ''}
@@ -838,7 +838,7 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
           />
         </div>
         <div style={{ flex: 1 }}>
-          <label style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Shrink</label>
+          <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '3px' }}>Shrink</label>
           <input
             type="number"
             value={styles.flexShrink ?? ''}
@@ -894,7 +894,7 @@ export const FlexChildSection: React.FC<FlexChildSectionProps> = ({ styles, onCh
       <Row label="Align Self">
         <IconButtonGroup
           options={[
-            { value: 'auto', icon: <span style={{ fontSize: '10px' }}>A</span>, title: 'Auto' },
+            { value: 'auto', icon: <span style={{ fontSize: '11px' }}>A</span>, title: 'Auto' },
             { value: 'flex-start', icon: <AlignVerticalJustifyStart size={13} />, title: 'Start' },
             { value: 'center', icon: <AlignVerticalJustifyCenter size={13} />, title: 'Center' },
             { value: 'flex-end', icon: <AlignVerticalJustifyEnd size={13} />, title: 'End' },
@@ -957,7 +957,7 @@ export const GridChildSection: React.FC<GridChildSectionProps> = ({ styles, onCh
               border: '1px solid ' + (styles.gridColumn === preset.css ? '#3b82f6' : 'var(--admin-border-strong)'),
               borderRadius: '3px',
               color: styles.gridColumn === preset.css ? '#fff' : 'var(--admin-text-icon)',
-              fontSize: '9px',
+              fontSize: '11px',
               cursor: 'pointer',
               fontWeight: 500,
             }}
@@ -982,7 +982,7 @@ export const GridChildSection: React.FC<GridChildSectionProps> = ({ styles, onCh
       <Row label="Align Self">
         <IconButtonGroup
           options={[
-            { value: 'auto', icon: <span style={{ fontSize: '10px' }}>A</span>, title: 'Auto' },
+            { value: 'auto', icon: <span style={{ fontSize: '11px' }}>A</span>, title: 'Auto' },
             { value: 'flex-start', icon: <AlignVerticalJustifyStart size={13} />, title: 'Start' },
             { value: 'center', icon: <AlignVerticalJustifyCenter size={13} />, title: 'Center' },
             { value: 'flex-end', icon: <AlignVerticalJustifyEnd size={13} />, title: 'End' },
@@ -997,7 +997,7 @@ export const GridChildSection: React.FC<GridChildSectionProps> = ({ styles, onCh
       <Row label="Justify Self">
         <IconButtonGroup
           options={[
-            { value: 'auto', icon: <span style={{ fontSize: '10px' }}>A</span>, title: 'Auto' },
+            { value: 'auto', icon: <span style={{ fontSize: '11px' }}>A</span>, title: 'Auto' },
             { value: 'start', icon: <AlignHorizontalJustifyStart size={13} />, title: 'Start' },
             { value: 'center', icon: <AlignHorizontalJustifyCenter size={13} />, title: 'Center' },
             { value: 'end', icon: <AlignHorizontalJustifyEnd size={13} />, title: 'End' },

@@ -416,7 +416,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                       {w.site_name}
                     </div>
                     <div style={{
-                      fontSize: '10px',
+                      fontSize: '11px',
                       color: 'var(--admin-text-icon)',
                       fontFamily: 'monospace',
                       marginTop: '2px',
@@ -460,7 +460,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                   )}
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <div>AI-generiertes JSON laden</div>
-                    <div style={{ fontSize: '10px', fontWeight: 400, color: 'var(--admin-text-icon)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 400, color: 'var(--admin-text-icon)', marginTop: '2px' }}>
                       .github_generated/website_import.json
                     </div>
                   </div>
@@ -603,7 +603,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                         <div style={{ fontWeight: 600 }}>
                           {mode === 'full' ? 'Vollständig' : 'Nur Seiten'}
                         </div>
-                        <div style={{ fontSize: '10px', marginTop: '2px', color: 'var(--admin-text-icon)' }}>
+                        <div style={{ fontSize: '11px', marginTop: '2px', color: 'var(--admin-text-icon)' }}>
                           {mode === 'full' ? 'Ersetzt gesamten Content' : 'Ersetzt nur pages[]'}
                         </div>
                       </button>
@@ -676,7 +676,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                                 <div style={{ color: '#c0c0c0', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {h.version_label || h.source}
                                 </div>
-                                <div style={{ color: 'var(--admin-text-icon)', fontSize: '10px' }}>
+                                <div style={{ color: 'var(--admin-text-icon)', fontSize: '11px' }}>
                                   {new Date(h.created_at).toLocaleString('de-DE')} · {h.source}
                                 </div>
                               </div>
@@ -686,7 +686,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                                   style={{
                                     padding: '3px 8px', borderRadius: '4px', border: '1px solid #3b82f640',
                                     backgroundColor: '#3b82f615', color: '#60a5fa', cursor: 'pointer',
-                                    fontSize: '10px', fontWeight: 600,
+                                    fontSize: '11px', fontWeight: 600,
                                   }}
                                   title="Diese Version wiederherstellen"
                                 >
@@ -697,7 +697,7 @@ export const JsonImportDialog: React.FC<JsonImportDialogProps> = ({ open, onClos
                                   style={{
                                     padding: '3px 6px', borderRadius: '4px', border: '1px solid #ef444440',
                                     backgroundColor: '#ef444415', color: '#fca5a5', cursor: 'pointer',
-                                    fontSize: '10px',
+                                    fontSize: '11px',
                                   }}
                                   title="Löschen"
                                 >

@@ -265,14 +265,193 @@
   color-scheme: dark;
 }
 
+/* ── Cherry Theme (dark, vivid rose-red on deep burgundy) ── */
+.admin-theme-cherry {
+  --admin-bg: #1a0f14;
+  --admin-bg-surface: #22141a;
+  --admin-bg-sidebar: #160c10;
+  --admin-bg-card: #2a1820;
+  --admin-bg-input: #3a2028;
+  --admin-bg-hover: #341c24;
+  --admin-bg-selected: rgba(225, 29, 72, 0.08);
+  --admin-border: #3a222a;
+  --admin-border-strong: #50303a;
+  --admin-text: #dcc5c5;
+  --admin-text-heading: #f0dada;
+  --admin-text-icon: #b08a8a;
+  --admin-text-secondary: #987070;
+  --admin-text-muted: #6e4a4a;
+  --admin-text-faint: #4a2a30;
+  --admin-accent: #e11d48;
+  --admin-accent-hover: #be123c;
+  --admin-accent-light: #fb7185;
+  --admin-accent-bg: rgba(225, 29, 72, 0.14);
+  --admin-accent-text: #fb7185;
+  --admin-danger: #f43f5e;
+  --admin-danger-hover: #e11d48;
+  --admin-danger-bg: rgba(244, 63, 94, 0.1);
+  --admin-success: #34d399;
+  --admin-success-bg: rgba(52, 211, 153, 0.1);
+  --admin-warning: #fbbf24;
+  --admin-warning-bg: rgba(251, 191, 36, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #22141a;
+  --admin-scrollbar-thumb: #50303a;
+  color-scheme: dark;
+}
+
+/* ── Mocha Theme (dark, warm coffee brown with caramel accent) ── */
+.admin-theme-mocha {
+  --admin-bg: #1c1614;
+  --admin-bg-surface: #241c18;
+  --admin-bg-sidebar: #181210;
+  --admin-bg-card: #2c221c;
+  --admin-bg-input: #3a2e26;
+  --admin-bg-hover: #342a22;
+  --admin-bg-selected: rgba(212, 165, 116, 0.08);
+  --admin-border: #3a2e26;
+  --admin-border-strong: #504038;
+  --admin-text: #d4c8be;
+  --admin-text-heading: #ede2d6;
+  --admin-text-icon: #b09880;
+  --admin-text-secondary: #968068;
+  --admin-text-muted: #6e5844;
+  --admin-text-faint: #4a3828;
+  --admin-accent: #d4a574;
+  --admin-accent-hover: #c08a50;
+  --admin-accent-light: #e8c49a;
+  --admin-accent-bg: rgba(212, 165, 116, 0.14);
+  --admin-accent-text: #e8c49a;
+  --admin-danger: #ef4444;
+  --admin-danger-hover: #dc2626;
+  --admin-danger-bg: rgba(239, 68, 68, 0.1);
+  --admin-success: #22c55e;
+  --admin-success-bg: rgba(34, 197, 94, 0.1);
+  --admin-warning: #f59e0b;
+  --admin-warning-bg: rgba(245, 158, 11, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --admin-overlay: rgba(0, 0, 0, 0.6);
+  --admin-scrollbar-track: #241c18;
+  --admin-scrollbar-thumb: #504038;
+  color-scheme: dark;
+}
+
+/* ── Slate Theme (light, professional cool gray with muted accent) ── */
+.admin-theme-slate {
+  --admin-bg: #f1f5f9;
+  --admin-bg-surface: #ffffff;
+  --admin-bg-sidebar: #e2e8f0;
+  --admin-bg-card: #ffffff;
+  --admin-bg-input: #e2e8f0;
+  --admin-bg-hover: #f1f5f9;
+  --admin-bg-selected: rgba(71, 85, 105, 0.06);
+  --admin-border: #cbd5e1;
+  --admin-border-strong: #94a3b8;
+  --admin-text: #334155;
+  --admin-text-heading: #1e293b;
+  --admin-text-icon: #64748b;
+  --admin-text-secondary: #64748b;
+  --admin-text-muted: #94a3b8;
+  --admin-text-faint: #cbd5e1;
+  --admin-accent: #475569;
+  --admin-accent-hover: #334155;
+  --admin-accent-light: #64748b;
+  --admin-accent-bg: rgba(71, 85, 105, 0.08);
+  --admin-accent-text: #475569;
+  --admin-danger: #dc2626;
+  --admin-danger-hover: #b91c1c;
+  --admin-danger-bg: rgba(220, 38, 38, 0.06);
+  --admin-success: #16a34a;
+  --admin-success-bg: rgba(22, 163, 74, 0.06);
+  --admin-warning: #ca8a04;
+  --admin-warning-bg: rgba(202, 138, 4, 0.06);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --admin-overlay: rgba(0, 0, 0, 0.4);
+  --admin-scrollbar-track: #e2e8f0;
+  --admin-scrollbar-thumb: #94a3b8;
+  color-scheme: light;
+}
+
+/* ── Aurora Theme (dark, cosmic purple/violet) ── */
+.admin-theme-aurora {
+  --admin-bg: #0a0f1a;
+  --admin-bg-surface: #0f1525;
+  --admin-bg-sidebar: #080c16;
+  --admin-bg-card: #131a2e;
+  --admin-bg-input: #1a2240;
+  --admin-bg-hover: #161e38;
+  --admin-bg-selected: rgba(168, 85, 247, 0.08);
+  --admin-border: #1c2445;
+  --admin-border-strong: #2a3460;
+  --admin-text: #d1cde8;
+  --admin-text-heading: #e8e4f8;
+  --admin-text-icon: #9590b8;
+  --admin-text-secondary: #7e78a8;
+  --admin-text-muted: #504a78;
+  --admin-text-faint: #302a58;
+  --admin-accent: #a855f7;
+  --admin-accent-hover: #9333ea;
+  --admin-accent-light: #c084fc;
+  --admin-accent-bg: rgba(168, 85, 247, 0.14);
+  --admin-accent-text: #c084fc;
+  --admin-danger: #f43f5e;
+  --admin-danger-hover: #e11d48;
+  --admin-danger-bg: rgba(244, 63, 94, 0.1);
+  --admin-success: #34d399;
+  --admin-success-bg: rgba(52, 211, 153, 0.1);
+  --admin-warning: #fbbf24;
+  --admin-warning-bg: rgba(251, 191, 36, 0.1);
+  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --admin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --admin-overlay: rgba(0, 0, 0, 0.65);
+  --admin-scrollbar-track: #0f1525;
+  --admin-scrollbar-thumb: #2a3460;
+  color-scheme: dark;
+}
+
+/* ── Sand Theme (light, warm earthy tones with amber accent) ── */
+.admin-theme-sand {
+  --admin-bg: #fdfaf5;
+  --admin-bg-surface: #fffefa;
+  --admin-bg-sidebar: #f5efe5;
+  --admin-bg-card: #fffefa;
+  --admin-bg-input: #f0e8da;
+  --admin-bg-hover: #f8f2e8;
+  --admin-bg-selected: rgba(180, 83, 9, 0.05);
+  --admin-border: #e7ddc8;
+  --admin-border-strong: #c8b898;
+  --admin-text: #44403c;
+  --admin-text-heading: #1c1917;
+  --admin-text-icon: #78716c;
+  --admin-text-secondary: #78716c;
+  --admin-text-muted: #a8a29e;
+  --admin-text-faint: #d6d3d1;
+  --admin-accent: #b45309;
+  --admin-accent-hover: #92400e;
+  --admin-accent-light: #d97706;
+  --admin-accent-bg: rgba(180, 83, 9, 0.08);
+  --admin-accent-text: #b45309;
+  --admin-danger: #dc2626;
+  --admin-danger-hover: #b91c1c;
+  --admin-danger-bg: rgba(220, 38, 38, 0.06);
+  --admin-success: #16a34a;
+  --admin-success-bg: rgba(22, 163, 74, 0.06);
+  --admin-warning: #ca8a04;
+  --admin-warning-bg: rgba(202, 138, 4, 0.06);
+  --admin-shadow: 0 1px 3px rgba(80, 60, 20, 0.06);
+  --admin-shadow-lg: 0 8px 24px rgba(80, 60, 20, 0.1);
+  --admin-overlay: rgba(40, 30, 10, 0.5);
+  --admin-scrollbar-track: #f0e8da;
+  --admin-scrollbar-thumb: #c8b898;
+  color-scheme: light;
+}
+
 /* ---- Global admin area styles ---- */
-.admin-theme-dark,
-.admin-theme-light,
-.admin-theme-ocean,
-.admin-theme-forest,
-.admin-theme-sunset,
-.admin-theme-lavender,
-.admin-theme-nord {
+[class^="admin-theme-"] {
   min-height: 100vh;
   background-color: var(--admin-bg);
   color: var(--admin-text);

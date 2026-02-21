@@ -142,7 +142,7 @@ const SizeDropdown: React.FC<SizeDropdownProps> = ({
     >
       {/* Header */}
       <div style={{
-        fontSize: '10px',
+        fontSize: '11px',
         color: 'var(--admin-text-icon)',
         marginBottom: '8px',
         textTransform: 'uppercase',
@@ -292,7 +292,7 @@ const ClickableSizeValue: React.FC<{
       }}
     >
       <span style={{
-        fontSize: '9px',
+        fontSize: '11px',
         color: 'var(--admin-text-icon)',
         textTransform: 'uppercase',
         letterSpacing: '0.04em',
@@ -406,7 +406,7 @@ export const SizeSection: React.FC<SizeSectionProps> = ({ styles, onChange, proM
                       border: `1px solid ${isActive ? '#3b82f6' : 'var(--admin-border-strong)'}`,
                       borderRadius: '3px',
                       color: isActive ? '#fff' : 'var(--admin-text-icon)',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       cursor: 'pointer',
                       fontWeight: 500,
                     }}

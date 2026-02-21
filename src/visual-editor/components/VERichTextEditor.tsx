@@ -92,7 +92,7 @@ const LinkDialog: React.FC<{
       padding: '8px',
       boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
-      <div style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Link URL
       </div>
       <div style={{ display: 'flex', gap: '4px' }}>

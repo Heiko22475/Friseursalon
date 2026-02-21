@@ -201,7 +201,7 @@ const CardTemplatePicker: React.FC<{
               {/* Category badge */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ color: '#6366f1' }}>{categoryIcons[tpl.category] || categoryIcons.general}</span>
-                <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                   {categoryLabels[tpl.category] || tpl.category}
                 </span>
               </div>
@@ -224,7 +224,7 @@ const CardTemplatePicker: React.FC<{
                       padding: '1px 6px',
                       backgroundColor: 'var(--admin-bg-card)',
                       borderRadius: '3px',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       color: 'var(--admin-text-icon)',
                     }}
                   >
@@ -235,7 +235,7 @@ const CardTemplatePicker: React.FC<{
 
               {/* Source indicator */}
               {!tpl.isBuiltIn && (
-                <span style={{ fontSize: '9px', color: '#22c55e', marginTop: '2px' }}>● aus Datenbank</span>
+                <span style={{ fontSize: '11px', color: '#22c55e', marginTop: '2px' }}>● aus Datenbank</span>
               )}
             </button>
           ))}

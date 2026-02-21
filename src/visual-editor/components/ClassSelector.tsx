@@ -125,7 +125,7 @@ export const ClassSelector: React.FC<ClassSelectorProps> = ({ element }) => {
           marginBottom: classNames.length > 0 || isAdding ? '6px' : '0',
         }}
       >
-        <span style={{ fontSize: '10px', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>
+        <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>
           Klassen
         </span>
         <button

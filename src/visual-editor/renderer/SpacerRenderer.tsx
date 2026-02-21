@@ -58,7 +58,7 @@ export const SpacerRenderer: React.FC<SpacerRendererProps> = ({
         >
           <span
             style={{
-              fontSize: '10px',
+              fontSize: '11px',
               color: '#3b82f6',
               backgroundColor: 'rgba(59, 130, 246, 0.1)',
               padding: '1px 6px',

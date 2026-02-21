@@ -147,13 +147,15 @@ Resend zeigt dir nun eine Tabelle mit **DNS-Einträgen**. Das sind die Einstellu
 
 Die Tabelle sieht ungefähr so aus (die Werte sind bei dir anders – nutze DEINE Werte!):
 
-| Type | Host | Value | Priority |
+| Type | Name | Value | Priority |
 |------|------|-------|----------|
 | TXT | `resend._domainkey` | `p=MIGfMA0GCSqGSIb3DQEBAQUAA...` (langer Text) | – |
 | TXT | `send` | `v=spf1 include:amazonses.com ~all` | – |
-| MX | `send` | `feedback-smtp.eu-west-1.amazonses.com` | 10 |
+| MX | `send` | `feedback-smtp.eu-west-1.amazonses.com` (oder `us-east-1`, je nach Region) | 10 |
 
 > ⚠️ **Wichtig:** Die Werte oben sind nur Beispiele. Kopiere immer die **echten Werte aus deinem Resend-Dashboard**, nicht aus dieser Anleitung!
+
+> 💡 **Tipp von Resend:** Resend empfiehlt, eine **Subdomain** zu verwenden (z.B. `updates.meinauftrittonline.de`) statt der Root-Domain. Das schützt die Reputation deiner Hauptdomain. Für ein einfaches Kontaktformular ist die Root-Domain aber völlig in Ordnung.
 
 > ✅ **Erledigt!** Die Domain ist bei Resend hinterlegt. Jetzt müssen wir bei IONOS beweisen, dass sie uns gehört.
 
@@ -166,17 +168,17 @@ Die Tabelle sieht ungefähr so aus (die Werte sind bei dir anders – nutze DEIN
 ### 3.1 – Bei IONOS einloggen
 
 1. Öffne einen **neuen Browser-Tab** (das Resend-Fenster bleibt offen!)
-2. Gehe zu: **https://login.ionos.de**
+2. Gehe zu: **https://my.ionos.de/domains** (oder **https://my.ionos.com/domains**)
 3. Melde dich mit deinen IONOS-Zugangsdaten an
    - Falls du die Zugangsdaten vergessen hast: Klicke auf „Passwort vergessen"
 
 ### 3.2 – DNS-Verwaltung finden
 
-1. Nach dem Login: Klicke auf **„Domains & SSL"** (im Menü links oder auf der Startseite)
-2. Du siehst deine Domain `meinauftrittonline.de` – klicke darauf
-3. Klicke auf den Reiter/Tab **„DNS"**
-   - Falls du „DNS" nicht direkt siehst: Suche nach **„DNS-Einstellungen"** oder **„DNS Records"**
-   - Alternativ: Klicke auf das **Zahnrad-Symbol** neben der Domain → **„DNS"**
+1. Nach dem Login siehst du eine Liste deiner Domains
+2. Klicke auf deine Domain **`meinauftrittonline.de`**
+3. Klicke oben auf den Reiter/Tab **„DNS"**
+
+> 💡 **Tipp:** Wenn du direkt zu `https://my.ionos.de/domains` gegangen bist, solltest du deine Domains sofort sehen. Falls du auf der allgemeinen IONOS-Startseite landest, suche nach „Domains" oder „Domains & SSL" und klicke dich durch.
 
 Du siehst jetzt eine Liste aller DNS-Einträge deiner Domain. Hier fügen wir neue hinzu.
 
@@ -184,17 +186,17 @@ Du siehst jetzt eine Liste aller DNS-Einträge deiner Domain. Hier fügen wir ne
 
 > **Was ist das?** DKIM ist eine digitale Unterschrift. Sie beweist, dass eine E-Mail wirklich von deiner Domain kommt und nicht gefälscht ist.
 
-1. Klicke auf **„Record hinzufügen"** (oder „DNS-Record hinzufügen")
-2. Wähle als Typ: **TXT**
+1. Klicke auf **„Add record"** (oder auf Deutsch: **„Record hinzufügen"**)
+2. Auf der Seite **„Add a DNS Record"** wähle den Typ: **TXT**
 3. Fülle die Felder so aus:
 
-| Feld | Was du einträgst |
-|------|-----------------|
-| **Hostname / Name** | `resend._domainkey` |
-| **Wert / Value** | Den langen Text aus der Resend-Tabelle, der mit `p=MIGfMA0GCSq...` anfängt. **Kopiere den kompletten Wert aus Resend!** |
-| **TTL** | Lass den Standardwert stehen (meistens `3600` oder `1 Stunde`) |
+| Feld bei IONOS | Was du einträgst |
+|----------------|-----------------|
+| **Host name** | `resend._domainkey` |
+| **TXT value** | Den langen Text aus der Resend-Tabelle, der mit `p=MIGfMA0GCSq...` anfängt. **Kopiere den kompletten Wert aus Resend!** |
+| **TTL** | Lass den Standardwert stehen (`1 hour`) |
 
-4. Klicke auf **„Speichern"**
+4. Klicke auf **„Save"** (Speichern)
 
 > ⚠️ **Wichtiger Hinweis für IONOS:** IONOS hängt automatisch `.meinauftrittonline.de` an den Hostnamen an. Du trägst also nur `resend._domainkey` ein – **NICHT** `resend._domainkey.meinauftrittonline.de`. IONOS macht daraus automatisch den vollständigen Namen.
 
@@ -202,34 +204,36 @@ Du siehst jetzt eine Liste aller DNS-Einträge deiner Domain. Hier fügen wir ne
 
 > **Was ist das?** SPF sagt E-Mail-Servern: „Diese Server dürfen im Namen meiner Domain E-Mails verschicken." Ohne SPF landen deine E-Mails im Spam.
 
-1. Klicke erneut auf **„Record hinzufügen"**
+1. Klicke erneut auf **„Add record"** (Record hinzufügen)
 2. Wähle als Typ: **TXT**
 3. Fülle die Felder so aus:
 
-| Feld | Was du einträgst |
-|------|-----------------|
-| **Hostname / Name** | `send` |
-| **Wert / Value** | `v=spf1 include:amazonses.com ~all` |
-| **TTL** | Standardwert lassen |
+| Feld bei IONOS | Was du einträgst |
+|----------------|-----------------|
+| **Host name** | `send` |
+| **TXT value** | `v=spf1 include:amazonses.com ~all` |
+| **TTL** | Standardwert lassen (`1 hour`) |
 
-4. Klicke auf **„Speichern"**
+4. Klicke auf **„Save"** (Speichern)
 
 ### 3.5 – Dritten DNS-Eintrag hinzufügen (MX-Eintrag)
 
 > **Was ist das?** Ein MX-Eintrag sagt, welcher Server für den E-Mail-Empfang zuständig ist. Resend nutzt dafür Amazon SES (ein E-Mail-Server von Amazon).
 
-1. Klicke erneut auf **„Record hinzufügen"**
+1. Klicke erneut auf **„Add record"** (Record hinzufügen)
 2. Wähle als Typ: **MX**
 3. Fülle die Felder so aus:
 
-| Feld | Was du einträgst |
-|------|-----------------|
-| **Hostname / Name** | `send` |
-| **Wert / Mail Server** | `feedback-smtp.eu-west-1.amazonses.com` |
-| **Priorität / Priority** | `10` |
-| **TTL** | Standardwert lassen |
+| Feld bei IONOS | Was du einträgst |
+|----------------|-----------------|
+| **Name** | `send` |
+| **Points to** | Den MX-Wert aus der Resend-Tabelle (z.B. `feedback-smtp.eu-west-1.amazonses.com` – abhängig von deiner gewählten Region bei Resend) |
+| **Priority** | `10` |
+| **TTL** | Standardwert lassen (`1 hour`) |
 
-4. Klicke auf **„Speichern"**
+4. Klicke auf **„Save"** (Speichern)
+
+> ⚠️ **Hinweis zur Priority:** Falls die Priorität `10` bei IONOS schon von einem anderen MX-Record belegt ist, nutze stattdessen `20` oder `30`.
 
 ### 3.6 – Kontrolle
 
@@ -1175,9 +1179,11 @@ Das bedeutet, dass Node.js oder die Vercel CLI nicht installiert ist:
 | Resend API-Key (live) | Vercel → Settings → Environment Variables | `RESEND_API_KEY` = `re_dein_key` |
 | Absender-Adresse | `api/contact.ts` → Zeile `from:` | `kontakt@meinauftrittonline.de` |
 | Empfänger-Adresse | `api/contact.ts` → Zeile `to:` | Deine E-Mail-Adresse(n) |
-| DKIM (DNS) | IONOS → DNS → TXT-Eintrag | Hostname: `resend._domainkey` / Wert: aus Resend kopieren |
-| SPF (DNS) | IONOS → DNS → TXT-Eintrag | Hostname: `send` / Wert: `v=spf1 include:amazonses.com ~all` |
-| MX (DNS) | IONOS → DNS → MX-Eintrag | Hostname: `send` / Wert: `feedback-smtp.eu-west-1.amazonses.com` / Priorität: `10` |
+| DKIM (DNS) | IONOS → DNS → Add record → TXT | Host name: `resend._domainkey` / TXT value: aus Resend kopieren |
+| SPF (DNS) | IONOS → DNS → Add record → TXT | Host name: `send` / TXT value: `v=spf1 include:amazonses.com ~all` |
+| MX (DNS) | IONOS → DNS → Add record → MX | Name: `send` / Points to: MX-Wert aus Resend / Priority: `10` |
+
+> 📖 **Offizielle Resend-Anleitung für IONOS:** https://resend.com/docs/knowledge-base/ionos
 
 ---
 

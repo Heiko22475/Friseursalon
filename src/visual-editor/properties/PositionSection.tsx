@@ -139,7 +139,7 @@ const InsetVisual: React.FC<{
             justifyContent: 'center',
           }}
         >
-          <span style={{ fontSize: '9px', color: 'var(--admin-text-icon)', fontWeight: 600, textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', fontWeight: 600, textTransform: 'uppercase' }}>
             {posType.slice(0, 3)}
           </span>
         </div>
@@ -270,7 +270,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
               <span style={{ fontSize: '12px', lineHeight: 1 }}>{opt.icon}</span>
               <span
                 style={{
-                  fontSize: '9px',
+                  fontSize: '11px',
                   fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#ffffff' : 'var(--admin-text-icon)',
                   lineHeight: 1,
@@ -294,7 +294,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
             marginBottom: '10px',
           }}
         >
-          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', lineHeight: 1.4 }}>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', lineHeight: 1.4 }}>
             {POSITION_OPTIONS.find((o) => o.value === currentPosition)?.description}
           </span>
         </div>
@@ -330,7 +330,7 @@ export const PositionSection: React.FC<PositionSectionProps> = ({ styles, onChan
 
           {/* Quick inset presets */}
           <div style={{ marginTop: '4px' }}>
-            <label style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', display: 'block', marginBottom: '4px' }}>
+            <label style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', display: 'block', marginBottom: '4px' }}>
               Schnell-Presets
             </label>
             <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
@@ -414,7 +414,7 @@ const PresetButton: React.FC<{
       border: `1px solid ${danger ? '#ef444440' : 'var(--admin-border-strong)'}`,
       borderRadius: '3px',
       color: danger ? '#f87171' : 'var(--admin-text-icon)',
-      fontSize: '10px',
+      fontSize: '11px',
       cursor: 'pointer',
       fontWeight: 500,
       transition: 'all 0.15s',

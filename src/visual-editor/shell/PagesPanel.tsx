@@ -254,7 +254,7 @@ const PageItem: React.FC<PageItemProps> = ({
         {!isPublished && (
           <div
             style={{
-              fontSize: '9px',
+              fontSize: '11px',
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',

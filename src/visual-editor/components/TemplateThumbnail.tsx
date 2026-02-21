@@ -136,7 +136,7 @@ export const TemplateThumbnail: React.FC<TemplateThumbnailProps> = ({
             padding: '4px 6px',
             backgroundColor: 'rgba(0, 0, 0, 0.75)',
             color: '#e0e0e0',
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 600,
             textAlign: 'center',
             whiteSpace: 'nowrap',
@@ -165,7 +165,7 @@ export const TemplateThumbnail: React.FC<TemplateThumbnailProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             color: '#ffffff',
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 700,
           }}
         >

@@ -113,7 +113,7 @@ const SliderRow: React.FC<{
   <div style={{ marginBottom: '8px' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
       {icon && <span style={{ color: 'var(--admin-text-icon)', display: 'flex' }}>{icon}</span>}
-      <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', flex: 1, fontWeight: 500 }}>{label}</span>
+      <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', flex: 1, fontWeight: 500 }}>{label}</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
         <input
           type="number"
@@ -143,14 +143,14 @@ const SliderRow: React.FC<{
               border: '1px solid var(--admin-border-strong)',
               borderRadius: '3px',
               color: 'var(--admin-text-icon)',
-              fontSize: '10px',
+              fontSize: '11px',
               cursor: 'pointer',
             }}
           >
             {unitOptions.map(u => <option key={u} value={u}>{u}</option>)}
           </select>
         ) : unit ? (
-          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>{unit}</span>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>{unit}</span>
         ) : null}
         {value !== defaultValue && (
           <button
@@ -161,7 +161,7 @@ const SliderRow: React.FC<{
               backgroundColor: 'transparent',
               border: 'none',
               color: 'var(--admin-text-icon)',
-              fontSize: '9px',
+              fontSize: '11px',
               cursor: 'pointer',
             }}
           >
@@ -200,7 +200,7 @@ const OriginGrid: React.FC<{
   onChange: (v: string | undefined) => void;
 }> = ({ value, onChange }) => (
   <div style={{ marginBottom: '8px' }}>
-    <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+    <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
       Transform Origin
     </span>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px', width: '84px' }}>

@@ -159,7 +159,7 @@ export const CardsProperties: React.FC<CardsPropertiesProps> = ({ element }) => 
             const label = vp === 'desktop' ? '🖥' : vp === 'tablet' ? '📱' : '📲';
             return (
               <div key={vp} style={{ flex: 1 }}>
-                <label style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', display: 'block', marginBottom: '2px', textAlign: 'center' }}>
+                <label style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', display: 'block', marginBottom: '2px', textAlign: 'center' }}>
                   {label}
                 </label>
                 <input

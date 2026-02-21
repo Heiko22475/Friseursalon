@@ -91,7 +91,7 @@ const TextContent: React.FC<{ element: VEText }> = ({ element }) => {
         }
         placeholder="Text eingeben…"
       />
-      <div style={{ fontSize: '10px', color: 'var(--admin-text-secondary)', marginTop: '4px' }}>
+      <div style={{ fontSize: '11px', color: 'var(--admin-text-secondary)', marginTop: '4px' }}>
         💡 Doppelklick auf Canvas für Inline-Editing
       </div>
     </div>
@@ -326,7 +326,7 @@ const SpacerContent: React.FC<{ element: VESpacer }> = ({ element }) => {
               backgroundColor: height === h ? '#3b82f620' : 'var(--admin-border)',
               border: `1px solid ${height === h ? '#3b82f6' : 'var(--admin-border-strong)'}`,
               borderRadius: '3px',
-              fontSize: '10px',
+              fontSize: '11px',
               color: height === h ? '#3b82f6' : 'var(--admin-text-icon)',
               cursor: 'pointer',
             }}

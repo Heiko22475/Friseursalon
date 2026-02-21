@@ -140,7 +140,7 @@ const ShadowEditor: React.FC<{
     border: '1px solid var(--admin-border-strong)',
     borderRadius: '3px',
     color: 'var(--admin-text)',
-    fontSize: '10px',
+    fontSize: '11px',
     textAlign: 'right',
   };
 
@@ -199,7 +199,7 @@ const ShadowEditor: React.FC<{
           {/* X / Y */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>X</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>X</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-50} max={50} value={shadow.offsetX}
@@ -213,7 +213,7 @@ const ShadowEditor: React.FC<{
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Y</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Y</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-50} max={50} value={shadow.offsetY}
@@ -231,7 +231,7 @@ const ShadowEditor: React.FC<{
           {/* Blur / Spread */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Blur</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Blur</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={0} max={100} value={shadow.blur}
@@ -245,7 +245,7 @@ const ShadowEditor: React.FC<{
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Spread</label>
+              <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', display: 'block', marginBottom: '2px' }}>Spread</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input
                   type="range" min={-30} max={50} value={shadow.spread}
@@ -262,7 +262,7 @@ const ShadowEditor: React.FC<{
 
           {/* Color */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-            <label style={{ fontSize: '9px', color: 'var(--admin-text-icon)', width: '32px' }}>Farbe</label>
+            <label style={{ fontSize: '11px', color: 'var(--admin-text-icon)', width: '32px' }}>Farbe</label>
             <input
               type="color"
               value={shadow.color.startsWith('#') ? shadow.color : '#000000'}
@@ -280,14 +280,14 @@ const ShadowEditor: React.FC<{
                 border: '1px solid var(--admin-border-strong)',
                 borderRadius: '3px',
                 color: 'var(--admin-text)',
-                fontSize: '10px',
+                fontSize: '11px',
                 fontFamily: 'monospace',
               }}
             />
           </div>
 
           {/* Inset toggle */}
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '10px', color: 'var(--admin-text-icon)' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '11px', color: 'var(--admin-text-icon)' }}>
             <input
               type="checkbox"
               checked={shadow.inset}
@@ -378,7 +378,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
               textAlign: 'right',
             }}
           />
-          <span style={{ fontSize: '10px', color: 'var(--admin-text-icon)' }}>%</span>
+          <span style={{ fontSize: '11px', color: 'var(--admin-text-icon)' }}>%</span>
         </div>
       </div>
 
@@ -399,7 +399,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
               border: '1px solid ' + (currentPreset?.label === preset.label ? '#3b82f6' : 'var(--admin-border-strong)'),
               borderRadius: '3px',
               color: currentPreset?.label === preset.label ? '#fff' : 'var(--admin-text-icon)',
-              fontSize: '10px',
+              fontSize: '11px',
               cursor: 'pointer',
               fontWeight: 500,
             }}
@@ -421,7 +421,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
             border: `1px solid ${showBuilder ? '#3b82f650' : 'var(--admin-border-strong)'}`,
             borderRadius: '4px',
             color: showBuilder ? '#60a5fa' : 'var(--admin-text-icon)',
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 500,
             cursor: 'pointer',
             display: 'flex',
@@ -455,7 +455,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
               border: '1px dashed var(--admin-border-strong)',
               borderRadius: '4px',
               color: 'var(--admin-text-icon)',
-              fontSize: '10px',
+              fontSize: '11px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -508,7 +508,7 @@ export const EffectsSection: React.FC<EffectsSectionProps> = ({ styles, onChange
                     border: '1px solid ' + (styles.overflow === val ? '#3b82f6' : 'var(--admin-border-strong)'),
                     borderRadius: '3px',
                     color: styles.overflow === val ? '#fff' : 'var(--admin-text-icon)',
-                    fontSize: '10px',
+                    fontSize: '11px',
                     cursor: 'pointer',
                     fontWeight: 500,
                     textTransform: 'capitalize',

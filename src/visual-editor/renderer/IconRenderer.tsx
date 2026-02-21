@@ -91,7 +91,7 @@ export const IconRenderer: React.FC<IconRendererProps> = ({
             justifyContent: 'center',
             backgroundColor: '#fee2e2',
             borderRadius: '4px',
-            fontSize: '10px',
+            fontSize: '11px',
             color: '#ef4444',
           }}
         >

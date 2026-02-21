@@ -245,17 +245,17 @@ export const StylesPanel: React.FC = () => {
                   <span style={{ color: '#888' }}>.</span>
                   <span style={{ flex: 1 }}>{cn}</span>
                   {hasExtends && (
-                    <span style={{ fontSize: '9px', color: 'var(--admin-text-muted)', fontFamily: 'sans-serif' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)', fontFamily: 'sans-serif' }}>
                       ← {def._extends}
                     </span>
                   )}
                   {def._typo && (
-                    <span style={{ fontSize: '9px', color: '#a78bfa', fontFamily: 'sans-serif', fontWeight: 600 }} title={`Typo Token: ${def._typo}`}>
+                    <span style={{ fontSize: '11px', color: '#a78bfa', fontFamily: 'sans-serif', fontWeight: 600 }} title={`Typo Token: ${def._typo}`}>
                       T
                     </span>
                   )}
                   <span style={{
-                    fontSize: '10px',
+                    fontSize: '11px',
                     color: usage > 0 ? '#4ade80' : 'var(--admin-text-muted)',
                     fontFamily: 'sans-serif',
                     minWidth: '16px',

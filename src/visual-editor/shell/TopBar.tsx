@@ -229,7 +229,7 @@ export const TopBar: React.FC = () => {
                       {p.name}
                     </div>
                     <div style={{
-                      fontSize: '10px',
+                      fontSize: '11px',
                       color: 'var(--admin-text-icon)',
                       fontFamily: 'monospace',
                     }}>
@@ -238,7 +238,7 @@ export const TopBar: React.FC = () => {
                   </div>
                   {p.isPublished === false && (
                     <span style={{
-                      fontSize: '9px',
+                      fontSize: '11px',
                       fontWeight: 600,
                       padding: '1px 4px',
                       borderRadius: '3px',
@@ -407,12 +407,12 @@ export const TopBar: React.FC = () => {
 
         {/* Data source indicator */}
         {dataSource === 'demo' && (
-          <span style={{ fontSize: '10px', color: '#a78bfa', marginLeft: '4px' }} title="Demo-Modus – Änderungen werden nicht in der Datenbank gespeichert">
+          <span style={{ fontSize: '11px', color: '#a78bfa', marginLeft: '4px' }} title="Demo-Modus – Änderungen werden nicht in der Datenbank gespeichert">
             🧪 Demo
           </span>
         )}
         {dataSource === 'live' && customerId && (
-          <span style={{ fontSize: '10px', color: '#4ade80', marginLeft: '4px' }} title={`Verbunden mit Kunde ${customerId}`}>
+          <span style={{ fontSize: '11px', color: '#4ade80', marginLeft: '4px' }} title={`Verbunden mit Kunde ${customerId}`}>
             🌐 {customerId}
           </span>
         )}

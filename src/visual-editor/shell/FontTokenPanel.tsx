@@ -128,7 +128,7 @@ const FontFamilyDropdown: React.FC<{
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = font.id === value ? '#3b82f620' : 'transparent')}
             >
               {font.name}
-              <span style={{ marginLeft: '6px', fontSize: '10px', color: 'var(--admin-text-muted)', fontFamily: 'system-ui' }}>
+              <span style={{ marginLeft: '6px', fontSize: '11px', color: 'var(--admin-text-muted)', fontFamily: 'system-ui' }}>
                 {font.category}
               </span>
             </button>
@@ -239,7 +239,7 @@ const FontTokenEditor: React.FC<{
             <Star size={11} /> Standard
           </button>
         ) : (
-          <span style={{ fontSize: '10px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '11px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Star size={11} fill="#fbbf24" /> Standard-Font
           </span>
         )}
@@ -262,7 +262,7 @@ const FontTokenEditor: React.FC<{
 
       {/* Usage info */}
       {usageCount > 0 && (
-        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+        <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
           Wird von {usageCount} Typo-Token{usageCount !== 1 ? 's' : ''} verwendet
         </div>
       )}
@@ -395,12 +395,12 @@ export const FontTokenPanel: React.FC = () => {
                   <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--admin-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {token.label}
                   </div>
-                  <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)', fontFamily: font ? `"${font.name}", ${font.fallback}` : 'inherit' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)', fontFamily: font ? `"${font.name}", ${font.fallback}` : 'inherit' }}>
                     {font?.name || token.fontFamily}
                   </div>
                 </div>
                 {isStd && <Star size={12} fill="#fbbf24" style={{ color: '#fbbf24', flexShrink: 0 }} />}
-                <span style={{ fontSize: '10px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
+                <span style={{ fontSize: '11px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
                   {usageCount}
                 </span>
               </button>
@@ -429,7 +429,7 @@ export const FontTokenPanel: React.FC = () => {
 
 const fieldLabelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: '10px',
+  fontSize: '11px',
   color: '#888',
   marginBottom: '3px',
   textTransform: 'uppercase',
@@ -456,6 +456,6 @@ const smallBtnStyle: React.CSSProperties = {
   borderRadius: '4px',
   background: 'none',
   cursor: 'pointer',
-  fontSize: '10px',
+  fontSize: '11px',
   fontWeight: 600,
 };

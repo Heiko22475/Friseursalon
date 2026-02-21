@@ -180,7 +180,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
             {/* Theme Colors */}
             {swatches.length > 0 && (
               <div style={{ marginBottom: '10px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                   Theme-Farben
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -212,7 +212,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Neutral Colors */}
             <div style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Neutral
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
@@ -243,7 +243,7 @@ export const VEColorPicker: React.FC<VEColorPickerProps> = ({
 
             {/* Custom Color */}
             <div>
-              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--admin-text-secondary)', marginBottom: '6px', letterSpacing: '0.05em' }}>
                 Eigene Farbe
               </div>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>

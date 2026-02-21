@@ -23,7 +23,7 @@ import type { ColorValue } from '../../types/theme';
 
 const fieldLabelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: '10px',
+  fontSize: '11px',
   color: '#888',
   marginBottom: '3px',
   textTransform: 'uppercase',
@@ -50,7 +50,7 @@ const smallBtnStyle: React.CSSProperties = {
   borderRadius: '4px',
   background: 'none',
   cursor: 'pointer',
-  fontSize: '10px',
+  fontSize: '11px',
   fontWeight: 600,
 };
 
@@ -196,7 +196,7 @@ const ResponsiveUnitInput: React.FC<{
           const parsed = parseSizeString(value[vp] || '');
           return (
             <div key={vp} style={{ flex: 1 }}>
-              <div style={{ fontSize: '9px', color: 'var(--admin-text-muted)', textAlign: 'center', marginBottom: '2px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)', textAlign: 'center', marginBottom: '2px' }}>
                 {vpLabels[vp]}
               </div>
               <div style={{ display: 'flex' }}>
@@ -230,7 +230,7 @@ const ResponsiveUnitInput: React.FC<{
                     borderLeft: 'none',
                     borderRadius: '0 4px 4px 0',
                     color: '#8b8fa3',
-                    fontSize: '9px',
+                    fontSize: '11px',
                     cursor: 'pointer',
                     outline: 'none',
                     minWidth: '32px',
@@ -329,7 +329,7 @@ const HoverSection: React.FC<{
               border: 'none',
               cursor: 'pointer',
               color: '#f87171',
-              fontSize: '10px',
+              fontSize: '11px',
               padding: '0 4px',
             }}
           >
@@ -517,7 +517,7 @@ const TypographyTokenEditor: React.FC<{
               borderLeft: 'none',
               borderRadius: '0 4px 4px 0',
               color: '#8b8fa3',
-              fontSize: '9px',
+              fontSize: '11px',
               cursor: 'pointer',
               outline: 'none',
               minWidth: '32px',
@@ -567,7 +567,7 @@ const TypographyTokenEditor: React.FC<{
             <Star size={11} /> Standard
           </button>
         ) : (
-          <span style={{ fontSize: '10px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '11px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Star size={11} fill="#fbbf24" /> Standard-Typo
           </span>
         )}
@@ -590,7 +590,7 @@ const TypographyTokenEditor: React.FC<{
 
       {/* Usage info */}
       {usageCount > 0 && (
-        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+        <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
           Wird von {usageCount} Klasse{usageCount !== 1 ? 'n' : ''} verwendet
         </div>
       )}
@@ -650,24 +650,24 @@ const TokenPreviewFlyout: React.FC<{
 
       {/* Token details */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+        <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
           <span style={{ color: 'var(--admin-text-icon)' }}>Font:</span> {fontObj?.name || token.fontToken}
         </div>
-        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+        <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
           <span style={{ color: 'var(--admin-text-icon)' }}>Größe:</span> {token.fontSize.desktop}
           {token.fontSize.tablet && ` / ${token.fontSize.tablet}`}
           {token.fontSize.mobile && ` / ${token.fontSize.mobile}`}
         </div>
-        <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+        <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
           <span style={{ color: 'var(--admin-text-icon)' }}>Gewicht:</span> {FONT_WEIGHT_LABELS[token.fontWeight] || token.fontWeight}
         </div>
         {token.lineHeight.desktop && (
-          <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
             <span style={{ color: 'var(--admin-text-icon)' }}>Zeile:</span> {token.lineHeight.desktop}
           </div>
         )}
         {token.letterSpacing && token.letterSpacing !== '0' && (
-          <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
             <span style={{ color: 'var(--admin-text-icon)' }}>Abstand:</span> {token.letterSpacing}
           </div>
         )}
@@ -756,7 +756,7 @@ export const TypographyTokenPanel: React.FC = () => {
           <div style={{ fontSize: '11px', color: '#fbbf24', fontWeight: 600, marginBottom: '4px' }}>
             Keine Font Tokens
           </div>
-          <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
             Erstelle zuerst Font Tokens, bevor du Typo Tokens anlegen kannst.
           </div>
         </div>
@@ -841,12 +841,12 @@ export const TypographyTokenPanel: React.FC = () => {
                   <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--admin-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {token.label}
                   </div>
-                  <div style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--admin-text-muted)' }}>
                     {fontToken?.label || token.fontToken || '–'} · {token.fontSize.desktop} · {FONT_WEIGHT_LABELS[token.fontWeight] || token.fontWeight}
                   </div>
                 </div>
                 {isStd && <Star size={12} fill="#fbbf24" style={{ color: '#fbbf24', flexShrink: 0 }} />}
-                <span style={{ fontSize: '10px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
+                <span style={{ fontSize: '11px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
                   {usageCount}
                 </span>
               </button>

@@ -16,7 +16,7 @@
 // → Viewport wechselt automatisch zur mobileFrom-Ansicht.
 // =====================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { VENavbar } from '../types/elements';
 import type { VEViewport } from '../types/styles';
 import { resolveStyles } from '../utils/styleResolver';
@@ -58,8 +58,14 @@ export const NavbarRenderer: React.FC<NavbarRendererProps> = ({
   // ─── VIEWPORT SWITCH ────────────────────────────────
   // When the hamburger element is selected on desktop (via Navigator tree),
   // automatically switch the viewport so the user sees the mobile layout.
+  // IMPORTANT: only react when selectedId itself changes to the hamburger —
+  // not when showMobile changes while the hamburger is already selected
+  // (that would cause an infinite loop: desktop→mobile→desktop→…).
+  const prevSelectedId = useRef<string | null>(null);
   useEffect(() => {
-    if (!showMobile && hamburgerChild && selectedId === hamburgerChild.id) {
+    const justSelected = selectedId !== prevSelectedId.current;
+    prevSelectedId.current = selectedId ?? null;
+    if (justSelected && !showMobile && hamburgerChild && selectedId === hamburgerChild.id) {
       const target: VEViewport = mobileFrom === 'tablet' ? 'tablet' : 'mobile';
       dispatch({ type: 'SET_VIEWPORT', viewport: target });
     }

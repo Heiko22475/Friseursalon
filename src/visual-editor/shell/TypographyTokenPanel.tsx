@@ -605,7 +605,8 @@ const TokenPreviewFlyout: React.FC<{
   token: TypographyToken;
   fontTokens: Record<string, import('../types/typographyTokens').FontToken>;
   anchorRect: { top: number; right: number; height: number };
-}> = ({ token, fontTokens, anchorRect }) => {
+  minTop: number;
+}> = ({ token, fontTokens, anchorRect, minTop }) => {
   const fontToken = fontTokens[token.fontToken];
   const fontObj = fontToken ? ALL_FONTS.find((f) => f.id === fontToken.fontFamily) : null;
   const fontFamily = fontObj ? `"${fontObj.name}", ${fontObj.fallback}` : 'inherit';
@@ -614,13 +615,35 @@ const TokenPreviewFlyout: React.FC<{
   // Parse desktop font size for preview
   const previewSize = token.fontSize.desktop || '1rem';
 
+  // Upward flip: measure flyout height after render, adjust top if it clips below viewport
+  const flyoutRef = useRef<HTMLDivElement>(null);
+  const [topPos, setTopPos] = useState<number>(anchorRect.top);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (flyoutRef.current) {
+      const height = flyoutRef.current.getBoundingClientRect().height;
+      const viewportBottom = window.innerHeight - 8;
+      // Preferred: top-aligned with anchor row
+      let preferred = anchorRect.top;
+      // If it clips below viewport, push it up
+      if (preferred + height > viewportBottom) {
+        preferred = viewportBottom - height;
+      }
+      // Never go above the header bar bottom
+      preferred = Math.max(minTop + 4, preferred);
+      setTopPos(preferred);
+      setVisible(true);
+    }
+  }, [anchorRect.top, anchorRect.right, anchorRect.height, minTop]);
+
   return createPortal(
     <div className={`admin-theme-${theme}`} style={{ display: 'contents' }}>
     <div
+      ref={flyoutRef}
       style={{
         position: 'fixed',
         left: `${anchorRect.right + 8}px`,
-        top: `${anchorRect.top}px`,
+        top: `${topPos}px`,
         zIndex: 9999,
         backgroundColor: 'var(--admin-bg-card)',
         border: '1px solid var(--admin-border-strong)',
@@ -630,6 +653,7 @@ const TokenPreviewFlyout: React.FC<{
         minWidth: '200px',
         maxWidth: '320px',
         pointerEvents: 'none',
+        visibility: visible ? 'visible' : 'hidden',
       }}
     >
       {/* Preview text */}
@@ -679,6 +703,134 @@ const TokenPreviewFlyout: React.FC<{
   );
 };
 
+// ===== CONTEXT MENU =====
+
+interface ContextMenuProps {
+  typoKey: string;
+  x: number;
+  y: number;
+  confirmDeleteKey: string | null;
+  standardKey: string | null;
+  tokenKeys: string[];
+  hasSelectedElement: boolean;
+  hasTargetClass: boolean;
+  onDuplicate: () => void;
+  onDelete: () => void;
+  onApplyToClass: () => void;
+  onApplyToElement: () => void;
+  onClose: () => void;
+}
+
+const ContextMenu: React.FC<ContextMenuProps> = ({
+  typoKey, x, y, confirmDeleteKey, tokenKeys,
+  hasSelectedElement, hasTargetClass,
+  onDuplicate, onDelete, onApplyToClass, onApplyToElement, onClose,
+}) => {
+  const { theme } = useAdminTheme();
+  const isOnlyToken = tokenKeys.length <= 1;
+  const isConfirming = confirmDeleteKey === typoKey;
+
+  // Auto-adjust upward when menu would extend below viewport
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [adjustedY, setAdjustedY] = useState(y);
+  useEffect(() => {
+    if (menuRef.current) {
+      const rect = menuRef.current.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight) {
+        setAdjustedY(Math.max(4, y - rect.height));
+      }
+    }
+  }, [y]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  const itemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    padding: '7px 12px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: 'var(--admin-text)',
+    fontSize: '12px',
+    textAlign: 'left',
+  };
+
+  return (
+    <div className={`admin-theme-${theme}`} style={{ display: 'contents' }}>
+      <div
+        ref={menuRef}
+        style={{
+          position: 'fixed',
+          left: x,
+          top: adjustedY,
+          zIndex: 9999,
+          backgroundColor: 'var(--admin-bg-card)',
+          border: '1px solid var(--admin-border-strong)',
+          borderRadius: '6px',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+          minWidth: '200px',
+          overflow: 'hidden',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onDuplicate}
+          style={itemStyle}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+        >
+          ⧉ Duplizieren
+        </button>
+
+        {!isOnlyToken && (
+          <button
+            onClick={onDelete}
+            style={{ ...itemStyle, color: isConfirming ? '#fff' : '#f87171', backgroundColor: isConfirming ? '#ef4444' : 'transparent' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isConfirming ? '#dc2626' : '#ef444420')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isConfirming ? '#ef4444' : 'transparent')}
+          >
+            🗑 {isConfirming ? 'Wirklich löschen?' : 'Löschen'}
+          </button>
+        )}
+
+        {(hasTargetClass || hasSelectedElement) && (
+          <div style={{ height: '1px', backgroundColor: 'var(--admin-border)', margin: '2px 0' }} />
+        )}
+
+        {hasTargetClass && (
+          <button
+            onClick={onApplyToClass}
+            style={itemStyle}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            🎨 Auf Klasse anwenden
+          </button>
+        )}
+
+        {hasSelectedElement && (
+          <button
+            onClick={onApplyToElement}
+            style={itemStyle}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--admin-border)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            ◻ Auf Element anwenden
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // ===== TYPOGRAPHY TOKEN PANEL =====
 
 export const TypographyTokenPanel: React.FC = () => {
@@ -688,6 +840,10 @@ export const TypographyTokenPanel: React.FC = () => {
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [hoverRect, setHoverRect] = useState<{ top: number; right: number; height: number } | null>(null);
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const headerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [contextMenu, setContextMenu] = useState<{ key: string; x: number; y: number } | null>(null);
+  const [confirmDeleteKey, setConfirmDeleteKey] = useState<string | null>(null);
 
   // Scroll expanded token into view
   useEffect(() => {
@@ -725,6 +881,23 @@ export const TypographyTokenPanel: React.FC = () => {
     setHoverRect(null);
   }, []);
 
+  // Re-measure hovered row position on scroll so flyout follows
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      setHoveredKey(prev => {
+        if (prev && rowRefs.current[prev]) {
+          const rect = rowRefs.current[prev]!.getBoundingClientRect();
+          setHoverRect({ top: rect.top, right: rect.right, height: rect.height });
+        }
+        return prev;
+      });
+    };
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
+
   const tokenKeys = Object.keys(typographyTokens);
   const standardKey = getStandardTypoTokenKey(typographyTokens);
 
@@ -753,10 +926,79 @@ export const TypographyTokenPanel: React.FC = () => {
     setExpandedKey(key);
   };
 
+  // Context menu: close on outside click
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = () => { setContextMenu(null); setConfirmDeleteKey(null); };
+    window.addEventListener('click', handler);
+    return () => window.removeEventListener('click', handler);
+  }, [contextMenu]);
+
+  // Context menu actions
+  const handleDuplicate = (key: string) => {
+    const token = typographyTokens[key];
+    if (!token) return;
+    let idx = 1;
+    let newKey = `${key}-copy`;
+    while (typographyTokens[newKey]) newKey = `${key}-copy-${++idx}`;
+    dispatch({
+      type: 'SET_TYPOGRAPHY_TOKEN',
+      key: newKey,
+      token: { ...token, label: `${token.label} (Kopie)`, standard: undefined },
+    });
+    setContextMenu(null);
+  };
+
+  const handleDeleteFromMenu = (key: string) => {
+    if (confirmDeleteKey !== key) {
+      setConfirmDeleteKey(key);
+      return;
+    }
+    const other = tokenKeys.filter(k => k !== key);
+    const replaceWith = (standardKey && standardKey !== key ? standardKey : other[0]) || '';
+    if (!replaceWith) return;
+    dispatch({ type: 'DELETE_TYPOGRAPHY_TOKEN', key, replaceWith });
+    setContextMenu(null);
+    setConfirmDeleteKey(null);
+  };
+
+  const applyTypoToClass = (typoKey: string) => {
+    // Apply to editingClass first, else first class of selected element
+    const targetClass = state.editingClass || (
+      state.selectedId
+        ? (() => {
+            const el = findElementById(state.page.body, state.selectedId);
+            return el?.classNames?.[0] ?? null;
+          })()
+        : null
+    );
+    if (targetClass) {
+      dispatch({ type: 'SET_CLASS_TYPO', className: targetClass, typoKey });
+    }
+    setContextMenu(null);
+  };
+
+  const applyTypoToElement = (typoKey: string) => {
+    if (!state.selectedId) { setContextMenu(null); return; }
+    const el = findElementById(state.page.body, state.selectedId);
+    if (!el) { setContextMenu(null); return; }
+    const elClasses = el.classNames || [];
+    let targetClass = elClasses.find(cn => globalStyles[cn]) ?? elClasses[0];
+    if (!targetClass) {
+      // Auto-create a class
+      const autoName = `${el.type.toLowerCase()}-typo-${el.id.slice(-4)}`;
+      dispatch({ type: 'CREATE_CLASS', name: autoName });
+      dispatch({ type: 'ASSIGN_CLASS', elementId: el.id, className: autoName });
+      targetClass = autoName;
+    }
+    dispatch({ type: 'SET_CLASS_TYPO', className: targetClass, typoKey });
+    setContextMenu(null);
+  };
+
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px', overflow: 'hidden', minHeight: 0 }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px 8px' }}>
+      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px 8px' }}>
         <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--admin-text-icon)', flex: 1 }}>
           Typo Tokens ({tokenKeys.length})
         </span>
@@ -790,7 +1032,7 @@ export const TypographyTokenPanel: React.FC = () => {
       )}
 
       {/* Token List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px' }}>
+      <div ref={scrollContainerRef} style={{ flex: 1, overflowY: 'auto', padding: '0 4px', minHeight: 0 }}>
         {tokenKeys.length === 0 && Object.keys(fontTokens).length > 0 && (
           <div style={{ padding: '20px 12px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '12px' }}>
             Keine Typography Tokens definiert.
@@ -808,23 +1050,37 @@ export const TypographyTokenPanel: React.FC = () => {
           const usageCount = usageCounts[key] || 0;
 
           const isActiveForSelection = activeTypoKeys.has(key);
+          const isHovered = hoveredKey === key && !isExpanded;
 
           return (
             <div
               key={key}
               ref={(el) => { rowRefs.current[key] = el; }}
-              onMouseEnter={(e) => !isExpanded && handleMouseEnterRow(key, e)}
-              onMouseLeave={handleMouseLeaveRow}
+              onMouseEnter={(e) => {
+                handleMouseEnterRow(key, e);
+              }}
+              onMouseLeave={() => {
+                setHoveredKey(null);
+                handleMouseLeaveRow();
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setContextMenu({ key, x: e.clientX, y: e.clientY });
+                setConfirmDeleteKey(null);
+              }}
               style={{
                 margin: '0 4px 2px',
                 borderRadius: '6px',
                 border: isExpanded ? '1px solid #3b82f640' : isActiveForSelection ? '1px solid #4ade8060' : '1px solid transparent',
-                backgroundColor: isExpanded ? 'var(--admin-bg-sidebar)' : isActiveForSelection ? '#4ade8010' : 'transparent',
+                backgroundColor: isExpanded
+                  ? 'var(--admin-bg-sidebar)'
+                  : isHovered ? '#2d2d3d40'
+                  : isActiveForSelection ? '#4ade8010' : 'transparent',
                 transition: 'all 0.15s',
               }}
             >
               {/* Row */}
-              <button
+              <div
                 onClick={() => setExpandedKey(isExpanded ? null : key)}
                 style={{
                   display: 'flex',
@@ -832,22 +1088,14 @@ export const TypographyTokenPanel: React.FC = () => {
                   gap: '8px',
                   width: '100%',
                   padding: '8px 10px',
-                  background: 'none',
-                  border: 'none',
                   cursor: 'pointer',
                   color: 'var(--admin-text)',
                   fontSize: '12px',
-                  textAlign: 'left',
                   borderRadius: '6px',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isExpanded) e.currentTarget.style.backgroundColor = '#2d2d3d40';
-                }}
-                onMouseLeave={(e) => {
-                  if (!isExpanded) e.currentTarget.style.backgroundColor = 'transparent';
+                  userSelect: 'none',
                 }}
               >
-                {/* Preview - shows "Aa" with the token's font and size */}
+                {/* Preview icon */}
                 <span
                   style={{
                     width: '28px',
@@ -884,7 +1132,7 @@ export const TypographyTokenPanel: React.FC = () => {
                 <span style={{ fontSize: '11px', color: usageCount > 0 ? '#4ade80' : 'var(--admin-text-muted)', flexShrink: 0 }}>
                   {usageCount}
                 </span>
-              </button>
+              </div>
 
               {/* Expanded editor */}
               {isExpanded && (
@@ -908,9 +1156,33 @@ export const TypographyTokenPanel: React.FC = () => {
             token={typographyTokens[hoveredKey]}
             fontTokens={fontTokens}
             anchorRect={hoverRect}
+            minTop={headerRef.current ? headerRef.current.getBoundingClientRect().bottom : 0}
           />
         )}
       </div>
+
+      {/* Context Menu (portal) */}
+      {contextMenu && createPortal(
+        <ContextMenu
+          typoKey={contextMenu.key}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          confirmDeleteKey={confirmDeleteKey}
+          standardKey={standardKey ?? null}
+          tokenKeys={tokenKeys}
+          hasSelectedElement={!!state.selectedId}
+          hasTargetClass={!!(state.editingClass || (state.selectedId && (() => {
+            const el = findElementById(state.page.body, state.selectedId);
+            return el?.classNames && el.classNames.length > 0;
+          })()))}
+          onDuplicate={() => handleDuplicate(contextMenu.key)}
+          onDelete={() => handleDeleteFromMenu(contextMenu.key)}
+          onApplyToClass={() => applyTypoToClass(contextMenu.key)}
+          onApplyToElement={() => applyTypoToElement(contextMenu.key)}
+          onClose={() => { setContextMenu(null); setConfirmDeleteKey(null); }}
+        />,
+        document.body
+      )}
     </div>
   );
 };

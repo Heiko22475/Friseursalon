@@ -23,7 +23,9 @@ const FontFamilyDropdown: React.FC<{
 }> = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   const filtered = search
     ? ALL_FONTS.filter((f) => f.name.toLowerCase().includes(search.toLowerCase()))
@@ -46,7 +48,14 @@ const FontFamilyDropdown: React.FC<{
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
       <button
-        onClick={() => setOpen(!open)}
+        ref={btnRef}
+        onClick={() => {
+          if (!open && btnRef.current) {
+            const rect = btnRef.current.getBoundingClientRect();
+            setOpenUpward(rect.bottom + 240 > window.innerHeight);
+          }
+          setOpen(!open);
+        }}
         style={{
           width: '100%',
           display: 'flex',
@@ -70,10 +79,11 @@ const FontFamilyDropdown: React.FC<{
         <div
           style={{
             position: 'absolute',
-            top: '100%',
+            ...(openUpward
+              ? { bottom: '100%', marginBottom: '2px' }
+              : { top: '100%', marginTop: '2px' }),
             left: 0,
             right: 0,
-            marginTop: '2px',
             backgroundColor: 'var(--admin-bg-card)',
             border: '1px solid #3d3d5d',
             borderRadius: '6px',
@@ -276,6 +286,7 @@ export const FontTokenPanel: React.FC = () => {
   const { state, dispatch } = useEditor();
   const { fontTokens, typographyTokens } = state;
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   const tokenKeys = Object.keys(fontTokens);
   const standardKey = getStandardFontTokenKey(fontTokens);
@@ -297,7 +308,7 @@ export const FontTokenPanel: React.FC = () => {
   };
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '8px', overflow: 'hidden', minHeight: 0 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px 8px' }}>
         <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--admin-text-icon)', flex: 1 }}>
@@ -321,7 +332,7 @@ export const FontTokenPanel: React.FC = () => {
       </div>
 
       {/* Token List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px', minHeight: 0 }}>
         {tokenKeys.length === 0 && (
           <div style={{ padding: '20px 12px', textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '12px' }}>
             Keine Font Tokens definiert.
@@ -340,11 +351,15 @@ export const FontTokenPanel: React.FC = () => {
           return (
             <div
               key={key}
+              onMouseEnter={() => setHoveredKey(key)}
+              onMouseLeave={() => setHoveredKey(null)}
               style={{
                 margin: '0 4px 2px',
                 borderRadius: '6px',
                 border: isExpanded ? '1px solid #3b82f640' : '1px solid transparent',
-                backgroundColor: isExpanded ? 'var(--admin-bg-sidebar)' : 'transparent',
+                backgroundColor: isExpanded
+                  ? 'var(--admin-bg-sidebar)'
+                  : hoveredKey === key ? '#2d2d3d40' : 'transparent',
                 transition: 'all 0.15s',
               }}
             >
@@ -364,12 +379,6 @@ export const FontTokenPanel: React.FC = () => {
                   fontSize: '12px',
                   textAlign: 'left',
                   borderRadius: '6px',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isExpanded) e.currentTarget.style.backgroundColor = '#2d2d3d40';
-                }}
-                onMouseLeave={(e) => {
-                  if (!isExpanded) e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 {/* Font preview letter */}

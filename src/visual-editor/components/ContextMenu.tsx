@@ -1,14 +1,14 @@
 // =====================================================
-// VISUAL EDITOR â€“ CONTEXT MENU
-// Rechtsklick-MenÃ¼ auf Canvas-Elemente
+// VISUAL EDITOR – CONTEXT MENU
+// Rechtsklick-Menü auf Canvas-Elemente
 //
 // Aktionen:
-//   â€¢ AuswÃ¤hlen / Eltern auswÃ¤hlen
-//   â€¢ Kopieren / EinfÃ¼gen / Duplizieren
-//   â€¢ Verschieben (hoch / runter)
-//   â€¢ In Container einwickeln
-//   â€¢ Element lÃ¶schen
-//   â€¢ Styles zurÃ¼cksetzen
+//   • Auswählen / Eltern auswählen
+//   • Kopieren / Einfügen / Duplizieren
+//   • Verschieben (hoch / runter)
+//   • In Container einwickeln
+//   • Element löschen
+//   • Styles zurücksetzen
 // =====================================================
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -49,11 +49,11 @@ export interface ContextMenuData {
   canWrap: boolean;
   /** clipboard hat Inhalt */
   hasClipboard: boolean;
-  /** Kann in dieses Element eingefÃ¼gt werden (Container) */
+  /** Kann in dieses Element eingefügt werden (Container) */
   canPasteInto: boolean;
   /** This element is inside a card that is a direct child of a Cards element */
   isCardInCards: boolean;
-  /** The ID of the card container (direct child of Cards) â€“ set when isCardInCards is true */
+  /** The ID of the card container (direct child of Cards) – set when isCardInCards is true */
   cardContainerId?: string;
 }
 
@@ -247,7 +247,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         borderBottom: '1px solid var(--admin-border)',
         marginBottom: '4px',
       }}>
-        {data.element.type}{data.element.label ? ` â€“ ${data.element.label}` : ''}
+        {data.element.type}{data.element.label ? ` – ${data.element.label}` : ''}
       </div>
 
       {/* Select Parent */}
@@ -274,7 +274,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
         onClick={() => fire('copy')}
       />
       <MenuItem
-        label="EinfÃ¼gen"
+        label="Einfügen"
         icon={<Clipboard size={14} />}
         shortcut="Ctrl+V"
         disabled={!data.hasClipboard || (!isContainer && !data.canPasteInto)}
@@ -321,7 +321,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
       />
       {isContainer && data.element.type !== 'Body' && (
         <MenuItem
-          label="Container auflÃ¶sen"
+          label="Container auflösen"
           icon={<ExternalLink size={14} />}
           onClick={() => fire('unwrap')}
         />
@@ -331,7 +331,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
 
       {/* Styles Reset */}
       <MenuItem
-        label="Styles zurÃ¼cksetzen"
+        label="Styles zurücksetzen"
         icon={<RotateCcw size={14} />}
         onClick={() => fire('reset-styles')}
       />
@@ -363,7 +363,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ data, onAction, onClos
 
       {/* Delete */}
       <MenuItem
-        label="LÃ¶schen"
+        label="Löschen"
         icon={<Trash2 size={14} />}
         shortcut="Del"
         danger

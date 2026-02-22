@@ -36,6 +36,8 @@ interface TypographySectionProps {
   typographyTokens?: Record<string, { label: string; fontSize: { desktop: string }; fontWeight: number; standard?: boolean }>;
   /** Callback to change the _typo token on the class */
   onTypoTokenChange?: (key: string | undefined) => void;
+  /** Callback for live-preview while hovering over a token in the dropdown (key=undefined → clear preview) */
+  onTypoTokenPreview?: (key: string | undefined) => void;
   /** Whether the user has any per-element typography overrides */
   hasOverrides?: boolean;
 }
@@ -300,6 +302,137 @@ const FontDropdown: React.FC<{
   );
 };
 
+// ===== TYPO TOKEN DROPDOWN =====
+
+const TypoTokenDropdown: React.FC<{
+  value: string | undefined;
+  tokens: Record<string, { label: string; fontSize: { desktop: string }; fontWeight: number; standard?: boolean }>;
+  onChange: (key: string | undefined) => void;
+  onPreview?: (key: string | undefined) => void;
+}> = ({ value, tokens, onChange, onPreview }) => {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUpward, setOpenUpward] = useState(false);
+  const entries = Object.entries(tokens);
+  const current = value ? tokens[value] : null;
+
+  const close = (clearPreview = true) => {
+    setOpen(false);
+    if (clearPreview) onPreview?.(undefined);
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        ref={btnRef}
+        onClick={() => {
+          if (!open && btnRef.current) {
+            const rect = btnRef.current.getBoundingClientRect();
+            setOpenUpward(rect.bottom + Math.min(entries.length, 8) * 36 + 48 > window.innerHeight);
+          }
+          if (open) close();
+          else setOpen(true);
+        }}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '6px 8px',
+          borderRadius: '4px',
+          border: value ? '1px solid #a78bfa40' : '1px solid var(--admin-border)',
+          backgroundColor: value ? '#7c5cfc10' : 'var(--admin-bg-input)',
+          color: value ? '#c4b5fd' : 'var(--admin-text)',
+          fontSize: '12px',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {current ? current.label : '– Kein Typo Token –'}
+        </span>
+        <ChevronDown size={12} style={{ color: 'var(--admin-text-muted)', flexShrink: 0 }} />
+      </button>
+
+      {open && (
+        <>
+          {/* Backdrop */}
+          <div onClick={() => close()} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />
+          {/* Dropdown list */}
+          <div
+            onMouseLeave={() => onPreview?.(undefined)}
+            style={{
+              position: 'absolute',
+              ...(openUpward
+                ? { bottom: '100%', marginBottom: '4px' }
+                : { top: '100%', marginTop: '4px' }),
+              left: 0,
+              right: 0,
+              zIndex: 200,
+              backgroundColor: 'var(--admin-bg-card)',
+              border: '1px solid var(--admin-border-strong)',
+              borderRadius: '6px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+              overflow: 'hidden',
+              maxHeight: '280px',
+              overflowY: 'auto',
+            }}
+          >
+            {/* None option */}
+            <button
+              onClick={() => { onChange(undefined); close(false); }}
+              style={{
+                width: '100%',
+                padding: '7px 10px',
+                background: !value ? 'var(--admin-bg-sidebar)' : 'none',
+                border: 'none',
+                borderBottom: '1px solid var(--admin-border)',
+                cursor: 'pointer',
+                color: 'var(--admin-text-muted)',
+                fontSize: '12px',
+                textAlign: 'left',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--admin-border)'; onPreview?.(undefined); }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = !value ? 'var(--admin-bg-sidebar)' : 'transparent'; }}
+            >
+              – Kein Typo Token –
+            </button>
+            {entries.map(([key, t]) => (
+              <button
+                key={key}
+                onClick={() => { onChange(key); close(false); }}
+                style={{
+                  width: '100%',
+                  padding: '7px 10px',
+                  background: key === value ? '#7c5cfc18' : 'none',
+                  border: 'none',
+                  borderBottom: '1px solid var(--admin-border)',
+                  cursor: 'pointer',
+                  color: key === value ? '#c4b5fd' : 'var(--admin-text)',
+                  fontSize: '12px',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '6px',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--admin-border)'; onPreview?.(key); }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = key === value ? '#7c5cfc18' : 'transparent'; }}
+              >
+                <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {t.label}{t.standard ? ' ★' : ''}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--admin-text-muted)', flexShrink: 0 }}>
+                  {t.fontSize.desktop} · {t.fontWeight}
+                </span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 // ===== ROW =====
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
@@ -317,7 +450,7 @@ const TokenHint: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 export const TypographySection: React.FC<TypographySectionProps> = ({
-  styles, onChange, tokenStyles, tokenLabel, tokenKey, typographyTokens, onTypoTokenChange, hasOverrides,
+  styles, onChange, tokenStyles, tokenLabel, tokenKey, typographyTokens, onTypoTokenChange, onTypoTokenPreview, hasOverrides,
 }) => {
   const sz = 13;
   const hasToken = !!(tokenStyles && tokenLabel);
@@ -346,38 +479,14 @@ export const TypographySection: React.FC<TypographySectionProps> = ({
               Typo Token
             </span>
           </div>
-          <div style={{ position: 'relative' }}>
-            <select
-              value={tokenKey || ''}
-              onChange={(e) => onTypoTokenChange(e.target.value || undefined)}
-              style={{
-                width: '100%',
-                padding: '6px 28px 6px 8px',
-                borderRadius: '4px',
-                border: tokenKey ? '1px solid #a78bfa40' : '1px solid var(--admin-border)',
-                backgroundColor: tokenKey ? '#7c5cfc10' : 'var(--admin-bg-sidebar)',
-                color: tokenKey ? '#c4b5fd' : 'var(--admin-text)',
-                fontSize: '12px',
-                cursor: 'pointer',
-                appearance: 'none' as const,
-                outline: 'none',
-              }}
-            >
-              <option value="">– Kein Typo Token –</option>
-              {Object.entries(typographyTokens).map(([key, t]) => (
-                <option key={key} value={key}>
-                  {t.label} ({t.fontSize.desktop}, {t.fontWeight})
-                  {t.standard ? ' ★' : ''}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              size={12}
-              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }}
-            />
-          </div>
+          <TypoTokenDropdown
+            value={tokenKey}
+            tokens={typographyTokens}
+            onChange={onTypoTokenChange}
+            onPreview={onTypoTokenPreview}
+          />
           {tokenKey && tokenLabel && (
-            <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--admin-text-muted)' }}>
+            <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--admin-text-secondary)' }}>
               Verknüpft: {tokenLabel} – Font/Größe/Gewicht werden vom Token gesteuert
             </div>
           )}

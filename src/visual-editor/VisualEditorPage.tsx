@@ -207,7 +207,7 @@ const EditorInner: React.FC = () => {
           style={{
             flex: 1,
             overflow: 'auto',
-            padding: state.viewport === 'desktop' ? '0' : '24px',
+            padding: '0',
             display: 'flex',
             justifyContent: 'center',
           }}

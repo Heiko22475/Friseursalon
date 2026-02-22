@@ -55,6 +55,19 @@ Zunächst Elemente wie Layout (Grid, Columns), uws. Alles was fehlt.
 Zu jedem Element benötige ich die gleichen Eigenschaften wie bei Webflow. 
 Nebenbei pflegen wir die create_json.md. 
 
+Das Kontextmenü im VE enthält Sonderzeichen die falsch gerendert werden. Beispiel: 
+ein "ü" wird falsch dargestellt. 
+
+There are text colors in the VE that have way to little contrast. 
+For example in the properties panel: 
+Section Typography "Verknüpft: Display (Hero H1) – Font/Größe/Gewicht werden vom Token gesteuert"
+Please increase contrast. 
+
+I cannot see the theme name of the application. I mean the theme that you choose 
+in the admin page with the icon. Add the selected theme name right to the theme icon in the button. 
+
+
+
 
 
 

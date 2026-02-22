@@ -704,6 +704,25 @@ export const PropertiesPanel: React.FC = () => {
                   }
                 }
               } : undefined}
+              onTypoTokenPreview={Object.keys(state.typographyTokens).length > 0 ? (key) => {
+                if (key === undefined) {
+                  dispatch({ type: 'CLEAR_TYPO_PREVIEW' });
+                  return;
+                }
+                // Determine target class (no auto-create for preview)
+                let targetClass: string | undefined;
+                if (editingClass) {
+                  targetClass = editingClass;
+                } else {
+                  const elClasses = selectedElement.classNames || [];
+                  targetClass = elClasses.find(cn => state.globalStyles[cn]?._typo)
+                    ?? elClasses.find(cn => state.globalStyles[cn])
+                    ?? elClasses[0];
+                }
+                if (targetClass) {
+                  dispatch({ type: 'SET_TYPO_PREVIEW', className: targetClass, key });
+                }
+              } : undefined}
             />
           </AccordionSection>
         )}

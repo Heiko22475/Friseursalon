@@ -24,7 +24,7 @@ interface CanvasRendererProps {
 const viewportWidths: Record<VEViewport, string> = {
   desktop: '100%',
   tablet: '768px',
-  mobile: '375px',
+  mobile: '360px',
 };
 
 /**

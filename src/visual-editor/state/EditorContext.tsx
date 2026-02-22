@@ -73,6 +73,8 @@ export interface EditorState {
   typographyTokens: TypographyTokenMap;
   /** Name of class currently being edited (null = editing element inline) */
   editingClass: string | null;
+  /** Temporary typography token preview — not saved in undo history */
+  typoPreview: { className: string; key: string | undefined } | null;
 }
 
 // ===== ACTIONS =====
@@ -133,7 +135,9 @@ export type EditorAction =
   | { type: 'SET_STANDARD_TYPOGRAPHY_TOKEN'; key: string }
   | { type: 'DELETE_TYPOGRAPHY_TOKEN'; key: string; replaceWith: string }
   | { type: 'RENAME_TYPOGRAPHY_TOKEN'; oldKey: string; newKey: string }
-  | { type: 'SET_CLASS_TYPO'; className: string; typoKey: string | undefined };
+  | { type: 'SET_CLASS_TYPO'; className: string; typoKey: string | undefined }
+  | { type: 'SET_TYPO_PREVIEW'; className: string; key: string | undefined }
+  | { type: 'CLEAR_TYPO_PREVIEW' };
 
 // ===== INITIAL STATE =====
 
@@ -164,6 +168,7 @@ export function createInitialState(
     fontTokens,
     typographyTokens,
     editingClass: null,
+    typoPreview: null,
   };
 }
 
@@ -1044,9 +1049,16 @@ function editorReducerInner(state: EditorState, action: EditorAction): EditorSta
           ...state.globalStyles,
           [action.className]: { ...cls, _typo: action.typoKey },
         },
+        typoPreview: null,
         isDirty: true,
       };
     }
+
+    case 'SET_TYPO_PREVIEW':
+      return { ...state, typoPreview: { className: action.className, key: action.key } };
+
+    case 'CLEAR_TYPO_PREVIEW':
+      return { ...state, typoPreview: null };
 
     default:
       return state;
@@ -1094,7 +1106,16 @@ export const EditorProvider: React.FC<EditorProviderProps> = ({
   // Keep the module-level globalStyles reference in sync for resolveStyles()
   // MUST be synchronous (not in useEffect) so renderers see updated classes
   // within the same render cycle that dispatched the change.
-  setGlobalStyles(state.globalStyles);
+  // Apply typoPreview overlay for live typography preview (not in undo history).
+  if (state.typoPreview) {
+    const { className, key } = state.typoPreview;
+    setGlobalStyles({
+      ...state.globalStyles,
+      [className]: { ...state.globalStyles[className], _typo: key },
+    });
+  } else {
+    setGlobalStyles(state.globalStyles);
+  }
   setFontTokens(state.fontTokens);
   setTypographyTokens(state.typographyTokens);
 

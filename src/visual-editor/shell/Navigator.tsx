@@ -182,6 +182,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ onTreeContextMenu }) => {
           className="ve-navigator-flyout"
           style={{
             width: state.navigatorTab === 'typography' ? '360px' : '240px',
+            height: '100%',
             backgroundColor: 'var(--admin-bg-card)',
             borderRight: '1px solid var(--admin-border)',
             display: 'flex',

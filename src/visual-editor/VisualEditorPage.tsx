@@ -5,7 +5,7 @@
 // Supports data source switching: Demo vs. Live (Supabase)
 // =====================================================
 
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { EditorProvider } from './state/EditorContext';
 import { VEThemeProvider } from './theme/VEThemeBridge';
 import { TopBar } from './shell/TopBar';
@@ -27,6 +27,9 @@ import type { GlobalStyles } from './types/styles';
 import type { FontTokenMap, TypographyTokenMap } from './types/typographyTokens';
 import { VEMediaDialogProvider } from './state/VEMediaDialogContext';
 import { VEMediaDialog } from './components/VEMediaDialog';
+import { useAdminTheme, ADMIN_THEMES } from '../contexts/AdminThemeContext';
+import type { AdminTheme } from '../contexts/AdminThemeContext';
+import { Palette, Check } from 'lucide-react';
 import './styles/editor.css';
 
 // ===== DATA SOURCE TYPE =====
@@ -341,6 +344,22 @@ const VisualEditorPage: React.FC = () => {
   const typographyTokens = dataSource === 'demo' ? {} : liveTypographyTokens;
   const showEditor = pages && pages.length > 0;
 
+  // Admin theme picker (same as AdminHeader)
+  const { theme: adminTheme, setTheme: setAdminTheme } = useAdminTheme();
+  const [themePickerOpen, setThemePickerOpen] = useState(false);
+  const themePickerRef = useRef<HTMLDivElement>(null);
+  const currentThemeInfo = ADMIN_THEMES.find(t => t.id === adminTheme) || ADMIN_THEMES[0];
+  useEffect(() => {
+    if (!themePickerOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (themePickerRef.current && !themePickerRef.current.contains(e.target as Node)) {
+        setThemePickerOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [themePickerOpen]);
+
   return (
     <VEErrorBoundary>
       <VEThemeProvider>
@@ -354,89 +373,212 @@ const VisualEditorPage: React.FC = () => {
             padding: '8px 16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            justifyContent: 'space-between',
             fontSize: '13px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             zIndex: 100,
           }}
         >
-          <span style={{ color: '#888', fontWeight: 500, marginRight: '4px' }}>Datenquelle:</span>
+          {/* Left: data source toggles */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ color: '#888', fontWeight: 500, marginRight: '4px' }}>Datenquelle:</span>
 
-          {/* Demo Toggle */}
-          <button
-            onClick={() => handleSourceChange('demo')}
-            style={{
-              padding: '4px 12px',
-              borderRadius: '6px',
-              border: `1px solid ${dataSource === 'demo' ? '#7c5cfc' : 'var(--admin-border-strong)'}`,
-              backgroundColor: dataSource === 'demo' ? '#7c5cfc22' : 'transparent',
-              color: dataSource === 'demo' ? '#a78bfa' : '#888',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: dataSource === 'demo' ? 600 : 400,
-              transition: 'all 0.15s',
-            }}
-          >
-            🧪 Demo / Testseite
-          </button>
+            {/* Demo Toggle */}
+            <button
+              onClick={() => handleSourceChange('demo')}
+              style={{
+                padding: '4px 12px',
+                borderRadius: '6px',
+                border: `1px solid ${dataSource === 'demo' ? '#7c5cfc' : 'var(--admin-border-strong)'}`,
+                backgroundColor: dataSource === 'demo' ? '#7c5cfc22' : 'transparent',
+                color: dataSource === 'demo' ? '#a78bfa' : '#888',
+                fontSize: '12px',
+                cursor: 'pointer',
+                fontWeight: dataSource === 'demo' ? 600 : 400,
+                transition: 'all 0.15s',
+              }}
+            >
+              🧪 Demo / Testseite
+            </button>
 
-          {/* Live Toggle */}
-          <button
-            onClick={() => handleSourceChange('live')}
-            style={{
-              padding: '4px 12px',
-              borderRadius: '6px',
-              border: `1px solid ${dataSource === 'live' ? '#22c55e' : 'var(--admin-border-strong)'}`,
-              backgroundColor: dataSource === 'live' ? '#22c55e18' : 'transparent',
-              color: dataSource === 'live' ? '#4ade80' : '#888',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: dataSource === 'live' ? 600 : 400,
-              transition: 'all 0.15s',
-            }}
-          >
-            🌐 Live-Website (Supabase)
-          </button>
+            {/* Live Toggle */}
+            <button
+              onClick={() => handleSourceChange('live')}
+              style={{
+                padding: '4px 12px',
+                borderRadius: '6px',
+                border: `1px solid ${dataSource === 'live' ? '#22c55e' : 'var(--admin-border-strong)'}`,
+                backgroundColor: dataSource === 'live' ? '#22c55e18' : 'transparent',
+                color: dataSource === 'live' ? '#4ade80' : '#888',
+                fontSize: '12px',
+                cursor: 'pointer',
+                fontWeight: dataSource === 'live' ? 600 : 400,
+                transition: 'all 0.15s',
+              }}
+            >
+              🌐 Live-Website (Supabase)
+            </button>
 
-          {/* Customer Selector (only for live) */}
-          {dataSource === 'live' && (
-            <>
-              <span style={{ color: '#555', margin: '0 4px' }}>|</span>
-              <select
-                value={selectedCustomer}
-                onChange={(e) => setSelectedCustomer(e.target.value)}
+            {/* Customer Selector (only for live) */}
+            {dataSource === 'live' && (
+              <>
+                <span style={{ color: '#555', margin: '0 4px' }}>|</span>
+                <select
+                  value={selectedCustomer}
+                  onChange={(e) => setSelectedCustomer(e.target.value)}
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid var(--admin-border-strong)',
+                    backgroundColor: 'var(--admin-bg-card)',
+                    color: '#ccc',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    minWidth: '200px',
+                  }}
+                >
+                  <option value="">— Kunde wählen —</option>
+                  {customerList.map((c) => (
+                    <option key={c.customer_id} value={c.customer_id}>
+                      {c.site_name} ({c.customer_id})
+                    </option>
+                  ))}
+                </select>
+
+                {liveLoading && (
+                  <span style={{ color: '#fbbf24', fontSize: '12px' }}>⏳ Lade...</span>
+                )}
+                {liveError && (
+                  <span style={{ color: '#f87171', fontSize: '12px' }}>❌ {liveError}</span>
+                )}
+                {livePages && (
+                  <span style={{ color: '#4ade80', fontSize: '12px' }}>
+                    ✅ {livePages.length} Seite{livePages.length !== 1 ? 'n' : ''} geladen
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Right: Theme Picker */}
+          <div ref={themePickerRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setThemePickerOpen(o => !o)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                height: '30px',
+                padding: '0 10px',
+                borderRadius: '8px',
+                border: '1px solid var(--admin-border)',
+                backgroundColor: themePickerOpen ? 'var(--admin-bg-input)' : 'transparent',
+                color: 'var(--admin-text-muted)',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)';
+                e.currentTarget.style.color = 'var(--admin-text)';
+              }}
+              onMouseLeave={(e) => {
+                if (!themePickerOpen) e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--admin-text-muted)';
+              }}
+              title="Design-Thema wählen"
+            >
+              <Palette size={14} />
+              <span style={{ display: 'flex', gap: '2px' }}>
+                {currentThemeInfo.swatches.map((c, i) => (
+                  <span key={i} style={{
+                    display: 'inline-block',
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: c,
+                    border: '1px solid var(--admin-border-strong)',
+                  }} />
+                ))}
+              </span>
+              <span style={{ fontSize: '11px', fontWeight: 500, color: 'inherit', whiteSpace: 'nowrap' }}>
+                {currentThemeInfo.label}
+              </span>
+            </button>
+
+            {/* Dropdown */}
+            {themePickerOpen && (
+              <div
                 style={{
-                  padding: '4px 8px',
-                  borderRadius: '6px',
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  right: 0,
+                  width: '220px',
+                  backgroundColor: 'var(--admin-bg-surface)',
                   border: '1px solid var(--admin-border-strong)',
-                  backgroundColor: 'var(--admin-bg-card)',
-                  color: '#ccc',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  minWidth: '200px',
+                  borderRadius: '10px',
+                  padding: '6px',
+                  boxShadow: 'var(--admin-shadow-lg)',
+                  zIndex: 200,
                 }}
               >
-                <option value="">— Kunde wählen —</option>
-                {customerList.map((c) => (
-                  <option key={c.customer_id} value={c.customer_id}>
-                    {c.site_name} ({c.customer_id})
-                  </option>
-                ))}
-              </select>
-
-              {liveLoading && (
-                <span style={{ color: '#fbbf24', fontSize: '12px' }}>⏳ Lade...</span>
-              )}
-              {liveError && (
-                <span style={{ color: '#f87171', fontSize: '12px' }}>❌ {liveError}</span>
-              )}
-              {livePages && (
-                <span style={{ color: '#4ade80', fontSize: '12px' }}>
-                  ✅ {livePages.length} Seite{livePages.length !== 1 ? 'n' : ''} geladen
-                </span>
-              )}
-            </>
-          )}
+                <div style={{
+                  padding: '4px 10px 8px',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'var(--admin-text-muted)',
+                }}>
+                  Design-Thema
+                </div>
+                {ADMIN_THEMES.map(t => {
+                  const isActive = t.id === adminTheme;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => { setAdminTheme(t.id as AdminTheme); setThemePickerOpen(false); }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        width: '100%',
+                        padding: '7px 10px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: isActive ? 'var(--admin-accent-bg)' : 'transparent',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.12s',
+                      }}
+                      onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'; }}
+                      onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    >
+                      <span style={{
+                        display: 'flex',
+                        borderRadius: '6px',
+                        overflow: 'hidden',
+                        border: `1.5px solid ${isActive ? 'var(--admin-accent)' : 'var(--admin-border-strong)'}`,
+                        flexShrink: 0,
+                      }}>
+                        {t.swatches.map((c, i) => (
+                          <span key={i} style={{ display: 'block', width: '16px', height: '20px', backgroundColor: c }} />
+                        ))}
+                      </span>
+                      <span style={{
+                        fontSize: '12px',
+                        fontWeight: isActive ? 600 : 400,
+                        color: isActive ? 'var(--admin-accent-text)' : 'var(--admin-text)',
+                        flex: 1,
+                        textAlign: 'left',
+                      }}>
+                        {t.label}
+                      </span>
+                      {isActive && <Check size={14} style={{ color: 'var(--admin-accent)', flexShrink: 0 }} />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Editor or Loading/Error State */}

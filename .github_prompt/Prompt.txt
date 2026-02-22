@@ -67,6 +67,35 @@ I cannot see the theme name of the application. I mean the theme that you choose
 in the admin page with the icon. Add the selected theme name right to the theme icon in the button. 
 
 
+In the main admin page, the theme button is still not implemented correctly. 
+There is a theme button, but it is not the theme button with the text like on these 
+pages: 
+It is implemented in: Logo Designer, Einstellungen, Theme Editor, Backup and Restore, 
+Typography. 
+Implement it on the main admin page  and on the 
+superadmin page and on the visual editor page and on the mediathek.
+2) Der Header der "Backup and Restore" seite entspricht nicht dem Header der 
+anderen Seiten. Er gehn nicht über den gesamten Bildschirm und schließt 
+oben nicht bündig ab. 
+
+Admin-Seite: Mir gefällt die Art und Weise, wie das Icon auf der 
+Visual-Editor-Karte angezeigt wird. Bitte zweige das Icon auf den anderen 
+Karten auch so an. 
+Entferne das "Empfohlen" tag in der Visual-Editor-Karte. 
+Auf der Einstellungen Karte kann man die Primärfarbe auswählen - das macht keinen Sinn? 
+Bitte recherchiere nach der Verwendung dieser Information im Code und 
+stelle sicher, dass, wenn wir diese Eigenschaften entfernen, nichts kaputtmachen. 
+Entferne diese Einstellung. 
+Header-Typ und Schriftart-Einstellungen auf der "Einstellungen" Seite bitte entfernen. 
+
+Please fix build errors (when calling npm run build).  
+
+
+
+
+
+
+
 
 
 

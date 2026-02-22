@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Palette, Database, LayoutGrid, PenTool } from 'lucide-react';
+import { Users, Palette, Database, LayoutGrid, PenTool, Settings } from 'lucide-react';
 import { AdminHeader } from '../admin/AdminHeader';
 
 export const SuperAdminDashboard: React.FC = () => {
@@ -93,13 +93,29 @@ export const SuperAdminDashboard: React.FC = () => {
             style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 rounded-lg transition" style={{ backgroundColor: 'var(--admin-accent-bg)', color: 'var(--admin-accent)' }}>
+              <div className="p-3 rounded-lg transition" style={{ backgroundColor: 'var(--admin-accent)', color: '#fff' }}>
                 <Database className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Daten Export/Import</h3>
             </div>
             <p style={{ color: 'var(--admin-text-muted)' }}>
               Export und Import von Vorlagen, Stockphotos und System-Daten.
+            </p>
+          </button>
+
+          <button
+            onClick={() => navigate('/superadmin/settings')}
+            className="block p-6 rounded-lg transition text-left group"
+            style={{ backgroundColor: 'var(--admin-bg-card)', border: '1px solid var(--admin-border)' }}
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 rounded-lg transition" style={{ backgroundColor: 'var(--admin-accent)', color: '#fff' }}>
+                <Settings className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--admin-text-heading)' }}>Einstellungen</h3>
+            </div>
+            <p style={{ color: 'var(--admin-text-muted)' }}>
+              Prerender-Parameter, Sitemap-Frequenz und Vercel Deploy Hook konfigurieren.
             </p>
           </button>
         </div>

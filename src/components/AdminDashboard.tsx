@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebsite } from '../contexts/WebsiteContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive, PenTool, ExternalLink, Sun, Moon } from 'lucide-react';
+import { LogOut, Layout, Palette, Settings, FolderOpen, Sparkles, Type, HardDrive, PenTool, ExternalLink } from 'lucide-react';
 import { useConfirmDialog } from './admin/ConfirmDialog';
-import { useAdminTheme } from '../contexts/AdminThemeContext';
+import { AdminHeader } from './admin/AdminHeader';
 
 export const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -12,7 +12,6 @@ export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { Dialog, confirm } = useConfirmDialog();
   const [showBackupReminder, setShowBackupReminder] = useState(false);
-  const { theme, toggleTheme } = useAdminTheme();
 
   // Check if backup reminder should be shown
   useEffect(() => {
@@ -79,109 +78,55 @@ export const AdminDashboard: React.FC = () => {
       <Dialog />
 
       {/* Header */}
-      <header
-        className="admin-dashboard-header"
-        style={{
-          backgroundColor: 'var(--admin-bg-surface)',
-          borderBottom: '1px solid var(--admin-border)',
-          padding: '12px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h1
+      <AdminHeader
+        title="BeautifulCMS"
+        subtitle={websiteRecord ? websiteRecord.site_name : user?.email}
+        backTo={false}
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                margin: 0,
-                fontSize: '20px',
-                fontWeight: 700,
-                background: `linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light))`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: '1px solid var(--admin-border-strong)',
+                backgroundColor: 'var(--admin-bg-input)',
+                color: 'var(--admin-text-secondary)',
+                fontSize: '13px',
+                textDecoration: 'none',
+                transition: 'all 0.15s',
               }}
             >
-              BeautifulCMS
-            </h1>
-            {websiteRecord && (
-              <span style={{ color: 'var(--admin-text-muted)', fontSize: '14px' }}>
-                — {websiteRecord.site_name}
-                {(websiteRecord as any).domain_name && (
-                  <span style={{ color: 'var(--admin-text-faint)', marginLeft: '8px' }}>
-                    ({(websiteRecord as any).domain_name})
-                  </span>
-                )}
-              </span>
-            )}
+              <ExternalLink size={14} />
+              Website ansehen
+            </a>
+            <button
+              onClick={handleSignOut}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: '1px solid var(--admin-border-strong)',
+                backgroundColor: 'var(--admin-bg-input)',
+                color: 'var(--admin-text-secondary)',
+                fontSize: '13px',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              <LogOut size={14} />
+              Abmelden
+            </button>
           </div>
-          <p style={{ fontSize: '12px', color: 'var(--admin-text-muted)', marginTop: '2px' }}>
-            {user?.email}
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              borderRadius: '6px',
-              border: '1px solid var(--admin-border-strong)',
-              backgroundColor: 'var(--admin-bg-input)',
-              color: 'var(--admin-text-secondary)',
-              fontSize: '13px',
-              textDecoration: 'none',
-              transition: 'all 0.15s',
-            }}
-          >
-            <ExternalLink size={14} />
-            Website ansehen
-          </a>
-          <button
-            onClick={toggleTheme}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '6px',
-              border: '1px solid var(--admin-border-strong)',
-              backgroundColor: 'var(--admin-bg-input)',
-              color: 'var(--admin-text-muted)',
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
-            title={theme === 'dark' ? 'Zum hellen Design wechseln' : 'Zum dunklen Design wechseln'}
-          >
-            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-          </button>
-          <button
-            onClick={handleSignOut}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              borderRadius: '6px',
-              border: '1px solid var(--admin-border-strong)',
-              backgroundColor: 'var(--admin-bg-input)',
-              color: 'var(--admin-text-secondary)',
-              fontSize: '13px',
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
-          >
-            <LogOut size={14} />
-            Abmelden
-          </button>
-        </div>
-      </header>
+        }
+      />
 
       {/* Content */}
       <main className="admin-dashboard-main" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
@@ -250,11 +195,11 @@ export const AdminDashboard: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: isFeatured ? 'var(--admin-accent)' : isDeprecated ? 'var(--admin-bg-input)' : 'var(--admin-bg-input)',
+                    backgroundColor: isDeprecated ? 'var(--admin-bg-input)' : 'var(--admin-accent)',
                     marginBottom: '14px',
                   }}
                 >
-                  <Icon size={20} style={{ color: isFeatured ? '#fff' : 'var(--admin-text-secondary)' }} />
+                  <Icon size={20} style={{ color: isDeprecated ? 'var(--admin-text-secondary)' : '#fff' }} />
                 </div>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--admin-text-heading)', margin: '0 0 4px 0' }}>
                   {section.name}
@@ -262,20 +207,6 @@ export const AdminDashboard: React.FC = () => {
                 <p style={{ fontSize: '12px', color: 'var(--admin-text-muted)', margin: 0 }}>
                   {section.desc}
                 </p>
-                {isFeatured && (
-                  <span
-                    style={{
-                      marginTop: '10px',
-                      fontSize: '10px',
-                      fontWeight: 600,
-                      color: 'var(--admin-accent-text)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    ★ Empfohlen
-                  </span>
-                )}
                 {isDeprecated && (
                   <span
                     style={{

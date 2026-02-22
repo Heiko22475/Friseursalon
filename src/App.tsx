@@ -20,6 +20,7 @@ import { GenericCardEditorPage } from './components/admin/GenericCardEditorPage'
 import { SuperAdminDashboard } from './components/superadmin/SuperAdminDashboard';
 import { UserManagement } from './components/superadmin/UserManagement';
 import { SuperAdminDataExport } from './components/superadmin/SuperAdminDataExport';
+import { SuperAdminSettings } from './components/superadmin/SuperAdminSettings';
 import { CardTemplatesPage } from './pages/superadmin/CardTemplatesPage';
 import { CardTemplateEditorPage } from './pages/superadmin/CardTemplateEditorPage';
 import { DynamicPage } from './components/DynamicPage';
@@ -63,6 +64,14 @@ function AppContent() {
                         element={
                         <ProtectedRoute>
                             <AdminLayout><UserManagement /></AdminLayout>
+                        </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/superadmin/settings"
+                        element={
+                        <ProtectedRoute>
+                            <AdminLayout><SuperAdminSettings /></AdminLayout>
                         </ProtectedRoute>
                         }
                     />
@@ -269,6 +278,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <AdminLayout><CardTemplateEditorPage /></AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/settings"
+            element={
+              <ProtectedRoute>
+                <AdminLayout><SuperAdminSettings /></AdminLayout>
               </ProtectedRoute>
             }
           />

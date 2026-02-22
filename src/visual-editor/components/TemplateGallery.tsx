@@ -113,9 +113,9 @@ export function createExampleTemplates(): TemplateItem[] {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: [80, 'px'],
-        paddingBottom: [80, 'px'],
-        backgroundColor: '#f9f7f2',
+        paddingTop: { value: 80, unit: 'px' },
+        paddingBottom: { value: 80, unit: 'px' },
+        backgroundColor: { kind: 'custom', hex: '#f9f7f2' },
       },
     },
     children: [
@@ -127,9 +127,9 @@ export function createExampleTemplates(): TemplateItem[] {
         content: '<h1>Willkommen</h1>',
         styles: {
           desktop: {
-            fontSize: [48, 'px'],
+            fontSize: { value: 48, unit: 'px' },
             fontWeight: 700,
-            marginBottom: [16, 'px'],
+            marginBottom: { value: 16, unit: 'px' },
           },
         },
         children: [],
@@ -142,8 +142,8 @@ export function createExampleTemplates(): TemplateItem[] {
         content: '<p>Ihre Überschrift hier</p>',
         styles: {
           desktop: {
-            fontSize: [18, 'px'],
-            color: '#666',
+            fontSize: { value: 18, unit: 'px' },
+            color: { kind: 'custom', hex: '#666666' },
           },
         },
         children: [],
@@ -159,9 +159,9 @@ export function createExampleTemplates(): TemplateItem[] {
     classNames: [],
     styles: {
       desktop: {
-        paddingTop: [60, 'px'],
-        paddingBottom: [60, 'px'],
-        backgroundColor: '#ffffff',
+        paddingTop: { value: 60, unit: 'px' },
+        paddingBottom: { value: 60, unit: 'px' },
+        backgroundColor: { kind: 'custom', hex: '#ffffff' },
       },
     },
     children: [
@@ -174,8 +174,8 @@ export function createExampleTemplates(): TemplateItem[] {
           desktop: {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: [24, 'px'],
-            maxWidth: [1200, 'px'],
+            gap: { value: 24, unit: 'px' },
+            maxWidth: { value: 1200, unit: 'px' },
             marginLeft: 'auto',
             marginRight: 'auto',
           },
@@ -192,9 +192,12 @@ export function createExampleTemplates(): TemplateItem[] {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                padding: [24, 'px'],
-                backgroundColor: '#f9f9f9',
-                borderRadius: [8, 'px'],
+                paddingTop: { value: 24, unit: 'px' },
+                paddingRight: { value: 24, unit: 'px' },
+                paddingBottom: { value: 24, unit: 'px' },
+                paddingLeft: { value: 24, unit: 'px' },
+                backgroundColor: { kind: 'custom', hex: '#f9f9f9' },
+                borderRadius: { value: 8, unit: 'px' },
               },
             },
             children: [
@@ -203,8 +206,16 @@ export function createExampleTemplates(): TemplateItem[] {
                 type: 'Icon',
                 label: 'Icon',
                 classNames: [],
-                content: { iconName: 'Star', size: [32, 'px'], color: null, strokeWidth: 2 },
-                styles: {},
+                content: {
+                  iconName: 'Star',
+                  size: 32,
+                  sizeUnit: 'px',
+                  color: { kind: 'custom', hex: '#6b7280' },
+                  strokeWidth: 2,
+                  containerBg: null,
+                  containerBorderRadius: 8,
+                },
+                styles: { desktop: {} },
                 children: [],
               },
               {
@@ -215,9 +226,9 @@ export function createExampleTemplates(): TemplateItem[] {
                 content: '<h3>Service 1</h3>',
                 styles: {
                   desktop: {
-                    fontSize: [18, 'px'],
+                    fontSize: { value: 18, unit: 'px' },
                     fontWeight: 600,
-                    marginTop: [12, 'px'],
+                    marginTop: { value: 12, unit: 'px' },
                   },
                 },
                 children: [],
@@ -235,9 +246,12 @@ export function createExampleTemplates(): TemplateItem[] {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                padding: [24, 'px'],
-                backgroundColor: '#f9f9f9',
-                borderRadius: [8, 'px'],
+                paddingTop: { value: 24, unit: 'px' },
+                paddingRight: { value: 24, unit: 'px' },
+                paddingBottom: { value: 24, unit: 'px' },
+                paddingLeft: { value: 24, unit: 'px' },
+                backgroundColor: { kind: 'custom', hex: '#f9f9f9' },
+                borderRadius: { value: 8, unit: 'px' },
               },
             },
             children: [
@@ -246,8 +260,16 @@ export function createExampleTemplates(): TemplateItem[] {
                 type: 'Icon',
                 label: 'Icon',
                 classNames: [],
-                content: { iconName: 'Zap', size: [32, 'px'], color: null, strokeWidth: 2 },
-                styles: {},
+                content: {
+                  iconName: 'Zap',
+                  size: 32,
+                  sizeUnit: 'px',
+                  color: { kind: 'custom', hex: '#6b7280' },
+                  strokeWidth: 2,
+                  containerBg: null,
+                  containerBorderRadius: 8,
+                },
+                styles: { desktop: {} },
                 children: [],
               },
               {
@@ -258,9 +280,9 @@ export function createExampleTemplates(): TemplateItem[] {
                 content: '<h3>Service 2</h3>',
                 styles: {
                   desktop: {
-                    fontSize: [18, 'px'],
+                    fontSize: { value: 18, unit: 'px' },
                     fontWeight: 600,
-                    marginTop: [12, 'px'],
+                    marginTop: { value: 12, unit: 'px' },
                   },
                 },
                 children: [],

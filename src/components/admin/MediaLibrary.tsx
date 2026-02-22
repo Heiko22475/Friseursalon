@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useWebsite } from '../../contexts/WebsiteContext';
 import { 
-  ArrowLeft, Upload, Image, Video, Palette, FileText, 
+  Upload, Image, Video, Palette, FileText, 
   LayoutGrid, List as ListIcon, FolderPlus, Folder, Trash2, 
   Scissors, Clipboard, XSquare, CheckSquare
 } from 'lucide-react';
@@ -11,6 +10,7 @@ import { MediaUpload } from './MediaUpload';
 import { MediaGrid } from './MediaGrid';
 import { Modal } from './Modal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { AdminHeader } from './AdminHeader';
 
 interface MediaCategory {
   id: string;
@@ -69,7 +69,6 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   isSuperAdmin = false,
   singleSelect = false
 }) => {
-  const navigate = useNavigate();
   const { customerId } = useWebsite();
   
   // For stockOnly mode (superadmin editing stockphotos), use 'stock' as customer_id
@@ -403,13 +402,91 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--admin-bg)' }}>
-      {/* Header */}
-      <div className="border-b px-6 py-4 flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
-        <div className="flex items-center gap-4">
-          {/* Single Select Mode: Show cancel button with text */}
-          {singleSelect && mode === 'select' ? (
-            <button 
-              onClick={onCancel} 
+      {/* Header: AdminHeader in admin mode (with theme picker); simplified bar in select mode */}
+      {mode === 'admin' ? (
+        <AdminHeader
+          title={stockOnly ? 'Stockphotos' : 'Mediathek'}
+          backTo={stockOnly ? '/superadmin' : '/admin'}
+          actions={
+            <div className="flex items-center gap-3">
+              {/* View Toggle */}
+              <div className="p-1 rounded-lg flex border" style={{ backgroundColor: 'var(--admin-bg-input)', borderColor: 'var(--admin-border-strong)' }}>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className="p-2 rounded"
+                  style={viewMode === 'grid' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
+                  onMouseEnter={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text)'; }}
+                  onMouseLeave={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
+                  title="Rasteransicht"
+                >
+                  <LayoutGrid size={18} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className="p-2 rounded"
+                  style={viewMode === 'list' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
+                  onMouseEnter={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text)'; }}
+                  onMouseLeave={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
+                  title="Listenansicht"
+                >
+                  <ListIcon size={18} />
+                </button>
+              </div>
+
+              {/* Selection Actions */}
+              {selectedIds.length > 0 && (
+                <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20">
+                  <span className="text-sm font-medium text-blue-400 mr-2">{selectedIds.length} ausgewählt</span>
+                  {(selectedCategory?.name !== 'stockphotos' || isSuperAdmin) && (
+                    <>
+                      <button onClick={handleCutFiles} className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Ausschneiden">
+                        <Scissors size={18} />
+                      </button>
+                      <button onClick={() => handleDeleteFiles(selectedIds)} className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Löschen">
+                        <Trash2 size={18} />
+                      </button>
+                    </>
+                  )}
+                  <button onClick={() => handleSelectAll(false)} className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Auswahl aufheben">
+                    <XSquare size={18} />
+                  </button>
+                </div>
+              )}
+
+              {/* Clipboard */}
+              {clipboard && (
+                <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20">
+                  <span className="text-sm font-medium text-blue-400 mr-2">
+                    {clipboard.fileIds.length} Datei(en) in Zwischenablage
+                  </span>
+                  <button onClick={handlePasteFiles} className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" title="Einfügen">
+                    <Clipboard size={14} /> Einfügen
+                  </button>
+                  <button onClick={() => setClipboard(null)} className="p-1 text-blue-400 hover:bg-blue-500/20 rounded" title="Abbrechen">
+                    <XSquare size={18} />
+                  </button>
+                </div>
+              )}
+
+              {/* Upload */}
+              {((selectedCategory?.name !== 'stockphotos') || (stockOnly && isSuperAdmin)) && (
+                <button
+                  onClick={() => { setUploadKey(k => k + 1); setIsUploadOpen(true); }}
+                  className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload
+                </button>
+              )}
+            </div>
+          }
+        />
+      ) : (
+        /* Select / Picker mode: simplified header without theme toggle */
+        <div className="border-b px-6 py-4 flex items-center justify-between" style={{ backgroundColor: 'var(--admin-bg-surface)', borderColor: 'var(--admin-border)' }}>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onCancel}
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
               style={{ color: 'var(--admin-text-secondary)' }}
               onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)'}
@@ -418,147 +495,37 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
               <XSquare className="w-5 h-5" />
               <span>Abbrechen</span>
             </button>
-          ) : mode === 'admin' ? (
-            <button onClick={() => navigate(stockOnly ? '/superadmin' : '/admin')} className="p-2 rounded-full" onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = ''}>
-              <ArrowLeft className="w-5 h-5" style={{ color: 'var(--admin-text-secondary)' }} />
-            </button>
-          ) : (
-            <button onClick={onCancel} className="p-2 rounded-full" onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--admin-bg-input)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = ''}>
-              <XSquare className="w-5 h-5" style={{ color: 'var(--admin-text-secondary)' }} />
-            </button>
-          )}
-          <h1 className="text-xl font-bold" style={{ color: 'var(--admin-text-heading)' }}>
-            {mode === 'select' 
-              ? (singleSelect ? 'Bild auswählen' : 'Bilder auswählen') 
-              : (stockOnly ? 'Stockphotos' : 'Mediathek')}
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-            {/* Selection Confirmation for Picker Mode (Multi-select only) */}
-            {mode === 'select' && !singleSelect && selectedIds.length > 0 && onSelect && (
-              <button
-                onClick={() => {
-                   const selectedFiles = files.filter(f => selectedIds.includes(f.id));
-                   onSelect(selectedFiles);
-                }}
-                className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm font-medium"
-              >
-                 <CheckSquare className="w-4 h-4" />
-                 {selectedIds.length} übernehmen
-              </button>
-            )}
-            
-            {/* Single Select: Show selected image preview and confirm button */}
-            {mode === 'select' && singleSelect && selectedIds.length > 0 && onSelect && (
-              <button
-                onClick={() => {
-                   const selectedFiles = files.filter(f => selectedIds.includes(f.id));
-                   onSelect(selectedFiles);
-                }}
-                className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm font-medium"
-              >
-                 <CheckSquare className="w-4 h-4" />
-                 Übernehmen
-              </button>
-            )}
-
+            <h1 className="text-xl font-bold" style={{ color: 'var(--admin-text-heading)' }}>
+              {singleSelect ? 'Bild auswählen' : 'Bilder auswählen'}
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
             {/* View Toggle */}
             <div className="p-1 rounded-lg flex border" style={{ backgroundColor: 'var(--admin-bg-input)', borderColor: 'var(--admin-border-strong)' }}>
-                <button 
-                  onClick={() => setViewMode('grid')}
-                  className="p-2 rounded"
-                  style={viewMode === 'grid' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
-                  onMouseEnter={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text)'; }}
-                  onMouseLeave={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
-                  title="Rasteransicht"
-                >
-                    <LayoutGrid size={18} />
-                </button>
-                <button 
-                  onClick={() => setViewMode('list')}
-                  className="p-2 rounded"
-                  style={viewMode === 'list' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
-                  onMouseEnter={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text)'; }}
-                  onMouseLeave={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
-                  title="Listenansicht"
-                >
-                    <ListIcon size={18} />
-                </button>
+              <button onClick={() => setViewMode('grid')} className="p-2 rounded"
+                style={viewMode === 'grid' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
+                onMouseEnter={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text)'; }}
+                onMouseLeave={e => { if (viewMode !== 'grid') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
+                title="Rasteransicht"><LayoutGrid size={18} /></button>
+              <button onClick={() => setViewMode('list')} className="p-2 rounded"
+                style={viewMode === 'list' ? { backgroundColor: 'var(--admin-bg-card)', boxShadow: 'var(--admin-shadow)', color: 'var(--admin-accent-text)' } : { color: 'var(--admin-text-muted)' }}
+                onMouseEnter={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text)'; }}
+                onMouseLeave={e => { if (viewMode !== 'list') e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
+                title="Listenansicht"><ListIcon size={18} /></button>
             </div>
-
-            {/* Actions for Selection (Admin Mode) - Hide delete/cut for stockphotos unless superadmin */}
-            {mode === 'admin' && selectedIds.length > 0 && (
-                <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20">
-                   <span className="text-sm font-medium text-blue-400 mr-2">{selectedIds.length} ausgewählt</span>
-                   {(selectedCategory?.name !== 'stockphotos' || isSuperAdmin) && (
-                     <>
-                       <button 
-                         onClick={handleCutFiles}
-                         className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded"
-                         title="Ausschneiden"
-                       >
-                         <Scissors size={18} />
-                       </button>
-                       <button 
-                         onClick={() => handleDeleteFiles(selectedIds)}
-                         className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded"
-                         title="Löschen"
-                       >
-                         <Trash2 size={18} />
-                       </button>
-                     </>
-                   )}
-                   <button 
-                     onClick={() => handleSelectAll(false)}
-                     className="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded"
-                     title="Auswahl aufheben"
-                   >
-                     <XSquare size={18} />
-                   </button>
-                </div>
+            {/* Confirm selection */}
+            {selectedIds.length > 0 && onSelect && (
+              <button
+                onClick={() => { const f = files.filter(file => selectedIds.includes(file.id)); onSelect(f); }}
+                className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm font-medium"
+              >
+                <CheckSquare className="w-4 h-4" />
+                {singleSelect ? 'Übernehmen' : `${selectedIds.length} übernehmen`}
+              </button>
             )}
-
-            {/* Clipboard Actions */}
-            {clipboard && (
-                <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20">
-                    <span className="text-sm font-medium text-blue-400 mr-2">
-                        {clipboard.fileIds.length} Datei(en) in Zwischenablage
-                    </span>
-                    <button 
-                     onClick={handlePasteFiles}
-                     className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-                     title="Einfügen"
-                    >
-                     <Clipboard size={14} /> Einfügen
-                    </button>
-                    <button 
-                     onClick={() => setClipboard(null)}
-                     className="p-1 text-blue-400 hover:bg-blue-500/20 rounded"
-                     title="Abbrechen"
-                    >
-                     <XSquare size={18} />
-                    </button>
-                </div>
-            )}
-
-          {/* Show upload button: 
-              - Not for stockphotos category unless superadmin
-              - Or when stockOnly is true (superadmin stockphotos page)
-          */}
-          {((selectedCategory?.name !== 'stockphotos') || (stockOnly && isSuperAdmin)) && (
-            <button
-              onClick={() => {
-                setUploadKey(k => k + 1);
-                setIsUploadOpen(true);
-              }}
-              className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-            >
-              <Upload className="w-4 h-4" />
-              Upload
-            </button>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}

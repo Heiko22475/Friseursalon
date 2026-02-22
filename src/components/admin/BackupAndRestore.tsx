@@ -219,15 +219,16 @@ export const BackupAndRestore: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div>
       <Dialog />
 
-      {/* Header */}
       <AdminHeader
         title="Backup & Wiederherstellung"
         subtitle="Sichern Sie Ihre Website-Daten oder stellen Sie ein früheres Backup wieder her."
         icon={Download}
       />
+
+      <div className="max-w-4xl mx-auto p-6">
 
       {/* Info Box */}
       <div className="mb-8 p-4 rounded-lg border flex gap-3" style={{ backgroundColor: 'var(--admin-accent-bg)', borderColor: 'var(--admin-border)' }}>
@@ -382,6 +383,7 @@ export const BackupAndRestore: React.FC = () => {
           )}
         </button>
       </section>
+      </div>
     </div>
   );
 };

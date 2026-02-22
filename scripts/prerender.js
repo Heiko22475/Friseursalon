@@ -46,6 +46,37 @@ function getEnvVar(name) {
 const SUPABASE_URL = getEnvVar('VITE_SUPABASE_URL');
 const SUPABASE_KEY = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
+// ===== PRERENDER CONFIG (from Supabase system_settings) =====
+
+async function fetchPrerenderConfig() {
+  const defaults = {
+    prerender_wait_ms: 1000,
+    prerender_selector_timeout_ms: 10000,
+    sitemap_changefreq: 'weekly',
+  };
+
+  if (!SUPABASE_URL || !SUPABASE_KEY) return defaults;
+
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('key, value')
+      .in('key', ['prerender_wait_ms', 'prerender_selector_timeout_ms', 'sitemap_changefreq']);
+
+    if (error || !data) return defaults;
+
+    const map = Object.fromEntries(data.map(r => [r.key, r.value]));
+    return {
+      prerender_wait_ms: parseInt(map.prerender_wait_ms ?? defaults.prerender_wait_ms, 10),
+      prerender_selector_timeout_ms: parseInt(map.prerender_selector_timeout_ms ?? defaults.prerender_selector_timeout_ms, 10),
+      sitemap_changefreq: map.sitemap_changefreq ?? defaults.sitemap_changefreq,
+    };
+  } catch {
+    return defaults;
+  }
+}
+
 // ===== HELPERS =====
 
 function log(msg) {
@@ -143,7 +174,7 @@ function startPreviewServer() {
 
 // ===== PRERENDER A SINGLE ROUTE =====
 
-async function prerenderRoute(browser, route) {
+async function prerenderRoute(browser, route, config) {
   const page = await browser.newPage();
   const url = `${PREVIEW_URL}${route}`;
 
@@ -151,11 +182,11 @@ async function prerenderRoute(browser, route) {
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
 
   // Wait a bit for any async rendering to settle
-  await page.waitForTimeout(1000);
+  await new Promise(r => setTimeout(r, config.prerender_wait_ms));
 
   // Wait specifically for the dynamic page container to be rendered
   await page.waitForSelector('.dynamic-page, .dynamic-page-404, .dynamic-page-empty', {
-    timeout: 10000,
+    timeout: config.prerender_selector_timeout_ms,
   }).catch(() => {
     log(`  ⚠ No page container found for ${route}, saving anyway`);
   });
@@ -187,7 +218,7 @@ async function prerenderRoute(browser, route) {
 
 // ===== GENERATE SITEMAP =====
 
-function generateSitemap(routes, domain) {
+function generateSitemap(routes, domain, changefreq = 'weekly') {
   const baseUrl = `https://${domain}`;
   const now = new Date().toISOString().split('T')[0];
 
@@ -197,7 +228,7 @@ function generateSitemap(routes, domain) {
     return `  <url>
     <loc>${loc}</loc>
     <lastmod>${now}</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
   });
@@ -220,6 +251,10 @@ async function main() {
   const domain = domainArg ? domainArg.split('=')[1] : 'localhost';
 
   log(`Domain: ${domain}`);
+
+  // Load prerender config from Supabase
+  const config = await fetchPrerenderConfig();
+  log(`Config: wait=${config.prerender_wait_ms}ms, selectorTimeout=${config.prerender_selector_timeout_ms}ms, changefreq=${config.sitemap_changefreq}`);
 
   // Check if dist/ exists
   if (!fs.existsSync(DIST_DIR)) {
@@ -249,12 +284,12 @@ async function main() {
   try {
     // Prerender each route
     for (const route of routes) {
-      await prerenderRoute(browser, route);
+      await prerenderRoute(browser, route, config);
     }
 
     // Generate sitemap
     if (domain !== 'localhost') {
-      generateSitemap(routes, domain);
+      generateSitemap(routes, domain, config.sitemap_changefreq);
     } else {
       log('Skipping sitemap generation for localhost.');
     }
